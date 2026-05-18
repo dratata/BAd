@@ -5,1218 +5,1222 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>🍼 Bebek Büyütme Macerası</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700;800&display=swap');
 
-  :root {
-    --pink: #FF6B9D;
-    --purple: #C77DFF;
-    --blue: #48CAE4;
-    --green: #52B788;
-    --yellow: #FFD166;
-    --orange: #FF9A3C;
-    --bg: #FFF5F8;
-    --card: #FFFFFF;
-    --text: #3D2C8D;
-    --soft: #F0E6FF;
-  }
+:root {
+  --pink:#FF6B9D; --purple:#C77DFF; --blue:#48CAE4; --green:#52B788;
+  --yellow:#FFD166; --orange:#FF9A3C; --red:#FF4757;
+  --accent:#FF6B9D; --accent2:#C77DFF;
+  --bg:#FFF5F8; --card:#fff; --text:#3D2C8D; --soft:#F0E6FF;
+  --shadow:0 8px 30px rgba(61,44,141,.1);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Nunito',sans-serif;background:linear-gradient(135deg,#FFF5F8,#EEF2FF,#F0FFF4);min-height:100vh;color:var(--text);overflow-x:hidden}
 
-  * { margin: 0; padding: 0; box-sizing: border-box; }
+/* ── SETUP ─────────────────────────────────────────── */
+#setupScreen{position:fixed;inset:0;background:linear-gradient(135deg,#FF9A9E,#FAD0C4,#FEF9D7,#A1C4FD,#C2E9FB);background-size:400% 400%;animation:gradShift 8s ease infinite;display:flex;align-items:center;justify-content:center;z-index:9999;padding:20px}
+@keyframes gradShift{0%{background-position:0 50%}50%{background-position:100% 50%}100%{background-position:0 50%}}
+.setup-card{background:rgba(255,255,255,.96);border-radius:32px;padding:36px;max-width:500px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,.2);animation:popIn .5s cubic-bezier(.175,.885,.32,1.275)}
+.setup-top{text-align:center;margin-bottom:26px}
+.setup-top .big{font-size:3rem;animation:wobble 2s ease-in-out infinite}
+@keyframes wobble{0%,100%{transform:rotate(-5deg)}50%{transform:rotate(5deg)}}
+.setup-top h1{font-family:'Fredoka One',cursive;font-size:1.9rem;color:var(--text);margin-bottom:4px}
+.setup-top p{color:#888;font-size:.88rem}
+.fgrp{margin-bottom:16px}
+.fgrp label{display:block;font-weight:800;font-size:.85rem;color:var(--text);margin-bottom:7px}
+.fgrp input{width:100%;padding:12px 16px;border:2px solid #E0D7FF;border-radius:14px;font-family:'Nunito',sans-serif;font-size:.95rem;font-weight:600;color:var(--text);background:var(--soft);outline:none;transition:border-color .2s}
+.fgrp input:focus{border-color:var(--purple);background:#fff}
+.gender-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.gbtn{padding:14px;border:3px solid #E0E0E0;border-radius:16px;background:#fff;cursor:pointer;font-family:'Nunito',sans-serif;font-size:1rem;font-weight:800;color:#666;transition:all .2s}
+.gbtn.girl.sel{border-color:var(--pink);background:#FFF0F5;color:var(--pink);box-shadow:0 4px 15px rgba(255,107,157,.3)}
+.gbtn.boy.sel{border-color:#4169E1;background:#EEF2FF;color:#4169E1;box-shadow:0 4px 15px rgba(65,105,225,.3)}
+.start-btn{width:100%;padding:16px;background:linear-gradient(135deg,var(--pink),var(--purple));color:#fff;border:none;border-radius:20px;font-family:'Fredoka One',cursive;font-size:1.2rem;cursor:pointer;transition:all .2s;margin-top:6px;box-shadow:0 6px 20px rgba(199,125,255,.4)}
+.start-btn:hover{transform:translateY(-3px);box-shadow:0 10px 30px rgba(199,125,255,.5)}
 
-  body {
-    font-family: 'Nunito', sans-serif;
-    background: linear-gradient(135deg, #FFF5F8 0%, #EEF2FF 50%, #F0FFF4 100%);
-    min-height: 100vh;
-    color: var(--text);
-  }
+/* ── HEADER ─────────────────────────────────────────── */
+.hdr{background:linear-gradient(90deg,var(--text),#5B2FBE);padding:10px 18px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;box-shadow:0 4px 20px rgba(61,44,141,.3)}
+.hdr-left h1{font-family:'Fredoka One',cursive;color:#fff;font-size:1.25rem}
+.hdr-sub{font-size:.72rem;color:rgba(255,255,255,.65);margin-top:2px}
+.hdr-stats{display:flex;gap:6px;flex-wrap:wrap}
+.hbadge{background:rgba(255,255,255,.15);color:#fff;padding:5px 11px;border-radius:20px;font-size:.72rem;font-weight:700;backdrop-filter:blur(4px)}
+.hbadge.dad{background:rgba(65,105,225,.35)}
+.hbadge.ms{background:rgba(255,209,102,.3)}
 
-  /* HEADER */
-  .header {
-    background: linear-gradient(90deg, var(--pink), var(--purple), var(--blue));
-    padding: 12px 20px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    box-shadow: 0 4px 15px rgba(199,125,255,0.3);
-  }
-  .header h1 {
-    font-family: 'Fredoka One', cursive;
-    color: white;
-    font-size: 1.6rem;
-    text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
-  }
-  .header-stats {
-    display: flex;
-    gap: 12px;
-    align-items: center;
-  }
-  .header-badge {
-    background: rgba(255,255,255,0.25);
-    color: white;
-    padding: 6px 14px;
-    border-radius: 20px;
-    font-weight: 700;
-    font-size: 0.85rem;
-    backdrop-filter: blur(4px);
-  }
+/* ── GRID ─────────────────────────────────────────── */
+.grid{display:grid;grid-template-columns:270px 360px 1fr;gap:14px;padding:14px;max-width:1350px;margin:0 auto}
 
-  /* MAIN LAYOUT */
-  .main {
-    max-width: 1100px;
-    margin: 0 auto;
-    padding: 16px;
-    display: grid;
-    grid-template-columns: 280px 1fr;
-    gap: 16px;
-  }
+/* ── BABY PANEL ─────────────────────────────────────────── */
+.baby-panel{display:flex;flex-direction:column;gap:12px}
+.baby-card{background:#fff;border-radius:24px;overflow:hidden;box-shadow:var(--shadow);border:3px solid transparent}
+.baby-scene{height:195px;position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center;transition:background 1s}
+.scene-deco{position:absolute;inset:0;display:flex;align-items:flex-end;justify-content:space-around;padding:0 10px 10px;font-size:1.4rem;pointer-events:none;opacity:.6}
+.baby-char{position:relative;z-index:2;text-align:center}
+.baby-emoji{font-size:5.5rem;line-height:1;filter:drop-shadow(0 4px 8px rgba(0,0,0,.12));animation:float 3s ease-in-out infinite;cursor:pointer;user-select:none;transition:all .4s}
+@keyframes float{0%,100%{transform:translateY(0) rotate(-2deg)}50%{transform:translateY(-10px) rotate(2deg)}}
+.baby-body-deco{font-size:1.6rem;margin-top:-8px;text-align:center}
+.scene-fx{position:absolute;inset:0;z-index:3;pointer-events:none;display:flex;justify-content:flex-end;align-items:flex-start;padding:8px;font-size:1.6rem}
+.baby-info{padding:10px 16px 14px;text-align:center}
+.baby-nm{font-family:'Fredoka One',cursive;font-size:1.3rem;color:var(--text)}
+.baby-stg{display:inline-block;font-size:.72rem;font-weight:700;color:var(--purple);background:var(--soft);padding:2px 10px;border-radius:10px;margin:3px 0}
+.baby-mood{font-size:.82rem;color:#888;margin-top:3px}
 
-  /* LEFT PANEL - BABY */
-  .baby-panel {
-    display: flex;
-    flex-direction: column;
-    gap: 14px;
-  }
+/* challenge */
+.ch-card{border-radius:20px;padding:14px;animation:chPulse 1s ease-in-out infinite;color:#fff}
+.ch-card.urgent{background:linear-gradient(135deg,#FF4757,#FF6B81);box-shadow:0 8px 25px rgba(255,71,87,.5)}
+.ch-card.medium{background:linear-gradient(135deg,#FF9A3C,#FFB347);box-shadow:0 8px 25px rgba(255,154,60,.4)}
+@keyframes chPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.01)}}
+.ch-top{display:flex;align-items:center;gap:8px;margin-bottom:6px}
+.ch-icon{font-size:1.6rem}
+.ch-name{font-family:'Fredoka One',cursive;font-size:1rem;flex:1}
+.ch-tbar{width:55px;height:8px;background:rgba(255,255,255,.3);border-radius:4px;overflow:hidden}
+.ch-tfill{height:100%;background:#fff;border-radius:4px;transition:width .3s linear}
+.ch-desc{font-size:.78rem;opacity:.92;margin-bottom:10px;line-height:1.4}
+.ch-btn{width:100%;padding:10px;background:#fff;border:none;border-radius:12px;font-family:'Nunito',sans-serif;font-weight:800;font-size:.88rem;cursor:pointer;transition:all .2s}
+.ch-btn:hover{transform:scale(1.03)}
 
-  .baby-card {
-    background: white;
-    border-radius: 24px;
-    padding: 20px;
-    text-align: center;
-    box-shadow: 0 8px 30px rgba(199,125,255,0.15);
-    border: 3px solid transparent;
-    background-clip: padding-box;
-    position: relative;
-    overflow: hidden;
-  }
-  .baby-card::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    border-radius: 22px;
-    background: linear-gradient(135deg, var(--pink), var(--purple), var(--blue));
-    z-index: -1;
-    margin: -3px;
-  }
+/* stats */
+.stats-card{background:#fff;border-radius:20px;padding:14px;box-shadow:var(--shadow)}
+.srow{margin-bottom:7px}
+.slabel{display:flex;justify-content:space-between;font-size:.73rem;font-weight:700;margin-bottom:3px}
+.sbar{height:9px;background:#F0E6FF;border-radius:9px;overflow:hidden}
+.sfill{height:100%;border-radius:9px;transition:width .5s}
 
-  .baby-age {
-    font-family: 'Fredoka One', cursive;
-    font-size: 1rem;
-    color: var(--purple);
-    margin-bottom: 8px;
-  }
+/* milk */
+.milk-card{background:linear-gradient(135deg,#FFF0F5,#FFE4E1);border-radius:16px;padding:12px;border:2px solid rgba(255,107,157,.3);box-shadow:var(--shadow)}
+.milk-top{display:flex;justify-content:space-between;font-size:.78rem;font-weight:800;color:var(--pink);margin-bottom:6px}
+.milk-bar{height:10px;background:rgba(255,107,157,.2);border-radius:10px;overflow:hidden}
+.milk-fill{height:100%;background:linear-gradient(90deg,var(--pink),#FF8FAB);border-radius:10px;transition:width .5s}
+.milk-tip{font-size:.66rem;color:#C2185B;margin-top:5px;line-height:1.3}
 
-  .baby-scene {
-    position: relative;
-    width: 160px;
-    height: 160px;
-    margin: 0 auto 12px;
-  }
+/* dp */
+.dp-card{background:linear-gradient(135deg,var(--text),#5B2FBE);border-radius:18px;padding:12px 14px;color:#fff}
+.dp-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:5px}
+.dp-title{font-family:'Fredoka One',cursive;font-size:.88rem;opacity:.9}
+.dp-val{font-family:'Fredoka One',cursive;font-size:1.5rem}
+.dp-bar{height:10px;background:rgba(255,255,255,.2);border-radius:10px;overflow:hidden;margin-bottom:5px}
+.dp-fill{height:100%;background:linear-gradient(90deg,var(--yellow),var(--orange));border-radius:10px;transition:width .5s}
+.dp-nxt{font-size:.68rem;opacity:.7}
+.dp-rate{font-size:.65rem;opacity:.55;margin-top:2px}
 
-  .baby-bg-circle {
-    position: absolute;
-    inset: 0;
-    border-radius: 50%;
-    animation: bgPulse 3s ease-in-out infinite;
-  }
+/* ── ACTIVITY PANEL ─────────────────────────────────────────── */
+.act-panel{background:#fff;border-radius:24px;padding:16px;box-shadow:var(--shadow);display:flex;flex-direction:column;gap:12px;align-self:start}
+.tab-nav{display:grid;grid-template-columns:repeat(4,1fr);gap:5px;background:var(--soft);border-radius:14px;padding:4px}
+.tnav-btn{padding:7px 4px;border:none;border-radius:10px;background:transparent;cursor:pointer;font-family:'Nunito',sans-serif;font-weight:700;font-size:.65rem;color:var(--text);transition:all .2s;text-align:center;line-height:1.2}
+.tnav-btn.on{background:#fff;box-shadow:0 2px 8px rgba(0,0,0,.08);color:var(--purple)}
+.tab-body{display:none}.tab-body.on{display:flex;flex-direction:column;gap:8px}
+.act-stitle{font-family:'Fredoka One',cursive;font-size:.82rem;color:var(--text);margin:6px 0 4px;padding-left:2px}
+.act-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+.abt{padding:11px 8px;border:none;border-radius:15px;cursor:pointer;font-family:'Nunito',sans-serif;font-weight:800;font-size:.72rem;color:#fff;transition:all .2s;display:flex;flex-direction:column;align-items:center;gap:3px;position:relative;overflow:hidden}
+.abt:hover:not(:disabled){transform:translateY(-3px);box-shadow:0 6px 18px rgba(0,0,0,.2)}
+.abt:disabled{opacity:.4;cursor:not-allowed;transform:none}
+.abt .ai{font-size:1.5rem}
+.abt .an{font-size:.72rem}
+.abt .ae{font-size:.6rem;opacity:.85}
 
-  @keyframes bgPulse {
-    0%, 100% { transform: scale(1); opacity: 0.6; }
-    50% { transform: scale(1.05); opacity: 1; }
-  }
+/* special anne sütü */
+.abt.special{grid-column:1/-1;flex-direction:row;padding:14px 16px;gap:12px;background:linear-gradient(135deg,#FF6B9D,#FFB347,#FF6B9D);background-size:200% 200%;animation:spPulse 3s ease-in-out infinite;box-shadow:0 6px 25px rgba(255,107,157,.45);border:2px solid rgba(255,255,255,.4)}
+@keyframes spPulse{0%,100%{background-position:0 50%;box-shadow:0 6px 25px rgba(255,107,157,.45)}50%{background-position:100% 50%;box-shadow:0 8px 35px rgba(255,107,157,.7)}}
+.abt.special .ai{font-size:2rem}
+.abt.special .an{font-size:.88rem;text-align:left}
+.abt.special .ae{font-size:.68rem}
+.sp-badge{position:absolute;top:7px;right:10px;background:rgba(255,255,255,.3);padding:2px 7px;border-radius:10px;font-size:.58rem;font-weight:800}
 
-  .baby-emoji {
-    position: absolute;
-    inset: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 5.5rem;
-    filter: drop-shadow(0 4px 8px rgba(0,0,0,0.1));
-    animation: babyBounce 2s ease-in-out infinite;
-    cursor: pointer;
-    user-select: none;
-    z-index: 2;
-  }
+.abt.feed{background:linear-gradient(135deg,#FF9A3C,#FFD166)}
+.abt.play{background:linear-gradient(135deg,#C77DFF,#7B2FBE)}
+.abt.care{background:linear-gradient(135deg,#48CAE4,#5B8DEE)}
+.abt.learn{background:linear-gradient(135deg,#52B788,#2DC653)}
+.abt.lang{background:linear-gradient(135deg,#FF6B9D,#C77DFF)}
+.abt.dad{background:linear-gradient(135deg,#3949AB,#5C6BC0)}
+.abt.phys{background:linear-gradient(135deg,#00BCD4,#0097A7)}
+.abt.mind{background:linear-gradient(135deg,#9C27B0,#7B1FA2)}
 
-  @keyframes babyBounce {
-    0%, 100% { transform: translateY(0) rotate(-2deg); }
-    50% { transform: translateY(-8px) rotate(2deg); }
-  }
+/* subtabs */
+.stab-nav{display:flex;gap:5px;margin-bottom:4px;flex-wrap:wrap}
+.stab-btn{padding:5px 11px;border:2px solid #E0D7FF;border-radius:20px;background:#fff;cursor:pointer;font-family:'Nunito',sans-serif;font-size:.68rem;font-weight:700;color:var(--text);transition:all .2s}
+.stab-btn.on{background:var(--purple);border-color:var(--purple);color:#fff}
 
-  .baby-name {
-    font-family: 'Fredoka One', cursive;
-    font-size: 1.4rem;
-    color: var(--text);
-    margin-bottom: 4px;
-  }
+/* dad section */
+.dad-hdr{background:linear-gradient(135deg,#EEF2FF,#E3F2FD);border-radius:16px;padding:12px 14px;border:2px solid #C5CAE9;margin-bottom:6px}
+.dad-hdr-title{font-family:'Fredoka One',cursive;font-size:.88rem;color:#283593;margin-bottom:6px}
+.dad-bar{height:10px;background:rgba(40,53,147,.15);border-radius:10px;overflow:hidden;margin-bottom:4px}
+.dad-fill{height:100%;background:linear-gradient(90deg,#3949AB,#7986CB);border-radius:10px;transition:width .5s}
+.dad-score-lbl{font-size:.68rem;color:#3949AB;font-weight:700}
 
-  .baby-mood {
-    font-size: 0.9rem;
-    color: #888;
-    margin-bottom: 12px;
-  }
+/* mom honor */
+.mom-card{background:linear-gradient(135deg,#FCE4EC,#F8BBD9);border-radius:16px;padding:14px;border:2px solid #F48FB1;text-align:center;margin-top:6px}
+.mom-title{font-family:'Fredoka One',cursive;font-size:.95rem;color:#C2185B;margin-bottom:8px}
+.mom-msg{font-size:.76rem;color:#880E4F;line-height:1.5;font-style:italic}
 
-  /* STATS */
-  .stat-row {
-    margin-bottom: 8px;
-  }
-  .stat-label {
-    display: flex;
-    justify-content: space-between;
-    font-size: 0.8rem;
-    font-weight: 700;
-    margin-bottom: 3px;
-  }
-  .stat-bar {
-    height: 10px;
-    background: #F0E6FF;
-    border-radius: 10px;
-    overflow: hidden;
-    position: relative;
-  }
-  .stat-fill {
-    height: 100%;
-    border-radius: 10px;
-    transition: width 0.5s ease;
-    position: relative;
-    overflow: hidden;
-  }
-  .stat-fill::after {
-    content: '';
-    position: absolute;
-    top: 0; left: -100%;
-    width: 60%;
-    height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.5), transparent);
-    animation: shimmer 2s infinite;
-  }
-  @keyframes shimmer {
-    0% { left: -100%; }
-    100% { left: 200%; }
-  }
+/* ── INFO PANEL ─────────────────────────────────────────── */
+.info-panel{display:flex;flex-direction:column;gap:14px}
+.icard{background:#fff;border-radius:20px;padding:16px;box-shadow:var(--shadow)}
+.icard h3{font-family:'Fredoka One',cursive;font-size:.95rem;color:var(--text);margin-bottom:10px;display:flex;align-items:center;gap:6px}
+.icard h3 span{font-size:.72rem;font-weight:600;color:#888;margin-left:auto}
 
-  /* ACTION BUTTONS */
-  .actions-card {
-    background: white;
-    border-radius: 20px;
-    padding: 16px;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
-  }
-  .actions-title {
-    font-family: 'Fredoka One', cursive;
-    font-size: 1rem;
-    color: var(--purple);
-    margin-bottom: 12px;
-    text-align: center;
-  }
-  .action-btns {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 8px;
-  }
-  .action-btn {
-    padding: 10px 8px;
-    border: none;
-    border-radius: 14px;
-    cursor: pointer;
-    font-family: 'Nunito', sans-serif;
-    font-weight: 800;
-    font-size: 0.8rem;
-    color: white;
-    transition: all 0.2s;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 2px;
-    position: relative;
-    overflow: hidden;
-  }
-  .action-btn:hover { transform: translateY(-3px); box-shadow: 0 6px 20px rgba(0,0,0,0.2); }
-  .action-btn:active { transform: translateY(-1px); }
-  .action-btn .btn-icon { font-size: 1.4rem; }
-  .action-btn .btn-cost { font-size: 0.65rem; font-weight: 600; opacity: 0.85; }
-  .action-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+/* vaccine list */
+.vax-list{display:flex;flex-direction:column;gap:5px;max-height:260px;overflow-y:auto;scrollbar-width:thin}
+.vax-item{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:12px;cursor:pointer;transition:all .2s;border:2px solid transparent}
+.vax-item.done{background:#F0FFF4;border-color:#B2DFDB}
+.vax-item.due{background:linear-gradient(135deg,#FFF8E1,#FFF3CD);border-color:var(--yellow);animation:vPulse 1.5s ease-in-out infinite}
+@keyframes vPulse{0%,100%{box-shadow:0 0 0 0 rgba(255,209,102,.5)}50%{box-shadow:0 0 0 6px rgba(255,209,102,0)}}
+.vax-item.locked{background:#F8F8F8;opacity:.6;cursor:default}
+.vax-item.special{border-style:dashed}
+.vax-ico{font-size:1.1rem;width:24px;text-align:center}
+.vax-info{flex:1}
+.vax-name{font-weight:800;font-size:.75rem;color:var(--text);line-height:1.2}
+.vax-age{font-size:.62rem;color:#888}
+.vax-st{font-size:.9rem}
 
-  .btn-feed   { background: linear-gradient(135deg, var(--orange), var(--yellow)); }
-  .btn-play   { background: linear-gradient(135deg, var(--pink), var(--purple)); }
-  .btn-sleep  { background: linear-gradient(135deg, var(--blue), #5B8DEE); }
-  .btn-learn  { background: linear-gradient(135deg, var(--green), #2DC653); }
-  .btn-hug    { background: linear-gradient(135deg, #FF8FAB, var(--pink)); }
-  .btn-sing   { background: linear-gradient(135deg, var(--purple), #7B2FBE); }
+/* milestones */
+.ms-list{display:flex;flex-direction:column;gap:5px;max-height:220px;overflow-y:auto;scrollbar-width:thin}
+.ms-item{display:flex;align-items:center;gap:9px;padding:7px 10px;border-radius:12px;cursor:pointer;transition:all .2s;border:2px solid transparent}
+.ms-item.unlocked{background:linear-gradient(135deg,#F0FFF4,#E6F7FF);border-color:var(--green)}
+.ms-item.locked{background:#F8F8F8;opacity:.5;cursor:default}
+.ms-item.fresh{animation:newUnlock .6s ease}
+@keyframes newUnlock{0%{transform:scale(.8);opacity:0}60%{transform:scale(1.08)}100%{transform:scale(1);opacity:1}}
+.ms-ico{font-size:1.3rem;width:26px;text-align:center}
+.ms-inf{flex:1}
+.ms-nm{font-weight:800;font-size:.75rem;color:var(--text);line-height:1.2}
+.ms-ag{font-size:.62rem;color:#888}
+.ms-dp{font-size:.6rem;color:var(--purple);font-weight:700}
+.ms-st{font-size:.85rem}
 
-  /* DP BAR */
-  .dp-card {
-    background: linear-gradient(135deg, #3D2C8D, #7B2FBE);
-    border-radius: 20px;
-    padding: 14px 16px;
-    color: white;
-  }
-  .dp-title {
-    font-family: 'Fredoka One', cursive;
-    font-size: 0.9rem;
-    margin-bottom: 6px;
-    opacity: 0.9;
-  }
-  .dp-value {
-    font-family: 'Fredoka One', cursive;
-    font-size: 1.6rem;
-    margin-bottom: 6px;
-  }
-  .dp-bar {
-    height: 12px;
-    background: rgba(255,255,255,0.2);
-    border-radius: 10px;
-    overflow: hidden;
-  }
-  .dp-fill {
-    height: 100%;
-    background: linear-gradient(90deg, var(--yellow), var(--orange));
-    border-radius: 10px;
-    transition: width 0.5s ease;
-    position: relative;
-    overflow: hidden;
-  }
-  .dp-fill::after {
-    content: '';
-    position: absolute;
-    top: 0; left: -100%;
-    width: 60%;
-    height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
-    animation: shimmer 1.5s infinite;
-  }
-  .dp-next { font-size: 0.75rem; opacity: 0.8; margin-top: 5px; }
+/* log */
+.log-wrap{max-height:130px;overflow-y:auto;display:flex;flex-direction:column;gap:3px;scrollbar-width:thin}
+.lentry{font-size:.73rem;padding:4px 10px;border-radius:8px;background:var(--soft);animation:lSlide .3s ease;line-height:1.3}
+@keyframes lSlide{from{transform:translateX(-12px);opacity:0}to{transform:none;opacity:1}}
+.lentry.ch{background:#FFE4E4}.lentry.vax{background:#E4FFE8}.lentry.ms{background:#FFF9E4}.lentry.dad{background:#E8EAF6}
 
-  /* RIGHT PANEL */
-  .right-panel {
-    display: flex;
-    flex-direction: column;
-    gap: 14px;
-  }
+/* ── POPUP ─────────────────────────────────────────── */
+.pop-ov{position:fixed;inset:0;background:rgba(61,44,141,.6);display:flex;align-items:center;justify-content:center;z-index:10000;backdrop-filter:blur(6px);animation:fadeIn .3s;padding:16px}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+.pop-box{background:#fff;border-radius:28px;padding:26px;max-width:430px;width:100%;box-shadow:0 25px 60px rgba(61,44,141,.3);animation:popIn .4s cubic-bezier(.175,.885,.32,1.275);position:relative;overflow:hidden;max-height:90vh;overflow-y:auto}
+@keyframes popIn{from{transform:scale(.5) translateY(30px);opacity:0}to{transform:scale(1) translateY(0);opacity:1}}
+.pop-rainbow{position:absolute;top:0;left:0;right:0;height:6px;background:linear-gradient(90deg,#FF6B9D,#FFD166,#52B788,#48CAE4,#C77DFF)}
+.pop-ico{font-size:4rem;display:block;text-align:center;margin:12px 0 6px}
+.pop-title{font-family:'Fredoka One',cursive;font-size:1.6rem;color:var(--text);text-align:center;margin-bottom:5px}
+.pop-sub{text-align:center;color:#888;font-size:.82rem;margin-bottom:14px}
+.pop-tag{display:inline-block;background:var(--soft);color:var(--purple);font-size:.68rem;font-weight:700;padding:3px 10px;border-radius:12px;margin-bottom:10px}
+.pop-sec{background:#F8F8FF;border-radius:14px;padding:13px;margin-bottom:10px}
+.pop-sec h4{font-size:.78rem;font-weight:800;color:var(--purple);margin-bottom:6px;display:flex;align-items:center;gap:5px}
+.pop-sec p{font-size:.77rem;color:#555;line-height:1.5}
+.pop-tip{background:#FFF8E1;border-radius:12px;padding:10px 13px;margin-bottom:14px;border-left:4px solid var(--yellow)}
+.pop-tip-t{font-size:.7rem;font-weight:800;color:var(--orange);margin-bottom:3px}
+.pop-tip p{font-size:.75rem;color:#666;line-height:1.4}
+.pop-btn{width:100%;padding:12px;background:linear-gradient(135deg,var(--pink),var(--purple));color:#fff;border:none;border-radius:16px;font-family:'Nunito',sans-serif;font-weight:800;font-size:.92rem;cursor:pointer;transition:all .2s}
+.pop-btn:hover{transform:translateY(-2px);box-shadow:0 6px 18px rgba(199,125,255,.4)}
+.pop-btn.green{background:linear-gradient(135deg,var(--green),#2DC653)}
+.new-badge{display:inline-block;background:linear-gradient(135deg,var(--yellow),var(--orange));color:#fff;font-size:.68rem;font-weight:800;padding:3px 10px;border-radius:12px;margin-bottom:6px;text-align:center}
 
-  /* MILESTONE TIMELINE */
-  .milestones-card {
-    background: white;
-    border-radius: 20px;
-    padding: 18px;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
-    flex: 1;
-  }
-  .milestones-title {
-    font-family: 'Fredoka One', cursive;
-    font-size: 1.2rem;
-    color: var(--text);
-    margin-bottom: 14px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
+/* ── PARTICLES ─────────────────────────────────────────── */
+.particle{position:fixed;pointer-events:none;font-size:1.5rem;animation:ptUp 1.5s ease forwards;z-index:9999}
+@keyframes ptUp{0%{transform:translateY(0) scale(.5) rotate(0deg);opacity:1}100%{transform:translateY(-120px) scale(1.3) rotate(30deg);opacity:0}}
+.toast{position:fixed;bottom:20px;right:20px;background:#fff;border-radius:16px;padding:11px 16px;box-shadow:0 8px 30px rgba(0,0,0,.15);font-size:.82rem;font-weight:700;color:var(--text);z-index:9998;animation:tIn .3s ease,tOut .3s ease 2.5s forwards;max-width:270px;line-height:1.3;border-left:4px solid var(--green)}
+.toast.red{border-color:var(--red)}
+.toast.blue{border-color:#4169E1}
+@keyframes tIn{from{transform:translateX(100px);opacity:0}to{transform:none;opacity:1}}
+@keyframes tOut{from{transform:none;opacity:1}to{transform:translateX(100px);opacity:0}}
 
-  .milestones-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-    gap: 10px;
-  }
+/* stars */
+.stars{position:fixed;inset:0;pointer-events:none;z-index:-1;overflow:hidden}
+.star{position:absolute;border-radius:50%;animation:twink 3s ease-in-out infinite}
+@keyframes twink{0%,100%{opacity:.2;transform:scale(1)}50%{opacity:.8;transform:scale(1.4)}}
 
-  .milestone-item {
-    border-radius: 16px;
-    padding: 12px;
-    cursor: pointer;
-    transition: all 0.3s;
-    border: 2px solid transparent;
-    position: relative;
-    overflow: hidden;
-  }
-  .milestone-item.locked {
-    background: #F8F8F8;
-    border-color: #E0E0E0;
-    opacity: 0.6;
-  }
-  .milestone-item.unlocked {
-    background: linear-gradient(135deg, #F0FFF4, #E6F7FF);
-    border-color: var(--green);
-    box-shadow: 0 4px 15px rgba(82,183,136,0.2);
-  }
-  .milestone-item.new {
-    animation: newMilestone 0.5s ease;
-    border-color: var(--yellow);
-    box-shadow: 0 0 20px rgba(255,209,102,0.5);
-  }
-  @keyframes newMilestone {
-    0% { transform: scale(0.8); opacity: 0; }
-    60% { transform: scale(1.1); }
-    100% { transform: scale(1); opacity: 1; }
-  }
-  .milestone-item:hover:not(.locked) { transform: translateY(-3px); }
+/* scrollbars */
+::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--purple);border-radius:10px}
 
-  .milestone-icon { font-size: 2rem; margin-bottom: 4px; }
-  .milestone-age {
-    font-size: 0.65rem;
-    font-weight: 700;
-    color: var(--purple);
-    background: var(--soft);
-    padding: 2px 6px;
-    border-radius: 10px;
-    display: inline-block;
-    margin-bottom: 4px;
-  }
-  .milestone-name {
-    font-weight: 800;
-    font-size: 0.8rem;
-    color: var(--text);
-    margin-bottom: 3px;
-    line-height: 1.2;
-  }
-  .milestone-desc {
-    font-size: 0.7rem;
-    color: #888;
-    line-height: 1.3;
-  }
-  .milestone-lock-icon {
-    position: absolute;
-    top: 8px; right: 8px;
-    font-size: 0.9rem;
-    opacity: 0.4;
-  }
-  .milestone-check {
-    position: absolute;
-    top: 8px; right: 8px;
-    font-size: 1rem;
-  }
-  .milestone-dp {
-    font-size: 0.65rem;
-    color: var(--purple);
-    font-weight: 700;
-    margin-top: 4px;
-  }
-
-  /* LOG */
-  .log-card {
-    background: white;
-    border-radius: 20px;
-    padding: 16px;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
-    max-height: 160px;
-    overflow: hidden;
-  }
-  .log-title {
-    font-family: 'Fredoka One', cursive;
-    font-size: 1rem;
-    color: var(--text);
-    margin-bottom: 8px;
-  }
-  .log-entries {
-    overflow-y: auto;
-    max-height: 110px;
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-    scrollbar-width: thin;
-  }
-  .log-entry {
-    font-size: 0.78rem;
-    padding: 4px 10px;
-    border-radius: 10px;
-    background: var(--soft);
-    color: var(--text);
-    animation: logSlide 0.3s ease;
-    line-height: 1.3;
-  }
-  @keyframes logSlide {
-    from { transform: translateX(-20px); opacity: 0; }
-    to { transform: translateX(0); opacity: 1; }
-  }
-
-  /* FLOATING PARTICLES */
-  .particle {
-    position: fixed;
-    pointer-events: none;
-    font-size: 1.5rem;
-    animation: floatUp 1.5s ease forwards;
-    z-index: 9999;
-  }
-  @keyframes floatUp {
-    0% { transform: translateY(0) scale(0.5); opacity: 1; }
-    100% { transform: translateY(-100px) scale(1.2); opacity: 0; }
-  }
-
-  /* MILESTONE POPUP */
-  .popup-overlay {
-    position: fixed;
-    inset: 0;
-    background: rgba(61,44,141,0.5);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 10000;
-    backdrop-filter: blur(4px);
-    animation: fadeIn 0.3s ease;
-  }
-  @keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
-  }
-  .popup-box {
-    background: white;
-    border-radius: 28px;
-    padding: 30px;
-    max-width: 420px;
-    width: 90%;
-    text-align: center;
-    box-shadow: 0 20px 60px rgba(61,44,141,0.3);
-    animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    position: relative;
-    overflow: hidden;
-  }
-  @keyframes popIn {
-    from { transform: scale(0.5); opacity: 0; }
-    to { transform: scale(1); opacity: 1; }
-  }
-  .popup-confetti {
-    position: absolute;
-    top: 0; left: 0; right: 0;
-    height: 8px;
-    background: linear-gradient(90deg, var(--pink), var(--yellow), var(--green), var(--blue), var(--purple));
-  }
-  .popup-icon { font-size: 4.5rem; margin: 10px 0; display: block; }
-  .popup-tag {
-    background: var(--soft);
-    color: var(--purple);
-    font-size: 0.75rem;
-    font-weight: 700;
-    padding: 4px 12px;
-    border-radius: 20px;
-    display: inline-block;
-    margin-bottom: 10px;
-  }
-  .popup-title {
-    font-family: 'Fredoka One', cursive;
-    font-size: 1.8rem;
-    color: var(--text);
-    margin-bottom: 8px;
-  }
-  .popup-subtitle {
-    font-size: 0.85rem;
-    color: var(--purple);
-    font-weight: 700;
-    margin-bottom: 12px;
-  }
-  .popup-info {
-    background: linear-gradient(135deg, #F0FFF4, #EEF2FF);
-    border-radius: 16px;
-    padding: 14px;
-    margin-bottom: 16px;
-    text-align: left;
-  }
-  .popup-info h4 {
-    font-size: 0.85rem;
-    font-weight: 800;
-    color: var(--green);
-    margin-bottom: 6px;
-    display: flex;
-    align-items: center;
-    gap: 5px;
-  }
-  .popup-info p {
-    font-size: 0.82rem;
-    color: #555;
-    line-height: 1.5;
-  }
-  .popup-tip {
-    background: #FFF8E7;
-    border-radius: 12px;
-    padding: 10px 14px;
-    margin-bottom: 16px;
-    text-align: left;
-    border-left: 4px solid var(--yellow);
-  }
-  .popup-tip-title { font-size: 0.75rem; font-weight: 800; color: var(--orange); margin-bottom: 4px; }
-  .popup-tip p { font-size: 0.78rem; color: #666; line-height: 1.4; }
-  .popup-close {
-    background: linear-gradient(135deg, var(--pink), var(--purple));
-    color: white;
-    border: none;
-    padding: 12px 32px;
-    border-radius: 20px;
-    font-family: 'Nunito', sans-serif;
-    font-weight: 800;
-    font-size: 1rem;
-    cursor: pointer;
-    transition: all 0.2s;
-  }
-  .popup-close:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(199,125,255,0.4); }
-
-  /* LEVEL UP POPUP */
-  .levelup-popup {
-    background: linear-gradient(135deg, #3D2C8D, #7B2FBE);
-    color: white;
-  }
-  .levelup-popup .popup-title { color: var(--yellow); }
-  .levelup-popup .popup-subtitle { color: rgba(255,255,255,0.8); }
-
-  /* IDLE NOTIFICATION */
-  .idle-toast {
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
-    background: white;
-    border-radius: 16px;
-    padding: 12px 18px;
-    box-shadow: 0 8px 30px rgba(0,0,0,0.15);
-    font-size: 0.85rem;
-    font-weight: 700;
-    color: var(--text);
-    z-index: 9998;
-    animation: toastIn 0.3s ease, toastOut 0.3s ease 2.7s forwards;
-    border-left: 4px solid var(--green);
-    max-width: 260px;
-  }
-  @keyframes toastIn {
-    from { transform: translateX(100px); opacity: 0; }
-    to { transform: translateX(0); opacity: 1; }
-  }
-  @keyframes toastOut {
-    from { transform: translateX(0); opacity: 1; }
-    to { transform: translateX(100px); opacity: 0; }
-  }
-
-  /* SCROLLBAR */
-  ::-webkit-scrollbar { width: 6px; }
-  ::-webkit-scrollbar-track { background: #f0f0f0; border-radius: 10px; }
-  ::-webkit-scrollbar-thumb { background: var(--purple); border-radius: 10px; }
-
-  /* RESPONSIVE */
-  @media (max-width: 700px) {
-    .main { grid-template-columns: 1fr; }
-    .header h1 { font-size: 1.2rem; }
-  }
-
-  /* STARS BACKGROUND */
-  .stars {
-    position: fixed;
-    inset: 0;
-    pointer-events: none;
-    z-index: -1;
-    overflow: hidden;
-  }
-  .star {
-    position: absolute;
-    border-radius: 50%;
-    animation: twinkle 3s ease-in-out infinite;
-  }
-  @keyframes twinkle {
-    0%, 100% { opacity: 0.2; transform: scale(1); }
-    50% { opacity: 0.8; transform: scale(1.3); }
-  }
-
-  .idle-rate {
-    font-size: 0.7rem;
-    color: rgba(255,255,255,0.7);
-    margin-top: 3px;
-  }
-
-  .click-hint {
-    font-size: 0.72rem;
-    color: #aaa;
-    text-align: center;
-    margin-top: 4px;
-    animation: hint 2s ease-in-out infinite;
-  }
-  @keyframes hint {
-    0%,100% { opacity: 0.5; }
-    50% { opacity: 1; }
-  }
+/* responsive */
+@media(max-width:1080px){.grid{grid-template-columns:260px 1fr}.info-panel{grid-column:1/-1;display:grid;grid-template-columns:repeat(3,1fr)}}
+@media(max-width:680px){.grid{grid-template-columns:1fr}.info-panel{grid-template-columns:1fr}.hdr{flex-direction:column;align-items:flex-start}}
 </style>
 </head>
 <body>
 
 <div class="stars" id="stars"></div>
 
-<!-- HEADER -->
-<div class="header">
-  <h1>🍼 Bebek Büyütme Macerası</h1>
-  <div class="header-stats">
-    <div class="header-badge" id="totalMilestones">🏆 0 Gelişim</div>
-    <div class="header-badge" id="totalDays">📅 Gün 1</div>
+<!-- ═══════════════════════════════════ SETUP SCREEN ═══════════ -->
+<div id="setupScreen">
+  <div class="setup-card">
+    <div class="setup-top">
+      <div class="big">🍼👶🌟</div>
+      <h1>Bebek Büyütme Macerası</h1>
+      <p>Bebeğinizin büyüme yolculuğuna hoş geldiniz! 🌈</p>
+    </div>
+    <div class="fgrp">
+      <label>👶 Bebeğinizin Adı</label>
+      <input id="inp-baby" type="text" placeholder="Bebek adını yazın..." maxlength="18">
+    </div>
+    <div class="fgrp">
+      <label>Cinsiyet</label>
+      <div class="gender-row">
+        <button class="gbtn girl sel" id="btn-girl" onclick="selGender('kiz')">👧 Kız</button>
+        <button class="gbtn boy"       id="btn-boy"  onclick="selGender('erkek')">👦 Erkek</button>
+      </div>
+    </div>
+    <div class="fgrp">
+      <label>💖 Annenin Adı</label>
+      <input id="inp-mom" type="text" placeholder="Anne adını yazın..." maxlength="18">
+    </div>
+    <div class="fgrp">
+      <label>💙 Babanın Adı</label>
+      <input id="inp-dad" type="text" placeholder="Baba adını yazın..." maxlength="18">
+    </div>
+    <button class="start-btn" onclick="startGame()">🌟 Maceraya Başla!</button>
   </div>
 </div>
 
-<!-- MAIN -->
-<div class="main">
+<!-- ═══════════════════════════════════ GAME ═══════════════════ -->
+<div id="gameScreen" style="display:none">
 
-  <!-- LEFT: BABY PANEL -->
-  <div class="baby-panel">
-
-    <!-- Baby Card -->
-    <div class="baby-card">
-      <div class="baby-age" id="babyAge">Yeni Doğmuş • 0. Ay</div>
-      <div class="baby-scene">
-        <div class="baby-bg-circle" id="bgCircle"></div>
-        <div class="baby-emoji" id="babyEmoji" title="Tıkla!">👶</div>
-      </div>
-      <div class="baby-name" id="babyName">Minik Bebek</div>
-      <div class="baby-mood" id="babyMood">😊 Mutlu ve Sağlıklı</div>
-
-      <div class="stat-row">
-        <div class="stat-label">
-          <span>🍼 Tokluk</span>
-          <span id="hungerVal">80%</span>
-        </div>
-        <div class="stat-bar">
-          <div class="stat-fill" id="hungerBar" style="width:80%; background: linear-gradient(90deg,#FF9A3C,#FFD166)"></div>
-        </div>
-      </div>
-      <div class="stat-row">
-        <div class="stat-label">
-          <span>💖 Mutluluk</span>
-          <span id="happyVal">70%</span>
-        </div>
-        <div class="stat-bar">
-          <div class="stat-fill" id="happyBar" style="width:70%; background: linear-gradient(90deg,#FF6B9D,#FF8FAB)"></div>
-        </div>
-      </div>
-      <div class="stat-row">
-        <div class="stat-label">
-          <span>😴 Dinçlik</span>
-          <span id="energyVal">90%</span>
-        </div>
-        <div class="stat-bar">
-          <div class="stat-fill" id="energyBar" style="width:90%; background: linear-gradient(90deg,#48CAE4,#5B8DEE)"></div>
-        </div>
-      </div>
-      <div class="stat-row">
-        <div class="stat-label">
-          <span>🧠 Zeka</span>
-          <span id="smartVal">10%</span>
-        </div>
-        <div class="stat-bar">
-          <div class="stat-fill" id="smartBar" style="width:10%; background: linear-gradient(90deg,#C77DFF,#7B2FBE)"></div>
-        </div>
-      </div>
-
-      <div class="click-hint">Bebeğe tıkla! ✨</div>
+  <header class="hdr">
+    <div class="hdr-left">
+      <h1>🍼 Bebek Büyütme Macerası</h1>
+      <div class="hdr-sub" id="hdrSub">Aile bilgisi yükleniyor...</div>
     </div>
+    <div class="hdr-stats">
+      <div class="hbadge" id="hAge">👶 0. Ay</div>
+      <div class="hbadge" id="hDay">📅 1. Gün</div>
+      <div class="hbadge dad" id="hDad">👨 Baba: 0%</div>
+      <div class="hbadge ms" id="hMs">🏆 0/20</div>
+    </div>
+  </header>
 
-    <!-- DP Card -->
-    <div class="dp-card">
-      <div class="dp-title">⭐ Gelişim Puanı</div>
-      <div class="dp-value" id="dpValue">0 GP</div>
-      <div class="dp-bar">
-        <div class="dp-fill" id="dpBar" style="width:0%"></div>
+  <div class="grid">
+
+    <!-- ════════ LEFT: BABY ════════ -->
+    <div class="baby-panel">
+
+      <div class="baby-card" id="babyCard">
+        <div class="baby-scene" id="babyScene">
+          <div class="scene-deco" id="sceneDeco"></div>
+          <div class="baby-char">
+            <div class="baby-emoji" id="babyFace" onclick="babyClick()" title="Tıkla!">👶</div>
+            <div class="baby-body-deco" id="babyBodyDeco"></div>
+          </div>
+          <div class="scene-fx" id="sceneFx"></div>
+        </div>
+        <div class="baby-info">
+          <div class="baby-nm" id="babyNm">Bebek</div>
+          <div class="baby-stg" id="babyStg">Yenidoğan</div>
+          <div class="baby-mood" id="babyMoodTxt">😊 Mutlu ve Sağlıklı</div>
+        </div>
       </div>
-      <div class="dp-next" id="dpNext">Sonraki gelişim: 100 GP</div>
-      <div class="idle-rate" id="idleRate">⏱ +0.5 GP/sn (otomatik)</div>
-    </div>
 
-    <!-- Actions -->
-    <div class="actions-card">
-      <div class="actions-title">✨ Aktiviteler</div>
-      <div class="action-btns">
-        <button class="action-btn btn-feed" onclick="doAction('feed')">
-          <span class="btn-icon">🍼</span>
-          <span>Besle</span>
-          <span class="btn-cost">+15 Tokluk, +8 GP</span>
-        </button>
-        <button class="action-btn btn-play" onclick="doAction('play')">
-          <span class="btn-icon">🎈</span>
-          <span>Oyna</span>
-          <span class="btn-cost">+20 Mutluluk, +12 GP</span>
-        </button>
-        <button class="action-btn btn-sleep" onclick="doAction('sleep')">
-          <span class="btn-icon">😴</span>
-          <span>Uyut</span>
-          <span class="btn-cost">+25 Dinçlik, +6 GP</span>
-        </button>
-        <button class="action-btn btn-learn" onclick="doAction('learn')">
-          <span class="btn-icon">📚</span>
-          <span>Öğret</span>
-          <span class="btn-cost">+18 Zeka, +15 GP</span>
-        </button>
-        <button class="action-btn btn-hug" onclick="doAction('hug')">
-          <span class="btn-icon">🤗</span>
-          <span>Sarıl</span>
-          <span class="btn-cost">+10 Mutluluk, +5 GP</span>
-        </button>
-        <button class="action-btn btn-sing" onclick="doAction('sing')">
-          <span class="btn-icon">🎵</span>
-          <span>Ninni Söyle</span>
-          <span class="btn-cost">+12 Dinçlik, +10 GP</span>
-        </button>
+      <!-- CHALLENGE -->
+      <div id="chCard" style="display:none" class="ch-card urgent">
+        <div class="ch-top">
+          <span class="ch-icon" id="chIco">⚠️</span>
+          <span class="ch-name" id="chName">Uyarı!</span>
+          <div class="ch-tbar"><div class="ch-tfill" id="chTFill" style="width:100%"></div></div>
+        </div>
+        <div class="ch-desc" id="chDesc"></div>
+        <button class="ch-btn" id="chBtn" onclick="resolveChallenge()">Çöz</button>
       </div>
-    </div>
-  </div>
 
-  <!-- RIGHT PANEL -->
-  <div class="right-panel">
-
-    <!-- Milestones -->
-    <div class="milestones-card">
-      <div class="milestones-title">
-        🌟 Gelişim Basamakları
-        <span style="font-size:0.8rem; font-weight:600; color:#888; margin-left:auto" id="milestonePct">0/18 tamamlandı</span>
+      <!-- STATS -->
+      <div class="stats-card">
+        <div class="srow">
+          <div class="slabel"><span>🍼 Tokluk</span><span id="sHunger">80%</span></div>
+          <div class="sbar"><div class="sfill" id="bHunger" style="width:80%;background:linear-gradient(90deg,#FF9A3C,#FFD166)"></div></div>
+        </div>
+        <div class="srow">
+          <div class="slabel"><span>💖 Mutluluk</span><span id="sHappy">70%</span></div>
+          <div class="sbar"><div class="sfill" id="bHappy" style="width:70%;background:linear-gradient(90deg,#FF6B9D,#FF8FAB)"></div></div>
+        </div>
+        <div class="srow">
+          <div class="slabel"><span>😴 Dinçlik</span><span id="sEnergy">90%</span></div>
+          <div class="sbar"><div class="sfill" id="bEnergy" style="width:90%;background:linear-gradient(90deg,#48CAE4,#5B8DEE)"></div></div>
+        </div>
+        <div class="srow">
+          <div class="slabel"><span>🏥 Sağlık</span><span id="sHealth">100%</span></div>
+          <div class="sbar"><div class="sfill" id="bHealth" style="width:100%;background:linear-gradient(90deg,#52B788,#2DC653)"></div></div>
+        </div>
+        <div class="srow">
+          <div class="slabel"><span>🧻 Bez</span><span id="sDiaper">100%</span></div>
+          <div class="sbar"><div class="sfill" id="bDiaper" style="width:100%;background:linear-gradient(90deg,#C77DFF,#9B59B6)"></div></div>
+        </div>
       </div>
-      <div class="milestones-grid" id="milestonesGrid"></div>
-    </div>
 
-    <!-- Log -->
-    <div class="log-card">
-      <div class="log-title">📓 Bebek Günlüğü</div>
-      <div class="log-entries" id="logEntries"></div>
-    </div>
+      <!-- BREAST MILK -->
+      <div class="milk-card" id="milkCard">
+        <div class="milk-top">
+          <span>🤱 Anne Sütü Deposu</span>
+          <span id="milkVal">100%</span>
+        </div>
+        <div class="milk-bar"><div class="milk-fill" id="milkFill" style="width:100%"></div></div>
+        <div class="milk-tip">WHO: İlk 6 ay TAM anne sütü 🌟 2 yaşa kadar destekleyici</div>
+      </div>
 
-  </div>
-</div>
+      <!-- DP -->
+      <div class="dp-card">
+        <div class="dp-top">
+          <span class="dp-title">⭐ Gelişim Puanı</span>
+          <span class="dp-val" id="dpVal">0</span>
+        </div>
+        <div class="dp-bar"><div class="dp-fill" id="dpFill" style="width:0%"></div></div>
+        <div class="dp-nxt" id="dpNxt">Sonraki gelişim: 200 GP</div>
+        <div class="dp-rate" id="dpRate">⏱ +0.5 GP/sn otomatik</div>
+      </div>
+
+    </div><!-- /baby-panel -->
+
+    <!-- ════════ MIDDLE: ACTIVITIES ════════ -->
+    <div class="act-panel">
+
+      <div class="tab-nav">
+        <button class="tnav-btn on" onclick="switchTab('beslenme')" id="tnav-beslenme">🍼<br>Beslenme</button>
+        <button class="tnav-btn"    onclick="switchTab('gelisim')"  id="tnav-gelisim" >🎮<br>Gelişim</button>
+        <button class="tnav-btn"    onclick="switchTab('bakim')"    id="tnav-bakim"   >💤<br>Bakım</button>
+        <button class="tnav-btn"    onclick="switchTab('baba')"     id="tnav-baba"    >👨<br>Baba</button>
+      </div>
+
+      <!-- TAB: BESLENME -->
+      <div class="tab-body on" id="tab-beslenme">
+        <button class="abt special" onclick="doAct('annesutu')">
+          <span class="ai">🤱</span>
+          <div>
+            <div class="an">Anne Sütü Ver</div>
+            <div class="ae">+35 Tokluk · +15 Mutluluk · +8 Sağlık · +25 GP</div>
+          </div>
+          <span class="sp-badge">EN İYİSİ!</span>
+        </button>
+        <div class="act-grid">
+          <button class="abt feed" onclick="doAct('biberon')">
+            <span class="ai">🍼</span><span class="an">Biberon</span><span class="ae">+20 Tokluk · +8 GP</span>
+          </button>
+          <button class="abt feed" id="btn-mama" onclick="doAct('mama')" disabled>
+            <span class="ai">🥣</span><span class="an">Mama/Püre</span><span class="ae">6. aydan · +12 GP</span>
+          </button>
+          <button class="abt care" id="btn-su" onclick="doAct('su')" disabled>
+            <span class="ai">💧</span><span class="an">Su</span><span class="ae">6. aydan · +4 GP</span>
+          </button>
+          <button class="abt feed" onclick="doAct('vitamin')">
+            <span class="ai">💊</span><span class="an">D Vitamini</span><span class="ae">+5 Sağlık · +4 GP</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- TAB: GELİŞİM -->
+      <div class="tab-body" id="tab-gelisim">
+        <div class="stab-nav">
+          <button class="stab-btn on" onclick="switchSubTab('fizik')" id="stab-fizik">🏋️ Fiziksel</button>
+          <button class="stab-btn"    onclick="switchSubTab('zihin')" id="stab-zihin">🧠 Zihinsel</button>
+          <button class="stab-btn"    onclick="switchSubTab('dil')"   id="stab-dil"  >💬 Dil</button>
+        </div>
+        <div class="act-grid" id="stab-body-fizik">
+          <button class="abt phys" onclick="doAct('tummytime')">
+            <span class="ai">🏋️</span><span class="an">Karna Yatış</span><span class="ae">Boyun kasları · +12 GP</span>
+          </button>
+          <button class="abt phys" onclick="doAct('masaj')">
+            <span class="ai">💆</span><span class="an">Bebek Masajı</span><span class="ae">Bağlanma · +10 GP</span>
+          </button>
+          <button class="abt phys" id="btn-jimnastik" onclick="doAct('jimnastik')" disabled>
+            <span class="ai">🤸</span><span class="an">Jimnastik</span><span class="ae">3. aydan · +14 GP</span>
+          </button>
+          <button class="abt phys" id="btn-yuzme" onclick="doAct('yuzme')" disabled>
+            <span class="ai">🏊</span><span class="an">Bebek Yüzmesi</span><span class="ae">3. aydan · +16 GP</span>
+          </button>
+        </div>
+        <div class="act-grid" id="stab-body-zihin" style="display:none">
+          <button class="abt mind" onclick="doAct('duyusal')">
+            <span class="ai">🌈</span><span class="an">Duyusal Oyun</span><span class="ae">Beyin · +13 GP</span>
+          </button>
+          <button class="abt mind" onclick="doAct('muzik')">
+            <span class="ai">🎵</span><span class="an">Müzik Dinle</span><span class="ae">Ritim · +10 GP</span>
+          </button>
+          <button class="abt mind" id="btn-blok" onclick="doAct('bloklar')" disabled>
+            <span class="ai">🧱</span><span class="an">Renkli Bloklar</span><span class="ae">6. aydan · +15 GP</span>
+          </button>
+          <button class="abt mind" id="btn-sekil" onclick="doAct('sekilrenk')" disabled>
+            <span class="ai">🔷</span><span class="an">Şekil-Renk</span><span class="ae">9. aydan · +18 GP</span>
+          </button>
+        </div>
+        <div class="act-grid" id="stab-body-dil" style="display:none">
+          <button class="abt lang" onclick="doAct('kitap')">
+            <span class="ai">📚</span><span class="an">Kitap Oku</span><span class="ae">Kelime dağarcığı · +14 GP</span>
+          </button>
+          <button class="abt lang" onclick="doAct('sarki')">
+            <span class="ai">🎤</span><span class="an">Şarkı Söyle</span><span class="ae">Dil gelişimi · +12 GP</span>
+          </button>
+          <button class="abt lang" onclick="doAct('konus')">
+            <span class="ai">💬</span><span class="an">Bebekle Konuş</span><span class="ae">İletişim · +12 GP</span>
+          </button>
+          <button class="abt lang" id="btn-teker" onclick="doAct('tekerleme')" disabled>
+            <span class="ai">🎭</span><span class="an">Tekerleme</span><span class="ae">12. aydan · +16 GP</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- TAB: BAKIM -->
+      <div class="tab-body" id="tab-bakim">
+        <div class="act-grid">
+          <button class="abt care" onclick="doAct('uyut')">
+            <span class="ai">😴</span><span class="an">Uyut</span><span class="ae">+28 Dinçlik · +8 GP</span>
+          </button>
+          <button class="abt care" onclick="doAct('saril')">
+            <span class="ai">🤗</span><span class="an">Sarıl & Sevgi</span><span class="ae">+18 Mutluluk · +8 GP</span>
+          </button>
+          <button class="abt care" onclick="doAct('banyo')">
+            <span class="ai">🛁</span><span class="an">Banyo Yaptır</span><span class="ae">+Bez · +Sağlık · +12 GP</span>
+          </button>
+          <button class="abt care" onclick="doAct('bez')">
+            <span class="ai">🧻</span><span class="an">Bez Değiştir</span><span class="ae">Bez sıfırla · +5 GP</span>
+          </button>
+          <button class="abt care" onclick="doAct('atesol')">
+            <span class="ai">🌡️</span><span class="an">Ateş Kontrol</span><span class="ae">+5 Sağlık · +4 GP</span>
+          </button>
+          <button class="abt play" onclick="doAct('ninni')">
+            <span class="ai">🎵</span><span class="an">Ninni Söyle</span><span class="ae">+12 Dinçlik · +10 GP</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- TAB: BABA -->
+      <div class="tab-body" id="tab-baba">
+        <div class="dad-hdr">
+          <div class="dad-hdr-title">👨‍👶 Baba Katılım Puanı</div>
+          <div class="dad-bar"><div class="dad-fill" id="dadFill" style="width:0%"></div></div>
+          <div class="dad-score-lbl" id="dadLbl">0 / 100 — Baba desteğini artır!</div>
+        </div>
+        <div class="act-grid">
+          <button class="abt dad" onclick="doAct('dad-saril')">
+            <span class="ai">👨‍👶</span><span class="an">Baba Sarılsın</span><span class="ae">+15 Mutluluk · +10 GP</span>
+          </button>
+          <button class="abt dad" onclick="doAct('dad-oyna')">
+            <span class="ai">🎮</span><span class="an">Baba Oynasın</span><span class="ae">+18 Mutluluk · +14 GP</span>
+          </button>
+          <button class="abt dad" onclick="doAct('dad-uyut')">
+            <span class="ai">🌙</span><span class="an">Baba Uyutsun</span><span class="ae">+25 Dinçlik · +10 GP</span>
+          </button>
+          <button class="abt dad" onclick="doAct('dad-gece')">
+            <span class="ai">⭐</span><span class="an">Gece Baba Kalksın</span><span class="ae">+20 Dinçlik · +15 GP</span>
+          </button>
+          <button class="abt dad" onclick="doAct('dad-masaj')">
+            <span class="ai">💆</span><span class="an">Baba Masaj</span><span class="ae">+12 Mutluluk · +10 GP</span>
+          </button>
+          <button class="abt dad" onclick="doAct('dad-bez')">
+            <span class="ai">🧻</span><span class="an">Baba Bez Değiştirsin</span><span class="ae">Bez sıfırla · +5 GP</span>
+          </button>
+        </div>
+        <div class="mom-card">
+          <div class="mom-title">💖 Annelere Saygı</div>
+          <div class="mom-msg" id="momMsg">"Anneler 24 saat, 7 gün, ücret almadan dünyanın en değerli işini yapıyorlar. Her biri bir kahraman! 💖"</div>
+        </div>
+      </div>
+
+    </div><!-- /act-panel -->
+
+    <!-- ════════ RIGHT: INFO ════════ -->
+    <div class="info-panel">
+
+      <!-- VACCINES -->
+      <div class="icard">
+        <h3>💉 Aşı Takvimi <span id="vaxCount">0/0 yapıldı</span></h3>
+        <div class="vax-list" id="vaxList"></div>
+      </div>
+
+      <!-- MILESTONES -->
+      <div class="icard">
+        <h3>🌟 Gelişim Basamakları <span id="msCount">0/20</span></h3>
+        <div class="ms-list" id="msList"></div>
+      </div>
+
+      <!-- LOG -->
+      <div class="icard">
+        <h3>📓 Bebek Günlüğü</h3>
+        <div class="log-wrap" id="logWrap"></div>
+      </div>
+
+    </div>
+  </div><!-- /grid -->
+</div><!-- /gameScreen -->
 
 <script>
-// ==================== GAME DATA ====================
+// ══════════════════════════════════════════════════════
+// DATA
+// ══════════════════════════════════════════════════════
 
 const MILESTONES = [
-  {
-    id: 1, dpRequired: 0, icon: '😢', name: 'İlk Ağlama', ageLabel: '0. Ay',
-    desc: 'Bebek dünyaya geldi!',
-    devInfo: 'Yenidoğan bebekler ağlayarak ihtiyaçlarını ifade eder. Bu onların ilk iletişim aracıdır.',
-    tip: 'Bebeğinizin ağlaması tok mu, uyku mu, kucak mı istediğini anlamaya çalışın. Her ağlama farklı bir ihtiyaca işaret eder.',
-    category: 'Sosyal-Duygusal'
-  },
-  {
-    id: 2, dpRequired: 100, icon: '👀', name: 'Yüz Takibi', ageLabel: '1. Ay',
-    desc: 'Yüzleri takip etmeye başlar',
-    devInfo: 'Bebekler doğumdan itibaren yakın mesafedeki yüzleri görebilir (~20-30 cm). 1. ayda yüzleri takip etmeye başlarlar.',
-    tip: 'Bebeğinizin 20-25 cm önünde durarak yavaşça sağa sola hareket edin. Bu göz kaslarını güçlendirir.',
-    category: 'Motor-Görsel'
-  },
-  {
-    id: 3, dpRequired: 250, icon: '😊', name: 'İlk Gülümseme', ageLabel: '2. Ay',
-    desc: 'Sosyal gülümseme başlar',
-    devInfo: 'Gerçek "sosyal gülümseme" yaklaşık 6-8. haftada ortaya çıkar. Bu, beyin gelişiminin önemli bir işaretidir.',
-    tip: 'Bebeğinize çok gülümseyin ve konuşun! Ayna karşısında gülümseme egzersizleri yapın.',
-    category: 'Sosyal-Duygusal'
-  },
-  {
-    id: 4, dpRequired: 450, icon: '🗣️', name: 'İlk Sesler', ageLabel: '2-3. Ay',
-    desc: 'Agulama ve ses çıkarma',
-    devInfo: 'Bebekler 2-3. ayda "aaa", "ooo" gibi sesler çıkarmaya başlar. Bu dil gelişiminin temeli.',
-    tip: 'Bebeğinizin seslerine benzer sesler çıkararak yanıt verin. Bu "ses konuşması" dil gelişimini destekler.',
-    category: 'Dil Gelişimi'
-  },
-  {
-    id: 5, dpRequired: 700, icon: '🤸', name: 'Baş Tutma', ageLabel: '3. Ay',
-    desc: 'Başını dik tutar',
-    devInfo: '3. ayda bebekler karnı üstüyken başını kaldırabilir. Boyun ve sırt kasları güçlenir.',
-    tip: '"Tummy time" (karna yatış) egzersizlerini günde birkaç kez 3-5 dakika yapın. Boyun kaslarını güçlendirir.',
-    category: 'Kaba Motor'
-  },
-  {
-    id: 6, dpRequired: 1000, icon: '✋', name: 'El Keşfi', ageLabel: '3-4. Ay',
-    desc: 'Ellerini fark eder ve inceler',
-    devInfo: 'Bebekler ellerini "keşfeder" ve uzun süre inceler. Bu öz-farkındalığın başlangıcıdır.',
-    tip: 'Bebeğinizin eline güvenli oyuncaklar verin. Farklı dokuları hissettirmek duyusal gelişimi destekler.',
-    category: 'İnce Motor'
-  },
-  {
-    id: 7, dpRequired: 1400, icon: '🎯', name: 'Uzanma', ageLabel: '4. Ay',
-    desc: 'Nesnelere uzanmaya çalışır',
-    devInfo: '4. ayda göz-el koordinasyonu gelişir. Bebek ilgi çeken nesnelere bilinçli olarak uzanmaya başlar.',
-    tip: 'Bebeğinizin görüş alanına renkli, güvenli oyuncaklar asın. Uzanma isteğini teşvik edin.',
-    category: 'İnce Motor'
-  },
-  {
-    id: 8, dpRequired: 1900, icon: '🍎', name: 'Katı Gıda', ageLabel: '4-6. Ay',
-    desc: 'Katı gıdalara hazır',
-    devInfo: 'WHO önerisi 6. ay. Bebeğin başını dik tutabilmesi, nesnelere ilgi göstermesi ve dilin dışarı çıkarma refleksinin azalması katı gıdaya hazır olma işaretleridir.',
-    tip: 'Katı gıdaya geçişte püre haline getirilmiş tek sebze/meyvelerle başlayın. Balı 1 yaşından önce vermeyin.',
-    category: 'Fiziksel Gelişim'
-  },
-  {
-    id: 9, dpRequired: 2500, icon: '🪀', name: 'Desteksiz Oturma', ageLabel: '6. Ay',
-    desc: 'Desteksiz oturabilir',
-    devInfo: '6. ayda çoğu bebek desteksiz oturmaya başlar. Karın ve sırt kasları yeterince güçlenmiştir.',
-    tip: 'Bebek oturma pratiği yaparken yanında olun. Düşmeler normaldir, sert zeminden uzak tutun.',
-    category: 'Kaba Motor'
-  },
-  {
-    id: 10, dpRequired: 3200, icon: '🗺️', name: 'Nesne Sürekliliği', ageLabel: '7-8. Ay',
-    desc: 'Saklanan nesneleri arar',
-    devInfo: '"Nesne sürekliliği" - gözden kaybolan nesnelerin var olmaya devam ettiğini anlamak. Bilişsel gelişimin önemli bir adımı.',
-    tip: 'Peekaboo (u yüce yaptım) oynayın! Bir oyuncağı bezin altına saklayın, bebeğinizin aramasını izleyin.',
-    category: 'Bilişsel Gelişim'
-  },
-  {
-    id: 11, dpRequired: 4000, icon: '🚶', name: 'Emekleme', ageLabel: '7-10. Ay',
-    desc: 'Emeklemeye başlar',
-    devInfo: 'Emekleme kol, bacak ve gövde kaslarını koordineli kullanmayı gerektirir. Bazı bebekler bu aşamayı atlayabilir.',
-    tip: 'Bebeğinizi emeklemeye teşvik etmek için önüne ilgi çekici oyuncaklar koyun. Güvenli emekleme alanı oluşturun.',
-    category: 'Kaba Motor'
-  },
-  {
-    id: 12, dpRequired: 5000, icon: '🧊', name: 'Parmak Tutma', ageLabel: '8-9. Ay',
-    desc: 'Pincer grasp (iki parmakla tutma)',
-    devInfo: 'Baş parmak ve işaret parmağını kullanarak küçük nesneleri tutmak ince motor gelişimin önemli bir aşaması.',
-    tip: 'Yaşa uygun parmak yiyecekler (yumuşak meyve parçaları) vererek bu beceriyi destekleyin.',
-    category: 'İnce Motor'
-  },
-  {
-    id: 13, dpRequired: 6200, icon: '👋', name: 'El Sallama', ageLabel: '9-10. Ay',
-    desc: 'Hoşçakal için el sallar',
-    devInfo: 'El sallama sosyal bağlantı ve taklitçilik gelişiminin bir göstergesidir. Beyin artık sosyal ipuçlarını anlamlandırıyor.',
-    tip: 'Her vedalaşmada el sallayın ve "Hoşçakal" deyin. Tekrar ve tutarlılık bu beceriyi pekiştirir.',
-    category: 'Sosyal-Duygusal'
-  },
-  {
-    id: 14, dpRequired: 7500, icon: '🚀', name: 'Tutunarak Yürüme', ageLabel: '9-12. Ay',
-    desc: 'Mobilyalara tutunarak yürür',
-    devInfo: '"Cruising" olarak adlandırılan bu aşamada bebek ayakta durmayı ve ağırlık aktarmayı öğrenir.',
-    tip: 'Mobilyaları tutunarak gezebileceği şekilde düzenleyin. Keskin köşeleri koruyucu aparatlarla kaplayın.',
-    category: 'Kaba Motor'
-  },
-  {
-    id: 15, dpRequired: 9000, icon: '💬', name: 'İlk Kelimeler', ageLabel: '10-14. Ay',
-    desc: 'Anlamlı ilk kelimeler',
-    devInfo: 'İlk anlamlı kelimeler genellikle 10-14. ay arasında ortaya çıkar. "Anne", "baba" gibi çift heceli kelimeler.',
-    tip: 'Eşyaları göstererek isimlerini söyleyin. Günlük rutinlerde çok konuşun. Kitap okumak kelime dağarcığını zenginleştirir.',
-    category: 'Dil Gelişimi'
-  },
-  {
-    id: 16, dpRequired: 11000, icon: '👣', name: 'İlk Adımlar', ageLabel: '11-15. Ay',
-    desc: 'Bağımsız yürüme!',
-    devInfo: 'Çoğu bebek 11-15. ay arasında desteksiz adımlar atar. Bu, koordinasyon ve denge gelişiminin zirvesidir.',
-    tip: 'İlk adımlarda çok heyecanlanın ve destekleyin! Düşmeler normaldir, cesaretini kırmayın.',
-    category: 'Kaba Motor'
-  },
-  {
-    id: 17, dpRequired: 14000, icon: '🎨', name: 'Karalama', ageLabel: '12-18. Ay',
-    desc: 'Kalemle çizgi çizer',
-    devInfo: 'Kalın boya kalemleriyle karalama yapmak ince motor gelişimi ve yaratıcılığı destekler.',
-    tip: 'Büyük kağıtlar ve kalın mumlu boyalar verin. Sonucu değil, süreci övün: "Çok güzel çiziyorsun!"',
-    category: 'İnce Motor'
-  },
-  {
-    id: 18, dpRequired: 18000, icon: '🗺️', name: 'İki Kelimeli Cümle', ageLabel: '18-24. Ay',
-    desc: 'İki kelimeyi birleştirir',
-    devInfo: 'İki yaşına gelince çoğu bebek 50+ kelime bilir ve iki kelimeli cümleler kurar ("daha su", "anne gel").',
-    tip: '18. ayda 15+ kelime söyleyemiyorsa pediatristle görüşün. Her çocuk farklı gelişir, paniklemeden takip edin.',
-    category: 'Dil Gelişimi'
-  }
+  {id:1,dp:0,icon:'😢',name:'İlk Ağlama',age:'Doğum',cat:'Sosyal',dev:'Yenidoğan bebekler ağlayarak ihtiyaçlarını ifade eder. Bu onların ilk iletişim aracıdır.',tip:'Her ağlama farklı bir ihtiyacı ifade eder. Tok mu? Bezi kirli mi? Kucak mı istiyor? Zamanla öğreneceksiniz!'},
+  {id:2,dp:200,icon:'👁️',name:'Yüz Takibi',age:'1. Ay',cat:'Motor',dev:'Bebekler doğumdan itibaren 20-30 cm mesafedeki yüzleri görebilir. 1. ayda yüzleri takip etmeye başlarlar.',tip:'20-25 cm mesafede durarak yavaşça sağa sola hareket edin. Göz kaslarını güçlendirir.'},
+  {id:3,dp:500,icon:'😊',name:'İlk Gülümseme',age:'2. Ay',cat:'Sosyal',dev:'Gerçek "sosyal gülümseme" 6-8. haftada başlar. Bu beyin gelişiminin önemli bir işaretidir.',tip:'Çok gülümseyin! Ayna egzersizleri yapın. Yüz ifadeleri taklit etmek sosyal gelişimi destekler.'},
+  {id:4,dp:900,icon:'🗣️',name:'Agulama',age:'2-3. Ay',cat:'Dil',dev:'Bebekler 2-3. ayda "aaa","ooo" gibi sesler çıkarmaya başlar. Dil gelişiminin temeli.',tip:'Aynı sesleri geri çıkararak "konuşma" başlatın. Göz teması kurun.'},
+  {id:5,dp:1400,icon:'💪',name:'Baş Tutma',age:'3. Ay',cat:'Motor',dev:'3. ayda bebekler karnı üstüyken başını kaldırabilir. Boyun ve sırt kasları güçlenir.',tip:'Günde birkaç kez 3-5 dakika Tummy Time yapın. Sert zeminden koruyun.'},
+  {id:6,dp:2000,icon:'✋',name:'El Keşfi',age:'3-4. Ay',cat:'Motor',dev:'Bebekler ellerini "keşfeder" ve uzun süre inceler. Öz-farkındalığın başlangıcı.',tip:'Farklı dokulara sahip oyuncaklar verin. Duyusal gelişimi destekler.'},
+  {id:7,dp:2800,icon:'🎯',name:'Nesnelere Uzanma',age:'4. Ay',cat:'Motor',dev:'4. ayda göz-el koordinasyonu gelişir. Bilinçli uzanma başlar.',tip:'Görüş alanına renkli oyuncaklar asın. Uzanma isteğini teşvik edin.'},
+  {id:8,dp:3600,icon:'🍎',name:'Katı Gıdaya Hazır',age:'4-6. Ay',cat:'Fiziksel',dev:'WHO önerisi 6. ay. Başı dik tutma, nesnelere ilgi ve dilin içeri çekilmesi hazır oluş işaretleridir.',tip:'Tek sebze/meyve püresiyle başlayın. Balı 1 yaş öncesi VERMEYİN. Alerjilere dikkat!'},
+  {id:9,dp:4500,icon:'🪑',name:'Desteksiz Oturma',age:'6. Ay',cat:'Motor',dev:'6. ayda karın ve sırt kasları yeterince güçlenir. Desteksiz oturma başlar.',tip:'Yanında olun, düşmeler normaldir. Sert zeminden uzak tutun.'},
+  {id:10,dp:5500,icon:'🕵️',name:'Nesne Sürekliliği',age:'7-8. Ay',cat:'Bilişsel',dev:'Saklanan nesnelerin var olmaya devam ettiğini anlama — bilişsel gelişimin önemli adımı.',tip:'Peekaboo (u yüce yaptım) oynayın! Oyuncağı bezin altına saklayın.'},
+  {id:11,dp:6500,icon:'🚀',name:'Emekleme',age:'7-10. Ay',cat:'Motor',dev:'Kol, bacak ve gövde kaslarını koordineli kullanma. Bazı bebekler bu aşamayı atlayabilir.',tip:'Önüne oyuncak koyun ve emeklemeye teşvik edin. Güvenli alan oluşturun.'},
+  {id:12,dp:7500,icon:'🤌',name:'Parmakla Tutma',age:'8-9. Ay',cat:'Motor',dev:'İki parmakla (pincer grasp) küçük nesneleri tutmak ince motor gelişiminin önemli aşaması.',tip:'Yumuşak meyve parçaları vererek bu beceriyi destekleyin. Ufak şeylere dikkat!'},
+  {id:13,dp:8500,icon:'👋',name:'El Sallama',age:'9-10. Ay',cat:'Sosyal',dev:'El sallama sosyal bağlantı ve taklitçilik gelişiminin göstergesidir.',tip:'Her vedalaşmada el sallayın. Tekrar ve tutarlılık beceriyi pekiştirir.'},
+  {id:14,dp:9500,icon:'🧗',name:'Tutunarak Yürüme',age:'9-12. Ay',cat:'Motor',dev:'"Cruising" — mobilyalara tutunarak yürüme. Ayakta durma ve ağırlık aktarmayı öğrenir.',tip:'Mobilyaları gezebileceği şekilde düzenleyin. Keskin köşeleri kapatın.'},
+  {id:15,dp:11000,icon:'💬',name:'İlk Kelimeler',age:'10-14. Ay',cat:'Dil',dev:'İlk anlamlı kelimeler 10-14. ay arasında gelir. "Anne","Baba" çift heceli kelimeler.',tip:'Eşyaları göstererek isimlerini söyleyin. Kitap okumak kelime dağarcığını zenginleştirir.'},
+  {id:16,dp:13000,icon:'👣',name:'İlk Adımlar',age:'11-15. Ay',cat:'Motor',dev:'Çoğu bebek 11-15. ayda desteksiz adım atar. Koordinasyon ve denge gelişiminin zirvesi.',tip:'Çok coşun ve destekleyin! Düşmeler normaldir, cesaretini kırmayın.'},
+  {id:17,dp:15000,icon:'🎨',name:'Karalama',age:'12-18. Ay',cat:'Motor',dev:'Kalın kalemle çizgi çizmek ince motor gelişimi ve yaratıcılığı destekler.',tip:'Büyük kağıt ve kalın boyalar verin. Süreci övün, sonucu değil.'},
+  {id:18,dp:17000,icon:'🏃',name:'Koşma',age:'15-18. Ay',cat:'Motor',dev:'Yürümenin ardından koşma gelir. Denge ve koordinasyon gelişmeye devam eder.',tip:'Açık alanlar sağlayın. Düşme korkusuyla aşırı kısıtlamayın.'},
+  {id:19,dp:19000,icon:'🧱',name:'Kule Yapma',age:'18. Ay',cat:'Bilişsel',dev:'3-4 bloku üst üste koyabilmek görsel-motor koordinasyonunu gösterir.',tip:'Farklı renklerde bloklar kullanın. "Kırmızı koy, mavi koy" diyerek renkleri öğretin.'},
+  {id:20,dp:22000,icon:'🗨️',name:'İki Kelimeli Cümle',age:'18-24. Ay',cat:'Dil',dev:'İki yaşında 50+ kelime bilir ve iki kelimeli cümleler kurar: "Daha su", "Anne gel".',tip:'18. ayda 15+ kelime yoksa pediatrist görüşü alın. Her çocuk farklı gelişir!'},
 ];
 
-const ACTION_EFFECTS = {
-  feed:  { hunger: 15,  happy: 5,   energy: 0,  smart: 2,  dp: 8,  emoji: '🍼', msg: 'Bebek beslendi! 🍼' },
-  play:  { hunger: -5,  happy: 20,  energy: -8, smart: 8,  dp: 12, emoji: '🎈', msg: 'Bebek oynadı! 🎈' },
-  sleep: { hunger: -3,  happy: 5,   energy: 25, smart: 3,  dp: 6,  emoji: '😴', msg: 'Bebek uyudu! 😴' },
-  learn: { hunger: -4,  happy: 8,   energy: -6, smart: 18, dp: 15, emoji: '📚', msg: 'Bebek öğrendi! 📚' },
-  hug:   { hunger: 0,   happy: 12,  energy: 3,  smart: 1,  dp: 5,  emoji: '🤗', msg: 'Bebek sarıldı! 🤗' },
-  sing:  { hunger: 0,   happy: 10,  energy: 12, smart: 4,  dp: 10, emoji: '🎵', msg: 'Ninni söylendi! 🎵' }
-};
+const VACCINES = [
+  {id:'hepb1',ay:0,name:'Hepatit B 1. Doz',type:'rutin',info:'Hepatit B virüsünden koruyan aşı. Karaciğer iltihabı ve kanserini önler.',tip:'Doğumda yapılır. Bebek için çok önemlidir.'},
+  {id:'bcg',ay:0,name:'BCG (Tüberküloz)',type:'rutin',info:'Tüberküloz hastalığına karşı korur. Özellikle ağır TB formlarından.',tip:'Sol koldan yapılır, ufak bir iz bırakabilir.'},
+  {id:'hepb2',ay:2,name:'Hepatit B 2. Doz',type:'rutin',info:'Hepatit B serisinin ikinci dozu. Koruma güçlendirilir.',tip:'2. ay kontrolünde yapılır.'},
+  {id:'dbt1',ay:2,name:'DBT-İPV-Hib 1. Doz',type:'rutin',info:'Difteri, Boğmaca, Tetanos, Çocuk Felci ve Hib enfeksiyonuna karşı beşli aşı.',tip:'Sonrasında hafif ateş normal. Ateş düşürücü hazır bulundurun.'},
+  {id:'pnc1',ay:2,name:'Pnömokok 1. Doz',type:'rutin',info:'Zatürre ve menenjite neden olan Streptococcus pneumoniae bakterisine karşı.',tip:'Kulak iltihabı, zatürre ve menenjiti önler.'},
+  {id:'rota1',ay:2,name:'Rotavirüs 1. Doz',type:'rutin',info:'Ağır ishal ve kusmaya neden olan rotavirüse karşı. Ağızdan damlatılır.',tip:'Ağızdan damlatılan aşı. Bebek yutmalı.'},
+  {id:'dbt2',ay:4,name:'DBT-İPV-Hib 2. Doz',type:'rutin',info:'Beşli aşının ikinci dozu.',tip:'4. ay kontrolünde yapılır.'},
+  {id:'pnc2',ay:4,name:'Pnömokok 2. Doz',type:'rutin',info:'Pnömokok aşısının ikinci dozu.',tip:'4. ay kontrolünde yapılır.'},
+  {id:'rota2',ay:4,name:'Rotavirüs 2. Doz',type:'rutin',info:'Rotavirüs aşısının ikinci dozu.',tip:'4. ay kontrolünde yapılır.'},
+  {id:'hepb3',ay:6,name:'Hepatit B 3. Doz',type:'rutin',info:'Hepatit B serisinin son dozu. Tam koruma sağlanır.',tip:'Serinin tamamlanması için önemli.'},
+  {id:'dbt3',ay:6,name:'DBT-İPV-Hib 3. Doz',type:'rutin',info:'Beşli aşının üçüncü dozu.',tip:'6. ay kontrolünde yapılır.'},
+  {id:'menc',ay:6,name:'Meningokok ACWY',type:'rutin',info:'Menenjit ve sepsis yapan meningokok bakterisine karşı korur.',tip:'Beyin zarı iltihabına karşı çok önemli.'},
+  {id:'menb',ay:3,name:'Meningokok B (Özel)',type:'ozel',info:'B tipi meningokok bakterisine karşı. Ücretli özel aşı.',tip:'Rutin takvimde yoktur, pediatrist önerisi ile yapılır.'},
+  {id:'grip',ay:6,name:'Grip Aşısı (Yıllık)',type:'ozel',info:'Her yıl değişen grip virüsüne karşı. 6. aydan itibaren uygulanabilir.',tip:'Sonbahar aylarında yaptırın. Her yıl tekrarlanmalı.'},
+  {id:'kkk',ay:12,name:'Kızamık-Kızamıkçık-Kabakulak',type:'rutin',info:'KKK üçlüsünü tek aşıda önler. 12. ayda yapılır.',tip:'Sonrasında 7-12. günde hafif döküntü/ateş olabilir, normaldir.'},
+  {id:'varicella',ay:12,name:'Suçiçeği (Varicella)',type:'rutin',info:'Suçiçeği virüsüne karşı. 12. ayda yapılır.',tip:'Ağır suçiçeğini ve zona riskini azaltır.'},
+  {id:'hepa1',ay:12,name:'Hepatit A 1. Doz',type:'rutin',info:'Hepatit A virüsüne karşı. Sarılık hastalığını önler.',tip:'12. ay kontrolünde yapılır.'},
+  {id:'dbt_r',ay:18,name:'DBT-İPV-Hib Rapel',type:'rutin',info:'Beşli aşının rapel (pekiştirme) dozu.',tip:'18. ay kontrolünde yapılır.'},
+  {id:'pnc_r',ay:18,name:'Pnömokok Rapel',type:'rutin',info:'Pnömokok aşısının rapel dozu.',tip:'18. ay kontrolünde yapılır.'},
+  {id:'hepa2',ay:18,name:'Hepatit A 2. Doz',type:'rutin',info:'Hepatit A serisinin ikinci dozu. Tam koruma.',tip:'18. ay kontrolünde yapılır.'},
+  {id:'kkk2',ay:24,name:'KKK 2. Doz',type:'rutin',info:'KKK aşısının ikinci dozu. Uzun süreli koruma.',tip:'24. ay kontrolünde yapılır.'},
+];
+
+const CHALLENGES = [
+  {id:'bez',icon:'💩',name:'Bez Değiştir!',desc:'Bebeğin bezi doldu ve pişik yapıyor!',urgent:true,action:'Hemen Bez Değiştir!',resolve:{diaper:100,happy:10,dp:8},penaltyMsg:'Bez değiştirilmedi! Pişik oluştu.',info:'Yenidoğanlar günde 8-10 kez bez kirletir. Her değişimde pişik önleme kremleri kullanın. Kırmızılık, ağlama ve bacakları çekme kirliliğin işaretleridir.',tip:'Bezi değiştirirken bebeğinizle konuşun, göz teması kurun. Bu rutin anlar bağlanmayı güçlendirir!'},
+  {id:'agla',icon:'😭',name:'Ağlama Krizi!',desc:'Bebek ağlıyor, neden olduğu bilinmiyor!',urgent:true,action:'Sakinleştir & Bak',resolve:{happy:20,energy:5,dp:10},penaltyMsg:'Bebek uzun süre ağladı!',info:'Bebekler ağlayarak ihtiyaçlarını anlatır. Sırasıyla kontrol edin: Acıkmış mı? Bezi kirli mi? Karnı mı ağrıyor? Sıcak/soğuk mu? Sadece kucak mı istiyor?',tip:'Bebeği sakinleştirmek için: kucağa alın, hafifçe sallayın, "şşş" sesi çıkarın veya müzik açın. Paniklemeden sakin kalın!'},
+  {id:'gaz',icon:'😖',name:'Gaz Sancısı!',desc:'Bebek gaz sancısından kıvranıyor ve ağlıyor!',urgent:true,action:'Gaz Çıkar (Sırtını Sıvazla)',resolve:{happy:18,health:5,dp:12},penaltyMsg:'Gaz sancısı uzadı!',info:'Gaz sancısı ilk 3 ayda çok yaygındır. Her beslemeden sonra bebeği dik tutup sırtını hafifçe sıvazlayın. Bisiklet hareketi de gaz çıkarmaya yardımcı olur.',tip:'Emzirme pozisyonuna dikkat edin, havanın az girmesini sağlayın. Fennel (rezene) çayı 6 ay üzeri için yardımcı olabilir (pediatrist onayıyla).'},
+  {id:'dis',icon:'🦷',name:'Diş Çıkarıyor!',desc:'Bebek diş ağrısından ağlıyor, her şeyi ısırıyor!',urgent:false,action:'Diş Kaşıyıcı Ver',resolve:{happy:15,health:5,dp:10},penaltyMsg:'Diş ağrısı devam etti!',info:'Diş çıkarma genellikle 4-7. aylarda başlar ve 2-3 yaşa kadar sürer. İlk dişler alt ön dişlerdir. Ateş, ishal, kabarcık gibi belirtiler diş çıkarmayla ilgili değildir.',tip:'Soğutulmuş diş kaşıyıcı kullanın, diş etini temiz parmakla masaj yapın. Diş çıkarma jeli kullanacaksanız pediatristle görüşün.'},
+  {id:'gece',icon:'🌙',name:'Gece Uyanması!',desc:'Gece 3! Bebek uyandı ve ağlıyor!',urgent:true,action:'Gece Kalk & Sakinleştir',resolve:{energy:20,happy:15,dp:15},penaltyMsg:'Bebek uzun süre gece ağladı!',info:'0-3 aylık bebekler gece 3-5 kez uyanır. 3-6 aylık bebekler 2-3 kez. Bu tamamen normaldir! Bebekler REM uykusu fazlasında daha sık uyanır.',tip:'Gece kalkma sorumluluğunu anne ve baba paylaşmalı! Biri 2 gece kalkarsa diğeri ertesi 2 gece kalkmalı. Bu sağlıklı ilişkinin temelidir.'},
+  {id:'ates',icon:'🤒',name:'Ateş!',desc:'Bebeğin ateşi yükseldi! Hemen kontrol et!',urgent:true,action:'Doktoru Ara / Ateş Düşür',resolve:{health:20,happy:8,dp:12},penaltyMsg:'Ateş tedavi edilmedi!',info:'3 aydan küçük bebeklerde 38°C ateşte HEMEN doktora gidin. Büyük bebeklerde 38.5°C altı ateş genellikle zararlı değildir. Bol sıvı verin, uygun ateş düşürücü kullanın.',tip:'Ateş ölçümünde koltuk altı normalden 0.5°C düşük gösterir. Kulak termometresi veya rektal ölçüm daha doğrudur.'},
+];
 
 const BABY_STAGES = [
-  { minDP: 0,     emoji: '👶', name: 'Yenidoğan',    bg: 'linear-gradient(135deg,#FFDEE9,#B5FFFC)' },
-  { minDP: 500,   emoji: '😊', name: 'Küçük Bebek',  bg: 'linear-gradient(135deg,#FFE4E1,#E6F7FF)' },
-  { minDP: 2000,  emoji: '🤲', name: 'Keşifçi',      bg: 'linear-gradient(135deg,#FFF0F5,#F0FFF4)' },
-  { minDP: 5000,  emoji: '🧗', name: 'Aktif Bebek',  bg: 'linear-gradient(135deg,#FFFDE7,#E8F5E9)' },
-  { minDP: 10000, emoji: '🚶', name: 'Toddler',      bg: 'linear-gradient(135deg,#EDE7F6,#FFF8E1)' },
-  { minDP: 16000, emoji: '🎉', name: 'Küçük Kahraman', bg: 'linear-gradient(135deg,#FCE4EC,#E8EAF6)' },
+  {minDP:0,    name:'Yenidoğan',   faceG:'👶',faceE:'👶',body:'',        bg:'linear-gradient(180deg,#1a0533,#2D1B69,#3d0b80)',    deco:'⭐✨🌙',  fx:'💫'},
+  {minDP:1000, name:'Keşifçi',     faceG:'😊',faceE:'😊',body:'🌈',      bg:'linear-gradient(180deg,#E0F7FA,#B2EBF2,#E0F2F1)',    deco:'🧸🎠🎡', fx:'🌟'},
+  {minDP:2500, name:'Uzanan Bebek',faceG:'🤸‍♀️',faceE:'🤸‍♂️',body:'',  bg:'linear-gradient(180deg,#FFF9C4,#FFECB3,#FFF3E0)',    deco:'🪀🎯🌻', fx:'✨'},
+  {minDP:4000, name:'Oturan Bebek',faceG:'👧',faceE:'👦',body:'',        bg:'linear-gradient(180deg,#E8F5E9,#DCEDC8,#F1F8E9)',    deco:'🎲🧩🐥', fx:'🍀'},
+  {minDP:6500, name:'Emekleyen',   faceG:'🧒‍♀️',faceE:'🧒‍♂️',body:'', bg:'linear-gradient(180deg,#E3F2FD,#BBDEFB,#E8EAF6)',    deco:'🚂🎪🎠', fx:'🌈'},
+  {minDP:9000, name:'İlk Adımlar', faceG:'👧',faceE:'👦',body:'👟',      bg:'linear-gradient(180deg,#FFF3E0,#FFE0B2,#FFF8E1)',    deco:'⚽🌷🏡', fx:'🎉'},
+  {minDP:13000,name:'Toddler',     faceG:'🏃‍♀️',faceE:'🏃‍♂️',body:'', bg:'linear-gradient(180deg,#E8EAF6,#C5CAE9,#EDE7F6)',    deco:'🌳🎪🎠', fx:'🎊'},
 ];
 
-// ==================== GAME STATE ====================
-const state = {
-  dp: 0,
-  hunger: 80,
-  happy: 70,
-  energy: 90,
-  smart: 10,
-  unlockedMilestones: new Set([1]),
-  day: 1,
-  lastTickTime: Date.now(),
-  idleAccumulator: 0,
-  clickCount: 0,
+const MOM_MSGS = [
+  '"Anneler 24 saat, 7 gün, ücret almadan dünyanın en değerli işini yapıyorlar. Her biri bir kahraman! 💖"',
+  '"Her ağlamaya koşan, her uyanmada kalkan, her beslemede sabırlı olan — anneye sonsuz saygı 🌸"',
+  '"Annenizin üzerine titrediği için bir gün teşekkür edeceğiniz zamanlar gelecek. O an uzak değil. 💝"',
+  '"Emzirmek, uyutmak, sarılmak — bunların hepsi sevginin somut halidir. Anneler sevgiyi eylem yapar. ❤️"',
+  '"Bebek sahibi olmak fiziksel ve duygusal olarak çok zorludur. Anneler bunu her gün yaşar. Onları destekleyin! 🌺"',
+];
+
+const ACT_DATA = {
+  annesutu:  {sfx:['🤱','💛','⭐'],msg:(g,n)=>`${n} anne sütü içti! 🤱`,   fx:{hunger:35,happy:15,health:8,dp:25},      milkCost:30,
+    popup:{title:'Anne Sütü',icon:'🤱',info:'Anne sütü, bebeğin ilk 6 ayında ihtiyaç duyduğu TÜM besinleri içerir. Antibikleri, büyüme faktörlerini ve bağışıklık proteinlerini içerir — hiçbir formül bunu tam olarak taklit edemez.',tip:'WHO ve DSÖ önerisi: İlk 6 ay SADECE anne sütü, 2 yaşa kadar destekleyici olarak devam edin. Anne sütü bebek için en iyi başlangıçtır!'}},
+  biberon:   {sfx:['🍼','💛'],  msg:(g,n)=>`Biberon verildi 🍼`,             fx:{hunger:20,dp:8}},
+  mama:      {sfx:['🥣','😋'],  msg:(g,n)=>`${n} mama yedi! 🥣`,            fx:{hunger:25,smart:5,dp:12}},
+  su:        {sfx:['💧','😊'],  msg:(g,n)=>`Su içirildi 💧`,                fx:{hunger:5,health:3,dp:4}},
+  vitamin:   {sfx:['💊','✨'],  msg:(g,n)=>`D Vitamini verildi 💊`,          fx:{health:5,dp:4}},
+  tummytime: {sfx:['🏋️','💪'], msg:(g,n)=>`Karna yatış yapıldı! 💪`,       fx:{energy:-5,health:8,smart:3,dp:12}},
+  masaj:     {sfx:['💆','❤️'],  msg:(g,n)=>`Bebek masajı yapıldı 💆`,        fx:{happy:12,energy:8,health:5,dp:10}},
+  jimnastik: {sfx:['🤸','⭐'],  msg:(g,n)=>`Bebek jimnastiği yapıldı! 🤸`,  fx:{happy:10,health:10,dp:14}},
+  yuzme:     {sfx:['🏊','💙'],  msg:(g,n)=>`Bebek yüzmesi! 🏊`,             fx:{health:15,happy:12,dp:16}},
+  duyusal:   {sfx:['🌈','🧠'],  msg:(g,n)=>`Duyusal oyun! 🌈`,              fx:{smart:10,happy:8,dp:13}},
+  muzik:     {sfx:['🎵','😊'],  msg:(g,n)=>`Müzik dinlendi 🎵`,              fx:{happy:15,smart:6,energy:5,dp:10}},
+  bloklar:   {sfx:['🧱','💡'],  msg:(g,n)=>`Renkli bloklar! 🧱`,            fx:{smart:12,happy:8,dp:15}},
+  sekilrenk: {sfx:['🔷','🧠'],  msg:(g,n)=>`Şekil-renk oyunu! 🔷`,          fx:{smart:15,dp:18}},
+  kitap:     {sfx:['📚','🌟'],  msg:(g,n)=>`Masal okundu 📚`,                fx:{smart:12,happy:10,dp:14}},
+  sarki:     {sfx:['🎤','🎶'],  msg:(g,n)=>`Şarkı söylendi 🎤`,              fx:{happy:12,smart:8,dp:12}},
+  konus:     {sfx:['💬','😊'],  msg:(g,n)=>`Bebekle konuşuldu 💬`,           fx:{smart:10,happy:8,dp:12}},
+  tekerleme: {sfx:['🎭','😄'],  msg:(g,n)=>`Tekerleme söylendi! 🎭`,         fx:{smart:15,happy:10,dp:16}},
+  uyut:      {sfx:['😴','🌙'],  msg:(g,n)=>`${n} uyudu 😴`,                 fx:{energy:28,happy:5,dp:8}},
+  saril:     {sfx:['🤗','💖'],  msg:(g,n)=>`Sarıldı ve sevildi 🤗`,          fx:{happy:18,energy:5,dp:8}},
+  banyo:     {sfx:['🛁','✨'],  msg:(g,n)=>`Banyo yapıldı 🛁`,               fx:{health:10,happy:12,dp:12},special:'diaper100'},
+  bez:       {sfx:['🧻','😊'],  msg:(g,n)=>`Bez değiştirildi 🧻`,            fx:{happy:5,dp:5},         special:'diaper100'},
+  atesol:    {sfx:['🌡️','💚'], msg:(g,n)=>`Ateş kontrol edildi 🌡️`,         fx:{health:5,dp:4}},
+  ninni:     {sfx:['🎵','😴'],  msg:(g,n)=>`Ninni söylendi 🎵`,              fx:{energy:12,happy:8,dp:10}},
+  'dad-saril':{sfx:['👨‍👶','💙'],msg:(g,n,d)=>`${d} ${n}'e sarıldı 💙`,    fx:{happy:15,dp:10},dadPts:8},
+  'dad-oyna': {sfx:['🎮','💙'], msg:(g,n,d)=>`${d} ile oyun zamanı! 🎮`,    fx:{happy:18,smart:8,dp:14},dadPts:10},
+  'dad-uyut': {sfx:['🌙','💙'], msg:(g,n,d)=>`${d} uyutuyor 🌙`,             fx:{energy:25,dp:10},dadPts:12},
+  'dad-gece': {sfx:['⭐','💙'], msg:(g,n,d)=>`Gece ${d} kalktı! ⭐`,         fx:{energy:20,dp:15},dadPts:15},
+  'dad-masaj':{sfx:['💆','💙'], msg:(g,n,d)=>`${d} masaj yaptı 💆`,          fx:{happy:12,health:5,dp:10},dadPts:8},
+  'dad-bez':  {sfx:['🧻','💙'], msg:(g,n,d)=>`${d} bez değiştirdi! 💙`,      fx:{happy:5,dp:5},dadPts:10,special:'diaper100'},
 };
 
-let nextMilestone = MILESTONES.find(m => m.dpRequired > 0);
-let currentStage = BABY_STAGES[0];
-let totalDays = 1;
+// ══════════════════════════════════════════════════════
+// STATE
+// ══════════════════════════════════════════════════════
+const S = {
+  started:false, babyName:'Bebek', gender:'kiz', momName:'Anne', dadName:'Baba',
+  hunger:80, happy:70, energy:90, health:100, diaper:100,
+  milk:100, dadScore:0,
+  dp:0, ageMonths:0, dayTime:1,
+  unlocked:new Set([1]), doneVax:new Set(),
+  activeChallenge:null, challengeTimer:0,
+  nextChallengeIn:45,
+  lastTick:Date.now(), currentStage:0,
+  momMsgIdx:0, momMsgTimer:0,
+  pendingMilestonePopup:null,
+};
 
-// ==================== IDLE TICK ====================
-function getIdleRate() {
-  // Rate increases with progress
-  const progress = state.unlockedMilestones.size;
-  return 0.5 + progress * 0.15;
+// ══════════════════════════════════════════════════════
+// SETUP
+// ══════════════════════════════════════════════════════
+let selectedGender = 'kiz';
+function selGender(g){
+  selectedGender = g;
+  document.getElementById('btn-girl').className='gbtn girl'+(g==='kiz'?' sel':'');
+  document.getElementById('btn-boy').className='gbtn boy'+(g==='erkek'?' sel':'');
 }
 
-function tick() {
-  const now = Date.now();
-  const delta = (now - state.lastTickTime) / 1000;
-  state.lastTickTime = now;
-
-  const rate = getIdleRate();
-  const earned = rate * delta;
-  state.dp += earned;
-  state.idleAccumulator += earned;
-
-  // Gradual stat decay
-  state.hunger = Math.max(0, state.hunger - 0.03 * delta);
-  state.happy  = Math.max(0, state.happy  - 0.02 * delta);
-  state.energy = Math.max(0, state.energy - 0.015 * delta);
-
-  // Day counter
-  state.day += delta / 60; // 1 real second = some game time
-  totalDays = Math.floor(state.day);
-
-  checkMilestones();
-  updateUI();
-}
-
-// ==================== ACTIONS ====================
-function doAction(type) {
-  const fx = ACTION_EFFECTS[type];
-  state.hunger = Math.min(100, Math.max(0, state.hunger + fx.hunger));
-  state.happy  = Math.min(100, Math.max(0, state.happy  + fx.happy));
-  state.energy = Math.min(100, Math.max(0, state.energy + fx.energy));
-  state.smart  = Math.min(100, Math.max(0, state.smart  + fx.smart));
-  state.dp += fx.dp;
-
-  spawnParticles(fx.emoji, 3);
-  addLog(fx.msg);
-  checkMilestones();
-  updateUI();
-}
-
-function babyClick() {
-  state.clickCount++;
-  state.dp += 3;
-  state.happy = Math.min(100, state.happy + 3);
-  spawnParticles(['⭐','✨','💫','🌟'][Math.floor(Math.random()*4)], 2);
-  checkMilestones();
-  updateUI();
-}
-
-// ==================== MILESTONES ====================
-function checkMilestones() {
-  for (const m of MILESTONES) {
-    if (!state.unlockedMilestones.has(m.id) && state.dp >= m.dpRequired) {
-      state.unlockedMilestones.add(m.id);
-      showMilestonePopup(m);
-      addLog(`🌟 Yeni gelişim: ${m.name}!`);
-      spawnParticles('🌟', 8);
-      break; // one at a time
-    }
+function startGame(){
+  const bn=document.getElementById('inp-baby').value.trim();
+  const mn=document.getElementById('inp-mom').value.trim();
+  const dn=document.getElementById('inp-dad').value.trim();
+  if(!bn||!mn||!dn){showToast('⚠️ Lütfen tüm alanları doldurun!','red');return;}
+  S.babyName=bn; S.gender=selectedGender; S.momName=mn; S.dadName=dn; S.started=true;
+  if(selectedGender==='erkek'){
+    document.documentElement.style.setProperty('--accent','#4169E1');
+    document.documentElement.style.setProperty('--accent2','#5B8DEE');
   }
-  updateStage();
+  document.getElementById('setupScreen').style.display='none';
+  document.getElementById('gameScreen').style.display='block';
+  document.getElementById('hdrSub').textContent=`${mn} 💖 ${dn} 💙 · ${bn}'in ailesi`;
+  addLog(`🍼 ${bn} dünyaya geldi! ${mn} ve ${dn} ailesine hayırlı olsun! Maceranız başlıyor...`,'ms');
+  addLog('💡 İpucu: Bebeğe tıkla, aktiviteler yap, zorlu anları çöz ve gelişimi izle!');
+  renderVax(); renderMs();
+  // birth vaccines
+  setTimeout(()=>triggerVaxDue(0),2000);
+  initStars();
+  updateUI();
+  setInterval(tick,100);
 }
 
-function updateStage() {
-  for (let i = BABY_STAGES.length - 1; i >= 0; i--) {
-    if (state.dp >= BABY_STAGES[i].minDP) {
-      if (currentStage !== BABY_STAGES[i]) {
-        currentStage = BABY_STAGES[i];
-        addLog(`🎉 Bebek büyüdü: ${currentStage.name}!`);
-        spawnParticles('🎉', 6);
-      }
+// ══════════════════════════════════════════════════════
+// TICK
+// ══════════════════════════════════════════════════════
+function tick(){
+  if(!S.started)return;
+  const now=Date.now(), dt=(now-S.lastTick)/1000;
+  S.lastTick=now;
+  // dp accumulation
+  const idleRate=0.5+S.dadScore*0.004+S.unlocked.size*0.05;
+  S.dp+=idleRate*dt;
+  // stat decay
+  S.hunger=clamp(S.hunger-0.025*dt*60);
+  S.happy=clamp(S.happy-0.018*dt*60);
+  S.energy=clamp(S.energy-0.013*dt*60);
+  S.diaper=clamp(S.diaper-0.008*dt*60);
+  // milk regen
+  if(S.ageMonths<12) S.milk=Math.min(100,S.milk+0.12*dt*60);
+  // day
+  S.dayTime+=dt/120;
+  // challenge timer
+  if(S.activeChallenge){
+    S.challengeTimer-=dt;
+    if(S.challengeTimer<=0) failChallenge();
+  } else {
+    S.nextChallengeIn-=dt;
+    if(S.nextChallengeIn<=0) spawnChallenge();
+  }
+  // auto challenges from low stats
+  if(!S.activeChallenge){
+    if(S.diaper<15) forceChallenge('bez');
+    else if(S.hunger<12) forceChallenge('agla');
+  }
+  // mom msg rotation
+  S.momMsgTimer+=dt;
+  if(S.momMsgTimer>20){S.momMsgTimer=0;S.momMsgIdx=(S.momMsgIdx+1)%MOM_MSGS.length;document.getElementById('momMsg').textContent=MOM_MSGS[S.momMsgIdx];}
+  // age
+  const newAge=Math.min(24,Math.floor(S.dp/600));
+  if(newAge!==S.ageMonths){
+    const old=S.ageMonths; S.ageMonths=newAge;
+    if(newAge>old) onAgeChange(newAge);
+  }
+  // milestones
+  checkMilestones();
+  updateUI();
+}
+
+function clamp(v,min=0,max=100){return Math.max(min,Math.min(max,v))}
+
+function onAgeChange(mo){
+  // unlock age-gated buttons
+  if(mo>=3){['btn-jimnastik','btn-yuzme'].forEach(id=>{const b=document.getElementById(id);if(b)b.disabled=false})}
+  if(mo>=4){const b=document.getElementById('btn-mama');if(b)b.disabled=false;}
+  if(mo>=6){['btn-su','btn-blok'].forEach(id=>{const b=document.getElementById(id);if(b)b.disabled=false})}
+  if(mo>=9){const b=document.getElementById('btn-sekil');if(b)b.disabled=false;}
+  if(mo>=12){
+    const b=document.getElementById('btn-teker');if(b)b.disabled=false;
+    document.getElementById('milkCard').style.opacity='0.4';
+    addLog(`🤱 ${S.babyName} 12 aya geldi! Anne sütü tamamlandı — tebrikler ${S.momName}! 💖`,'ms');
+  }
+  triggerVaxDue(mo);
+  addLog(`📅 ${S.babyName} ${mo}. aya girdi!`);
+}
+
+// ══════════════════════════════════════════════════════
+// ACTIONS
+// ══════════════════════════════════════════════════════
+function doAct(id){
+  const a=ACT_DATA[id];
+  if(!a)return;
+  if(id==='annesutu'){
+    if(S.ageMonths>=12){showPopupInfo({icon:'🤱',title:'Anne Sütü Tamamlandı',sub:'12 ay anne sütü verdiniz — bu muazzam bir başarı!',info:'WHO önerisi olan 12+ ay emzirmeyi tamamladınız. '+S.babyName+' için en iyi başlangıcı sağladınız.',tip:'2 yaşa kadar anne sütü devam ettirilebilir. Kararı anneyle birlikte alın. '+S.momName+', gerçek bir kahraman!',btnTxt:'Harika Anne! 💖'});return;}
+    if(S.milk<a.milkCost){showPopupInfo({icon:'🤱',title:'Anne Sütü Deposu Doluyor',sub:'Birkaç dakika bekleyin...',info:'Anne sütü depası yenileniyor. Depo dolduğunda tekrar verebilirsiniz. Bu süreçte biberon kullanabilirsiniz.',tip:'Anne sütü üretimini artırmak için annein bol su içmesi, dinlenmesi ve stresten uzak durması önemlidir. '+S.dadName+', anneye destek ol!',btnTxt:'Tamam'});return;}
+    S.milk=Math.max(0,S.milk-a.milkCost);
+    showAnnesutuPopup();
+  }
+  applyFx(a.fx||{});
+  if(a.special==='diaper100') S.diaper=100;
+  if(a.dadPts) S.dadScore=Math.min(100,S.dadScore+a.dadPts);
+  const msg=a.msg(S.gender,S.babyName,S.dadName);
+  addLog(msg, id.startsWith('dad-')?'dad':'');
+  spawnParticles(a.sfx||['✨'],3);
+  checkMilestones();
+  updateUI();
+}
+
+function applyFx(fx){
+  if(fx.hunger!==undefined) S.hunger=clamp(S.hunger+fx.hunger);
+  if(fx.happy!==undefined)  S.happy=clamp(S.happy+fx.happy);
+  if(fx.energy!==undefined) S.energy=clamp(S.energy+fx.energy);
+  if(fx.health!==undefined) S.health=clamp(S.health+fx.health);
+  if(fx.smart!==undefined)  S.dp+=fx.smart*0.5;
+  if(fx.dp!==undefined)     S.dp+=fx.dp;
+}
+
+function babyClick(){
+  S.dp+=3; S.happy=clamp(S.happy+3);
+  spawnParticles(['⭐','✨','💫','🌟'],2);
+}
+
+// ══════════════════════════════════════════════════════
+// CHALLENGE SYSTEM
+// ══════════════════════════════════════════════════════
+function spawnChallenge(){
+  const avail=CHALLENGES.filter(c=>{
+    if(c.id==='dis'&&S.ageMonths<4) return false;
+    if(c.id==='gece'&&S.ageMonths>12&&Math.random()<.6) return false;
+    return true;
+  });
+  const ch=avail[Math.floor(Math.random()*avail.length)];
+  activateChallenge(ch);
+  S.nextChallengeIn=30+Math.random()*60;
+}
+
+function forceChallenge(id){
+  if(S.activeChallenge)return;
+  const ch=CHALLENGES.find(c=>c.id===id);
+  if(ch) activateChallenge(ch);
+}
+
+function activateChallenge(ch){
+  S.activeChallenge=ch;
+  S.challengeTimer=45;
+  const el=document.getElementById('chCard');
+  el.style.display='block';
+  el.className='ch-card '+(ch.urgent?'urgent':'medium');
+  document.getElementById('chIco').textContent=ch.icon;
+  document.getElementById('chName').textContent=ch.name;
+  document.getElementById('chDesc').textContent=ch.desc;
+  document.getElementById('chBtn').textContent=ch.action;
+  spawnParticles([ch.icon],2);
+  showToast(`${ch.icon} ${ch.name}`,'red');
+  addLog(`${ch.icon} ${ch.name} — Hızlıca çöz!`,'ch');
+}
+
+function resolveChallenge(){
+  if(!S.activeChallenge)return;
+  const ch=S.activeChallenge;
+  applyFx(ch.resolve||{});
+  if(ch.id==='bez'||ch.id==='gece') S.diaper=Math.min(100,S.diaper+20);
+  clearChallenge();
+  spawnParticles(['✅','⭐','🎉'],4);
+  addLog(`✅ ${ch.name} çözüldü! Harika ebeveyn! +${ch.resolve.dp||0} GP`,'ms');
+  showChallengeResolvePopup(ch);
+}
+
+function failChallenge(){
+  const ch=S.activeChallenge;
+  S.hunger=clamp(S.hunger-15);
+  S.happy=clamp(S.happy-20);
+  S.health=clamp(S.health-10);
+  clearChallenge();
+  addLog(`⚠️ ${ch.penaltyMsg} İstatistikler düştü!`,'ch');
+  showToast(`⚠️ ${ch.penaltyMsg}`,'red');
+}
+
+function clearChallenge(){
+  S.activeChallenge=null;
+  S.challengeTimer=0;
+  document.getElementById('chCard').style.display='none';
+  S.nextChallengeIn=30+Math.random()*50;
+}
+
+// ══════════════════════════════════════════════════════
+// MILESTONES
+// ══════════════════════════════════════════════════════
+function checkMilestones(){
+  for(const m of MILESTONES){
+    if(!S.unlocked.has(m.id)&&S.dp>=m.dp){
+      S.unlocked.add(m.id);
+      const el=document.getElementById('ms-'+m.id);
+      if(el)el.className='ms-item unlocked fresh';
+      spawnParticles(['🌟','⭐','🎉'],6);
+      addLog(`🌟 Yeni gelişim: ${m.name}!`,'ms');
+      showMilestonePopup(m,true);
       break;
     }
   }
 }
 
-// ==================== UI ====================
-function updateUI() {
-  // Stats
-  document.getElementById('hungerBar').style.width = state.hunger + '%';
-  document.getElementById('happyBar').style.width  = state.happy  + '%';
-  document.getElementById('energyBar').style.width = state.energy + '%';
-  document.getElementById('smartBar').style.width  = Math.min(100, state.smart) + '%';
-  document.getElementById('hungerVal').textContent = Math.round(state.hunger) + '%';
-  document.getElementById('happyVal').textContent  = Math.round(state.happy)  + '%';
-  document.getElementById('energyVal').textContent = Math.round(state.energy) + '%';
-  document.getElementById('smartVal').textContent  = Math.round(state.smart)  + '%';
+// ══════════════════════════════════════════════════════
+// VACCINES
+// ══════════════════════════════════════════════════════
+function triggerVaxDue(mo){
+  const due=VACCINES.filter(v=>v.ay===mo&&!S.doneVax.has(v.id));
+  due.forEach(v=>{
+    addLog(`💉 ${v.name} zamanı! (${mo}. ay)`, 'vax');
+    showToast(`💉 ${v.name} zamanı!`,'');
+  });
+  renderVax();
+}
 
-  // Mood
-  const mood = getMood();
-  document.getElementById('babyMood').textContent = mood;
+function doVaccine(id){
+  const v=VACCINES.find(x=>x.id===id);
+  if(!v)return;
+  if(S.doneVax.has(id)){showVaxPopup(v,true);return;}
+  if(S.ageMonths<v.ay){showToast(`⏳ Bu aşı için ${v.ay}. aya kadar bekleyin.`,'');return;}
+  showVaxConfirmPopup(v);
+}
 
-  // Baby emoji & stage
-  document.getElementById('babyEmoji').textContent = currentStage.emoji;
-  document.getElementById('bgCircle').style.background = currentStage.bg;
-  document.getElementById('babyName').textContent = currentStage.name;
+function confirmVax(id){
+  S.doneVax.add(id);
+  S.health=clamp(S.health+3); S.dp+=15;
+  renderVax();
+  addLog(`✅ ${VACCINES.find(v=>v.id===id).name} yapıldı!`,'vax');
+  spawnParticles(['💉','✅','💚'],3);
+}
 
-  // Age label
-  const ageMonths = Math.min(24, Math.floor(state.dp / 800));
-  document.getElementById('babyAge').textContent = `${ageLabel(ageMonths)} • ${ageMonths}. Ay`;
-
-  // DP
-  const rounded = Math.floor(state.dp);
-  document.getElementById('dpValue').textContent = rounded.toLocaleString('tr') + ' GP';
-  document.getElementById('idleRate').textContent = `⏱ +${getIdleRate().toFixed(1)} GP/sn (otomatik)`;
-
-  // DP bar towards next milestone
-  const next = MILESTONES.find(m => !state.unlockedMilestones.has(m.id));
-  if (next) {
-    const prev = MILESTONES.filter(m => m.dpRequired < next.dpRequired).slice(-1)[0];
-    const base = prev ? prev.dpRequired : 0;
-    const range = next.dpRequired - base;
-    const progress = Math.min(100, ((state.dp - base) / range) * 100);
-    document.getElementById('dpBar').style.width = progress + '%';
-    document.getElementById('dpNext').textContent = `Sonraki: ${next.name} — ${Math.max(0, Math.ceil(next.dpRequired - state.dp))} GP kaldı`;
+// ══════════════════════════════════════════════════════
+// UI UPDATE
+// ══════════════════════════════════════════════════════
+function updateUI(){
+  // stats
+  setBar('bHunger','sHunger',S.hunger);
+  setBar('bHappy','sHappy',S.happy);
+  setBar('bEnergy','sEnergy',S.energy);
+  setBar('bHealth','sHealth',S.health);
+  setBar('bDiaper','sDiaper',S.diaper);
+  // milk
+  document.getElementById('milkFill').style.width=S.milk+'%';
+  document.getElementById('milkVal').textContent=Math.round(S.milk)+'%';
+  // dp
+  const dpR=Math.floor(S.dp);
+  document.getElementById('dpVal').textContent=dpR.toLocaleString('tr');
+  const nxt=MILESTONES.find(m=>!S.unlocked.has(m.id));
+  if(nxt){
+    const prev=MILESTONES.filter(m=>m.dp<nxt.dp&&S.unlocked.has(m.id)).slice(-1)[0];
+    const base=prev?prev.dp:0,range=nxt.dp-base,pct=Math.min(100,((S.dp-base)/range)*100);
+    document.getElementById('dpFill').style.width=pct+'%';
+    document.getElementById('dpNxt').textContent=`Sonraki: ${nxt.name} — ${Math.max(0,Math.ceil(nxt.dp-S.dp))} GP`;
   } else {
-    document.getElementById('dpBar').style.width = '100%';
-    document.getElementById('dpNext').textContent = '🎉 Tüm gelişimler tamamlandı!';
+    document.getElementById('dpFill').style.width='100%';
+    document.getElementById('dpNxt').textContent='🎉 Tüm gelişimler tamamlandı!';
   }
-
-  // Header
-  document.getElementById('totalMilestones').textContent = `🏆 ${state.unlockedMilestones.size}/18 Gelişim`;
-  document.getElementById('totalDays').textContent = `📅 ${totalDays}. Gün`;
-
-  // Milestones count
-  document.getElementById('milestonePct').textContent = `${state.unlockedMilestones.size}/18 tamamlandı`;
-
-  // Render milestones
-  renderMilestones();
-}
-
-function ageLabel(months) {
-  if (months === 0) return 'Yeni Doğmuş';
-  if (months <= 1) return 'Yenidoğan';
-  if (months <= 3) return 'Küçük Bebek';
-  if (months <= 6) return 'Bebek';
-  if (months <= 12) return 'Büyüyen Bebek';
-  if (months <= 18) return 'Toddler';
-  return 'Küçük Çocuk';
-}
-
-function getMood() {
-  const avg = (state.hunger + state.happy + state.energy) / 3;
-  if (avg > 80) return '😄 Çok Mutlu!';
-  if (avg > 60) return '😊 Mutlu ve Sağlıklı';
-  if (avg > 40) return '😐 İdare Eder';
-  if (avg > 20) return '😢 Biraz Mutsuz';
-  return '😭 Yardım İstiyor!';
-}
-
-function renderMilestones() {
-  const grid = document.getElementById('milestonesGrid');
-  grid.innerHTML = '';
-  for (const m of MILESTONES) {
-    const unlocked = state.unlockedMilestones.has(m.id);
-    const div = document.createElement('div');
-    div.className = 'milestone-item ' + (unlocked ? 'unlocked' : 'locked');
-    div.innerHTML = `
-      <div class="milestone-icon">${m.icon}</div>
-      <div class="milestone-age">${m.ageLabel}</div>
-      <div class="milestone-name">${m.name}</div>
-      <div class="milestone-desc">${m.desc}</div>
-      ${unlocked
-        ? `<div class="milestone-check">✅</div>`
-        : `<div class="milestone-lock-icon">🔒</div><div class="milestone-dp">🌟 ${m.dpRequired.toLocaleString('tr')} GP</div>`
-      }
-    `;
-    if (unlocked) {
-      div.onclick = () => showMilestoneInfo(m);
-    }
-    grid.appendChild(div);
+  const idleRate=(0.5+S.dadScore*0.004+S.unlocked.size*0.05).toFixed(1);
+  document.getElementById('dpRate').textContent=`⏱ +${idleRate} GP/sn otomatik`;
+  // challenge timer
+  if(S.activeChallenge){
+    const pct=(S.challengeTimer/45)*100;
+    document.getElementById('chTFill').style.width=pct+'%';
   }
+  // baby visual
+  const st=getCurrentStage();
+  if(S.currentStage!==st){S.currentStage=st;updateBabyScene(st);}
+  // face expression
+  const face=getBabyFace(st);
+  document.getElementById('babyFace').textContent=face;
+  // baby info
+  document.getElementById('babyNm').textContent=S.babyName;
+  document.getElementById('babyStg').textContent=BABY_STAGES[st].name;
+  document.getElementById('babyMoodTxt').textContent=getMood();
+  // header
+  document.getElementById('hAge').textContent=`${S.gender==='kiz'?'👧':'👦'} ${S.ageMonths}. Ay`;
+  document.getElementById('hDay').textContent=`📅 ${Math.floor(S.dayTime)}. Gün`;
+  document.getElementById('hDad').textContent=`👨 ${S.dadName}: ${Math.round(S.dadScore)}%`;
+  document.getElementById('hMs').textContent=`🏆 ${S.unlocked.size}/20`;
+  // dad fill
+  document.getElementById('dadFill').style.width=S.dadScore+'%';
+  const dadLbl=S.dadScore>=80?'🏆 Kahraman Baba!':S.dadScore>=50?'⭐ Harika Baba!':S.dadScore>=25?'👍 İyi Baba!':'Baba desteğini artır! 💙';
+  document.getElementById('dadLbl').textContent=`${Math.round(S.dadScore)} / 100 — ${dadLbl}`;
+  // anne sütü button disabled after 12
+  const asBtn=document.querySelector('#tab-beslenme .abt.special');
+  if(asBtn) asBtn.disabled=S.ageMonths>=12;
+  // milestone count header
+  document.getElementById('msCount').textContent=`${S.unlocked.size}/20`;
+  // vax count
+  const totalVax=VACCINES.length, doneVax=S.doneVax.size;
+  document.getElementById('vaxCount').textContent=`${doneVax}/${totalVax} yapıldı`;
 }
 
-// ==================== LOG ====================
-function addLog(msg) {
-  const container = document.getElementById('logEntries');
-  const entry = document.createElement('div');
-  entry.className = 'log-entry';
-  const time = new Date().toLocaleTimeString('tr', {hour:'2-digit', minute:'2-digit'});
-  entry.textContent = `${time} — ${msg}`;
-  container.insertBefore(entry, container.firstChild);
-  while (container.children.length > 20) {
-    container.removeChild(container.lastChild);
+function setBar(barId,lblId,val){
+  document.getElementById(barId).style.width=Math.round(val)+'%';
+  document.getElementById(lblId).textContent=Math.round(val)+'%';
+  // color warning
+  if(val<25) document.getElementById(barId).style.filter='hue-rotate(0deg)';
+  else document.getElementById(barId).style.filter='';
+}
+
+function getCurrentStage(){
+  for(let i=BABY_STAGES.length-1;i>=0;i--) if(S.dp>=BABY_STAGES[i].minDP) return i;
+  return 0;
+}
+
+function updateBabyScene(si){
+  const st=BABY_STAGES[si];
+  document.getElementById('babyScene').style.background=st.bg;
+  document.getElementById('sceneDeco').textContent=st.deco;
+  document.getElementById('sceneFx').textContent=st.fx;
+  document.getElementById('babyBodyDeco').textContent=st.body;
+}
+
+function getBabyFace(si){
+  if(S.activeChallenge){
+    if(S.activeChallenge.id==='gaz'||S.activeChallenge.id==='dis') return '😖';
+    return '😭';
   }
+  if(S.energy<20) return '😴';
+  if(S.hunger<15) return '😮';
+  if(S.happy>80) return '😄';
+  if(S.happy<30) return '😢';
+  const st=BABY_STAGES[si];
+  return S.gender==='kiz'?st.faceG:st.faceE;
 }
 
-// ==================== PARTICLES ====================
-function spawnParticles(emoji, count) {
-  for (let i = 0; i < count; i++) {
-    setTimeout(() => {
-      const p = document.createElement('div');
-      p.className = 'particle';
-      p.textContent = emoji;
-      p.style.left = (20 + Math.random() * 60) + 'vw';
-      p.style.top  = (20 + Math.random() * 60) + 'vh';
+function getMood(){
+  const avg=(S.hunger+S.happy+S.energy)/3;
+  if(avg>80)return'😄 Çok Mutlu ve Sağlıklı!';
+  if(avg>60)return'😊 Mutlu ve Sağlıklı';
+  if(avg>40)return'😐 İdare Eder';
+  if(avg>20)return'😢 Biraz Mutsuz';
+  return'😭 Acil Bakım Gerekiyor!';
+}
+
+// ══════════════════════════════════════════════════════
+// RENDER LISTS
+// ══════════════════════════════════════════════════════
+function renderVax(){
+  const list=document.getElementById('vaxList');
+  list.innerHTML='';
+  VACCINES.forEach(v=>{
+    const done=S.doneVax.has(v.id);
+    const due=S.ageMonths>=v.ay&&!done;
+    const locked=S.ageMonths<v.ay&&!done;
+    const div=document.createElement('div');
+    div.className=`vax-item ${done?'done':due?'due':'locked'} ${v.type==='ozel'?'special-vaccine':''}`;
+    div.innerHTML=`<span class="vax-ico">💉</span><div class="vax-info"><div class="vax-name">${v.name}${v.type==='ozel'?' 🔸':''}</div><div class="vax-age">${v.ay}. Ay${v.type==='ozel'?' · Özel':'·Rutin'}</div></div><span class="vax-st">${done?'✅':due?'⚠️':'🔒'}</span>`;
+    if(!locked) div.onclick=()=>doVaccine(v.id);
+    list.appendChild(div);
+  });
+}
+
+function renderMs(){
+  const list=document.getElementById('msList');
+  list.innerHTML='';
+  MILESTONES.forEach(m=>{
+    const done=S.unlocked.has(m.id);
+    const div=document.createElement('div');
+    div.id='ms-'+m.id;
+    div.className='ms-item '+(done?'unlocked':'locked');
+    div.innerHTML=`<span class="ms-ico">${m.icon}</span><div class="ms-inf"><div class="ms-nm">${m.name}</div><div class="ms-ag">${m.age}${done?'':' · '+m.dp.toLocaleString('tr')+' GP'}</div></div><span class="ms-st">${done?'✅':'🔒'}</span>`;
+    if(done) div.onclick=()=>showMilestonePopup(m,false);
+    list.appendChild(div);
+  });
+}
+
+// ══════════════════════════════════════════════════════
+// TABS
+// ══════════════════════════════════════════════════════
+function switchTab(t){
+  ['beslenme','gelisim','bakim','baba'].forEach(id=>{
+    document.getElementById('tab-'+id).className='tab-body'+(id===t?' on':'');
+    document.getElementById('tnav-'+id).className='tnav-btn'+(id===t?' on':'');
+  });
+}
+
+function switchSubTab(t){
+  ['fizik','zihin','dil'].forEach(id=>{
+    document.getElementById('stab-body-'+id).style.display=id===t?'grid':'none';
+    document.getElementById('stab-'+id).className='stab-btn'+(id===t?' on':'');
+  });
+}
+
+// ══════════════════════════════════════════════════════
+// POPUPS
+// ══════════════════════════════════════════════════════
+function showMilestonePopup(m,isNew){
+  const h=`
+    <div class="pop-ov" onclick="if(event.target===this)this.remove()">
+      <div class="pop-box">
+        <div class="pop-rainbow"></div>
+        ${isNew?'<div class="new-badge" style="display:block;margin-top:12px;text-align:center">🎊 YENİ GELİŞİM!</div>':''}
+        <span class="pop-ico">${m.icon}</span>
+        <div class="pop-title">${m.name}</div>
+        <div class="pop-sub">${m.age}</div>
+        <span class="pop-tag">${m.cat}</span>
+        <div class="pop-sec"><h4>🧠 Gelişim Bilgisi</h4><p>${m.dev}</p></div>
+        <div class="pop-tip"><div class="pop-tip-t">💡 Ebeveyn İpucu</div><p>${m.tip}</p></div>
+        <button class="pop-btn" onclick="this.closest('.pop-ov').remove()">${isNew?'🎉 Harika! Devam Et!':'✅ Anladım'}</button>
+      </div>
+    </div>`;
+  document.body.insertAdjacentHTML('beforeend',h);
+}
+
+function showChallengeResolvePopup(ch){
+  const h=`
+    <div class="pop-ov" onclick="if(event.target===this)this.remove()">
+      <div class="pop-box">
+        <div class="pop-rainbow"></div>
+        <span class="pop-ico">${ch.icon}</span>
+        <div class="pop-title">${ch.name}</div>
+        <div class="pop-sub" style="color:var(--green);font-weight:700">✅ Başarıyla çözüldü!</div>
+        <div class="pop-sec"><h4>📖 Bilgi</h4><p>${ch.info}</p></div>
+        <div class="pop-tip"><div class="pop-tip-t">💡 Pratik İpucu</div><p>${ch.tip}</p></div>
+        <button class="pop-btn green" onclick="this.closest('.pop-ov').remove()">👍 Öğrendim!</button>
+      </div>
+    </div>`;
+  document.body.insertAdjacentHTML('beforeend',h);
+}
+
+function showAnnesutuPopup(){
+  const d=ACT_DATA.annesutu.popup;
+  const h=`
+    <div class="pop-ov" onclick="if(event.target===this)this.remove()">
+      <div class="pop-box">
+        <div class="pop-rainbow"></div>
+        <span class="pop-ico">${d.icon}</span>
+        <div class="pop-title">${d.title}</div>
+        <div class="pop-sub" style="color:var(--pink);font-weight:700">🌟 En Değerli Besin!</div>
+        <div class="pop-sec"><h4>❤️ Neden Bu Kadar Önemli?</h4><p>${d.info}</p></div>
+        <div class="pop-tip"><div class="pop-tip-t">💡 WHO Önerisi</div><p>${d.tip}</p></div>
+        <div style="background:#FCE4EC;border-radius:12px;padding:10px 14px;margin-bottom:14px;text-align:center">
+          <div style="font-weight:800;color:#C2185B;font-size:.82rem">💖 ${S.momName}, sen bir kahraman!</div>
+          <div style="font-size:.75rem;color:#880E4F;margin-top:4px">Emzirmek kolay değil. Her damlası için teşekkürler. 🌸</div>
+        </div>
+        <button class="pop-btn" onclick="this.closest('.pop-ov').remove()">💖 Devam!</button>
+      </div>
+    </div>`;
+  document.body.insertAdjacentHTML('beforeend',h);
+}
+
+function showVaxConfirmPopup(v){
+  const h=`
+    <div class="pop-ov" onclick="if(event.target===this)this.remove()">
+      <div class="pop-box">
+        <div class="pop-rainbow"></div>
+        <span class="pop-ico">💉</span>
+        <div class="pop-title">${v.name}</div>
+        <div class="pop-sub">${v.ay}. Ay · ${v.type==='ozel'?'Özel (Ücretli)':'Rutin'}</div>
+        <div class="pop-sec"><h4>💊 Bu Aşı Neden Önemli?</h4><p>${v.info}</p></div>
+        <div class="pop-tip"><div class="pop-tip-t">💡 Ebeveyn Notu</div><p>${v.tip}</p></div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:4px">
+          <button class="pop-btn green" onclick="confirmVax('${v.id}');this.closest('.pop-ov').remove()">✅ Aşıyı Yaptır! (+15 GP)</button>
+          <button class="pop-btn" style="background:linear-gradient(135deg,#aaa,#888)" onclick="this.closest('.pop-ov').remove()">Sonra</button>
+        </div>
+      </div>
+    </div>`;
+  document.body.insertAdjacentHTML('beforeend',h);
+}
+
+function showVaxPopup(v,done){
+  const h=`
+    <div class="pop-ov" onclick="if(event.target===this)this.remove()">
+      <div class="pop-box">
+        <div class="pop-rainbow"></div>
+        <span class="pop-ico">💉</span>
+        <div class="pop-title">${v.name}</div>
+        <div class="pop-sub" style="color:var(--green);font-weight:700">✅ Yapıldı!</div>
+        <div class="pop-sec"><h4>ℹ️ Bilgi</h4><p>${v.info}</p></div>
+        <button class="pop-btn" onclick="this.closest('.pop-ov').remove()">Kapat</button>
+      </div>
+    </div>`;
+  document.body.insertAdjacentHTML('beforeend',h);
+}
+
+function showPopupInfo({icon,title,sub,info,tip,btnTxt}){
+  const h=`
+    <div class="pop-ov" onclick="if(event.target===this)this.remove()">
+      <div class="pop-box">
+        <div class="pop-rainbow"></div>
+        <span class="pop-ico">${icon}</span>
+        <div class="pop-title">${title}</div>
+        <div class="pop-sub">${sub}</div>
+        <div class="pop-sec"><h4>ℹ️ Bilgi</h4><p>${info}</p></div>
+        <div class="pop-tip"><div class="pop-tip-t">💡 İpucu</div><p>${tip}</p></div>
+        <button class="pop-btn" onclick="this.closest('.pop-ov').remove()">${btnTxt||'Tamam'}</button>
+      </div>
+    </div>`;
+  document.body.insertAdjacentHTML('beforeend',h);
+}
+
+// ══════════════════════════════════════════════════════
+// EFFECTS
+// ══════════════════════════════════════════════════════
+function spawnParticles(emojis,count){
+  for(let i=0;i<count;i++){
+    setTimeout(()=>{
+      const p=document.createElement('div');
+      p.className='particle';
+      p.textContent=emojis[Math.floor(Math.random()*emojis.length)];
+      p.style.left=(15+Math.random()*70)+'vw';
+      p.style.top=(10+Math.random()*70)+'vh';
       document.body.appendChild(p);
-      setTimeout(() => p.remove(), 1500);
-    }, i * 100);
+      setTimeout(()=>p.remove(),1500);
+    },i*120);
   }
 }
 
-// ==================== POPUPS ====================
-function showMilestonePopup(m) {
-  showMilestoneInfo(m, true);
+let toastTimeout=null;
+function showToast(msg,type=''){
+  const old=document.querySelector('.toast');if(old)old.remove();
+  if(toastTimeout)clearTimeout(toastTimeout);
+  const t=document.createElement('div');
+  t.className='toast '+(type||'');
+  t.textContent=msg;
+  document.body.appendChild(t);
+  toastTimeout=setTimeout(()=>t.remove(),3200);
 }
 
-function showMilestoneInfo(m, isNew = false) {
-  const overlay = document.createElement('div');
-  overlay.className = 'popup-overlay';
-  overlay.innerHTML = `
-    <div class="popup-box">
-      <div class="popup-confetti"></div>
-      ${isNew ? '<div style="font-size:1rem;font-weight:800;color:#FF9A3C;margin-bottom:4px;margin-top:8px">🎊 YENİ GELİŞİM!</div>' : ''}
-      <span class="popup-icon">${m.icon}</span>
-      <div class="popup-tag">${m.category} • ${m.ageLabel}</div>
-      <div class="popup-title">${m.name}</div>
-      <div class="popup-subtitle">${m.desc}</div>
-
-      <div class="popup-info">
-        <h4>🧠 Gelişim Bilgisi</h4>
-        <p>${m.devInfo}</p>
-      </div>
-
-      <div class="popup-tip">
-        <div class="popup-tip-title">💡 Ebeveyn İpucu</div>
-        <p>${m.tip}</p>
-      </div>
-
-      <button class="popup-close" onclick="this.closest('.popup-overlay').remove()">
-        ${isNew ? '🎉 Harika! Devam Et!' : '✅ Anladım'}
-      </button>
-    </div>
-  `;
-  overlay.onclick = (e) => { if (e.target === overlay) overlay.remove(); };
-  document.body.appendChild(overlay);
+function addLog(msg,cls=''){
+  const w=document.getElementById('logWrap');
+  if(!w)return;
+  const d=document.createElement('div');
+  d.className='lentry '+(cls||'');
+  const time=new Date().toLocaleTimeString('tr',{hour:'2-digit',minute:'2-digit'});
+  d.textContent=`${time} — ${msg}`;
+  w.insertBefore(d,w.firstChild);
+  while(w.children.length>25)w.removeChild(w.lastChild);
 }
 
-// ==================== STARS ====================
-function createStars() {
-  const container = document.getElementById('stars');
-  const colors = ['#FFD166','#FF6B9D','#C77DFF','#48CAE4','#52B788'];
-  for (let i = 0; i < 30; i++) {
-    const star = document.createElement('div');
-    star.className = 'star';
-    const size = 4 + Math.random() * 8;
-    star.style.cssText = `
-      width: ${size}px;
-      height: ${size}px;
-      left: ${Math.random() * 100}vw;
-      top: ${Math.random() * 100}vh;
-      background: ${colors[Math.floor(Math.random() * colors.length)]};
-      animation-delay: ${Math.random() * 3}s;
-      animation-duration: ${2 + Math.random() * 3}s;
-      opacity: 0.3;
-    `;
-    container.appendChild(star);
+function initStars(){
+  const c=document.getElementById('stars');
+  const colors=['#FFD166','#FF6B9D','#C77DFF','#48CAE4','#52B788'];
+  for(let i=0;i<25;i++){
+    const s=document.createElement('div');
+    s.className='star';
+    const sz=3+Math.random()*7;
+    s.style.cssText=`width:${sz}px;height:${sz}px;left:${Math.random()*100}vw;top:${Math.random()*100}vh;background:${colors[Math.floor(Math.random()*colors.length)]};animation-delay:${Math.random()*3}s;animation-duration:${2+Math.random()*3}s`;
+    c.appendChild(s);
   }
 }
 
-// ==================== INIT ====================
-function init() {
-  createStars();
-  document.getElementById('babyEmoji').addEventListener('click', babyClick);
-
-  // Initial log entries
-  addLog('🍼 Bebek dünyaya geldi! Maceranız başlıyor...');
-  addLog('💡 İpucu: Bebeğe aktiviteler yaparak gelişim puanı kazanın!');
-  addLog('⭐ Bebeğe tıklayarak da puan kazanabilirsiniz!');
-
-  // Render initial state
-  updateUI();
-
-  // Start game loop
-  setInterval(tick, 100);
-}
-
-init();
+// init scene on page load
+window.addEventListener('load',()=>{
+  updateBabyScene(0);
+  document.getElementById('babyScene').style.background=BABY_STAGES[0].bg;
+});
 </script>
 </body>
 </html>
