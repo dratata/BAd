@@ -366,6 +366,8 @@ body{font-family:'Nunito',sans-serif;background:linear-gradient(135deg,#FFF5F8,#
       <div class="hbadge dad" id="hDad">👨 Baba: 0%</div>
       <div class="hbadge ms" id="hMs">🏆 0/20</div>
       <button onclick="manualSave()" style="background:rgba(82,183,136,.3);color:#fff;border:none;padding:5px 11px;border-radius:20px;font-size:.72rem;font-weight:700;cursor:pointer;font-family:'Nunito',sans-serif" title="Kaydet">💾 Kaydet</button>
+      <button onclick="showReportCard()" style="background:rgba(255,209,102,.3);color:#fff;border:none;padding:5px 11px;border-radius:20px;font-size:.72rem;font-weight:700;cursor:pointer;font-family:'Nunito',sans-serif" title="Bebek Karnesi">📊 Karne</button>
+      <button onclick="toggleSound()" id="soundBtn" style="background:rgba(199,125,255,.3);color:#fff;border:none;padding:5px 11px;border-radius:20px;font-size:.72rem;font-weight:700;cursor:pointer;font-family:'Nunito',sans-serif" title="Ses Aç/Kapat">🔊 Ses</button>
     </div>
   </header>
   <div class="night-tint" id="nightTint" style="opacity:0"></div>
@@ -622,7 +624,7 @@ body{font-family:'Nunito',sans-serif;background:linear-gradient(135deg,#FFF5F8,#
 
       <!-- ACHIEVEMENTS -->
       <div class="ach-card">
-        <h3>🏅 Başarımlar <span id="achCount">0/8</span></h3>
+        <h3>🏅 Başarımlar <span id="achCount">0/12</span></h3>
         <div class="ach-list" id="achList"></div>
       </div>
 
@@ -836,7 +838,10 @@ function saveGame(){
     ageMonths:S.ageMonths, unlocked:[...S.unlocked], doneVax:[...S.doneVax],
     unlockedAch:[...S.unlockedAch], doneDoc:[...S.doneDoc],
     totalFeeds:S.totalFeeds, milkFeeds:S.milkFeeds,
-    annesutuPopupShown:S.annesutuPopupShown, savedAt:Date.now(),
+    annesutuPopupShown:S.annesutuPopupShown,
+    challengesSolved:S.challengesSolved||0,
+    shownRegressions:[...S.shownRegressions],
+    soundEnabled:S.soundEnabled, savedAt:Date.now(),
   };
   try { localStorage.setItem(SAVE_KEY, JSON.stringify(data)); } catch(e){}
 }
@@ -854,6 +859,9 @@ function applySaveData(d){
   S.unlockedAch = new Set(d.unlockedAch||[]); S.doneDoc = new Set(d.doneDoc||[]);
   S.totalFeeds = d.totalFeeds||0;
   S.milkFeeds = d.milkFeeds||0; S.annesutuPopupShown = d.annesutuPopupShown||0;
+  S.challengesSolved = d.challengesSolved||0;
+  S.shownRegressions = new Set(d.shownRegressions||[]);
+  S.soundEnabled = d.soundEnabled!==undefined ? d.soundEnabled : true;
   S.started = true;
 }
 
@@ -952,6 +960,10 @@ const ACHIEVEMENTS = [
   {id:'vax10',       icon:'🛡️', name:'Tam Koruma',         desc:'10 aşı tamamlandı',               check:s=>s.doneVax.size>=10},
   {id:'ms10',        icon:'🌟', name:'Gelişim Takipçisi',  desc:'10 gelişim basamağı açıldı',      check:s=>s.unlocked.size>=10},
   {id:'ms20',        icon:'🎊', name:'Büyüme Ustası',      desc:'Tüm 20 basamak tamamlandı!',     check:s=>s.unlocked.size>=20},
+  {id:'doc5',        icon:'🩺', name:'Doktor Dostu',       desc:'5 doktor kontrolü tamamlandı',    check:s=>s.doneDoc&&s.doneDoc.size>=5},
+  {id:'doc_all',     icon:'🏥', name:'Sağlık Şampiyonu',   desc:'Tüm doktor kontrolleri yapıldı',  check:s=>s.doneDoc&&s.doneDoc.size>=11},
+  {id:'challenge10', icon:'⚔️', name:'Kriz Uzmanı',        desc:'10 zorlu anı çözdün',             check:s=>(s.challengesSolved||0)>=10},
+  {id:'perfectdad',  icon:'👑', name:'Efsanevi Baba',      desc:'Baba desteği %100 oldu!',         check:s=>s.dadScore>=100},
 ];
 
 const TIPS = [
@@ -971,6 +983,15 @@ const TIPS = [
   '6. aydan itibaren katı gıdaya geçerken tek tek yeni gıdalar deneyin! 🥣',
   'Diş çıkarma döneminde soğuk diş kaşıyıcı büyük rahatlama sağlar! 🦷',
   'Her çocuk farklı gelişir — karşılaştırmadan kaçının, kendi tempolarına güvenin! 🌈',
+  'Baba katılan ev işleri ve gece nöbetleri annenin zihinsel sağlığını doğrudan etkiler! 💙',
+  '3 aydan küçük bebekte 38°C ateş — hemen doktora! Beklemeden. 🚨',
+  'Bebek ağladığında sizi sevdiği için sizi çağırıyor — bu güven bağının işaretidir! 💕',
+  'Doğum sonrası depresyon 5 anneden 1\'inde görülür — utanmadan yardım isteyin! 🌸',
+  'Tek bir dilde konuşun — karışık dil kullanmak dil gelişimini yavaşlatabilir! 🗣️',
+  'Bebeğinize kitap okurken parmağınızı kelimelerin üzerinde gezdirin — okuma farkındalığı gelişir! 📖',
+  'İlk 1000 gün (hamilelik + 2 yaş) beynin %80\'i gelişir — bu dönemi iyi değerlendirin! 🧠',
+  'Hafıza oyunları (peekaboo) 8. aydan itibaren "nesne sürekliliği" kavramını öğretir! 🙈',
+  '18. ay öfke krizleri beyin gelişiminin bir parçasıdır — ceza değil, sakinlik işe yarar! 😤',
 ];
 
 const BABY_STAGES = [
@@ -1041,6 +1062,7 @@ const S = {
   posEventTimer: 70 + Math.random()*50,
   totalFeeds:0, milkFeeds:0,
   annesutuPopupShown:0,
+  challengesSolved:0,
   shownRegressions:new Set(),
   soundEnabled:true,
 };
@@ -1256,6 +1278,7 @@ function resolveChallenge(){
   const ch=S.activeChallenge;
   applyFx(ch.resolve||{});
   if(ch.id==='bez'||ch.id==='gece') S.diaper=Math.min(100,S.diaper+20);
+  S.challengesSolved=(S.challengesSolved||0)+1;
   clearChallenge();
   spawnParticles(['✅','⭐','🎉'],4);
   addLog(`✅ ${ch.name} çözüldü! Harika ebeveyn! +${ch.resolve.dp||0} GP`,'ms');
@@ -1297,6 +1320,7 @@ function checkMilestones(){
       addLog(`🌟 Yeni gelişim: ${m.name}!`,'ms');
       playSound('milestone');
       showMilestonePopup(m,true);
+      if(S.unlocked.size>=20) setTimeout(showGrandFinale, 3500);
       document.getElementById('msCount').textContent=`${S.unlocked.size}/20`;
       renderAlbum();
       break;
@@ -1399,7 +1423,7 @@ function updateUI(){
   document.getElementById('vitalHeight').textContent=gd.h+' cm';
   document.getElementById('vitalAge').textContent=S.ageMonths+'. Ay';
   // achievements count
-  document.getElementById('achCount').textContent=`${S.unlockedAch.size}/8`;
+  document.getElementById('achCount').textContent=`${S.unlockedAch.size}/${ACHIEVEMENTS.length}`;
 }
 
 function setBar(barId,lblId,val){
@@ -1863,6 +1887,115 @@ function showAchievementToast(a){
   div.innerHTML=`<span style="font-size:1.2rem">${a.icon}</span> 🏅 <strong>${a.name}</strong><br><span style="font-size:.7rem;opacity:.8">${a.desc}</span>`;
   document.body.appendChild(div);
   setTimeout(()=>div.remove(),3500);
+}
+
+// ══════════════════════════════════════════════════════
+// SOUND TOGGLE
+// ══════════════════════════════════════════════════════
+function toggleSound(){
+  S.soundEnabled=!S.soundEnabled;
+  const btn=document.getElementById('soundBtn');
+  if(btn) btn.textContent=S.soundEnabled?'🔊 Ses':'🔇 Ses';
+  if(S.soundEnabled) playSound('click');
+}
+
+// ══════════════════════════════════════════════════════
+// REPORT CARD POPUP
+// ══════════════════════════════════════════════════════
+function showReportCard(){
+  const age=S.ageMonths;
+  const gi=Math.min(24,age);
+  const gd=BABY_GROWTH[gi]||BABY_GROWTH[24];
+  const breastPct=S.totalFeeds>0?Math.round((S.milkFeeds/S.totalFeeds)*100):0;
+  const docDone=S.doneDoc?S.doneDoc.size:0;
+  const vaxDone=S.doneVax.size;
+  const msDone=S.unlocked.size;
+  const dadLvl=S.dadScore>=80?'🏆 Kahraman Baba':S.dadScore>=50?'⭐ Harika Baba':S.dadScore>=25?'👍 İyi Baba':'🌱 Başlangıç';
+  const overallScore=Math.round((msDone/20*30)+(vaxDone/21*20)+(docDone/11*15)+(S.dadScore*0.25)+(breastPct*0.1));
+
+  const barStyle=(v,color)=>`style="height:8px;background:${color};border-radius:4px;width:${Math.min(100,v)}%;margin-top:3px;transition:width .5s"`;
+  const h=`<div class="pop-ov" onclick="if(event.target===this)this.remove()">
+  <div class="pop-box">
+    <div class="pop-rainbow"></div>
+    <span class="pop-ico">📊</span>
+    <div class="pop-title">${S.babyName}'in Karnesi</div>
+    <div class="pop-sub">${age}. Ay · ${gd.w}kg · ${gd.h}cm</div>
+
+    <div style="background:linear-gradient(135deg,#FFF9E4,#FFF3CD);border-radius:16px;padding:12px;margin-bottom:12px;text-align:center">
+      <div style="font-family:'Fredoka One',cursive;font-size:2.2rem;color:#E65100">${overallScore}</div>
+      <div style="font-size:.72rem;color:#BF360C;font-weight:700">/ 100 Ebeveynlik Puanı</div>
+      <div style="height:10px;background:#FFE0B2;border-radius:5px;margin-top:6px;overflow:hidden"><div ${barStyle(overallScore,'linear-gradient(90deg,#FF9A3C,#FFD166)')}></div></div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px;font-size:.73rem">
+      <div style="background:#F0FFF4;border-radius:12px;padding:10px">
+        <div style="font-weight:800;color:#2E7D32;margin-bottom:4px">🏅 Gelişim Basamakları</div>
+        <div style="font-size:1.2rem;font-family:'Fredoka One',cursive;color:#388E3C">${msDone}<span style="font-size:.8rem">/20</span></div>
+        <div style="height:6px;background:#C8E6C9;border-radius:3px;overflow:hidden;margin-top:4px"><div ${barStyle(msDone/20*100,'#52B788')}></div></div>
+      </div>
+      <div style="background:#E8F5E9;border-radius:12px;padding:10px">
+        <div style="font-weight:800;color:#1565C0;margin-bottom:4px">💉 Aşılar</div>
+        <div style="font-size:1.2rem;font-family:'Fredoka One',cursive;color:#1976D2">${vaxDone}<span style="font-size:.8rem">/${VACCINES.length}</span></div>
+        <div style="height:6px;background:#BBDEFB;border-radius:3px;overflow:hidden;margin-top:4px"><div ${barStyle(vaxDone/VACCINES.length*100,'#48CAE4')}></div></div>
+      </div>
+      <div style="background:#FFF8E1;border-radius:12px;padding:10px">
+        <div style="font-weight:800;color:#E65100;margin-bottom:4px">🩺 Doktor Kontrolleri</div>
+        <div style="font-size:1.2rem;font-family:'Fredoka One',cursive;color:#F57C00">${docDone}<span style="font-size:.8rem">/11</span></div>
+        <div style="height:6px;background:#FFE0B2;border-radius:3px;overflow:hidden;margin-top:4px"><div ${barStyle(docDone/11*100,'#FF9A3C')}></div></div>
+      </div>
+      <div style="background:#EEF2FF;border-radius:12px;padding:10px">
+        <div style="font-weight:800;color:#283593;margin-bottom:4px">👨 Baba Desteği</div>
+        <div style="font-size:1.2rem;font-family:'Fredoka One',cursive;color:#3949AB">${Math.round(S.dadScore)}<span style="font-size:.8rem">%</span></div>
+        <div style="height:6px;background:#C5CAE9;border-radius:3px;overflow:hidden;margin-top:4px"><div ${barStyle(S.dadScore,'linear-gradient(90deg,#3949AB,#7986CB)')}></div></div>
+      </div>
+    </div>
+
+    <div style="background:#FFF0F5;border-radius:12px;padding:10px;margin-bottom:12px;font-size:.74rem">
+      <div style="font-weight:800;color:#C2185B;margin-bottom:6px">🤱 Anne Sütü İstatistiği</div>
+      <div style="color:#880E4F">Toplam Beslenme: <strong>${S.totalFeeds}</strong> kez</div>
+      <div style="color:#880E4F;margin-top:3px">Anne Sütü Oranı: <strong>${breastPct}%</strong></div>
+      <div style="color:#880E4F;margin-top:3px">Kriz Çözümleri: <strong>${S.challengesSolved||0}</strong></div>
+      ${breastPct>=80?'<div style="color:#C2185B;font-weight:700;margin-top:4px">🌟 Anne Sütü Şampiyonusunuz!</div>':''}
+    </div>
+
+    <div style="background:#FCE4EC;border-radius:12px;padding:10px;margin-bottom:14px;text-align:center;font-size:.74rem">
+      <div style="font-weight:800;color:#C2185B">💖 ${S.momName} — Sen Gerçek Bir Kahraman!</div>
+      <div style="color:#880E4F;margin-top:4px;font-style:italic">"Her uyumayan geceye, her sarılmaya, her emzirmeye teşekkürler. Anne olmak bu dünyanın en büyük işidir."</div>
+    </div>
+
+    <button class="pop-btn" onclick="this.closest('.pop-ov').remove()">💖 Harika Gidiyoruz!</button>
+  </div></div>`;
+  document.body.insertAdjacentHTML('beforeend',h);
+}
+
+// ══════════════════════════════════════════════════════
+// GRAND FINALE
+// ══════════════════════════════════════════════════════
+function showGrandFinale(){
+  playSound('achieve');
+  spawnParticles(['🎊','🌟','🎉','💖','⭐','🏆'],12);
+  const h=`<div class="pop-ov" onclick="if(event.target===this)this.remove()">
+  <div class="pop-box" style="background:linear-gradient(135deg,#FFF9E4,#FFF0F5,#EEF2FF)">
+    <div class="pop-rainbow"></div>
+    <span class="pop-ico">🏆</span>
+    <div class="pop-title" style="color:#E65100">Tebrikler!</div>
+    <div class="pop-sub" style="color:var(--purple);font-weight:700;font-size:.9rem">Tüm 20 Gelişim Basamağını Tamamladınız!</div>
+    <div style="text-align:center;font-size:2.5rem;margin:12px 0">🎊👶🌟🎉</div>
+    <div class="pop-sec" style="text-align:center">
+      <p style="font-size:.84rem;font-weight:700;color:var(--text)">${S.babyName}, ${S.ageMonths}. ayında tüm gelişim basamaklarını geçti!</p>
+      <p style="font-size:.78rem;color:#555;margin-top:8px">Bu yolculukta emek veren herkese sonsuz teşekkür...</p>
+    </div>
+    <div style="background:#FCE4EC;border-radius:14px;padding:14px;text-align:center;margin-bottom:12px">
+      <div style="font-family:'Fredoka One',cursive;font-size:1.1rem;color:#C2185B">💖 ${S.momName}</div>
+      <div style="font-size:.76rem;color:#880E4F;margin-top:4px">"Sen 24 saat, 7 gün, yıllarca bu bebeğe hayat verdin. Her damlası için, her uyumayan gece için TEŞEKKÜRLER. Sen gerçek bir kahramansın."</div>
+    </div>
+    <div style="background:#EEF2FF;border-radius:14px;padding:12px;text-align:center;margin-bottom:14px">
+      <div style="font-family:'Fredoka One',cursive;font-size:1rem;color:#283593">💙 ${S.dadName}</div>
+      <div style="font-size:.74rem;color:#3949AB;margin-top:4px">"Baba olarak burada olmak, katılmak, destek vermek — bu en büyük hediyeydi. ${S.babyName} büyüdüğünde bunu hatırlayacak."</div>
+    </div>
+    <button class="pop-btn" onclick="this.closest('.pop-ov').remove()" style="background:linear-gradient(135deg,#FF6B9D,#FFD166,#52B788,#C77DFF);background-size:300% 300%;animation:gradShift 3s ease infinite">🌟 Muhteşem Bir Yolculuktu!</button>
+  </div></div>`;
+  document.body.insertAdjacentHTML('beforeend',h);
 }
 
 function initStars(){
