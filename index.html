@@ -647,6 +647,125 @@ body{font-family:'Nunito',sans-serif;background:linear-gradient(135deg,#FFF5F8,#
 // DATA
 // ══════════════════════════════════════════════════════
 
+// ══════════════════════════════════════════════════════
+// MONTHLY DEVELOPMENT REPORTS
+// ══════════════════════════════════════════════════════
+const MONTH_REPORTS = {
+  1:{emoji:'👁️',title:'1. Ay — Keşif Başlıyor!',
+    can:['20-30 cm mesafeden yüz görür','Seslere tepki verir','Refleksler aktif (emme, kavrama)'],
+    focus:['Günde 3-5 kez Tummy Time','Göz teması ve konuşma','Ninni ve yumuşak müzik'],
+    warn:['İşitme tepkisi yoksa','Beslenme güçlüğü varsa','1 haftada doğum kilosuna dönmediyse'],
+    momTip:'Emzirme düzeni henüz oturuyor — sabırlı olun, 4-6. haftada kolaylaşır. Yalnız hissetmek normaldir!',
+    dadTip:'Gece nöbetine katıl! Anne uyurken bebeği bana bak. Bu en büyük destektir. 💙',
+  },
+  2:{emoji:'😊',title:'2. Ay — İlk Gülümseme!',
+    can:['Sosyal gülümseme başlar','Seslere döner','Kısa süre başı tutar'],
+    focus:['Ayna oyunları','Yüz mimiklerini taklit etme','Renkli kontrast nesneler gösterme'],
+    warn:['Gülümseme yoksa','Seslere ilgisizlik varsa'],
+    momTip:'Doğum sonrası duygusal dalgalanmalar normaldir. Kendinize iyi bakın! Yardım istemekten çekinmeyin.',
+    dadTip:'Banyoyu sen yap! Bu özel anı kaçırma.',
+  },
+  3:{emoji:'💪',title:'3. Ay — Güçleniyor!',
+    can:['Başını 45-90° kaldırır','Elleriyle oynamaya başlar','Sese döner'],
+    focus:['Karna yatış egzersizleri','Çıngırak ve sallanan oyuncaklar','Konuşma ve tekrar'],
+    warn:['Başını hiç kaldıramıyorsa','Nesneyi gözüyle takip etmiyorsa'],
+    momTip:'Bu dönemde anne yalnızlığı zirvededir. Anne grupları veya aile desteği çok değerlidir.',
+    dadTip:'Bebeği sen uyut — gece rutinine katıl. Annenin yükünü pay.',
+  },
+  4:{emoji:'🤸',title:'4. Ay — Uyku Regresyonu!',
+    can:['Uzanır ve nesneleri kavrar','Sesleri taklit eder','Büyük gülüşler çıkarır'],
+    focus:['Farklı dokular hissettirme','Şarkılar ve ritim','Oturma pozisyonu desteği'],
+    warn:['4. ay uyku regresyonu normaldir! Bitmez, geçer.','Ani gece uyanmaları artarsa panikmeyin.'],
+    momTip:'4. ay uyku regresyonu en zorlu dönemlerden biri. İkisi de bitkin olabilirsiniz — bu normal!',
+    dadTip:'Uyku regresyonu döneminde özellikle geceleri anneyle nöbet tut. Bu dönem 2-6 hafta sürer.',
+  },
+  6:{emoji:'🪑',title:'6. Ay — Desteksiz Oturma!',
+    can:['Kısa süre desteksiz oturur','Nesneleri ağzına götürür','Katı gıdaya başlamaya hazır'],
+    focus:['Katı gıda tanıtımı (tek tek)','Pincer grasp egzersizleri','Peekaboo oyunu'],
+    warn:['Katı gıda alerjisi takibi (yeni gıdayı 3 gün bekle)','Oturma çok gecikiyorsa'],
+    momTip:'Katı gıdaya geçiş annenin işini artırır. Baba püreler yapabilir, beslemeye yardım edebilir!',
+    dadTip:'Katı gıda verebilirsin! Bu özel görevi üstlen — bebek seninle güzel anılar yaşar.',
+  },
+  9:{emoji:'🚀',title:'9. Ay — Hareketli Dönem!',
+    can:['Emekler veya sürünür','Tutunarak ayağa kalkmaya çalışır','Peekaboo oyunu oynar'],
+    focus:['Güvenli keşif alanı oluşturma','El-göz koordinasyon oyunları','Basit kelimeler tekrarlama'],
+    warn:['Ev güvenliği! Prizleri, keskin köşeleri kapatın.','Küçük nesneleri ortadan kaldırın (boğulma riski).'],
+    momTip:'Bu dönemde bebek sürekli hareket eder — fiziksel yorgunluk artar. Mola alın!',
+    dadTip:'Eve güvenlik önlemleri almak babaya mükemmel bir görev! Bugün başla.',
+  },
+  12:{emoji:'🎂',title:'1 YAŞ! Büyük Kutlama!',
+    can:['İlk adımlar atıyor (veya atmak üzere)','10-15 kelime söyler','Bardaktan içebilir'],
+    focus:['Yürümeyi teşvik etme','Kelime tekrarlama oyunları','Kitap ve resim kartları'],
+    warn:['15 kelime söylemiyorsa doktora','Yürüme 18. aya kadar başlamazsa değerlendirin'],
+    momTip:'1 yılı tamamladın! Bu muazzam bir başarı. Anne sütü verdiysen süper kahramansın! 💖',
+    dadTip:'Anneye 1. yıl kutlaması yap! O bu yılı senin için de yaşadı. Teşekkür et.',
+  },
+  18:{emoji:'🏃',title:'18. Ay — Toddler Fırtınası!',
+    can:['Koşar','50+ kelime bilir','İki kelimeli cümle kurmaya başlar'],
+    focus:['Sınır koyma ve tutarlılık','Basit yönergeler (git, getir)','Yaratıcı oyun (boya, hamur)'],
+    warn:['18. ay uyku regresyonu normaldir','Öfke krizleri başlıyorsa: sabırlı ol, güvende ol, tutarlı ol'],
+    momTip:'Toddler dönemi hem meşakkatli hem harika! Her "hayır" beyninin gelişim işaretidir.',
+    dadTip:'Toddler sınırları test eder — anne ve baba tutarlı olmalı! Birlikte karar alın.',
+  },
+  24:{emoji:'🎊',title:'2 YAŞ! Küçük Çocuk!',
+    can:['İki kelimeli cümleler kurar','Koşar, atlar','Sevdiği insanları tanıtır'],
+    focus:['Oyun grupları ve sosyalleşme','Hikaye anlatma ve kitap okuma','Tuvalet eğitimine hazırlık'],
+    warn:['2. yıl otizm taraması yapıldı mı? Mutlaka yaptırın.','50 kelime yoksa doktora gidin.'],
+    momTip:'İki yılı geçtiniz — bu yolculuk herkesi değiştirdi. Sen artık gerçek bir anne! 💖',
+    dadTip:'2 yıl boyunca ne kadar destek verdin? Dürüstçe değerlendir ve daha iyisi için söz ver.',
+  },
+};
+
+// ══════════════════════════════════════════════════════
+// POSITIVE SURPRISE EVENTS
+// ══════════════════════════════════════════════════════
+const POS_EVENTS_EARLY = [ // 0-6 months
+  {msg:(n,d)=>`💖 ${n} anneye baktı ve güldü! Bu an ödüle değer!`, dp:20, sfx:['💖','😄'],fx:{happy:10}},
+  {msg:(n,d)=>`🤲 ${n} parmağınızı sıkıca tuttu!`, dp:12, sfx:['🤲','💛'],fx:{happy:8}},
+  {msg:(n,d)=>`🌟 ${n} dil çıkardığınızda taklit etti!`, dp:18, sfx:['🌟','😊'],fx:{smart:2}},
+  {msg:(n,d)=>`😂 ${n} ilk kez kıkırdadı! Evin en güzel sesi!`, dp:25, sfx:['😂','🎉'],fx:{happy:15}},
+  {msg:(n,d)=>`💤 ${n} 4 saat kesintisiz uyudu! Siz de biraz dinlenin!`, dp:20, sfx:['💤','✨'],fx:{energy:15}},
+  {msg:(n,d)=>`👀 ${n} oyuncağını 10 dakika inceledi — merakı gelişiyor!`, dp:15, sfx:['👀','🧠'],fx:{smart:3}},
+  {msg:(n,d)=>`🎵 Ninni söylediğinizde anında sakinleşti!`, dp:14, sfx:['🎵','💙'],fx:{energy:8}},
+];
+const POS_EVENTS_MID = [ // 6-12 months
+  {msg:(n,d)=>`🍌 ${n} ilk katı gıdasını sevdi! Afiyetle!`, dp:22, sfx:['🍌','😋'],fx:{hunger:10}},
+  {msg:(n,d)=>`🐾 ${n} emekledi ve sizi takip etti!`, dp:28, sfx:['🐾','🎉'],fx:{happy:12}},
+  {msg:(n,d)=>`👋 ${n} ilk kez el salladı — büyüyorsun!`, dp:20, sfx:['👋','⭐'],fx:{smart:3}},
+  {msg:(n,d)=>`🙈 ${n} Peekaboo oynarken kahkahalar attı!`, dp:18, sfx:['😂','🌟'],fx:{happy:15}},
+  {msg:(n,d)=>`📦 ${n} saati doldu ama uyumak istemedi — keşfetmek daha eğlenceli!`, dp:15, sfx:['✨','🧸'],fx:{smart:2}},
+];
+const POS_EVENTS_LATE = [ // 12-24 months
+  {msg:(n,d)=>`💬 ${n} ilk anlamlı kelimesini söyledi!`, dp:35, sfx:['💬','🌟','🎉'],fx:{happy:15,smart:5}},
+  {msg:(n,d)=>`👣 ${n} bugün 5 adım attı! Bravo!`, dp:30, sfx:['👣','🎊'],fx:{happy:20}},
+  {msg:(n,d)=>`🎨 ${n} ilk resmini yaptı — buzdolabına asın!`, dp:20, sfx:['🎨','💛'],fx:{smart:5}},
+  {msg:(n,d)=>`📚 ${n} aynı kitabı 5 kez okuttu! Kitap sevgisi!`, dp:22, sfx:['📚','🌈'],fx:{smart:4}},
+  {msg:(n,d)=>`🤗 ${n} ${d||'babayı'} gördüğünde koşarak geldi!`, dp:25, sfx:['🤗','💙'],fx:{happy:15}},
+  {msg:(n,d)=>`🎵 ${n} dans etmeye başladı! Müzik aşkı!`, dp:18, sfx:['🎵','💃'],fx:{happy:12}},
+];
+
+// ══════════════════════════════════════════════════════
+// SLEEP REGRESSION EVENTS
+// ══════════════════════════════════════════════════════
+const SLEEP_REGRESSIONS = {
+  4: {title:'4. Ay Uyku Regresyonu!',
+    info:'4. ay uyku regresyonu, beyin gelişiminin hızlandığı ve uyku döngülerinin yeniden yapılandığı bu dönemde ortaya çıkar. Bebek daha sık uyanır.',
+    tip:'Bu dönem 2-6 hafta sürer ve kendi kendine geçer. Geceleri nöbet tutun, sabırlı olun. BU GEÇECEK!',
+    momMsg:'Anne, sen çok güçlüsün! Uyku açığı içindeyken bile devam ediyorsun. Bunu unutma. 💖'},
+  8: {title:'8-10. Ay Uyku Regresyonu!',
+    info:'Emekleme, oturma ve tutunarak ayağa kalkma gibi motor becerilerin gelişimi uyku düzenini bozar.',
+    tip:'Gün içi aktiviteleri artırın, enerji boşaltsın. Uyku rutinini tutarlı tutun.',
+    momMsg:'Bu dönem de geçecek! Her regresyon bir gelişimin habercisidir. 🌟'},
+  12: {title:'12. Ay Uyku Regresyonu!',
+    info:'Yürüme ve sosyal gelişim sırasında beyin o kadar aktif ki uyku düzeni bozulur. Separation anxiety da başlar.',
+    tip:'Uyku öncesi rutini kısalt ama güçlendir. Güven verici nesneler (sevilen oyuncak) yardımcı olur.',
+    momMsg:'1 yılın sonunda bu da olur! Ama kısa sürer. Beraber geçersiniz. 💪'},
+  18: {title:'18. Ay Uyku Regresyonu!',
+    info:'Dil patlaması, bağımsızlık isteği ve diş çıkarma bir arada uyku bozukluğuna yol açar.',
+    tip:'Sınırları net koyun. "Yatak odana geri götürürüm" diyip tutun. Tutarlılık anahtardır.',
+    momMsg:'Toddler fırtınası + uyku regresyonu = zorlu dönem. Ama en iyi aile olarak geçirirsiniz! 💖'},
+};
+
 const MILESTONES = [
   {id:1,dp:0,icon:'😢',name:'İlk Ağlama',age:'Doğum',cat:'Sosyal',dev:'Yenidoğan bebekler ağlayarak ihtiyaçlarını ifade eder. Bu onların ilk iletişim aracıdır.',tip:'Her ağlama farklı bir ihtiyacı ifade eder. Tok mu? Bezi kirli mi? Kucak mı istiyor? Zamanla öğreneceksiniz!'},
   {id:2,dp:200,icon:'👁️',name:'Yüz Takibi',age:'1. Ay',cat:'Motor',dev:'Bebekler doğumdan itibaren 20-30 cm mesafedeki yüzleri görebilir. 1. ayda yüzleri takip etmeye başlarlar.',tip:'20-25 cm mesafede durarak yavaşça sağa sola hareket edin. Göz kaslarını güçlendirir.'},
@@ -919,8 +1038,11 @@ const S = {
   lastTick:Date.now(), currentStage:0,
   momMsgIdx:0, momMsgTimer:0,
   tipIdx:0, tipTimer:0,
+  posEventTimer: 70 + Math.random()*50,
   totalFeeds:0, milkFeeds:0,
   annesutuPopupShown:0,
+  shownRegressions:new Set(),
+  soundEnabled:true,
 };
 
 // ══════════════════════════════════════════════════════
@@ -1014,6 +1136,9 @@ function tick(){
   if(nt) nt.style.opacity=nightOpacity;
   // achievements
   checkAchievements();
+  // positive events
+  S.posEventTimer-=dt;
+  if(S.posEventTimer<=0){ spawnPositiveEvent(); S.posEventTimer=60+Math.random()*80; }
   // age
   const newAge=Math.min(24,Math.floor(S.dp/600));
   if(newAge!==S.ageMonths){
@@ -1028,19 +1153,25 @@ function tick(){
 function clamp(v,min=0,max=100){return Math.max(min,Math.min(max,v))}
 
 function onAgeChange(mo){
-  // unlock age-gated buttons
-  if(mo>=3){['btn-jimnastik','btn-yuzme'].forEach(id=>{const b=document.getElementById(id);if(b)b.disabled=false})}
-  if(mo>=4){const b=document.getElementById('btn-mama');if(b)b.disabled=false;}
-  if(mo>=6){['btn-su','btn-blok'].forEach(id=>{const b=document.getElementById(id);if(b)b.disabled=false})}
-  if(mo>=9){const b=document.getElementById('btn-sekil');if(b)b.disabled=false;}
-  if(mo>=12){
-    const b=document.getElementById('btn-teker');if(b)b.disabled=false;
+  applyAgeUnlocks(mo);
+  if(mo===12){
     document.getElementById('milkCard').style.opacity='0.4';
     addLog(`🤱 ${S.babyName} 12 aya geldi! Anne sütü tamamlandı — tebrikler ${S.momName}! 💖`,'ms');
   }
   triggerVaxDue(mo);
   renderDoc();
   addLog(`📅 ${S.babyName} ${mo}. aya girdi!`);
+  // Monthly development report (key months)
+  if(MONTH_REPORTS[mo]){
+    setTimeout(()=>showMonthReport(mo), 1500);
+  }
+  // Sleep regression warnings
+  if(SLEEP_REGRESSIONS[mo]&&!S.shownRegressions.has(mo)){
+    S.shownRegressions.add(mo);
+    setTimeout(()=>showSleepRegressionPopup(SLEEP_REGRESSIONS[mo]), 4000);
+  }
+  // Play age milestone sound
+  playSound('age');
 }
 
 // ══════════════════════════════════════════════════════
@@ -1081,6 +1212,7 @@ function applyFx(fx){
 function babyClick(){
   S.dp+=3; S.happy=clamp(S.happy+3);
   spawnParticles(['⭐','✨','💫','🌟'],2);
+  playSound('click');
 }
 
 // ══════════════════════════════════════════════════════
@@ -1106,6 +1238,7 @@ function forceChallenge(id){
 function activateChallenge(ch){
   S.activeChallenge=ch;
   S.challengeTimer=45;
+  playSound('challenge');
   const el=document.getElementById('chCard');
   el.style.display='block';
   el.className='ch-card '+(ch.urgent?'urgent':'medium');
@@ -1162,6 +1295,7 @@ function checkMilestones(){
       }
       spawnParticles(['🌟','⭐','🎉'],6);
       addLog(`🌟 Yeni gelişim: ${m.name}!`,'ms');
+      playSound('milestone');
       showMilestonePopup(m,true);
       document.getElementById('msCount').textContent=`${S.unlocked.size}/20`;
       renderAlbum();
@@ -1516,6 +1650,112 @@ function addLog(msg,cls=''){
   d.textContent=`${time} — ${msg}`;
   w.insertBefore(d,w.firstChild);
   while(w.children.length>25)w.removeChild(w.lastChild);
+}
+
+// ══════════════════════════════════════════════════════
+// WEB AUDIO
+// ══════════════════════════════════════════════════════
+let _audioCtx=null;
+function getACtx(){ if(!_audioCtx&&S.soundEnabled) try{_audioCtx=new(window.AudioContext||window.webkitAudioContext)()}catch(e){} return _audioCtx; }
+function tone(freq,dur,type='sine',gain=0.18,delay=0){
+  const ctx=getACtx(); if(!ctx)return;
+  const o=ctx.createOscillator(),g=ctx.createGain();
+  o.connect(g); g.connect(ctx.destination);
+  o.type=type; o.frequency.value=freq;
+  g.gain.setValueAtTime(0,ctx.currentTime+delay);
+  g.gain.linearRampToValueAtTime(gain,ctx.currentTime+delay+0.02);
+  g.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+delay+dur);
+  o.start(ctx.currentTime+delay); o.stop(ctx.currentTime+delay+dur+0.05);
+}
+function playSound(type){
+  if(!S.soundEnabled)return;
+  if(type==='click')    tone(880,0.08,'sine',0.12);
+  if(type==='milestone')[523,659,784,1047].forEach((f,i)=>tone(f,0.25,'sine',0.2,i*0.12));
+  if(type==='challenge')[220,180].forEach((f,i)=>tone(f,0.3,'sawtooth',0.12,i*0.15));
+  if(type==='achieve')  [392,523,659,784,1047].forEach((f,i)=>tone(f,0.3,'sine',0.18,i*0.1));
+  if(type==='vax')      [523,659].forEach((f,i)=>tone(f,0.2,'sine',0.15,i*0.15));
+  if(type==='pos')      [659,784].forEach((f,i)=>tone(f,0.2,'sine',0.14,i*0.12));
+  if(type==='age')      [523,587,659,698,784].forEach((f,i)=>tone(f,0.25,'sine',0.16,i*0.1));
+}
+
+// ══════════════════════════════════════════════════════
+// MONTHLY REPORT POPUP
+// ══════════════════════════════════════════════════════
+function showMonthReport(mo){
+  const r=MONTH_REPORTS[mo]; if(!r)return;
+  const canList=r.can.map(c=>`<li>${c}</li>`).join('');
+  const focusList=r.focus.map(f=>`<li>${f}</li>`).join('');
+  const warnList=r.warn.map(w=>`<li style="color:var(--red)">⚠️ ${w}</li>`).join('');
+  const h=`<div class="pop-ov" onclick="if(event.target===this)this.remove()">
+    <div class="pop-box">
+      <div class="pop-rainbow"></div>
+      <span class="pop-ico">${r.emoji}</span>
+      <div class="pop-title">${r.title}</div>
+      <div class="pop-sub">Aylık Gelişim Raporu</div>
+      <div class="pop-sec"><h4>✅ Artık Yapabiliyor</h4><ul style="padding-left:14px;font-size:.77rem;color:#555;line-height:1.6">${canList}</ul></div>
+      <div class="pop-sec"><h4>🎯 Bu Ay Odaklanın</h4><ul style="padding-left:14px;font-size:.77rem;color:#555;line-height:1.6">${focusList}</ul></div>
+      <div class="pop-sec" style="background:#FFF5F5"><h4 style="color:var(--red)">🔍 Dikkat Edin</h4><ul style="padding-left:14px;font-size:.75rem;line-height:1.6">${warnList}</ul></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px">
+        <div style="background:#FFF0F5;border-radius:12px;padding:10px;font-size:.72rem">
+          <div style="font-weight:800;color:var(--pink);margin-bottom:4px">💖 ${S.momName} için</div>
+          <div style="color:#880E4F;line-height:1.4">${r.momTip}</div>
+        </div>
+        <div style="background:#EEF2FF;border-radius:12px;padding:10px;font-size:.72rem">
+          <div style="font-weight:800;color:#3949AB;margin-bottom:4px">💙 ${S.dadName} için</div>
+          <div style="color:#283593;line-height:1.4">${r.dadTip}</div>
+        </div>
+      </div>
+      <button class="pop-btn" onclick="this.closest('.pop-ov').remove()">📋 Anladım, Devam!</button>
+    </div></div>`;
+  document.body.insertAdjacentHTML('beforeend',h);
+}
+
+// ══════════════════════════════════════════════════════
+// SLEEP REGRESSION
+// ══════════════════════════════════════════════════════
+function showSleepRegressionPopup(r){
+  const h=`<div class="pop-ov" onclick="if(event.target===this)this.remove()">
+    <div class="pop-box">
+      <div class="pop-rainbow" style="background:linear-gradient(90deg,#48CAE4,#5B8DEE,#C77DFF)"></div>
+      <span class="pop-ico">🌙</span>
+      <div class="pop-title" style="color:#3949AB">${r.title}</div>
+      <div class="pop-sub">Bu normaldir — geçecek!</div>
+      <div class="pop-sec"><h4>ℹ️ Neden Oluyor?</h4><p>${r.info}</p></div>
+      <div class="pop-tip"><div class="pop-tip-t">💡 Bu Dönemde Ne Yapmalı?</div><p>${r.tip}</p></div>
+      <div style="background:linear-gradient(135deg,#FCE4EC,#F8BBD9);border-radius:12px;padding:12px;margin-bottom:14px;text-align:center">
+        <div style="font-size:1.2rem;margin-bottom:4px">💖</div>
+        <div style="font-size:.78rem;color:#880E4F;font-style:italic;line-height:1.4">${r.momMsg}</div>
+      </div>
+      <button class="pop-btn" style="background:linear-gradient(135deg,#48CAE4,#5B8DEE)" onclick="this.closest('.pop-ov').remove()">💙 Güçlüyüz, Geçer!</button>
+    </div></div>`;
+  document.body.insertAdjacentHTML('beforeend',h);
+}
+
+// ══════════════════════════════════════════════════════
+// POSITIVE EVENTS
+// ══════════════════════════════════════════════════════
+function spawnPositiveEvent(){
+  let pool;
+  if(S.ageMonths<6)       pool=POS_EVENTS_EARLY;
+  else if(S.ageMonths<12) pool=POS_EVENTS_MID;
+  else                    pool=POS_EVENTS_LATE;
+  const ev=pool[Math.floor(Math.random()*pool.length)];
+  const msg=ev.msg(S.babyName,S.dadName);
+  S.dp+=ev.dp;
+  if(ev.fx) applyFx(ev.fx);
+  spawnParticles(ev.sfx,4);
+  playSound('pos');
+  addLog(`🌈 ${msg}`,'ms');
+  showPosToast(msg);
+}
+
+function showPosToast(msg){
+  const d=document.createElement('div');
+  d.className='toast';
+  d.style.cssText='border-color:var(--purple);background:linear-gradient(135deg,#F0E6FF,#FFF0F5);max-width:320px;font-size:.78rem;line-height:1.4';
+  d.textContent=msg;
+  document.body.appendChild(d);
+  setTimeout(()=>d.remove(),3500);
 }
 
 // ══════════════════════════════════════════════════════
