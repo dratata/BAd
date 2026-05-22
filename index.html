@@ -297,6 +297,23 @@ body{font-family:'Nunito',sans-serif;background:linear-gradient(135deg,#FFF5F8,#
 .ach-popup{background:linear-gradient(135deg,#FFF8E1,#FFF3CD)!important}
 .ach-popup .pop-title{color:#E65100!important}
 
+/* mom energy */
+.me-card{background:linear-gradient(135deg,#FCE4EC,#FFF0F5);border-radius:14px;padding:10px 12px;border:2px solid #F48FB1;margin-bottom:8px}
+.me-top{display:flex;justify-content:space-between;font-size:.75rem;font-weight:800;color:#C2185B;margin-bottom:5px}
+.me-bar{height:9px;background:rgba(194,24,91,.2);border-radius:9px;overflow:hidden}
+.me-fill{height:100%;background:linear-gradient(90deg,#FF6B9D,#FF8FAB);border-radius:9px;transition:width .5s}
+.me-tip{font-size:.63rem;color:#880E4F;margin-top:4px;line-height:1.3}
+.me-fill.critical{animation:critBlink .7s ease-in-out infinite;background:linear-gradient(90deg,#FF4757,#FF6B81)!important}
+
+/* food guide */
+.food-row{display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid #F0E6FF;font-size:.74rem}
+.food-mo{min-width:52px;font-weight:800;color:var(--purple);font-size:.68rem}
+.food-items{color:#555;line-height:1.4}
+
+/* sleep chips */
+.sleep-row{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-top:5px}
+.sleep-chip{background:rgba(72,202,228,.2);border-radius:8px;padding:3px 8px;font-size:.65rem;font-weight:700;color:#0277BD}
+
 /* scrollbars */
 ::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--purple);border-radius:10px}
 
@@ -564,6 +581,10 @@ body{font-family:'Nunito',sans-serif;background:linear-gradient(135deg,#FFF5F8,#
           <button class="abt play" onclick="doAct('ninni')">
             <span class="ai">🎵</span><span class="an">Ninni Söyle</span><span class="ae">+12 Dinçlik · +10 GP</span>
           </button>
+          <button class="abt special" style="grid-column:1/-1;background:linear-gradient(135deg,#FF6B9D,#E91E8C);animation:none;flex-direction:row;padding:11px 14px;gap:10px" onclick="doAct('mom-dinlen')">
+            <span class="ai" style="font-size:1.6rem">☕</span>
+            <div><div class="an">Anne Molası</div><div class="ae">Anne enerjisi yenilenir! +15 GP</div></div>
+          </button>
         </div>
       </div>
 
@@ -573,6 +594,11 @@ body{font-family:'Nunito',sans-serif;background:linear-gradient(135deg,#FFF5F8,#
           <div class="dad-hdr-title">👨‍👶 Baba Katılım Puanı</div>
           <div class="dad-bar"><div class="dad-fill" id="dadFill" style="width:0%"></div></div>
           <div class="dad-score-lbl" id="dadLbl">0 / 100 — Baba desteğini artır!</div>
+        </div>
+        <div class="me-card">
+          <div class="me-top"><span>💖 <span id="momNameLbl">Annenin</span> Enerjisi</span><span id="sMomWb">85%</span></div>
+          <div class="me-bar"><div class="me-fill" id="bMomWb" style="width:85%"></div></div>
+          <div class="me-tip" id="momWbTip">Baba destek verdikçe annenin enerjisi yenilenir!</div>
         </div>
         <div class="act-grid">
           <button class="abt dad" onclick="doAct('dad-saril')">
@@ -592,6 +618,10 @@ body{font-family:'Nunito',sans-serif;background:linear-gradient(135deg,#FFF5F8,#
           </button>
           <button class="abt dad" onclick="doAct('dad-bez')">
             <span class="ai">🧻</span><span class="an">Baba Bez Değiştirsin</span><span class="ae">Bez sıfırla · +5 GP</span>
+          </button>
+          <button class="abt dad" style="grid-column:1/-1;background:linear-gradient(135deg,#E91E8C,#C2185B);flex-direction:row;padding:12px 14px;gap:10px" onclick="doAct('dad-anne')">
+            <span class="ai" style="font-size:1.6rem">💐</span>
+            <div><div class="an">Anneye Destek Ol</div><div class="ae">Annenin enerjisini yenile! +15 GP · +Baba Puan</div></div>
           </button>
         </div>
         <div class="mom-card">
@@ -822,6 +852,8 @@ const CHALLENGES = [
   {id:'dis',icon:'🦷',name:'Diş Çıkarıyor!',desc:'Bebek diş ağrısından ağlıyor, her şeyi ısırıyor!',urgent:false,action:'Diş Kaşıyıcı Ver',resolve:{happy:15,health:5,dp:10},penaltyMsg:'Diş ağrısı devam etti!',info:'Diş çıkarma genellikle 4-7. aylarda başlar ve 2-3 yaşa kadar sürer. İlk dişler alt ön dişlerdir. Ateş, ishal, kabarcık gibi belirtiler diş çıkarmayla ilgili değildir.',tip:'Soğutulmuş diş kaşıyıcı kullanın, diş etini temiz parmakla masaj yapın. Diş çıkarma jeli kullanacaksanız pediatristle görüşün.'},
   {id:'gece',icon:'🌙',name:'Gece Uyanması!',desc:'Gece 3! Bebek uyandı ve ağlıyor!',urgent:true,action:'Gece Kalk & Sakinleştir',resolve:{energy:20,happy:15,dp:15},penaltyMsg:'Bebek uzun süre gece ağladı!',info:'0-3 aylık bebekler gece 3-5 kez uyanır. 3-6 aylık bebekler 2-3 kez. Bu tamamen normaldir! Bebekler REM uykusu fazlasında daha sık uyanır.',tip:'Gece kalkma sorumluluğunu anne ve baba paylaşmalı! Biri 2 gece kalkarsa diğeri ertesi 2 gece kalkmalı. Bu sağlıklı ilişkinin temelidir.'},
   {id:'ates',icon:'🤒',name:'Ateş!',desc:'Bebeğin ateşi yükseldi! Hemen kontrol et!',urgent:true,action:'Doktoru Ara / Ateş Düşür',resolve:{health:20,happy:8,dp:12},penaltyMsg:'Ateş tedavi edilmedi!',info:'3 aydan küçük bebeklerde 38°C ateşte HEMEN doktora gidin. Büyük bebeklerde 38.5°C altı ateş genellikle zararlı değildir. Bol sıvı verin, uygun ateş düşürücü kullanın.',tip:'Ateş ölçümünde koltuk altı normalden 0.5°C düşük gösterir. Kulak termometresi veya rektal ölçüm daha doğrudur.'},
+  {id:'kolik',icon:'😫',name:'Kolik Krizi!',desc:'Bebek saatlerce ağlıyor — gaz sancısı şiddetli!',urgent:true,action:'Karın Masajı & Sallama',resolve:{happy:22,health:10,dp:18,energy:-5},penaltyMsg:'Kolik uzun sürdü, bebek tüpüne döndü!',info:'Kolik, sağlıklı bebeklerde haftada 3+ gün, günde 3+ saat süren ağlama olarak tanımlanır. 3. ayda zirveye ulaşır ve genellikle 4. ayda kendiliğinden geçer. Kesin nedeni bilinmemektedir.',tip:'3 S: Sallama (sallanmak), Sarılma (sıkıca), Seslendirme (şşş). Bu üçlü kombinasyon çoğu zaman işe yarar. Sabırlı olun — bu geçecek!'},
+  {id:'atlama',icon:'🧠',name:'Gelişim Atlaması!',desc:'Bebek birden huysuzlaştı — bu gelişim atlamasının işareti!',urgent:false,action:'Sabırlı Ol & Fazla Sarıl',resolve:{happy:18,dp:25,energy:-3},penaltyMsg:'Gelişim atlaması zor geçti!',info:'Gelişim atlamaları (Wonder Weeks) beynin hızlı büyüdüğü dönemlerdir. Bebek daha sinirli, uyumsuz ve sarılmak ister. Bu kısa sürer ve ardından büyük bir gelişim gelir!',tip:'Gelişim atlaması sırasında fazladan sarılın, rutini koruyun ve sabırlı olun. Atlama bittikten sonra bebeğiniz tamamen farklı bir beceri kazanmış olacak!'},
 ];
 
 // ══════════════════════════════════════════════════════
@@ -834,7 +866,7 @@ function saveGame(){
   const data = {
     babyName:S.babyName, gender:S.gender, momName:S.momName, dadName:S.dadName,
     dp:S.dp, hunger:S.hunger, happy:S.happy, energy:S.energy, health:S.health,
-    diaper:S.diaper, milk:S.milk, dadScore:S.dadScore, dayTime:S.dayTime,
+    diaper:S.diaper, milk:S.milk, dadScore:S.dadScore, momWellbeing:S.momWellbeing, dayTime:S.dayTime,
     ageMonths:S.ageMonths, unlocked:[...S.unlocked], doneVax:[...S.doneVax],
     unlockedAch:[...S.unlockedAch], doneDoc:[...S.doneDoc],
     totalFeeds:S.totalFeeds, milkFeeds:S.milkFeeds,
@@ -853,7 +885,7 @@ function applySaveData(d){
   S.momName = d.momName||'Anne'; S.dadName = d.dadName||'Baba';
   S.dp = d.dp||0; S.hunger = d.hunger??80; S.happy = d.happy??70;
   S.energy = d.energy??90; S.health = d.health??100; S.diaper = d.diaper??100;
-  S.milk = d.milk??100; S.dadScore = d.dadScore||0; S.dayTime = d.dayTime||1;
+  S.milk = d.milk??100; S.dadScore = d.dadScore||0; S.momWellbeing = d.momWellbeing??85; S.dayTime = d.dayTime||1;
   S.ageMonths = d.ageMonths||0;
   S.unlocked = new Set(d.unlocked||[1]); S.doneVax = new Set(d.doneVax||[]);
   S.unlockedAch = new Set(d.unlockedAch||[]); S.doneDoc = new Set(d.doneDoc||[]);
@@ -1043,6 +1075,8 @@ const ACT_DATA = {
   'dad-gece': {sfx:['⭐','💙'], msg:(g,n,d)=>`Gece ${d} kalktı! ⭐`,         fx:{energy:20,dp:15},dadPts:15},
   'dad-masaj':{sfx:['💆','💙'], msg:(g,n,d)=>`${d} masaj yaptı 💆`,          fx:{happy:12,health:5,dp:10},dadPts:8},
   'dad-bez':  {sfx:['🧻','💙'], msg:(g,n,d)=>`${d} bez değiştirdi! 💙`,      fx:{happy:5,dp:5},dadPts:10,special:'diaper100'},
+  'dad-anne': {sfx:['💐','💖'], msg:(g,n,d)=>`${d} anneye destek verdi! 💐`, fx:{happy:8,dp:15},dadPts:12,momWbPts:30},
+  'mom-dinlen':{sfx:['☕','🌸'],msg:(g,n)=>`Kısa mola — anne enerjisi yenileniyor ☕`,fx:{dp:15},momWbPts:22},
 };
 
 // ══════════════════════════════════════════════════════
@@ -1051,7 +1085,7 @@ const ACT_DATA = {
 const S = {
   started:false, babyName:'Bebek', gender:'kiz', momName:'Anne', dadName:'Baba',
   hunger:80, happy:70, energy:90, health:100, diaper:100,
-  milk:100, dadScore:0,
+  milk:100, dadScore:0, momWellbeing:85,
   dp:0, ageMonths:0, dayTime:1,
   unlocked:new Set([1]), doneVax:new Set(), unlockedAch:new Set(), doneDoc:new Set(),
   activeChallenge:null, challengeTimer:0,
@@ -1129,6 +1163,22 @@ function tick(){
   S.diaper=clamp(S.diaper-0.008*dt*60);
   // milk regen
   if(S.ageMonths<12) S.milk=Math.min(100,S.milk+0.12*dt*60);
+  // mom wellbeing decay — faster without dad support
+  const momDecayRate = S.dadScore>50 ? 0.006 : S.dadScore>25 ? 0.010 : 0.015;
+  S.momWellbeing = clamp(S.momWellbeing - momDecayRate*dt*60);
+  // low mom wellbeing affects baby
+  if(S.momWellbeing<30){
+    S.happy  = clamp(S.happy  - 0.012*dt*60);
+    S.energy = clamp(S.energy - 0.008*dt*60);
+  }
+  // warn at critical mom energy (throttled)
+  if(!S._momWarnTimer) S._momWarnTimer=0;
+  S._momWarnTimer-=dt;
+  if(S.momWellbeing<20 && S._momWarnTimer<=0){
+    S._momWarnTimer=90;
+    showToast(`⚠️ ${S.momName} çok yorgun! ${S.dadName} destek vermeli! 💙`,'red');
+    addLog(`💔 ${S.momName} yorgunluk sınırına geldi — ${S.dadName}, şimdi destek zamanı!`,'ch');
+  }
   // day
   S.dayTime+=dt/120;
   // challenge timer
@@ -1187,6 +1237,8 @@ function onAgeChange(mo){
   if(MONTH_REPORTS[mo]){
     setTimeout(()=>showMonthReport(mo), 1500);
   }
+  // Solid food guide at 6 months
+  if(mo===6) setTimeout(showSolidFoodGuide, 6000);
   // Sleep regression warnings
   if(SLEEP_REGRESSIONS[mo]&&!S.shownRegressions.has(mo)){
     S.shownRegressions.add(mo);
@@ -1214,8 +1266,9 @@ function doAct(id){
   applyFx(a.fx||{});
   if(a.special==='diaper100') S.diaper=100;
   if(a.dadPts) S.dadScore=Math.min(100,S.dadScore+a.dadPts);
+  if(a.momWbPts) applyMomWb(a.momWbPts);
   if(id==='biberon'||id==='mama'||id==='annesutu') S.totalFeeds++;
-  const msg=a.msg(S.gender,S.babyName,S.dadName);
+  const msg=typeof a.msg==='function'?a.msg(S.gender,S.babyName,S.dadName):a.msg;
   addLog(msg, id.startsWith('dad-')?'dad':'');
   spawnParticles(a.sfx||['✨'],3);
   checkMilestones();
@@ -1231,6 +1284,10 @@ function applyFx(fx){
   if(fx.dp!==undefined)     S.dp+=fx.dp;
 }
 
+function applyMomWb(pts){
+  S.momWellbeing=clamp(S.momWellbeing+pts);
+}
+
 function babyClick(){
   S.dp+=3; S.happy=clamp(S.happy+3);
   spawnParticles(['⭐','✨','💫','🌟'],2);
@@ -1244,6 +1301,8 @@ function spawnChallenge(){
   const avail=CHALLENGES.filter(c=>{
     if(c.id==='dis'&&S.ageMonths<4) return false;
     if(c.id==='gece'&&S.ageMonths>12&&Math.random()<.6) return false;
+    if(c.id==='kolik'&&S.ageMonths>4) return false;
+    if(c.id==='atlama'&&(S.ageMonths<2||S.ageMonths>14)) return false;
     return true;
   });
   const ch=avail[Math.floor(Math.random()*avail.length)];
@@ -1404,6 +1463,26 @@ function updateUI(){
   document.getElementById('hDay').textContent=`📅 ${Math.floor(S.dayTime)}. Gün`;
   document.getElementById('hDad').textContent=`👨 ${S.dadName}: ${Math.round(S.dadScore)}%`;
   document.getElementById('hMs').textContent=`🏆 ${S.unlocked.size}/20`;
+  // mom wellbeing
+  const mwEl=document.getElementById('bMomWb');
+  const mwLbl=document.getElementById('sMomWb');
+  const mwTip=document.getElementById('momWbTip');
+  const mwNm=document.getElementById('momNameLbl');
+  if(mwEl){
+    mwEl.style.width=Math.round(S.momWellbeing)+'%';
+    if(mwLbl) mwLbl.textContent=Math.round(S.momWellbeing)+'%';
+    if(mwNm) mwNm.textContent=S.momName+'\'in';
+    if(S.momWellbeing<20){
+      mwEl.className='me-fill critical';
+      if(mwTip) mwTip.textContent=`🚨 ${S.momName} kritik yorgunlukta! ${S.dadName} hemen destek vermeli!`;
+    } else if(S.momWellbeing<40){
+      mwEl.className='me-fill';mwEl.style.background='linear-gradient(90deg,#FF9A3C,#FFD166)';
+      if(mwTip) mwTip.textContent=`⚠️ ${S.momName} yoruluyor — baba desteği şart!`;
+    } else {
+      mwEl.className='me-fill';mwEl.style.background='';
+      if(mwTip) mwTip.textContent=`💖 ${S.momName} iyi hissediyor! Destek devam etsin.`;
+    }
+  }
   // dad fill
   document.getElementById('dadFill').style.width=S.dadScore+'%';
   const dadLbl=S.dadScore>=80?'🏆 Kahraman Baba!':S.dadScore>=50?'⭐ Harika Baba!':S.dadScore>=25?'👍 İyi Baba!':'Baba desteğini artır! 💙';
@@ -1705,11 +1784,20 @@ function playSound(type){
 // ══════════════════════════════════════════════════════
 // MONTHLY REPORT POPUP
 // ══════════════════════════════════════════════════════
+const SLEEP_HOURS={
+  0:'16-17 saat (2-3 saatlik kesmeler)',
+  1:'14-17 saat',2:'13-15 saat',3:'13-15 saat',4:'12-15 saat',
+  5:'12-15 saat',6:'12-14 saat',7:'12-14 saat',8:'12-14 saat',
+  9:'12-14 saat',10:'11-14 saat',11:'11-14 saat',12:'11-14 saat',
+  18:'11-14 saat',24:'11-14 saat',
+};
+
 function showMonthReport(mo){
   const r=MONTH_REPORTS[mo]; if(!r)return;
   const canList=r.can.map(c=>`<li>${c}</li>`).join('');
   const focusList=r.focus.map(f=>`<li>${f}</li>`).join('');
   const warnList=r.warn.map(w=>`<li style="color:var(--red)">⚠️ ${w}</li>`).join('');
+  const sleepHr=SLEEP_HOURS[mo]||'11-14 saat';
   const h=`<div class="pop-ov" onclick="if(event.target===this)this.remove()">
     <div class="pop-box">
       <div class="pop-rainbow"></div>
@@ -1719,6 +1807,10 @@ function showMonthReport(mo){
       <div class="pop-sec"><h4>✅ Artık Yapabiliyor</h4><ul style="padding-left:14px;font-size:.77rem;color:#555;line-height:1.6">${canList}</ul></div>
       <div class="pop-sec"><h4>🎯 Bu Ay Odaklanın</h4><ul style="padding-left:14px;font-size:.77rem;color:#555;line-height:1.6">${focusList}</ul></div>
       <div class="pop-sec" style="background:#FFF5F5"><h4 style="color:var(--red)">🔍 Dikkat Edin</h4><ul style="padding-left:14px;font-size:.75rem;line-height:1.6">${warnList}</ul></div>
+      <div style="background:#E3F2FD;border-radius:12px;padding:10px;margin-bottom:10px;display:flex;align-items:center;gap:10px">
+        <span style="font-size:1.5rem">😴</span>
+        <div><div style="font-size:.73rem;font-weight:800;color:#1565C0">${mo}. Ayda Uyku İhtiyacı</div><div class="sleep-chip" style="display:inline-block;margin-top:3px">${sleepHr}</div></div>
+      </div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px">
         <div style="background:#FFF0F5;border-radius:12px;padding:10px;font-size:.72rem">
           <div style="font-weight:800;color:var(--pink);margin-bottom:4px">💖 ${S.momName} için</div>
@@ -1950,6 +2042,11 @@ function showReportCard(){
       </div>
     </div>
 
+    <div style="background:#FFF0F5;border-radius:12px;padding:10px;margin-bottom:10px;font-size:.74rem">
+      <div style="font-weight:800;color:#C2185B;margin-bottom:5px">💖 Anne Enerjisi Durumu</div>
+      <div style="color:#880E4F">Şu anki enerji: <strong>${Math.round(S.momWellbeing)}%</strong> — ${S.momWellbeing>=70?'🌟 Harika!':S.momWellbeing>=40?'⚠️ Destekleyin':' 🚨 Kritik!'}</div>
+      <div style="height:7px;background:#F8BBD9;border-radius:3px;margin-top:5px;overflow:hidden"><div style="height:100%;background:${S.momWellbeing>=70?'#FF6B9D':S.momWellbeing>=40?'#FF9A3C':'#FF4757'};border-radius:3px;width:${Math.min(100,S.momWellbeing)}%"></div></div>
+    </div>
     <div style="background:#FFF0F5;border-radius:12px;padding:10px;margin-bottom:12px;font-size:.74rem">
       <div style="font-weight:800;color:#C2185B;margin-bottom:6px">🤱 Anne Sütü İstatistiği</div>
       <div style="color:#880E4F">Toplam Beslenme: <strong>${S.totalFeeds}</strong> kez</div>
@@ -1964,6 +2061,54 @@ function showReportCard(){
     </div>
 
     <button class="pop-btn" onclick="this.closest('.pop-ov').remove()">💖 Harika Gidiyoruz!</button>
+  </div></div>`;
+  document.body.insertAdjacentHTML('beforeend',h);
+}
+
+// ══════════════════════════════════════════════════════
+// SOLID FOOD GUIDE
+// ══════════════════════════════════════════════════════
+function showSolidFoodGuide(){
+  const rows=[
+    {mo:'6. Ay',items:'Tek sebze püreleri: Havuç, kabak, patates, bezelye'},
+    {mo:'6-7. Ay',items:'Meyve püreleri: Elma, armut, muz, şeftali'},
+    {mo:'7. Ay',items:'Yulaf lapası, pirinç lapası, tek tahıllar'},
+    {mo:'7-8. Ay',items:'Baklagiller: Mercimek püresi, nohut püresi'},
+    {mo:'8. Ay',items:'Et ve tavuk püresi (yeterli demir için önemli)'},
+    {mo:'9. Ay',items:'Küçük yumuşak parçalar (BLW başlanabilir)'},
+    {mo:'10-12. Ay',items:'Aile yemeklerinden uyarlamalar, yumurta, peynir'},
+    {mo:'⚠️ VERMEYİN',items:'Bal (1 yaş altı), tuz, şeker, işlenmiş gıda, inek sütü'},
+  ];
+  const rowHtml=rows.map(r=>`<div class="food-row"><span class="food-mo">${r.mo}</span><span class="food-items">${r.items}</span></div>`).join('');
+  const h=`<div class="pop-ov" onclick="if(event.target===this)this.remove()">
+  <div class="pop-box">
+    <div class="pop-rainbow"></div>
+    <span class="pop-ico">🥣</span>
+    <div class="pop-title">Katı Gıdaya Geçiş!</div>
+    <div class="pop-sub" style="color:var(--green);font-weight:700">${S.babyName} 6 aya geldi — katı gıda zamanı!</div>
+    <div class="pop-sec">
+      <h4>✅ Hazır Olduğunun İşaretleri</h4>
+      <ul style="padding-left:14px;font-size:.74rem;color:#555;line-height:1.7">
+        <li>Başını dik tutabiliyor</li>
+        <li>Aile yemeğine ilgi gösteriyor</li>
+        <li>Dili dışarı çıkartma refleksi geçti</li>
+        <li>Destekli oturabiliyor</li>
+      </ul>
+    </div>
+    <div class="pop-sec">
+      <h4>🗓️ Gıda Tanıtım Takvimi</h4>
+      <div style="font-size:.72rem;color:#888;margin-bottom:6px">Her yeni gıdayı 3-5 gün bekleyerek tanıtın (alerji takibi)</div>
+      ${rowHtml}
+    </div>
+    <div class="pop-tip">
+      <div class="pop-tip-t">💡 WHO Önerisi</div>
+      <p>6. ayda katı gıda başlanır ama ANNE SÜTÜ devam eder! Anne sütü 2 yaşa kadar en değerli besindir. Katı gıda onu tamamlar, yerini almaz.</p>
+    </div>
+    <div style="background:#E8F5E9;border-radius:12px;padding:10px;margin-bottom:14px;font-size:.72rem;text-align:center">
+      <strong style="color:#2E7D32">👨 ${S.dadName} için görev:</strong>
+      <div style="color:#388E3C;margin-top:3px">Püreler yapmayı sen üstlen! Bebekle ilk katı gıda anını birlikte yaşa.</div>
+    </div>
+    <button class="pop-btn green" onclick="this.closest('.pop-ov').remove()">🥣 Anladık, Başlıyoruz!</button>
   </div></div>`;
   document.body.insertAdjacentHTML('beforeend',h);
 }
