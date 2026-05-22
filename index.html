@@ -226,7 +226,42 @@ body{font-family:'Nunito',sans-serif;background:linear-gradient(135deg,#FFF5F8,#
 .star{position:absolute;border-radius:50%;animation:twink 3s ease-in-out infinite}
 @keyframes twink{0%,100%{opacity:.2;transform:scale(1)}50%{opacity:.8;transform:scale(1.4)}}
 
-/* critical stat warning */
+/* album */
+.album-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;max-height:160px;overflow-y:auto}
+.album-card{background:linear-gradient(135deg,#F0FFF4,#E6F7FF);border:2px solid var(--green);border-radius:12px;padding:8px 4px;text-align:center;cursor:pointer;transition:all .2s}
+.album-card:hover{transform:scale(1.07);box-shadow:0 4px 12px rgba(82,183,136,.3)}
+.album-card .al-ico{font-size:1.6rem}
+.album-card .al-nm{font-size:.58rem;font-weight:700;color:var(--text);margin-top:2px;line-height:1.2}
+.album-empty{font-size:.78rem;color:#aaa;text-align:center;padding:12px;font-style:italic}
+
+/* doctor checkup */
+.doc-item{display:flex;align-items:center;gap:8px;padding:7px 10px;border-radius:12px;border:2px solid transparent;transition:all .2s}
+.doc-item.done{background:#F0FFF4;border-color:#B2DFDB}
+.doc-item.due{background:linear-gradient(135deg,#E3F2FD,#BBDEFB);border-color:#90CAF9;animation:vPulse 1.5s ease-in-out infinite}
+.doc-item.locked{background:#F8F8F8;opacity:.6}
+.doc-name{font-weight:800;font-size:.75rem;color:var(--text)}
+.doc-age{font-size:.62rem;color:#888}
+.doc-tab-btns{display:flex;gap:5px;margin-bottom:8px}
+.doc-tab-btn{flex:1;padding:6px;border:2px solid #E0D7FF;border-radius:10px;background:#fff;cursor:pointer;font-family:'Nunito',sans-serif;font-size:.68rem;font-weight:700;color:var(--text);transition:all .2s}
+.doc-tab-btn.on{background:var(--purple);border-color:var(--purple);color:#fff}
+
+/* save indicator */
+.save-ind{position:fixed;bottom:12px;left:12px;background:rgba(82,183,136,.9);color:#fff;padding:6px 12px;border-radius:12px;font-size:.7rem;font-weight:700;animation:saveIn .3s ease,saveOut .4s ease 1.5s forwards;z-index:9990;display:flex;align-items:center;gap:5px}
+@keyframes saveIn{from{transform:translateY(20px);opacity:0}to{transform:none;opacity:1}}
+@keyframes saveOut{from{opacity:1}to{opacity:0}}
+
+/* setup saved game card */
+.saved-banner{background:linear-gradient(135deg,#E8F5E9,#E3F2FD);border:2px solid var(--green);border-radius:16px;padding:14px;margin-bottom:16px;text-align:center}
+.saved-banner h4{font-family:'Fredoka One',cursive;color:#2E7D32;font-size:1rem;margin-bottom:6px}
+.saved-banner p{font-size:.78rem;color:#555;margin-bottom:10px}
+.saved-btns{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.load-btn{padding:11px;background:linear-gradient(135deg,var(--green),#2DC653);color:#fff;border:none;border-radius:14px;font-family:'Nunito',sans-serif;font-weight:800;font-size:.85rem;cursor:pointer;transition:all .2s}
+.load-btn:hover{transform:translateY(-2px);box-shadow:0 4px 15px rgba(82,183,136,.4)}
+.new-btn{padding:11px;background:#fff;border:2px solid #ddd;border-radius:14px;font-family:'Nunito',sans-serif;font-weight:700;font-size:.82rem;cursor:pointer;color:#666;transition:all .2s}
+.new-btn:hover{border-color:#bbb;background:#f5f5f5}
+
+/* night overlay on game */
+.night-tint{position:fixed;inset:0;background:rgba(10,5,40,.25);pointer-events:none;z-index:50;transition:opacity 1s}
 .sfill.critical{animation:critBlink .7s ease-in-out infinite}
 @keyframes critBlink{0%,100%{opacity:1}50%{opacity:.4}}
 .sbar.critical-bg{background:#FFE0E0}
@@ -282,6 +317,16 @@ body{font-family:'Nunito',sans-serif;background:linear-gradient(135deg,#FFF5F8,#
       <h1>Bebek Büyütme Macerası</h1>
       <p>Bebeğinizin büyüme yolculuğuna hoş geldiniz! 🌈</p>
     </div>
+    <!-- SAVED GAME BANNER -->
+    <div class="saved-banner" id="savedBanner" style="display:none">
+      <h4>💾 Kayıtlı Oyun Bulundu!</h4>
+      <p id="savedDesc">Önceki oyununuza devam edebilirsiniz.</p>
+      <div class="saved-btns">
+        <button class="load-btn" onclick="loadSavedGame()">📂 Devam Et</button>
+        <button class="new-btn" onclick="clearAndNew()">🆕 Yeni Oyun</button>
+      </div>
+    </div>
+    <div id="newGameForm">
     <div class="fgrp">
       <label>👶 Bebeğinizin Adı</label>
       <input id="inp-baby" type="text" placeholder="Bebek adını yazın..." maxlength="18">
@@ -302,6 +347,7 @@ body{font-family:'Nunito',sans-serif;background:linear-gradient(135deg,#FFF5F8,#
       <input id="inp-dad" type="text" placeholder="Baba adını yazın..." maxlength="18">
     </div>
     <button class="start-btn" onclick="startGame()">🌟 Maceraya Başla!</button>
+    </div><!-- /newGameForm -->
   </div>
 </div>
 
@@ -319,8 +365,10 @@ body{font-family:'Nunito',sans-serif;background:linear-gradient(135deg,#FFF5F8,#
       <div class="hbadge" id="hDay">📅 1. Gün</div>
       <div class="hbadge dad" id="hDad">👨 Baba: 0%</div>
       <div class="hbadge ms" id="hMs">🏆 0/20</div>
+      <button onclick="manualSave()" style="background:rgba(82,183,136,.3);color:#fff;border:none;padding:5px 11px;border-radius:20px;font-size:.72rem;font-weight:700;cursor:pointer;font-family:'Nunito',sans-serif" title="Kaydet">💾 Kaydet</button>
     </div>
   </header>
+  <div class="night-tint" id="nightTint" style="opacity:0"></div>
 
   <div class="grid">
 
@@ -555,10 +603,15 @@ body{font-family:'Nunito',sans-serif;background:linear-gradient(135deg,#FFF5F8,#
     <!-- ════════ RIGHT: INFO ════════ -->
     <div class="info-panel">
 
-      <!-- VACCINES -->
+      <!-- VACCINES + DOCTOR -->
       <div class="icard">
-        <h3>💉 Aşı Takvimi <span id="vaxCount">0/0 yapıldı</span></h3>
-        <div class="vax-list" id="vaxList"></div>
+        <h3>🏥 Sağlık Takvimi <span id="vaxCount">0/0 yapıldı</span></h3>
+        <div class="doc-tab-btns">
+          <button class="doc-tab-btn on" onclick="switchHealthTab('vax')" id="ht-vax">💉 Aşılar</button>
+          <button class="doc-tab-btn"    onclick="switchHealthTab('doc')" id="ht-doc">🩺 Doktor Kontrolleri</button>
+        </div>
+        <div id="htab-vax"><div class="vax-list" id="vaxList"></div></div>
+        <div id="htab-doc" style="display:none"><div class="vax-list" id="docList"></div></div>
       </div>
 
       <!-- MILESTONES -->
@@ -571,6 +624,12 @@ body{font-family:'Nunito',sans-serif;background:linear-gradient(135deg,#FFF5F8,#
       <div class="ach-card">
         <h3>🏅 Başarımlar <span id="achCount">0/8</span></h3>
         <div class="ach-list" id="achList"></div>
+      </div>
+
+      <!-- ALBUM -->
+      <div class="icard">
+        <h3>📸 Bebek Albümü <span id="albumCount" style="font-size:.72rem;font-weight:600;color:#888;margin-left:auto">0 anı</span></h3>
+        <div class="album-grid" id="albumGrid"><div class="album-empty">Gelişim basamakları açıldıkça burada görünecek! 🌟</div></div>
       </div>
 
       <!-- LOG -->
@@ -642,6 +701,116 @@ const CHALLENGES = [
   {id:'dis',icon:'🦷',name:'Diş Çıkarıyor!',desc:'Bebek diş ağrısından ağlıyor, her şeyi ısırıyor!',urgent:false,action:'Diş Kaşıyıcı Ver',resolve:{happy:15,health:5,dp:10},penaltyMsg:'Diş ağrısı devam etti!',info:'Diş çıkarma genellikle 4-7. aylarda başlar ve 2-3 yaşa kadar sürer. İlk dişler alt ön dişlerdir. Ateş, ishal, kabarcık gibi belirtiler diş çıkarmayla ilgili değildir.',tip:'Soğutulmuş diş kaşıyıcı kullanın, diş etini temiz parmakla masaj yapın. Diş çıkarma jeli kullanacaksanız pediatristle görüşün.'},
   {id:'gece',icon:'🌙',name:'Gece Uyanması!',desc:'Gece 3! Bebek uyandı ve ağlıyor!',urgent:true,action:'Gece Kalk & Sakinleştir',resolve:{energy:20,happy:15,dp:15},penaltyMsg:'Bebek uzun süre gece ağladı!',info:'0-3 aylık bebekler gece 3-5 kez uyanır. 3-6 aylık bebekler 2-3 kez. Bu tamamen normaldir! Bebekler REM uykusu fazlasında daha sık uyanır.',tip:'Gece kalkma sorumluluğunu anne ve baba paylaşmalı! Biri 2 gece kalkarsa diğeri ertesi 2 gece kalkmalı. Bu sağlıklı ilişkinin temelidir.'},
   {id:'ates',icon:'🤒',name:'Ateş!',desc:'Bebeğin ateşi yükseldi! Hemen kontrol et!',urgent:true,action:'Doktoru Ara / Ateş Düşür',resolve:{health:20,happy:8,dp:12},penaltyMsg:'Ateş tedavi edilmedi!',info:'3 aydan küçük bebeklerde 38°C ateşte HEMEN doktora gidin. Büyük bebeklerde 38.5°C altı ateş genellikle zararlı değildir. Bol sıvı verin, uygun ateş düşürücü kullanın.',tip:'Ateş ölçümünde koltuk altı normalden 0.5°C düşük gösterir. Kulak termometresi veya rektal ölçüm daha doğrudur.'},
+];
+
+// ══════════════════════════════════════════════════════
+// SAVE / LOAD
+// ══════════════════════════════════════════════════════
+const SAVE_KEY = 'babyMacerasi_v2';
+
+function saveGame(){
+  if(!S.started) return;
+  const data = {
+    babyName:S.babyName, gender:S.gender, momName:S.momName, dadName:S.dadName,
+    dp:S.dp, hunger:S.hunger, happy:S.happy, energy:S.energy, health:S.health,
+    diaper:S.diaper, milk:S.milk, dadScore:S.dadScore, dayTime:S.dayTime,
+    ageMonths:S.ageMonths, unlocked:[...S.unlocked], doneVax:[...S.doneVax],
+    unlockedAch:[...S.unlockedAch], doneDoc:[...S.doneDoc],
+    totalFeeds:S.totalFeeds, milkFeeds:S.milkFeeds,
+    annesutuPopupShown:S.annesutuPopupShown, savedAt:Date.now(),
+  };
+  try { localStorage.setItem(SAVE_KEY, JSON.stringify(data)); } catch(e){}
+}
+
+function loadSave(){ try { const r=localStorage.getItem(SAVE_KEY); return r?JSON.parse(r):null; } catch(e){ return null; } }
+
+function applySaveData(d){
+  S.babyName = d.babyName||'Bebek'; S.gender = d.gender||'kiz';
+  S.momName = d.momName||'Anne'; S.dadName = d.dadName||'Baba';
+  S.dp = d.dp||0; S.hunger = d.hunger??80; S.happy = d.happy??70;
+  S.energy = d.energy??90; S.health = d.health??100; S.diaper = d.diaper??100;
+  S.milk = d.milk??100; S.dadScore = d.dadScore||0; S.dayTime = d.dayTime||1;
+  S.ageMonths = d.ageMonths||0;
+  S.unlocked = new Set(d.unlocked||[1]); S.doneVax = new Set(d.doneVax||[]);
+  S.unlockedAch = new Set(d.unlockedAch||[]); S.doneDoc = new Set(d.doneDoc||[]);
+  S.totalFeeds = d.totalFeeds||0;
+  S.milkFeeds = d.milkFeeds||0; S.annesutuPopupShown = d.annesutuPopupShown||0;
+  S.started = true;
+}
+
+function loadSavedGame(){
+  const d = loadSave(); if(!d) return;
+  applySaveData(d);
+  if(d.gender==='erkek'){
+    document.documentElement.style.setProperty('--accent','#4169E1');
+    document.documentElement.style.setProperty('--accent2','#5B8DEE');
+  }
+  document.getElementById('setupScreen').style.display='none';
+  document.getElementById('gameScreen').style.display='block';
+  document.getElementById('hdrSub').textContent=`${S.momName} 💖 ${S.dadName} 💙 · ${S.babyName}'in ailesi`;
+  addLog(`📂 Oyun yüklendi! ${S.babyName} ${S.ageMonths}. ayda, ${Math.floor(S.dp)} GP ile devam ediyor.`,'ms');
+  // unlock buttons by age
+  applyAgeUnlocks(S.ageMonths);
+  if(S.ageMonths>=12) document.getElementById('milkCard').style.opacity='0.4';
+  renderVax(); renderMs(); renderAch(); renderAlbum(); renderDoc();
+  initStars(); updateUI();
+  setInterval(tick,100);
+  setInterval(()=>{saveGame();},30000);
+}
+
+function clearAndNew(){
+  if(confirm('Kayıtlı oyun silinecek. Emin misiniz?')){
+    localStorage.removeItem(SAVE_KEY);
+    document.getElementById('savedBanner').style.display='none';
+    document.getElementById('newGameForm').style.display='block';
+  }
+}
+
+function manualSave(){ saveGame(); showSaveIndicator(); }
+
+function showSaveIndicator(){
+  document.querySelectorAll('.save-ind').forEach(x=>x.remove());
+  const d=document.createElement('div');
+  d.className='save-ind';
+  d.innerHTML='💾 Kaydedildi!';
+  document.body.appendChild(d);
+  setTimeout(()=>d.remove(),2000);
+}
+
+function applyAgeUnlocks(mo){
+  if(mo>=3){['btn-jimnastik','btn-yuzme'].forEach(id=>{const b=document.getElementById(id);if(b)b.disabled=false})}
+  if(mo>=4){const b=document.getElementById('btn-mama');if(b)b.disabled=false;}
+  if(mo>=6){['btn-su','btn-blok'].forEach(id=>{const b=document.getElementById(id);if(b)b.disabled=false})}
+  if(mo>=9){const b=document.getElementById('btn-sekil');if(b)b.disabled=false;}
+  if(mo>=12){const b=document.getElementById('btn-teker');if(b)b.disabled=false;}
+}
+
+// ══════════════════════════════════════════════════════
+// DOCTOR CHECKUP SCHEDULE
+// ══════════════════════════════════════════════════════
+const DOCTOR_VISITS = [
+  {id:'dv0',ay:0,name:'Yenidoğan Taraması',desc:'İşitme testi, topuk kanı, fizik muayene',
+   info:'Doğumdan sonra ilk 48-72 saatte yapılır. Fenilketonüri, hipotiroidi, işitme kaybı ve diğer metabolik hastalıklar taranır.',tip:'Tüm taramaların yapıldığından emin olun. Bu testler erken müdahale ile hayat kurtarır.'},
+  {id:'dv1h',ay:0,name:'1. Hafta Kontrolü',desc:'Sarılık, kilo takibi, emzirme değerlendirmesi',
+   info:'Doğumdan 5-7 gün sonra yapılır. Bebek kilonu takip etmek ve sarılık (ikter) değerlendirmesi için kritiktir.',tip:'Bebek doğum kilonun %10\'dan fazlasını kaybetmemeli. Sarılık için güneş ışığı yararlıdır.'},
+  {id:'dv1',ay:1,name:'1. Ay Kontrolü',desc:'Büyüme, refleksler, beslenme değerlendirmesi',
+   info:'Boy, kilo, baş çevresi ölçülür. Refleksler değerlendirilir. Anne emzirme soruları sorabilir.',tip:'Bu ziyarette D vitamini ve demir desteği başlanabilir. Sorunuzu sormaktan çekinmeyin.'},
+  {id:'dv2',ay:2,name:'2. Ay Kontrolü',desc:'Gelişim değerlendirmesi + aşılar',
+   info:'İlk çoklu aşılar yapılır. Sosyal gelişim, uyku düzeni ve beslenme değerlendirilir.',tip:'Aşı sonrası ateş için parasetamol hazır bulundurun. Doz için doktora sorun.'},
+  {id:'dv4',ay:4,name:'4. Ay Kontrolü',desc:'Motor gelişim + aşılar',
+   info:'Bebek başını tutabiliyor mu? Yüzleri takip ediyor mu? Katı gıdaya hazırlık değerlendirilir.',tip:'Karna yatış egzersizlerini düzenli yapıyorsanız söyleyin — doktor değerlendirir.'},
+  {id:'dv6',ay:6,name:'6. Ay Kontrolü',desc:'Katı gıda danışmanlığı + aşılar',
+   info:'Katı gıdaya geçiş rehberliği verilir. Oturma gelişimi değerlendirilir. Demir eksikliği taraması yapılabilir.',tip:'Bu dönemde katı gıdaya başlıyorsanız doktora danışın. Alerji listesini sorun.'},
+  {id:'dv9',ay:9,name:'9. Ay Kontrolü',desc:'Dil-sosyal gelişim değerlendirmesi',
+   info:'Bebek hece çıkarıyor mu? Yabancı korkusu başladı mı? Emekleme değerlendirilir.',tip:'Bu dönemde bebek yabancılara karşı çekingen olabilir — bu normaldir.'},
+  {id:'dv12',ay:12,name:'12. Ay Kontrolü',desc:'1. yıl kutlaması + aşılar',
+   info:'İlk yılın büyük değerlendirmesi. Dil gelişimi, yürüme, ince motor beceriler incelenir.',tip:'15+ kelime söyleyemiyorsa veya yürüme başlamadıysa doktora söyleyin.'},
+  {id:'dv15',ay:15,name:'15. Ay Kontrolü',desc:'Yürüme ve dil gelişimi takibi',
+   info:'Yürüyüşün kalitesi, el-göz koordinasyonu değerlendirilir. Kelime sayısı sorulur.',tip:'Çocuğunuzun söylediği kelimeleri not alın — doktora söylemek için.'},
+  {id:'dv18',ay:18,name:'18. Ay Kontrolü',desc:'Otizm taraması + aşılar',
+   info:'M-CHAT otizm taraması yapılır. İki kelimeli cümle kurma değerlendirilir.',tip:'Bu taramadan korkmayın — erken tanı çok değerlidir. Her soruya dürüstçe cevap verin.'},
+  {id:'dv24',ay:24,name:'2. Yıl Kontrolü',desc:'Tam gelişim değerlendirmesi + aşılar',
+   info:'İki yaşında çocuk bağımsız yürüyüp koşabiliyor, 50+ kelime bilmeli ve iki kelimeli cümle kurabilmelidir.',tip:'Beslenme sorunları, uyku sorunları ve davranış soruları için bu ziyareti iyi kullanın.'},
 ];
 
 // BABY WEIGHT/HEIGHT by month (approximate WHO averages)
@@ -744,7 +913,7 @@ const S = {
   hunger:80, happy:70, energy:90, health:100, diaper:100,
   milk:100, dadScore:0,
   dp:0, ageMonths:0, dayTime:1,
-  unlocked:new Set([1]), doneVax:new Set(), unlockedAch:new Set(),
+  unlocked:new Set([1]), doneVax:new Set(), unlockedAch:new Set(), doneDoc:new Set(),
   activeChallenge:null, challengeTimer:0,
   nextChallengeIn:45,
   lastTick:Date.now(), currentStage:0,
@@ -764,6 +933,19 @@ function selGender(g){
   document.getElementById('btn-boy').className='gbtn boy'+(g==='erkek'?' sel':'');
 }
 
+// Check for saved game on page load
+window.addEventListener('DOMContentLoaded', ()=>{
+  const saved = loadSave();
+  if(saved){
+    const ago = Math.round((Date.now()-saved.savedAt)/60000);
+    const agoTxt = ago<60?`${ago} dakika önce`:`${Math.round(ago/60)} saat önce`;
+    document.getElementById('savedBanner').style.display='block';
+    document.getElementById('savedDesc').textContent=
+      `${saved.babyName} · ${saved.ageMonths}. Ay · ${Math.floor(saved.dp).toLocaleString('tr')} GP · ${agoTxt} kaydedildi`;
+    document.getElementById('newGameForm').style.display='none';
+  }
+});
+
 function startGame(){
   const bn=document.getElementById('inp-baby').value.trim();
   const mn=document.getElementById('inp-mom').value.trim();
@@ -779,12 +961,11 @@ function startGame(){
   document.getElementById('hdrSub').textContent=`${mn} 💖 ${dn} 💙 · ${bn}'in ailesi`;
   addLog(`🍼 ${bn} dünyaya geldi! ${mn} ve ${dn} ailesine hayırlı olsun! Maceranız başlıyor...`,'ms');
   addLog('💡 İpucu: Bebeğe tıkla, aktiviteler yap, zorlu anları çöz ve gelişimi izle!');
-  renderVax(); renderMs(); renderAch();
-  // birth vaccines
+  renderVax(); renderMs(); renderAch(); renderAlbum(); renderDoc();
   setTimeout(()=>triggerVaxDue(0),2000);
-  initStars();
-  updateUI();
+  initStars(); updateUI();
   setInterval(tick,100);
+  setInterval(()=>saveGame(),30000); // auto-save every 30s
 }
 
 // ══════════════════════════════════════════════════════
@@ -824,7 +1005,13 @@ function tick(){
   if(S.momMsgTimer>20){S.momMsgTimer=0;S.momMsgIdx=(S.momMsgIdx+1)%MOM_MSGS.length;const m=document.getElementById('momMsg');if(m)m.textContent=MOM_MSGS[S.momMsgIdx];}
   // tips rotation
   S.tipTimer+=dt;
-  if(S.tipTimer>12){S.tipTimer=0;S.tipIdx=(S.tipIdx+1)%TIPS.length;const t=document.getElementById('tipText');if(t){t.textContent=TIPS[S.tipIdx];t.className='tip-text';void t.offsetWidth;t.className='tip-text';}}
+  if(S.tipTimer>12){S.tipTimer=0;S.tipIdx=(S.tipIdx+1)%TIPS.length;const t=document.getElementById('tipText');if(t){t.textContent=TIPS[S.tipIdx];}}
+  // night/day visual cycle (4-hour real period → day 0-2, night 2-4)
+  const dayPhase=(S.dayTime%4)/4; // 0..1
+  const isNight=dayPhase>0.5&&dayPhase<1.0;
+  const nightOpacity=isNight?Math.sin((dayPhase-0.5)*Math.PI)*0.3:0;
+  const nt=document.getElementById('nightTint');
+  if(nt) nt.style.opacity=nightOpacity;
   // achievements
   checkAchievements();
   // age
@@ -852,6 +1039,7 @@ function onAgeChange(mo){
     addLog(`🤱 ${S.babyName} 12 aya geldi! Anne sütü tamamlandı — tebrikler ${S.momName}! 💖`,'ms');
   }
   triggerVaxDue(mo);
+  renderDoc();
   addLog(`📅 ${S.babyName} ${mo}. aya girdi!`);
 }
 
@@ -976,6 +1164,7 @@ function checkMilestones(){
       addLog(`🌟 Yeni gelişim: ${m.name}!`,'ms');
       showMilestonePopup(m,true);
       document.getElementById('msCount').textContent=`${S.unlocked.size}/20`;
+      renderAlbum();
       break;
     }
   }
@@ -1332,6 +1521,73 @@ function addLog(msg,cls=''){
 // ══════════════════════════════════════════════════════
 // ACHIEVEMENTS
 // ══════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════
+// ALBUM
+// ══════════════════════════════════════════════════════
+function renderAlbum(){
+  const grid=document.getElementById('albumGrid');
+  if(!grid)return;
+  const unlocked=MILESTONES.filter(m=>S.unlocked.has(m.id));
+  if(!unlocked.length){grid.innerHTML='<div class="album-empty">Gelişim basamakları açıldıkça burada görünecek! 🌟</div>';return;}
+  grid.innerHTML=unlocked.map(m=>`
+    <div class="album-card" onclick='showMilestonePopup(MILESTONES.find(x=>x.id===${m.id}),false)' title="${m.name}">
+      <div class="al-ico">${m.icon}</div>
+      <div class="al-nm">${m.name}</div>
+    </div>`).join('');
+  const cnt=document.getElementById('albumCount');
+  if(cnt) cnt.textContent=`${unlocked.length} anı`;
+}
+
+// ══════════════════════════════════════════════════════
+// DOCTOR VISITS
+// ══════════════════════════════════════════════════════
+function renderDoc(){
+  const list=document.getElementById('docList');
+  if(!list)return;
+  list.innerHTML='';
+  DOCTOR_VISITS.forEach(v=>{
+    const done=S.doneDoc&&S.doneDoc.has(v.id);
+    const due=S.ageMonths>=v.ay&&!done;
+    const locked=S.ageMonths<v.ay&&!done;
+    const div=document.createElement('div');
+    div.className=`doc-item ${done?'done':due?'due':'locked'}`;
+    div.innerHTML=`<span style="font-size:1.1rem">🩺</span><div style="flex:1"><div class="doc-name">${v.name}</div><div class="doc-age">${v.ay}. Ay · ${v.desc}</div></div><span>${done?'✅':due?'⚠️':'🔒'}</span>`;
+    if(!locked) div.onclick=()=>showDocPopup(v);
+    list.appendChild(div);
+  });
+}
+
+function showDocPopup(v){
+  const done=S.doneDoc&&S.doneDoc.has(v.id);
+  const h=`<div class="pop-ov" onclick="if(event.target===this)this.remove()">
+    <div class="pop-box"><div class="pop-rainbow"></div>
+    <span class="pop-ico">🩺</span>
+    <div class="pop-title">${v.name}</div>
+    <div class="pop-sub">${v.ay}. Ay Kontrolü</div>
+    <div class="pop-sec"><h4>ℹ️ Bu Kontrolde Ne Yapılır?</h4><p>${v.info}</p></div>
+    <div class="pop-tip"><div class="pop-tip-t">💡 Ebeveyn Notu</div><p>${v.tip}</p></div>
+    ${!done&&S.ageMonths>=v.ay?`<button class="pop-btn green" onclick="markDocDone('${v.id}');this.closest('.pop-ov').remove()">✅ Doktora Gittik! (+20 GP)</button>`
+    :`<button class="pop-btn" onclick="this.closest('.pop-ov').remove()">Kapat</button>`}
+    </div></div>`;
+  document.body.insertAdjacentHTML('beforeend',h);
+}
+
+function markDocDone(id){
+  if(!S.doneDoc) S.doneDoc=new Set();
+  S.doneDoc.add(id);
+  S.health=clamp(S.health+5); S.dp+=20;
+  renderDoc();
+  addLog(`🩺 Doktor kontrolü tamamlandı! +20 GP 🏥`,'vax');
+  spawnParticles(['🩺','✅','💚'],3);
+}
+
+function switchHealthTab(t){
+  document.getElementById('htab-vax').style.display=t==='vax'?'block':'none';
+  document.getElementById('htab-doc').style.display=t==='doc'?'block':'none';
+  document.getElementById('ht-vax').className='doc-tab-btn'+(t==='vax'?' on':'');
+  document.getElementById('ht-doc').className='doc-tab-btn'+(t==='doc'?' on':'');
+}
+
 function renderAch(){
   const list=document.getElementById('achList');
   if(!list)return;
