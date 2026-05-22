@@ -297,6 +297,29 @@ body{font-family:'Nunito',sans-serif;background:linear-gradient(135deg,#FFF5F8,#
 .ach-popup{background:linear-gradient(135deg,#FFF8E1,#FFF3CD)!important}
 .ach-popup .pop-title{color:#E65100!important}
 
+/* first aid */
+.faid-list{display:flex;flex-direction:column;gap:5px;margin-bottom:8px}
+.faid-item{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:12px;cursor:pointer;background:#FFF5F5;border:2px solid #FFCDD2;transition:all .2s}
+.faid-item:hover{background:#FFE4E1;transform:translateX(3px)}
+.faid-item.urgent{background:#FFF5F5;border-color:#EF9A9A}
+.faid-ico{font-size:1.1rem;width:24px;text-align:center}
+.faid-inf{flex:1}
+.faid-nm{font-weight:800;font-size:.73rem;color:#C62828}
+.faid-tag{font-size:.58rem;font-weight:700;padding:1px 6px;border-radius:6px;margin-top:1px;display:inline-block}
+.faid-tag.acil{background:#FF4757;color:#fff}
+.faid-tag.dikkat{background:#FF9A3C;color:#fff}
+.emergency-btn{display:block;width:100%;padding:10px;background:linear-gradient(135deg,#FF4757,#C62828);color:#fff;border:none;border-radius:12px;font-family:'Nunito',sans-serif;font-weight:800;font-size:.85rem;cursor:pointer;margin-top:6px;box-shadow:0 4px 15px rgba(255,71,87,.4);animation:chPulse 2s ease-in-out infinite}
+
+/* safety checklist */
+.safety-item{display:flex;align-items:center;gap:8px;padding:7px 10px;border-radius:10px;background:#F8F8FF;margin-bottom:5px;cursor:pointer;transition:all .2s;border:2px solid transparent}
+.safety-item.checked{background:#F0FFF4;border-color:#B2DFDB}
+.safety-item input[type=checkbox]{width:16px;height:16px;cursor:pointer;accent-color:var(--green)}
+.safety-txt{font-size:.74rem;font-weight:600;color:var(--text);flex:1}
+.safety-item.checked .safety-txt{text-decoration:line-through;color:#aaa}
+
+/* challenge timer urgency */
+.ch-tfill.urgent-flash{animation:critBlink .4s ease-in-out infinite;background:#FF4757!important}
+
 /* mom energy */
 .me-card{background:linear-gradient(135deg,#FCE4EC,#FFF0F5);border-radius:14px;padding:10px 12px;border:2px solid #F48FB1;margin-bottom:8px}
 .me-top{display:flex;justify-content:space-between;font-size:.75rem;font-weight:800;color:#C2185B;margin-bottom:5px}
@@ -654,8 +677,15 @@ body{font-family:'Nunito',sans-serif;background:linear-gradient(135deg,#FFF5F8,#
 
       <!-- ACHIEVEMENTS -->
       <div class="ach-card">
-        <h3>🏅 Başarımlar <span id="achCount">0/12</span></h3>
+        <h3>🏅 Başarımlar <span id="achCount">0/15</span></h3>
         <div class="ach-list" id="achList"></div>
+      </div>
+
+      <!-- FIRST AID -->
+      <div class="icard">
+        <h3>🚨 Acil Rehberi <span style="font-size:.65rem;font-weight:600;color:#EF5350">Hızlı bilgi</span></h3>
+        <div class="faid-list" id="faidList"></div>
+        <button class="emergency-btn" onclick="callEmergency()">🆘 Acil Durum — 112 Ara!</button>
       </div>
 
       <!-- ALBUM -->
@@ -738,6 +768,20 @@ const MONTH_REPORTS = {
     warn:['18. ay uyku regresyonu normaldir','Öfke krizleri başlıyorsa: sabırlı ol, güvende ol, tutarlı ol'],
     momTip:'Toddler dönemi hem meşakkatli hem harika! Her "hayır" beyninin gelişim işaretidir.',
     dadTip:'Toddler sınırları test eder — anne ve baba tutarlı olmalı! Birlikte karar alın.',
+  },
+  15:{emoji:'🚶',title:'15. Ay — Aktif Kaşif!',
+    can:['Bağımsız yürüyor','Küçük şeyler taşıyabilir','İşaret ederek istiyor'],
+    focus:['Kelime oyunları — "Bu ne?" diyerek sormak','Yapı bozma ve yeniden inşa etme','Karalama kağıdı ve kalın boyalar'],
+    warn:['15 kelime yoksa doktora danışın','Yürüyüş çok dengesizse kontrol ettirin'],
+    momTip:'Toddler dönemine giriş: "hayır" çoğalır, sınır testleri başlar. Bu beyin gelişiminin işaretidir, sizi sevmemeye başlamadı!',
+    dadTip:'Her akşam 20 dakika bebeğinle oyna — kaliteli vakit, nicelikten önemlidir.',
+  },
+  21:{emoji:'🗣️',title:'21. Ay — Kelime Patlaması!',
+    can:['50+ kelime bilir','İki kelimeli cümleler kurar','Hayvanları taklit eder'],
+    focus:['Renk ve sayı oyunları','Arkadaş oyun tarihleri','Hayal gücü oyunları (bardağı telefon gibi kullanmak)'],
+    warn:['20 anlamlı kelime yoksa değerlendirme isteyin','Göz teması azaldıysa doktora söyleyin'],
+    momTip:'Öfke krizleri zirvededir — sakin kalmak, güvenli alan yaratmak ve tutarlı olmak işe yarar.',
+    dadTip:'Çocuk öfke krizi yaşarken anneyi destekle. Ortak strateji belirleyin — farklı tepkiler çocuğu şaşırtır.',
   },
   24:{emoji:'🎊',title:'2 YAŞ! Küçük Çocuk!',
     can:['İki kelimeli cümleler kurar','Koşar, atlar','Sevdiği insanları tanıtır'],
@@ -845,6 +889,46 @@ const VACCINES = [
   {id:'kkk2',ay:24,name:'KKK 2. Doz',type:'rutin',info:'KKK aşısının ikinci dozu. Uzun süreli koruma.',tip:'24. ay kontrolünde yapılır.'},
 ];
 
+const FIRST_AID = [
+  {id:'bogulma',icon:'😮‍💨',name:'Boğulma / Hava Yolu Tıkanıklığı',urgency:'acil',
+   symptoms:'Öksüremiyor, ses çıkaramıyor, yüzü kızarıyor ya da morarıyor',
+   action:'Bebeği yüz aşağı bacağınıza yatırın, arkanıza 5 kez sert vurun (sırt darbesi). Ardından yüzü yukarı çevirin, 2 parmakla göğsüne 5 baskı yapın. Tekrar edin. Hemen 112 arayın!',
+   tip:'Bu manevrayı önceden pratikte öğrenin — acil anında hatırlamak güçtür. Bebek ilkyardım kursu alın.'},
+  {id:'ates',icon:'🌡️',name:'Yüksek Ateş',urgency:'acil',
+   symptoms:'3 ay altında 38°C+, büyük bebekte 39°C+, bilinç değişikliği',
+   action:'3 aydan küçük → HEMEN 112! Büyük bebek: giysilerini çıkarın, ılık ıslak bez. Uygun doz ateş düşürücü (doktor onayıyla). Bol sıvı verin.',
+   tip:'Ateş düşürücü vermeden önce dozunu pediatristle doğrulayın. Aspirin VERMEYİN!'},
+  {id:'dusme',icon:'🤕',name:'Düşme / Baş Travması',urgency:'dikkat',
+   symptoms:'Yüksekten düştü, kusma, uyuklama, bilinç değişikliği',
+   action:'Ağlıyor ve oynuyor ise genellikle iyidir. Kusma, aşırı uyuklama, gözlerde değişiklik, bilinç kaybı → ACİL! 24 saat gözlem altında tutun.',
+   tip:'Değişme yeri yüksekten düşme riskini artırır. Her zaman bir eliniz bebekte olsun.'},
+  {id:'dokuuntu',icon:'🔴',name:'Alerjik Reaksiyon / Döküntü',urgency:'dikkat',
+   symptoms:'Yeni gıda/ürün sonrası döküntü, yüz/dudak şişmesi, nefes güçlüğü',
+   action:'Tetikleyeni hemen kaldırın. Yüz/boyun şişmesi veya nefes güçlüğü → ACİL 112! Hafif döküntü → soğuk kompres, doktora danışın.',
+   tip:'Yeni gıdaları tek tek ve 3-5 gün arayla tanıtın. Ailede alerji varsa dikkatli olun.'},
+  {id:'nefes',icon:'😰',name:'Nefes Güçlüğü',urgency:'acil',
+   symptoms:'Hızlı nefes, burun kanadı açılıp kapanıyor, mavi renk (siyanoz)',
+   action:'HEMEN 112 arayın! Bebeği rahat pozisyonda tutun (başı hafif yukarı). Ağzını temizleyin. Nefes almıyorsa bebek CPR başlayın (bunu önceden öğrenin).',
+   tip:'Bebek CPR kursu tüm ebeveynler için zorunlu olmalı. Yerel hastanelerde ücretsiz kurslar var.'},
+  {id:'yanik',icon:'🔥',name:'Yanık',urgency:'dikkat',
+   symptoms:'Kızarıklık, şişme, su toplaması, büyük yüzey',
+   action:'Hemen soğuk akan su altında 15-20 dakika tutun. BUZ kullanmayın! Diş macunu sürmeyin. Su toplayan veya büyük alanda → ACİL. Üzeri temiz örtüyle kapatın.',
+   tip:'Sıcak çay, çorba, ütü — hepsi risk. Bebek yürümeye başlayınca mutfakta özellikle dikkatli olun.'},
+];
+
+const BABY_SAFETY = [
+  'Tüm prizlere kapak takıldı ✅',
+  'Keskin mobilya köşelerine tampon yapıştırıldı ✅',
+  'Merdiven başı ve altına güvenlik kapısı takıldı ✅',
+  'İlaçlar, kimyasallar kilitli dolaba kaldırıldı ✅',
+  'Küçük nesneler (bozuk para, düğme, yüksük) toplandı ✅',
+  'Ağır mobilyalar (kitaplık, dolap) duvara sabitlendi ✅',
+  'Elektrik kabloları gizlendi / korundu ✅',
+  'Banyo ve mutfak kapıları kilitlenebilir hale getirildi ✅',
+  'Bebek yürüteci KULLANILMIYOR (basamak riski!) ✅',
+  'Pencere koruyucuları takıldı ✅',
+];
+
 const CHALLENGES = [
   {id:'bez',icon:'💩',name:'Bez Değiştir!',desc:'Bebeğin bezi doldu ve pişik yapıyor!',urgent:true,action:'Hemen Bez Değiştir!',resolve:{diaper:100,happy:10,dp:8},penaltyMsg:'Bez değiştirilmedi! Pişik oluştu.',info:'Yenidoğanlar günde 8-10 kez bez kirletir. Her değişimde pişik önleme kremleri kullanın. Kırmızılık, ağlama ve bacakları çekme kirliliğin işaretleridir.',tip:'Bezi değiştirirken bebeğinizle konuşun, göz teması kurun. Bu rutin anlar bağlanmayı güçlendirir!'},
   {id:'agla',icon:'😭',name:'Ağlama Krizi!',desc:'Bebek ağlıyor, neden olduğu bilinmiyor!',urgent:true,action:'Sakinleştir & Bak',resolve:{happy:20,energy:5,dp:10},penaltyMsg:'Bebek uzun süre ağladı!',info:'Bebekler ağlayarak ihtiyaçlarını anlatır. Sırasıyla kontrol edin: Acıkmış mı? Bezi kirli mi? Karnı mı ağrıyor? Sıcak/soğuk mu? Sadece kucak mı istiyor?',tip:'Bebeği sakinleştirmek için: kucağa alın, hafifçe sallayın, "şşş" sesi çıkarın veya müzik açın. Paniklemeden sakin kalın!'},
@@ -873,7 +957,9 @@ function saveGame(){
     annesutuPopupShown:S.annesutuPopupShown,
     challengesSolved:S.challengesSolved||0,
     shownRegressions:[...S.shownRegressions],
-    soundEnabled:S.soundEnabled, savedAt:Date.now(),
+    soundEnabled:S.soundEnabled,
+    momNeverLow:S.momNeverLow, safetydone:S.safetydone, safetyPopupShown:S.safetyPopupShown,
+    savedAt:Date.now(),
   };
   try { localStorage.setItem(SAVE_KEY, JSON.stringify(data)); } catch(e){}
 }
@@ -894,6 +980,9 @@ function applySaveData(d){
   S.challengesSolved = d.challengesSolved||0;
   S.shownRegressions = new Set(d.shownRegressions||[]);
   S.soundEnabled = d.soundEnabled!==undefined ? d.soundEnabled : true;
+  S.momNeverLow = d.momNeverLow!==undefined ? d.momNeverLow : true;
+  S.safetydone = d.safetydone||false;
+  S.safetyPopupShown = d.safetyPopupShown||false;
   S.started = true;
 }
 
@@ -911,7 +1000,7 @@ function loadSavedGame(){
   // unlock buttons by age
   applyAgeUnlocks(S.ageMonths);
   if(S.ageMonths>=12) document.getElementById('milkCard').style.opacity='0.4';
-  renderVax(); renderMs(); renderAch(); renderAlbum(); renderDoc();
+  renderVax(); renderMs(); renderAch(); renderAlbum(); renderDoc(); renderFaid();
   initStars(); updateUI();
   setInterval(tick,100);
   setInterval(()=>{saveGame();},30000);
@@ -996,6 +1085,9 @@ const ACHIEVEMENTS = [
   {id:'doc_all',     icon:'🏥', name:'Sağlık Şampiyonu',   desc:'Tüm doktor kontrolleri yapıldı',  check:s=>s.doneDoc&&s.doneDoc.size>=11},
   {id:'challenge10', icon:'⚔️', name:'Kriz Uzmanı',        desc:'10 zorlu anı çözdün',             check:s=>(s.challengesSolved||0)>=10},
   {id:'perfectdad',  icon:'👑', name:'Efsanevi Baba',      desc:'Baba desteği %100 oldu!',         check:s=>s.dadScore>=100},
+  {id:'allvax',      icon:'💉', name:'Aşı Tamamlandı!',    desc:'21 aşının tamamı yapıldı',        check:s=>s.doneVax.size>=21},
+  {id:'momhero',     icon:'🌺', name:'Süper Anne',         desc:'Anne enerjisi hiç 30 altına düşmedi (12 ay)', check:s=>(s.momNeverLow||false)},
+  {id:'safety',      icon:'🛡️', name:'Güvenli Yuva',       desc:'Bebek güvenlik listesi tamamlandı',check:s=>(s.safetydone||false)},
 ];
 
 const TIPS = [
@@ -1099,6 +1191,9 @@ const S = {
   challengesSolved:0,
   shownRegressions:new Set(),
   soundEnabled:true,
+  momNeverLow:true,
+  safetydone:false,
+  safetyPopupShown:false,
 };
 
 // ══════════════════════════════════════════════════════
@@ -1139,7 +1234,7 @@ function startGame(){
   document.getElementById('hdrSub').textContent=`${mn} 💖 ${dn} 💙 · ${bn}'in ailesi`;
   addLog(`🍼 ${bn} dünyaya geldi! ${mn} ve ${dn} ailesine hayırlı olsun! Maceranız başlıyor...`,'ms');
   addLog('💡 İpucu: Bebeğe tıkla, aktiviteler yap, zorlu anları çöz ve gelişimi izle!');
-  renderVax(); renderMs(); renderAch(); renderAlbum(); renderDoc();
+  renderVax(); renderMs(); renderAch(); renderAlbum(); renderDoc(); renderFaid();
   setTimeout(()=>triggerVaxDue(0),2000);
   initStars(); updateUI();
   setInterval(tick,100);
@@ -1171,6 +1266,8 @@ function tick(){
     S.happy  = clamp(S.happy  - 0.012*dt*60);
     S.energy = clamp(S.energy - 0.008*dt*60);
   }
+  // track mom never low achievement
+  if(S.momWellbeing<30) S.momNeverLow=false;
   // warn at critical mom energy (throttled)
   if(!S._momWarnTimer) S._momWarnTimer=0;
   S._momWarnTimer-=dt;
@@ -1178,6 +1275,11 @@ function tick(){
     S._momWarnTimer=90;
     showToast(`⚠️ ${S.momName} çok yorgun! ${S.dadName} destek vermeli! 💙`,'red');
     addLog(`💔 ${S.momName} yorgunluk sınırına geldi — ${S.dadName}, şimdi destek zamanı!`,'ch');
+  }
+  // challenge timer color urgency
+  if(S.activeChallenge){
+    const tf=document.getElementById('chTFill');
+    if(tf) tf.className='ch-tfill'+(S.challengeTimer<10?' urgent-flash':'');
   }
   // day
   S.dayTime+=dt/120;
@@ -1239,6 +1341,8 @@ function onAgeChange(mo){
   }
   // Solid food guide at 6 months
   if(mo===6) setTimeout(showSolidFoodGuide, 6000);
+  // Baby safety checklist at month 8
+  if(mo===8&&!S.safetyPopupShown){ S.safetyPopupShown=true; setTimeout(showSafetyChecklist, 5000); }
   // Sleep regression warnings
   if(SLEEP_REGRESSIONS[mo]&&!S.shownRegressions.has(mo)){
     S.shownRegressions.add(mo);
@@ -1979,6 +2083,107 @@ function showAchievementToast(a){
   div.innerHTML=`<span style="font-size:1.2rem">${a.icon}</span> 🏅 <strong>${a.name}</strong><br><span style="font-size:.7rem;opacity:.8">${a.desc}</span>`;
   document.body.appendChild(div);
   setTimeout(()=>div.remove(),3500);
+}
+
+// ══════════════════════════════════════════════════════
+// FIRST AID GUIDE
+// ══════════════════════════════════════════════════════
+function renderFaid(){
+  const list=document.getElementById('faidList');
+  if(!list)return;
+  list.innerHTML=FIRST_AID.map(f=>`
+    <div class="faid-item ${f.urgency==='acil'?'urgent':''}" onclick="showFaidPopup('${f.id}')">
+      <span class="faid-ico">${f.icon}</span>
+      <div class="faid-inf">
+        <div class="faid-nm">${f.name}</div>
+        <span class="faid-tag ${f.urgency}">${f.urgency==='acil'?'⚡ ACİL':'⚠️ Dikkat'}</span>
+      </div>
+      <span style="color:#EF9A9A;font-size:.8rem">›</span>
+    </div>`).join('');
+}
+
+function showFaidPopup(id){
+  const f=FIRST_AID.find(x=>x.id===id); if(!f)return;
+  const h=`<div class="pop-ov" onclick="if(event.target===this)this.remove()">
+  <div class="pop-box">
+    <div class="pop-rainbow" style="background:linear-gradient(90deg,#FF4757,#FF6B81,#FFD166)"></div>
+    <span class="pop-ico">${f.icon}</span>
+    <div class="pop-title" style="color:#C62828">${f.name}</div>
+    <div class="pop-sub"><span class="faid-tag ${f.urgency}" style="font-size:.78rem">${f.urgency==='acil'?'⚡ ACİL — Hemen Harekete Geç!':'⚠️ Dikkat — Değerlendir'}</span></div>
+    <div class="pop-sec" style="background:#FFF5F5">
+      <h4 style="color:#C62828">🔴 Belirtiler</h4>
+      <p>${f.symptoms}</p>
+    </div>
+    <div class="pop-sec" style="background:#F0FFF4">
+      <h4 style="color:#2E7D32">✅ Ne Yapmalı?</h4>
+      <p style="font-weight:600">${f.action}</p>
+    </div>
+    <div class="pop-tip"><div class="pop-tip-t">💡 Önemli Not</div><p>${f.tip}</p></div>
+    <button class="emergency-btn" onclick="callEmergency()" style="margin-bottom:8px">🆘 112 Ara!</button>
+    <button class="pop-btn" onclick="this.closest('.pop-ov').remove()">Anladım</button>
+  </div></div>`;
+  document.body.insertAdjacentHTML('beforeend',h);
+}
+
+function callEmergency(){
+  showToast('📞 112 — Türkiye Acil Servisi! Hemen arayın!','red');
+  addLog('🆘 Acil yardım: Türkiye 112 — Bebek Acil Servisi','ch');
+}
+
+// ══════════════════════════════════════════════════════
+// BABY SAFETY CHECKLIST
+// ══════════════════════════════════════════════════════
+function showSafetyChecklist(){
+  const checks=BABY_SAFETY.map((item,i)=>`
+    <label class="safety-item" id="sitem-${i}" onclick="toggleSafety(${i})">
+      <input type="checkbox" id="sch-${i}" onchange="toggleSafety(${i})">
+      <span class="safety-txt">${item}</span>
+    </label>`).join('');
+  const h=`<div class="pop-ov" id="safetyPop" onclick="if(event.target===this)this.remove()">
+  <div class="pop-box">
+    <div class="pop-rainbow" style="background:linear-gradient(90deg,#FF9A3C,#52B788,#48CAE4)"></div>
+    <span class="pop-ico">🛡️</span>
+    <div class="pop-title">Bebek Güvenlik Kontrolü!</div>
+    <div class="pop-sub">${S.babyName} emeklemeye başladı — ev güvenliği şimdi kritik!</div>
+    <div class="pop-sec">
+      <h4>✅ Tamamlanması Gereken Güvenlik Adımları</h4>
+      <div style="font-size:.71rem;color:#888;margin-bottom:8px">Her maddeyi tamamlayınca işaretleyin:</div>
+      ${checks}
+    </div>
+    <div style="background:#E3F2FD;border-radius:12px;padding:10px;margin-bottom:12px;font-size:.73rem">
+      <strong style="color:#1565C0">💡 Bilgi:</strong>
+      <span style="color:#1976D2"> Bebek yürüteci kullanmayın! Basamaklardan düşme riski çok yüksektir. WHO ve AAP tarafından önerilmez.</span>
+    </div>
+    <button class="pop-btn green" id="safetyDoneBtn" onclick="completeSafety()" style="opacity:.5;cursor:not-allowed" disabled>
+      🛡️ Güvenli Yuva Oluşturuldu! (+30 GP)
+    </button>
+  </div></div>`;
+  document.body.insertAdjacentHTML('beforeend',h);
+}
+
+let _safetyChecked=new Set();
+function toggleSafety(i){
+  const cb=document.getElementById('sch-'+i);
+  const item=document.getElementById('sitem-'+i);
+  if(!cb||!item)return;
+  cb.checked=!cb.checked;
+  if(cb.checked){_safetyChecked.add(i);item.className='safety-item checked';}
+  else{_safetyChecked.delete(i);item.className='safety-item';}
+  const btn=document.getElementById('safetyDoneBtn');
+  if(btn){
+    const done=_safetyChecked.size>=BABY_SAFETY.length;
+    btn.disabled=!done;btn.style.opacity=done?'1':'0.5';btn.style.cursor=done?'pointer':'not-allowed';
+  }
+}
+
+function completeSafety(){
+  S.safetydone=true; S.dp+=30;
+  document.getElementById('safetyPop').remove();
+  spawnParticles(['🛡️','✅','⭐'],5);
+  playSound('achieve');
+  addLog('🛡️ Bebek güvenlik listesi tamamlandı! +30 GP','ms');
+  showToast('🛡️ Güvenli Yuva Oluşturuldu! +30 GP','');
+  checkAchievements();
 }
 
 // ══════════════════════════════════════════════════════
