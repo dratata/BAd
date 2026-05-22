@@ -226,6 +226,42 @@ body{font-family:'Nunito',sans-serif;background:linear-gradient(135deg,#FFF5F8,#
 .star{position:absolute;border-radius:50%;animation:twink 3s ease-in-out infinite}
 @keyframes twink{0%,100%{opacity:.2;transform:scale(1)}50%{opacity:.8;transform:scale(1.4)}}
 
+/* critical stat warning */
+.sfill.critical{animation:critBlink .7s ease-in-out infinite}
+@keyframes critBlink{0%,100%{opacity:1}50%{opacity:.4}}
+.sbar.critical-bg{background:#FFE0E0}
+
+/* achievements */
+.ach-card{background:#fff;border-radius:20px;padding:14px;box-shadow:var(--shadow)}
+.ach-card h3{font-family:'Fredoka One',cursive;font-size:.95rem;color:var(--text);margin-bottom:10px;display:flex;align-items:center;gap:6px}
+.ach-list{display:flex;flex-direction:column;gap:5px}
+.ach-item{display:flex;align-items:center;gap:9px;padding:8px 10px;border-radius:12px;border:2px solid transparent;transition:all .3s}
+.ach-item.done{background:linear-gradient(135deg,#FFF9E4,#FFF3CD);border-color:var(--yellow)}
+.ach-item.locked{background:#F8F8F8;opacity:.5}
+.ach-item.fresh{animation:achPop .5s cubic-bezier(.175,.885,.32,1.275)}
+@keyframes achPop{0%{transform:scale(.7);opacity:0}70%{transform:scale(1.1)}100%{transform:scale(1);opacity:1}}
+.ach-ico{font-size:1.4rem;width:26px;text-align:center}
+.ach-inf{flex:1}
+.ach-nm{font-weight:800;font-size:.75rem;color:var(--text)}
+.ach-desc{font-size:.62rem;color:#888}
+.ach-st{font-size:.85rem}
+
+/* tips ticker */
+.tips-bar{background:linear-gradient(90deg,var(--text),#5B2FBE);color:rgba(255,255,255,.9);padding:6px 18px;font-size:.72rem;font-weight:600;display:flex;align-items:center;gap:10px;overflow:hidden}
+.tips-bar span{font-weight:800;color:var(--yellow);white-space:nowrap}
+.tip-text{animation:tipSlide .5s ease}
+@keyframes tipSlide{from{transform:translateY(8px);opacity:0}to{transform:translateY(0);opacity:1}}
+
+/* baby vitals */
+.baby-vitals{display:flex;justify-content:center;gap:16px;padding:8px 16px;background:var(--soft);font-size:.72rem;font-weight:700;color:var(--text)}
+.vital{text-align:center}
+.vital-val{font-family:'Fredoka One',cursive;font-size:1rem;color:var(--purple)}
+.vital-lbl{font-size:.6rem;color:#888;margin-top:1px}
+
+/* achievement popup */
+.ach-popup{background:linear-gradient(135deg,#FFF8E1,#FFF3CD)!important}
+.ach-popup .pop-title{color:#E65100!important}
+
 /* scrollbars */
 ::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--purple);border-radius:10px}
 
@@ -272,6 +308,7 @@ body{font-family:'Nunito',sans-serif;background:linear-gradient(135deg,#FFF5F8,#
 <!-- ═══════════════════════════════════ GAME ═══════════════════ -->
 <div id="gameScreen" style="display:none">
 
+  <div class="tips-bar" id="tipsBar"><span>💡 İpucu:</span><span class="tip-text" id="tipText">Oyuna hoş geldiniz! Bebeğinizin gelişimini takip edin.</span></div>
   <header class="hdr">
     <div class="hdr-left">
       <h1>🍼 Bebek Büyütme Macerası</h1>
@@ -303,6 +340,11 @@ body{font-family:'Nunito',sans-serif;background:linear-gradient(135deg,#FFF5F8,#
           <div class="baby-nm" id="babyNm">Bebek</div>
           <div class="baby-stg" id="babyStg">Yenidoğan</div>
           <div class="baby-mood" id="babyMoodTxt">😊 Mutlu ve Sağlıklı</div>
+        </div>
+        <div class="baby-vitals">
+          <div class="vital"><div class="vital-val" id="vitalWeight">3.2 kg</div><div class="vital-lbl">⚖️ Kilo</div></div>
+          <div class="vital"><div class="vital-val" id="vitalHeight">50 cm</div><div class="vital-lbl">📏 Boy</div></div>
+          <div class="vital"><div class="vital-val" id="vitalAge">0. Ay</div><div class="vital-lbl">🎂 Yaş</div></div>
         </div>
       </div>
 
@@ -525,6 +567,12 @@ body{font-family:'Nunito',sans-serif;background:linear-gradient(135deg,#FFF5F8,#
         <div class="ms-list" id="msList"></div>
       </div>
 
+      <!-- ACHIEVEMENTS -->
+      <div class="ach-card">
+        <h3>🏅 Başarımlar <span id="achCount">0/8</span></h3>
+        <div class="ach-list" id="achList"></div>
+      </div>
+
       <!-- LOG -->
       <div class="icard">
         <h3>📓 Bebek Günlüğü</h3>
@@ -596,6 +644,47 @@ const CHALLENGES = [
   {id:'ates',icon:'🤒',name:'Ateş!',desc:'Bebeğin ateşi yükseldi! Hemen kontrol et!',urgent:true,action:'Doktoru Ara / Ateş Düşür',resolve:{health:20,happy:8,dp:12},penaltyMsg:'Ateş tedavi edilmedi!',info:'3 aydan küçük bebeklerde 38°C ateşte HEMEN doktora gidin. Büyük bebeklerde 38.5°C altı ateş genellikle zararlı değildir. Bol sıvı verin, uygun ateş düşürücü kullanın.',tip:'Ateş ölçümünde koltuk altı normalden 0.5°C düşük gösterir. Kulak termometresi veya rektal ölçüm daha doğrudur.'},
 ];
 
+// BABY WEIGHT/HEIGHT by month (approximate WHO averages)
+const BABY_GROWTH = [
+  {w:3.2,h:50},{w:4.2,h:54},{w:5.1,h:57},{w:5.9,h:60},
+  {w:6.5,h:62},{w:7.0,h:64},{w:7.5,h:66},{w:7.8,h:67},
+  {w:8.2,h:69},{w:8.5,h:71},{w:8.8,h:72},{w:9.0,h:74},
+  {w:9.2,h:75},{w:9.5,h:76},{w:9.7,h:77},{w:9.9,h:78},
+  {w:10.1,h:79},{w:10.3,h:80},{w:10.5,h:82},{w:10.7,h:83},
+  {w:10.9,h:84},{w:11.1,h:85},{w:11.3,h:86},{w:11.5,h:87},
+  {w:11.7,h:88}
+];
+
+const ACHIEVEMENTS = [
+  {id:'firstfeed',   icon:'🍼', name:'İlk Beslenme',      desc:'İlk kez besledin!',               check:s=>s.totalFeeds>=1},
+  {id:'annesutu10',  icon:'🤱', name:'Anne Sütü Şampiyonu',desc:'10 kez anne sütü verdin',         check:s=>s.milkFeeds>=10},
+  {id:'dad25',       icon:'👨', name:'Aktif Baba',         desc:'Baba desteği %25 oldu',           check:s=>s.dadScore>=25},
+  {id:'dad75',       icon:'🏆', name:'Kahraman Baba',      desc:'Baba desteği %75 oldu',           check:s=>s.dadScore>=75},
+  {id:'vax5',        icon:'💉', name:'Aşı Koruyucusu',     desc:'5 aşı yaptırdın',                check:s=>s.doneVax.size>=5},
+  {id:'vax10',       icon:'🛡️', name:'Tam Koruma',         desc:'10 aşı tamamlandı',               check:s=>s.doneVax.size>=10},
+  {id:'ms10',        icon:'🌟', name:'Gelişim Takipçisi',  desc:'10 gelişim basamağı açıldı',      check:s=>s.unlocked.size>=10},
+  {id:'ms20',        icon:'🎊', name:'Büyüme Ustası',      desc:'Tüm 20 basamak tamamlandı!',     check:s=>s.unlocked.size>=20},
+];
+
+const TIPS = [
+  'Bebeğinize konuşmaya devam edin — duymak dil gelişiminin temelidir! 👂',
+  'Anne sütü sadece besin değil, bağışıklık sistemi için de en iyi destek! 🤱',
+  'Tummy Time (karna yatış) günde 3-5 kez 5 dakika yapılmalıdır. 💪',
+  'Bebek masajı hem bağlanmayı hem de sindirim sistemini destekler! 💆',
+  'Gece uyanmaları normaldir — sabırlı olun, bu dönem geçer! 🌙',
+  'Baba katılımı bebeğin sosyal ve bilişsel gelişimine büyük katkı sağlar! 👨‍👶',
+  'Her gün en az bir kitap okumak kelime dağarcığını hızla artırır! 📚',
+  'Göz teması ve gülümseme bebeğin güven duygusunu pekiştirir! 😊',
+  'Bebek ağladığında paniklemeden sırasıyla ihtiyaçlarını kontrol edin! 🔍',
+  'Müzik ve ritim bebeğin matematik ve dil becerilerini destekler! 🎵',
+  'Anne iyi hissederse bebek de iyi hisseder — anneye destek çok önemli! 💖',
+  'Aşı takvimini aksatmadan takip etmek çocuğunuzun en büyük korumasıdır! 💉',
+  'Bebek kucağa alındığında oksitosin salgılanır — hem anne hem bebek rahatlar! 🤗',
+  '6. aydan itibaren katı gıdaya geçerken tek tek yeni gıdalar deneyin! 🥣',
+  'Diş çıkarma döneminde soğuk diş kaşıyıcı büyük rahatlama sağlar! 🦷',
+  'Her çocuk farklı gelişir — karşılaştırmadan kaçının, kendi tempolarına güvenin! 🌈',
+];
+
 const BABY_STAGES = [
   {minDP:0,    name:'Yenidoğan',   faceG:'👶',faceE:'👶',body:'',        bg:'linear-gradient(180deg,#1a0533,#2D1B69,#3d0b80)',    deco:'⭐✨🌙',  fx:'💫'},
   {minDP:1000, name:'Keşifçi',     faceG:'😊',faceE:'😊',body:'🌈',      bg:'linear-gradient(180deg,#E0F7FA,#B2EBF2,#E0F2F1)',    deco:'🧸🎠🎡', fx:'🌟'},
@@ -655,12 +744,14 @@ const S = {
   hunger:80, happy:70, energy:90, health:100, diaper:100,
   milk:100, dadScore:0,
   dp:0, ageMonths:0, dayTime:1,
-  unlocked:new Set([1]), doneVax:new Set(),
+  unlocked:new Set([1]), doneVax:new Set(), unlockedAch:new Set(),
   activeChallenge:null, challengeTimer:0,
   nextChallengeIn:45,
   lastTick:Date.now(), currentStage:0,
   momMsgIdx:0, momMsgTimer:0,
-  pendingMilestonePopup:null,
+  tipIdx:0, tipTimer:0,
+  totalFeeds:0, milkFeeds:0,
+  annesutuPopupShown:0,
 };
 
 // ══════════════════════════════════════════════════════
@@ -688,7 +779,7 @@ function startGame(){
   document.getElementById('hdrSub').textContent=`${mn} 💖 ${dn} 💙 · ${bn}'in ailesi`;
   addLog(`🍼 ${bn} dünyaya geldi! ${mn} ve ${dn} ailesine hayırlı olsun! Maceranız başlıyor...`,'ms');
   addLog('💡 İpucu: Bebeğe tıkla, aktiviteler yap, zorlu anları çöz ve gelişimi izle!');
-  renderVax(); renderMs();
+  renderVax(); renderMs(); renderAch();
   // birth vaccines
   setTimeout(()=>triggerVaxDue(0),2000);
   initStars();
@@ -730,7 +821,12 @@ function tick(){
   }
   // mom msg rotation
   S.momMsgTimer+=dt;
-  if(S.momMsgTimer>20){S.momMsgTimer=0;S.momMsgIdx=(S.momMsgIdx+1)%MOM_MSGS.length;document.getElementById('momMsg').textContent=MOM_MSGS[S.momMsgIdx];}
+  if(S.momMsgTimer>20){S.momMsgTimer=0;S.momMsgIdx=(S.momMsgIdx+1)%MOM_MSGS.length;const m=document.getElementById('momMsg');if(m)m.textContent=MOM_MSGS[S.momMsgIdx];}
+  // tips rotation
+  S.tipTimer+=dt;
+  if(S.tipTimer>12){S.tipTimer=0;S.tipIdx=(S.tipIdx+1)%TIPS.length;const t=document.getElementById('tipText');if(t){t.textContent=TIPS[S.tipIdx];t.className='tip-text';void t.offsetWidth;t.className='tip-text';}}
+  // achievements
+  checkAchievements();
   // age
   const newAge=Math.min(24,Math.floor(S.dp/600));
   if(newAge!==S.ageMonths){
@@ -769,11 +865,15 @@ function doAct(id){
     if(S.ageMonths>=12){showPopupInfo({icon:'🤱',title:'Anne Sütü Tamamlandı',sub:'12 ay anne sütü verdiniz — bu muazzam bir başarı!',info:'WHO önerisi olan 12+ ay emzirmeyi tamamladınız. '+S.babyName+' için en iyi başlangıcı sağladınız.',tip:'2 yaşa kadar anne sütü devam ettirilebilir. Kararı anneyle birlikte alın. '+S.momName+', gerçek bir kahraman!',btnTxt:'Harika Anne! 💖'});return;}
     if(S.milk<a.milkCost){showPopupInfo({icon:'🤱',title:'Anne Sütü Deposu Doluyor',sub:'Birkaç dakika bekleyin...',info:'Anne sütü depası yenileniyor. Depo dolduğunda tekrar verebilirsiniz. Bu süreçte biberon kullanabilirsiniz.',tip:'Anne sütü üretimini artırmak için annein bol su içmesi, dinlenmesi ve stresten uzak durması önemlidir. '+S.dadName+', anneye destek ol!',btnTxt:'Tamam'});return;}
     S.milk=Math.max(0,S.milk-a.milkCost);
-    showAnnesutuPopup();
+    S.milkFeeds++;
+    // show educational popup first 2 times, then just toast
+    if(S.annesutuPopupShown<2){S.annesutuPopupShown++;showAnnesutuPopup();}
+    else showToast(`🤱 ${S.babyName} anne sütü içti! +35 Tokluk 💛`);
   }
   applyFx(a.fx||{});
   if(a.special==='diaper100') S.diaper=100;
   if(a.dadPts) S.dadScore=Math.min(100,S.dadScore+a.dadPts);
+  if(id==='biberon'||id==='mama'||id==='annesutu') S.totalFeeds++;
   const msg=a.msg(S.gender,S.babyName,S.dadName);
   addLog(msg, id.startsWith('dad-')?'dad':'');
   spawnParticles(a.sfx||['✨'],3);
@@ -866,10 +966,16 @@ function checkMilestones(){
     if(!S.unlocked.has(m.id)&&S.dp>=m.dp){
       S.unlocked.add(m.id);
       const el=document.getElementById('ms-'+m.id);
-      if(el)el.className='ms-item unlocked fresh';
+      if(el){
+        el.className='ms-item unlocked fresh';
+        el.querySelector('.ms-st').textContent='✅';
+        el.querySelector('.ms-dp') && (el.querySelector('.ms-dp').textContent='');
+        el.onclick=()=>showMilestonePopup(m,false);
+      }
       spawnParticles(['🌟','⭐','🎉'],6);
       addLog(`🌟 Yeni gelişim: ${m.name}!`,'ms');
       showMilestonePopup(m,true);
+      document.getElementById('msCount').textContent=`${S.unlocked.size}/20`;
       break;
     }
   }
@@ -963,14 +1069,33 @@ function updateUI(){
   // vax count
   const totalVax=VACCINES.length, doneVax=S.doneVax.size;
   document.getElementById('vaxCount').textContent=`${doneVax}/${totalVax} yapıldı`;
+  // baby vitals
+  const gi=Math.min(24,S.ageMonths);
+  const gd=BABY_GROWTH[gi]||BABY_GROWTH[24];
+  document.getElementById('vitalWeight').textContent=gd.w.toFixed(1)+' kg';
+  document.getElementById('vitalHeight').textContent=gd.h+' cm';
+  document.getElementById('vitalAge').textContent=S.ageMonths+'. Ay';
+  // achievements count
+  document.getElementById('achCount').textContent=`${S.unlockedAch.size}/8`;
 }
 
 function setBar(barId,lblId,val){
-  document.getElementById(barId).style.width=Math.round(val)+'%';
-  document.getElementById(lblId).textContent=Math.round(val)+'%';
-  // color warning
-  if(val<25) document.getElementById(barId).style.filter='hue-rotate(0deg)';
-  else document.getElementById(barId).style.filter='';
+  const bar=document.getElementById(barId);
+  const lbl=document.getElementById(lblId);
+  bar.style.width=Math.round(val)+'%';
+  lbl.textContent=Math.round(val)+'%';
+  if(val<20){
+    bar.className='sfill critical';
+    bar.style.background='linear-gradient(90deg,#FF4757,#FF6B81)';
+    lbl.style.color='var(--red)';
+  } else if(val<40){
+    bar.classList.remove('critical');
+    bar.style.background='linear-gradient(90deg,#FF9A3C,#FFD166)';
+    lbl.style.color='var(--orange)';
+  } else {
+    bar.classList.remove('critical');
+    lbl.style.color='';
+  }
 }
 
 function getCurrentStage(){
@@ -1034,7 +1159,7 @@ function renderMs(){
     const div=document.createElement('div');
     div.id='ms-'+m.id;
     div.className='ms-item '+(done?'unlocked':'locked');
-    div.innerHTML=`<span class="ms-ico">${m.icon}</span><div class="ms-inf"><div class="ms-nm">${m.name}</div><div class="ms-ag">${m.age}${done?'':' · '+m.dp.toLocaleString('tr')+' GP'}</div></div><span class="ms-st">${done?'✅':'🔒'}</span>`;
+    div.innerHTML=`<span class="ms-ico">${m.icon}</span><div class="ms-inf"><div class="ms-nm">${m.name}</div><div class="ms-ag">${m.age}</div>${done?'':'<div class="ms-dp">🌟 '+m.dp.toLocaleString('tr')+' GP</div>'}</div><span class="ms-st">${done?'✅':'🔒'}</span>`;
     if(done) div.onclick=()=>showMilestonePopup(m,false);
     list.appendChild(div);
   });
@@ -1202,6 +1327,46 @@ function addLog(msg,cls=''){
   d.textContent=`${time} — ${msg}`;
   w.insertBefore(d,w.firstChild);
   while(w.children.length>25)w.removeChild(w.lastChild);
+}
+
+// ══════════════════════════════════════════════════════
+// ACHIEVEMENTS
+// ══════════════════════════════════════════════════════
+function renderAch(){
+  const list=document.getElementById('achList');
+  if(!list)return;
+  list.innerHTML='';
+  ACHIEVEMENTS.forEach(a=>{
+    const done=S.unlockedAch.has(a.id);
+    const div=document.createElement('div');
+    div.id='ach-'+a.id;
+    div.className='ach-item '+(done?'done':'locked');
+    div.innerHTML=`<span class="ach-ico">${a.icon}</span><div class="ach-inf"><div class="ach-nm">${a.name}</div><div class="ach-desc">${a.desc}</div></div><span class="ach-st">${done?'✅':'🔒'}</span>`;
+    list.appendChild(div);
+  });
+}
+
+function checkAchievements(){
+  ACHIEVEMENTS.forEach(a=>{
+    if(!S.unlockedAch.has(a.id)&&a.check(S)){
+      S.unlockedAch.add(a.id);
+      const el=document.getElementById('ach-'+a.id);
+      if(el){el.className='ach-item done fresh';el.querySelector('.ach-st').textContent='✅';}
+      showAchievementToast(a);
+      addLog(`🏅 Başarım kazanıldı: ${a.name}!`,'ms');
+    }
+  });
+}
+
+function showAchievementToast(a){
+  // Remove existing achievement toasts
+  document.querySelectorAll('.ach-toast').forEach(x=>x.remove());
+  const div=document.createElement('div');
+  div.className='toast ach-toast';
+  div.style.cssText='border-color:var(--yellow);background:linear-gradient(135deg,#FFF9E4,#FFF3CD)';
+  div.innerHTML=`<span style="font-size:1.2rem">${a.icon}</span> 🏅 <strong>${a.name}</strong><br><span style="font-size:.7rem;opacity:.8">${a.desc}</span>`;
+  document.body.appendChild(div);
+  setTimeout(()=>div.remove(),3500);
 }
 
 function initStars(){
