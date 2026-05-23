@@ -468,6 +468,8 @@ body{font-family:'Nunito',sans-serif;background:linear-gradient(135deg,#FFF5F8,#
       <button onclick="showBirthStory()" style="background:rgba(255,154,60,.35);color:#fff;border:none;padding:5px 11px;border-radius:20px;font-size:.72rem;font-weight:700;cursor:pointer;font-family:'Nunito',sans-serif" title="Doğum Hikayesi">👶 Hikaye</button>
       <button onclick="showFirstWords()" style="background:rgba(76,175,80,.35);color:#fff;border:none;padding:5px 11px;border-radius:20px;font-size:.72rem;font-weight:700;cursor:pointer;font-family:'Nunito',sans-serif" title="İlk Kelimeler">🗣️ Kelimeler</button>
       <button onclick="showTeethMap()" style="background:rgba(33,150,243,.35);color:#fff;border:none;padding:5px 11px;border-radius:20px;font-size:.72rem;font-weight:700;cursor:pointer;font-family:'Nunito',sans-serif" title="Dişlenme Haritası">🦷 Dişler</button>
+      <button onclick="showSleepLog()" style="background:rgba(63,81,181,.35);color:#fff;border:none;padding:5px 11px;border-radius:20px;font-size:.72rem;font-weight:700;cursor:pointer;font-family:'Nunito',sans-serif" title="Uyku Günlüğü">😴 Uyku</button>
+      <button onclick="showFeedLog()" style="background:rgba(56,142,60,.35);color:#fff;border:none;padding:5px 11px;border-radius:20px;font-size:.72rem;font-weight:700;cursor:pointer;font-family:'Nunito',sans-serif" title="Beslenme Günlüğü">🍽️ Öğün</button>
       <span id="seasonBadge" title="Mevsim" style="font-size:1.1rem;cursor:default">🌸</span>
     </div>
   </header>
@@ -626,6 +628,7 @@ body{font-family:'Nunito',sans-serif;background:linear-gradient(135deg,#FFF5F8,#
           <button class="info-btn" onclick="showMotorGuide()">🏃 Motor Gelişim</button>
           <button class="info-btn" onclick="showImmunityGuide()">🛡️ Bağışıklık</button>
           <button class="info-btn" onclick="showSocialGuide()">🤝 Sosyal</button>
+          <button class="info-btn" onclick="showColorShapeGame()">🎨 Renk & Şekil</button>
         </div>
         <div class="stab-nav">
           <button class="stab-btn on" onclick="switchSubTab('fizik')" id="stab-fizik">🏋️ Fiziksel</button>
@@ -691,6 +694,7 @@ body{font-family:'Nunito',sans-serif;background:linear-gradient(135deg,#FFF5F8,#
           <button class="info-btn" onclick="showBabyPoems()">📜 Şiirler</button>
           <button class="info-btn" onclick="showGrowthJournal()">📏 Büyüme</button>
           <button class="info-btn" onclick="showCryDecoder()">😭 Ağlama Kodu</button>
+          <button class="info-btn" onclick="showStressChecker()">🧘 Stres Ölçer</button>
         </div>
         <div class="act-grid">
           <button class="abt care" onclick="doAct('uyut')">
@@ -1173,6 +1177,8 @@ const CHALLENGES = [
   {id:'ilkyemek',icon:'🥦',name:'Sebze Reddi!',desc:'Bebek sebzeyi reddediyor — her şeyi tükürdü!',urgent:false,action:'Sabırla Tekrar Dene',resolve:{happy:10,health:8,dp:16},penaltyMsg:'Bebek aç kaldı!',info:'Bir bebeğin yeni bir gıdayı kabul etmesi 10-15 maruziyeti gerektirebilir. İlk reddetme normal ve beklenen bir davranıştır — pes etmeyin!',tip:'Yüz ifadenizi olumlu tutun, siz de bebeğin yanında aynı sebzeyi yiyin. Oyunlaştırın: "uçak geliyorr!" Israr etmeden, baskı yapmadan tekrar sunun.'},
   {id:'yabanci',icon:'😰',name:'Yabancı Kaygısı!',desc:'Tanımadık biri geldi — bebek ağlamaya başladı!',urgent:false,action:'Güvenli Ortam Yarat',resolve:{happy:18,dp:20},penaltyMsg:'Yabancı kaygısı kötü geçti!',info:'Yabancı kaygısı 6-8. aylarda başlar ve 2 yaşa kadar sürebilir. Bu, sağlıklı bir ebeveyn-bebek bağının göstergesidir. Bebek, bakımveren ile yabancı arasındaki farkı öğreniyor.',tip:'Yeni insanları tanıştırırken sabırlı olun. Önce siz tanıştırın, ebeveyn yanındayken yaklaşmalarına izin verin. Asla zorlamayın — bebek kendi hızında sosyalleşir.'},
   {id:'buyumeatlamasi',icon:'📈',name:'Büyüme Sıçraması!',desc:'Bebek aniden çok acıktı — büyüme sıçraması başladı!',urgent:false,action:'Daha Sık Besle',resolve:{hunger:40,health:8,dp:18},penaltyMsg:'Büyüme sıçraması desteklenmedi!',info:'Büyüme sıçramaları genellikle 3, 6, 9. aylarda olur. Bu dönemde bebek daha sık emer, daha huysuz olur ve daha fazla uyur. Anne sütü talebi artınca süt de artar — bu normal!',tip:'Büyüme sıçraması sırasında isteğe bağlı besleyin, daha sık emzirin. Genellikle 2-3 günde geçer. Formüle geçmeye gerek yok — talep artınca süt artar!'},
+  {id:'tantrum',icon:'🌋',name:'Toddler Öfke Krizi!',minAge:12,desc:'Bebek yerde yuvarlanıyor ve çığlık atıyor!',urgent:false,action:'Sakin Kal & Alan Ver',resolve:{happy:20,energy:5,dp:24},penaltyMsg:'Öfke krizi yönetilemedi!',info:'"Terrible Twos" erken başlayabilir! Toddler öfke krizleri 12-36. aylarda normaldir. Bebek duygularını henüz düzenleyemiyor — prefrontal korteks gelişimi 25 yaşa kadar sürer!',tip:'Kriz sırasında: sakin kalın, tehlikeden uzaklaştırın, alan verin, geçmesini bekleyin. Sonra sarılın. Asla kriz anında müzakere etmeyin veya ödüllendirmeyin.'},
+  {id:'geceteroru',icon:'👻',name:'Gece Terörü!',minAge:12,desc:'Bebek gece çığlıkla uyandı, ama aslında uyuyor!',urgent:true,action:'Sakin Ol, Uyanmaya Çalışma',resolve:{energy:15,happy:10,dp:20},penaltyMsg:'Gece terörü ebeveynleri de korkuttu!',info:'Gece terörü (pavor nocturnus) 18 ay-6 yaş arası yaygındır. Çocuk uyurgezer gibi çığlık atar ama aslında uyku durumundadır. Genellikle sabah hiçbir şey hatırlamaz.',tip:'Gece terörü sırasında: uyandırmaya çalışmayın! Güvenliğini sağlayın, sakin bekleyin. 5-15 dakikada geçer. Normal uyku düzeni ve stressiz ortam sıklığı azaltır.'},
 ];
 
 // ══════════════════════════════════════════════════════
@@ -1207,6 +1213,7 @@ function saveGame(){
     dailyStreak:S.dailyStreak||0, lastStreakDay:S.lastStreakDay||0, maxStreak:S.maxStreak||0,
     birthStory:S.birthStory||null,
     firstWords:S.firstWords||[], teethDone:[...S.teethDone||new Set()], cryDecoderUsed:S.cryDecoderUsed||false, sensoryRead:S.sensoryRead||false,
+    sleepLog:S.sleepLog||[], feedLog:S.feedLog||[], stressChecked:S.stressChecked||false, colorGamePlayed:S.colorGamePlayed||false,
     savedAt:Date.now(),
   };
   try { localStorage.setItem(SAVE_KEY, JSON.stringify(data)); } catch(e){}
@@ -1261,6 +1268,10 @@ function applySaveData(d){
   S.teethDone = new Set(d.teethDone||[]);
   S.cryDecoderUsed = d.cryDecoderUsed||false;
   S.sensoryRead = d.sensoryRead||false;
+  S.sleepLog = d.sleepLog||[];
+  S.feedLog = d.feedLog||[];
+  S.stressChecked = d.stressChecked||false;
+  S.colorGamePlayed = d.colorGamePlayed||false;
   S.started = true;
 }
 
@@ -1386,6 +1397,10 @@ const ACHIEVEMENTS = [
   {id:'words5',     icon:'💬', name:'Konuşkan Bebek',      desc:'5 ilk kelime kaydedildi!',             check:s=>(s.firstWords&&s.firstWords.length>=5)},
   {id:'teeth5',     icon:'🦷', name:'Dişli Gülümseme',     desc:'5 diş çıktı!',                        check:s=>(s.teethDone&&s.teethDone.size>=5)},
   {id:'sensory',    icon:'🌈', name:'Duyusal Keşif',       desc:'Duyusal Gelişim Rehberi okundu',       check:s=>(s.sensoryRead||false)},
+  {id:'sleeplog5',  icon:'😴', name:'Uyku Takipçisi',      desc:'5 uyku seansı kaydedildi',             check:s=>(s.sleepLog&&s.sleepLog.length>=5)},
+  {id:'feedlog10',  icon:'🍽️', name:'Beslenme Takipçisi',  desc:'10 öğün günlüğe işlendi',              check:s=>(s.feedLog&&s.feedLog.length>=10)},
+  {id:'stress1',    icon:'🧘', name:'Farkındayım',         desc:'Ebeveyn stres ölçeri kullanıldı',      check:s=>(s.stressChecked||false)},
+  {id:'colorgame',  icon:'🎨', name:'Renkli Dünya',        desc:'Renk & Şekil oyunu oynandı',           check:s=>(s.colorGamePlayed||false)},
 ];
 
 const TIPS = [
@@ -1525,6 +1540,10 @@ const S = {
   teethDone:new Set(),
   cryDecoderUsed:false,
   sensoryRead:false,
+  sleepLog:[],
+  feedLog:[],
+  stressChecked:false,
+  colorGamePlayed:false,
 };
 
 // ══════════════════════════════════════════════════════
@@ -3168,6 +3187,10 @@ function showAllGuides(){
     {ico:'🗣️',name:'İlk Kelimeler',fn:'showFirstWords()'},
     {ico:'🦷',name:'Dişlenme Haritası',fn:'showTeethMap()'},
     {ico:'🌈',name:'Duyusal Gelişim',fn:'showSensoryGuide()'},
+    {ico:'😴',name:'Uyku Günlüğü',fn:'showSleepLog()'},
+    {ico:'🍽️',name:'Beslenme Günlüğü',fn:'showFeedLog()'},
+    {ico:'🧘',name:'Stres Ölçeri',fn:'showStressChecker()'},
+    {ico:'🎨',name:'Renk & Şekil',fn:'showColorShapeGame()'},
   ];
   const chips=guides.map(g=>`<button class="guide-chip" onclick="${g.fn};this.closest('.pop-ov').remove()">${g.ico}<br>${g.name}</button>`).join('');
   const h=`<div class="pop-ov" onclick="if(event.target===this)this.remove()">
@@ -3708,6 +3731,252 @@ function showSensoryGuide(){
     <button class="pop-btn" style="background:linear-gradient(135deg,#E91E63,#FF9800)" onclick="checkAchievements();this.closest('.pop-ov').remove()">🌈 Harika Bilgi!</button>
   </div></div>`;
   document.body.insertAdjacentHTML('beforeend',h);
+  checkAchievements();
+}
+
+// ══════════════════════════════════════════════════════
+// SLEEP LOG
+// ══════════════════════════════════════════════════════
+function showSleepLog(){
+  const log=S.sleepLog||[];
+  const totalMins=log.reduce((a,e)=>a+e.mins,0);
+  const avgMins=log.length?Math.round(totalMins/log.length):0;
+  const recent=log.slice(-7).reverse();
+  const bars=recent.map(e=>{
+    const pct=Math.min(100,Math.round(e.mins/720*100));
+    const col=e.quality>=4?'#4CAF50':e.quality>=3?'#FFC107':'#F44336';
+    return `<div style="display:flex;align-items:center;gap:6px;margin-bottom:4px;font-size:.67rem">
+      <div style="width:55px;color:#888;flex-shrink:0">${e.label}</div>
+      <div style="flex:1;background:#EEE;border-radius:4px;height:12px;overflow:hidden">
+        <div style="width:${pct}%;background:${col};height:100%;border-radius:4px"></div>
+      </div>
+      <div style="width:40px;text-align:right;font-weight:700;color:${col}">${e.hrs}s</div>
+    </div>`;
+  }).join('')||'<div style="color:#aaa;font-size:.73rem;text-align:center;padding:10px">Henüz kayıt yok</div>';
+  const h=`<div class="pop-ov" onclick="if(event.target===this)this.remove()">
+  <div class="pop-box">
+    <div class="pop-rainbow" style="background:linear-gradient(90deg,#1A237E,#3949AB,#7986CB)"></div>
+    <span class="pop-ico">😴</span>
+    <div class="pop-title">Uyku Günlüğü</div>
+    <div class="pop-sub">${log.length} kayıt · Ort. ${Math.floor(avgMins/60)}s ${avgMins%60}dk</div>
+    <div style="margin:8px 0">${bars}</div>
+    <div style="background:#E8EAF6;border-radius:12px;padding:10px;margin-bottom:8px">
+      <div style="font-weight:800;font-size:.75rem;color:#3949AB;margin-bottom:6px">➕ Yeni Uyku Ekle</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:6px">
+        <div>
+          <div style="font-size:.65rem;color:#666;margin-bottom:2px">Süre (saat)</div>
+          <input id="sleepHrs" type="number" min="0" max="12" step="0.5" value="2" style="width:100%;padding:7px;border:2px solid #9FA8DA;border-radius:8px;font-family:'Nunito',sans-serif;font-size:.8rem;outline:none;box-sizing:border-box">
+        </div>
+        <div>
+          <div style="font-size:.65rem;color:#666;margin-bottom:2px">Kalite (1-5)</div>
+          <input id="sleepQual" type="number" min="1" max="5" value="3" style="width:100%;padding:7px;border:2px solid #9FA8DA;border-radius:8px;font-family:'Nunito',sans-serif;font-size:.8rem;outline:none;box-sizing:border-box">
+        </div>
+      </div>
+      <input id="sleepLabel" placeholder="Etiket (ör: Gece uykusu, Öğlen uykusu)" style="width:100%;padding:7px;border:2px solid #9FA8DA;border-radius:8px;font-family:'Nunito',sans-serif;font-size:.75rem;outline:none;box-sizing:border-box;margin-bottom:6px">
+      <button onclick="saveSleepEntry()" style="width:100%;padding:9px;background:linear-gradient(135deg,#3949AB,#7986CB);color:#fff;border:none;border-radius:10px;font-family:'Fredoka One',cursive;cursor:pointer">😴 Kaydet</button>
+    </div>
+    <div class="pop-tip"><div class="pop-tip-t">😴 Uyku İhtiyacı (Aylara Göre)</div><p>0-3 ay: 14-17s · 4-11 ay: 12-15s · 1-2 yaş: 11-14s. Toplam uyku gündüz+gece uyku dahildir.</p></div>
+    <button class="pop-btn" style="background:#eee;color:#555" onclick="this.closest('.pop-ov').remove()">Kapat</button>
+  </div></div>`;
+  document.body.insertAdjacentHTML('beforeend',h);
+}
+
+function saveSleepEntry(){
+  const hrs=parseFloat(document.getElementById('sleepHrs').value)||0;
+  const quality=parseInt(document.getElementById('sleepQual').value)||3;
+  const label=document.getElementById('sleepLabel').value.trim()||'Uyku';
+  if(hrs<=0){showToast('Lütfen süre girin! ⏰'); return;}
+  const mins=Math.round(hrs*60);
+  S.sleepLog=S.sleepLog||[];
+  S.sleepLog.push({hrs:hrs,mins,quality,label,month:S.ageMonths});
+  const bonus=quality>=4?20:quality>=3?12:8;
+  S.dp+=bonus;
+  S.energy=Math.min(100,S.energy+quality*3);
+  spawnParticles(['😴','⭐','🌙'],3);
+  showToast(`😴 ${hrs}s uyku kaydedildi! +${bonus} GP`);
+  addLog(`😴 Uyku kaydı: ${hrs}s · Kalite ${quality}/5`,'care');
+  document.querySelector('.pop-ov').remove();
+  checkAchievements();
+  showSleepLog();
+}
+
+// ══════════════════════════════════════════════════════
+// FEEDING LOG
+// ══════════════════════════════════════════════════════
+function showFeedLog(){
+  const log=S.feedLog||[];
+  const recent=log.slice(-8).reverse();
+  const types={milk:'🤱',formula:'🍼',solid:'🥄',water:'💧',snack:'🍎'};
+  const items=recent.map(e=>`
+    <div style="display:flex;align-items:center;gap:7px;background:#F1F8E9;border-radius:9px;padding:6px 9px;margin-bottom:4px">
+      <span style="font-size:1.1rem">${types[e.type]||'🍽️'}</span>
+      <div style="flex:1">
+        <div style="font-weight:700;font-size:.75rem;color:var(--text)">${e.note||e.type}</div>
+        <div style="font-size:.62rem;color:#888">${e.month}. ay${e.duration?' · '+e.duration+'dk':''}</div>
+      </div>
+    </div>`).join('')||'<div style="color:#aaa;font-size:.73rem;text-align:center;padding:10px">Henüz kayıt yok</div>';
+  const h=`<div class="pop-ov" onclick="if(event.target===this)this.remove()">
+  <div class="pop-box">
+    <div class="pop-rainbow" style="background:linear-gradient(90deg,#E8F5E9,#A5D6A7)"></div>
+    <span class="pop-ico">🍽️</span>
+    <div class="pop-title">Beslenme Günlüğü</div>
+    <div class="pop-sub">${log.length} öğün kaydedildi</div>
+    <div style="max-height:180px;overflow-y:auto;margin:8px 0">${items}</div>
+    <div style="background:#F1F8E9;border-radius:12px;padding:10px;margin-bottom:8px">
+      <div style="font-weight:800;font-size:.75rem;color:#388E3C;margin-bottom:6px">➕ Öğün Ekle</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:6px">
+        <div>
+          <div style="font-size:.65rem;color:#666;margin-bottom:2px">Tür</div>
+          <select id="feedType" style="width:100%;padding:7px;border:2px solid #A5D6A7;border-radius:8px;font-family:'Nunito',sans-serif;font-size:.75rem;outline:none">
+            <option value="milk">🤱 Anne Sütü</option>
+            <option value="formula">🍼 Mama/Formül</option>
+            <option value="solid">🥄 Katı Gıda</option>
+            <option value="snack">🍎 Atıştırmalık</option>
+            <option value="water">💧 Su</option>
+          </select>
+        </div>
+        <div>
+          <div style="font-size:.65rem;color:#666;margin-bottom:2px">Süre (dk, isteğe bağlı)</div>
+          <input id="feedDur" type="number" min="0" max="60" placeholder="dk" style="width:100%;padding:7px;border:2px solid #A5D6A7;border-radius:8px;font-family:'Nunito',sans-serif;font-size:.8rem;outline:none;box-sizing:border-box">
+        </div>
+      </div>
+      <input id="feedNote" placeholder="Not (ör: sol taraf, sebze püresi)" style="width:100%;padding:7px;border:2px solid #A5D6A7;border-radius:8px;font-family:'Nunito',sans-serif;font-size:.75rem;outline:none;box-sizing:border-box;margin-bottom:6px">
+      <button onclick="saveFeedEntry()" style="width:100%;padding:9px;background:linear-gradient(135deg,#388E3C,#66BB6A);color:#fff;border:none;border-radius:10px;font-family:'Fredoka One',cursive;cursor:pointer">🍽️ Kaydet</button>
+    </div>
+    <div class="pop-tip"><div class="pop-tip-t">🤱 Emzirme Takibi</div><p>Her emzirmeyi kaydetmek süt üretimini takip etmenize yardımcı olur. Günde 8-12 emzirme yenidoğan için normal — bu sayıyı görünce paniklemeyeceksiniz!</p></div>
+    <button class="pop-btn" style="background:#eee;color:#555" onclick="this.closest('.pop-ov').remove()">Kapat</button>
+  </div></div>`;
+  document.body.insertAdjacentHTML('beforeend',h);
+}
+
+function saveFeedEntry(){
+  const type=document.getElementById('feedType').value;
+  const duration=parseInt(document.getElementById('feedDur').value)||null;
+  const note=document.getElementById('feedNote').value.trim();
+  S.feedLog=S.feedLog||[];
+  S.feedLog.push({type,duration,note,month:S.ageMonths});
+  if(type==='milk'){S.milkFeeds=(S.milkFeeds||0)+1; S.totalFeeds=(S.totalFeeds||0)+1;}
+  else if(type==='formula'||type==='solid') S.totalFeeds=(S.totalFeeds||0)+1;
+  S.dp+=10; S.hunger=Math.min(100,S.hunger+18);
+  showToast('🍽️ Öğün kaydedildi! +10 GP');
+  document.querySelector('.pop-ov').remove();
+  checkAchievements();
+  showFeedLog();
+}
+
+// ══════════════════════════════════════════════════════
+// PARENT STRESS CHECKER
+// ══════════════════════════════════════════════════════
+function showStressChecker(){
+  S.stressChecked=true;
+  const questions=[
+    {q:'Son 1 haftada uyku kalitenizi nasıl değerlendirirsiniz?',opts:['Çok iyi','Orta','Kötü','Çok kötü'],scores:[0,1,2,3]},
+    {q:'Kendinizi ne sıklıkla bunalmış hissediyorsunuz?',opts:['Nadiren','Bazen','Sık sık','Neredeyse her zaman'],scores:[0,1,2,3]},
+    {q:'Eşinizle iletişiminiz nasıl?',opts:['Harika','İyi','Gergin','Çatışmalı'],scores:[0,1,2,3]},
+    {q:'Son 1 haftada kendinize ayırdığınız zaman?',opts:['30dk+ her gün','Birkaç kez','Çok az','Hiç'],scores:[0,1,2,3]},
+    {q:'Bebeğe bakmak hakkında genel hissiniz?',opts:['Keyifli','Çoğunlukla iyi','Zor ama yapıyorum','Çok bunaltıcı'],scores:[0,1,2,3]},
+  ];
+  let answers=[];
+  let current=0;
+  function renderQ(){
+    const q=questions[current];
+    const opts=q.opts.map((o,i)=>`<button onclick="answerStress(${i})" style="width:100%;padding:9px;background:#F3E5F5;border:2px solid #CE93D8;border-radius:10px;font-family:'Nunito',sans-serif;font-size:.78rem;cursor:pointer;margin-bottom:5px;text-align:left">${o}</button>`).join('');
+    const box=document.getElementById('stressQBox');
+    if(box) box.innerHTML=`<div style="font-weight:700;font-size:.8rem;color:var(--text);margin-bottom:8px">${current+1}/5 — ${q.q}</div>${opts}`;
+  }
+  function answerStress(i){
+    answers.push(questions[current].scores[i]);
+    current++;
+    if(current<questions.length){renderQ(); return;}
+    const total=answers.reduce((a,b)=>a+b,0);
+    const level=total<=3?'Düşük':total<=7?'Orta':'Yüksek';
+    const col=total<=3?'#4CAF50':total<=7?'#FF9800':'#F44336';
+    const tips={
+      Düşük:['Harika gidiyorsunuz! Rutininize devam edin.','Küçük anları kutlayın — iyi ebeveynlik göstergeleri bunlar.','Sosyal bağlarınızı koruyun.'],
+      Orta:['Günde 15 dakika "ben zamanı" ayırın.','Eşinizle gece konuşmaları yapın.','Uyku kalitenizi artırmak için rutin oluşturun.','Gereksiz sorumlulukları devredin.'],
+      Yüksek:['Bugün birine yardım isteyin — annenize, arkadaşınıza.','Postpartum depresyon için bir uzmana danışın.','Partner ile görev paylaşımını yeniden düzenleyin.','Türkiye psikolojik destek: 182 (ALO Psikiyatri Hattı)'],
+    };
+    const tipList=tips[level].map(t=>`<li style="margin-bottom:4px">${t}</li>`).join('');
+    const box=document.getElementById('stressQBox');
+    if(box) box.innerHTML=`
+      <div style="text-align:center;margin-bottom:10px">
+        <div style="font-size:2rem;margin-bottom:4px">${total<=3?'😊':total<=7?'😐':'😰'}</div>
+        <div style="font-weight:800;font-size:1rem;color:${col}">${level} Stres Seviyesi</div>
+        <div style="font-size:.7rem;color:#888">Skor: ${total}/15</div>
+      </div>
+      <div style="background:#FFF;border-radius:10px;padding:10px;border-left:4px solid ${col}">
+        <div style="font-weight:700;font-size:.75rem;color:${col};margin-bottom:5px">💡 Öneriler</div>
+        <ul style="font-size:.7rem;color:#555;padding-left:14px;line-height:1.8;margin:0">${tipList}</ul>
+      </div>`;
+    S.dp+=30; spawnParticles(['🧘','💜','⭐'],4);
+    showToast('🧘 Öz değerlendirme tamamlandı! +30 GP');
+    checkAchievements();
+  }
+  const h=`<div class="pop-ov" onclick="if(event.target===this)this.remove()">
+  <div class="pop-box">
+    <div class="pop-rainbow" style="background:linear-gradient(90deg,#EDE7F6,#D1C4E9)"></div>
+    <span class="pop-ico">🧘</span>
+    <div class="pop-title">Ebeveyn Stres Ölçeri</div>
+    <div class="pop-sub">5 soruluk öz değerlendirme</div>
+    <div id="stressQBox" style="margin:10px 0"></div>
+    <button class="pop-btn" style="background:#eee;color:#555;margin-top:8px" onclick="this.closest('.pop-ov').remove()">Kapat</button>
+  </div></div>`;
+  document.body.insertAdjacentHTML('beforeend',h);
+  renderQ();
+  window.answerStress=answerStress;
+}
+
+// ══════════════════════════════════════════════════════
+// COLOR & SHAPE FLASH CARDS
+// ══════════════════════════════════════════════════════
+function showColorShapeGame(){
+  if(S.ageMonths<9){showToast('Bu oyun 9. aydan itibaren! Henüz erken. 🌟'); return;}
+  S.colorGamePlayed=true;
+  const cards=[
+    {shape:'⭕',name:'Daire',color:'#F44336',colorName:'Kırmızı'},
+    {shape:'🟦',name:'Kare',color:'#2196F3',colorName:'Mavi'},
+    {shape:'🔺',name:'Üçgen',color:'#4CAF50',colorName:'Yeşil'},
+    {shape:'🟡',name:'Daire',color:'#FFEB3B',colorName:'Sarı'},
+    {shape:'🟣',name:'Daire',color:'#9C27B0',colorName:'Mor'},
+    {shape:'🟧',name:'Kare',color:'#FF9800',colorName:'Turuncu'},
+    {shape:'💠',name:'Elmas',color:'#00BCD4',colorName:'Cyan'},
+    {shape:'🔷',name:'Elmas',color:'#1565C0',colorName:'Koyu Mavi'},
+  ];
+  let idx=0;
+  function renderCard(){
+    const c=cards[idx];
+    const box=document.getElementById('colorCardBox');
+    if(!box) return;
+    box.innerHTML=`
+      <div style="text-align:center;padding:14px 0">
+        <div style="font-size:5rem;margin-bottom:10px;cursor:pointer" onclick="nextCard()" title="Devam et">${c.shape}</div>
+        <div style="font-size:1.4rem;font-weight:800;color:${c.color};font-family:'Fredoka One',cursive">${c.colorName}</div>
+        <div style="font-size:.9rem;color:#777;margin-top:3px">${c.name}</div>
+        <div style="font-size:.65rem;color:#aaa;margin-top:8px">${idx+1}/${cards.length} — Resme tıkla!</div>
+      </div>`;
+  }
+  function nextCard(){
+    playSound('click');
+    idx=(idx+1)%cards.length;
+    if(idx===0){
+      S.dp+=25; spawnParticles(['🎨','⭐','🌈'],5);
+      showToast('🎨 Tur tamamlandı! +25 GP');
+    }
+    renderCard();
+  }
+  const h=`<div class="pop-ov" onclick="if(event.target===this)this.remove()">
+  <div class="pop-box">
+    <div class="pop-rainbow" style="background:linear-gradient(90deg,#FF6B9D,#FFD166,#06D6A0,#118AB2)"></div>
+    <span class="pop-ico">🎨</span>
+    <div class="pop-title">Renk & Şekil Flash Kartlar</div>
+    <div class="pop-sub">Resme tıklayarak kartları çevir!</div>
+    <div id="colorCardBox" style="margin:8px 0"></div>
+    <div class="pop-tip"><div class="pop-tip-t">🧠 Nasıl Kullanılır?</div><p>Her karta tıkladığınızda bebeğe rengi ve şekli söyleyin. Tekrar çok önemli — aynı kart günde birkaç kez gösterin. 12-18. aylarda renk isimleri yerleşmeye başlar.</p></div>
+    <button class="pop-btn" style="background:linear-gradient(135deg,#E91E63,#FF9800)" onclick="this.closest('.pop-ov').remove()">🎨 Bitti!</button>
+  </div></div>`;
+  document.body.insertAdjacentHTML('beforeend',h);
+  renderCard();
+  window.nextCard=nextCard;
   checkAchievements();
 }
 
