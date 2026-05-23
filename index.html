@@ -394,8 +394,149 @@ body{font-family:'Nunito',sans-serif;background:linear-gradient(135deg,#FFF5F8,#
 /* scrollbars */
 ::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--purple);border-radius:10px}
 
-/* responsive */
-@media(max-width:1080px){.grid{grid-template-columns:260px 1fr}.info-panel{grid-column:1/-1;display:grid;grid-template-columns:repeat(3,1fr)}}
+/* ── RESPONSIVE ─────────────────────────────────────────── */
+
+/* Tablet (≤1080px) */
+@media(max-width:1080px){
+  .grid{grid-template-columns:250px 1fr}
+  .info-panel{grid-column:1/-1;display:grid;grid-template-columns:repeat(3,1fr)}
+}
+
+/* Large mobile / small tablet (≤768px) */
+@media(max-width:768px){
+  .grid{grid-template-columns:1fr;gap:10px;padding:10px}
+  .baby-panel{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .baby-card{grid-column:1/-1}
+  .stats-card{grid-column:1/-1}
+  .info-panel{grid-template-columns:1fr 1fr;gap:10px}
+  .hdr{padding:8px 12px;gap:6px}
+  .hdr-left h1{font-size:1rem}
+  .hdr-stats{gap:4px;flex-wrap:wrap}
+  .hbadge{font-size:.65rem;padding:4px 8px}
+  .hdr-stats button{font-size:.65rem!important;padding:4px 8px!important}
+  .act-panel{padding:12px}
+  .act-grid{grid-template-columns:1fr 1fr}
+  .tips-bar{font-size:.65rem;padding:5px 12px}
+  .pop-box{padding:18px;border-radius:22px}
+  .pop-title{font-size:1.3rem}
+  .pop-ico{font-size:3rem;margin:8px 0 4px}
+  .guide-grid{grid-template-columns:repeat(3,1fr)}
+}
+
+/* Mobile (≤480px) — primary target */
+@media(max-width:480px){
+  /* grid: single column stack */
+  .grid{grid-template-columns:1fr;gap:8px;padding:8px}
+  .baby-panel{display:flex;flex-direction:column;gap:8px}
+  .info-panel{display:flex;flex-direction:column;gap:8px}
+
+  /* header: wrap buttons to 2 rows */
+  .hdr{padding:8px 10px;gap:5px}
+  .hdr-left h1{font-size:.95rem}
+  .hdr-sub{font-size:.58rem}
+  .hdr-stats{gap:3px;justify-content:flex-start}
+  .hbadge{font-size:.6rem;padding:3px 7px}
+  .hdr-stats button{font-size:.6rem!important;padding:3px 7px!important;border-radius:14px!important}
+
+  /* tips bar */
+  .tips-bar{font-size:.62rem;padding:5px 10px;gap:6px}
+
+  /* baby scene smaller */
+  .baby-scene{height:155px}
+  .baby-emoji{font-size:4.2rem}
+  .baby-nm{font-size:1.1rem}
+
+  /* stats */
+  .stats-card{padding:12px}
+  .slabel{font-size:.68rem}
+  .sbar{height:8px}
+
+  /* activity panel */
+  .act-panel{padding:10px;gap:8px}
+  .tab-nav{gap:3px}
+  .tnav-btn{font-size:.6rem;padding:6px 3px}
+  .act-grid{grid-template-columns:1fr 1fr;gap:5px}
+  .abt{padding:10px 6px;border-radius:12px}
+  .abt .ai{font-size:1.3rem}
+  .abt .an{font-size:.67rem}
+  .abt .ae{font-size:.55rem}
+  .abt.special{padding:11px 12px}
+  .abt.special .ai{font-size:1.7rem}
+  .abt.special .an{font-size:.8rem}
+
+  /* info buttons: scroll horizontally */
+  .act-panel > .tab-body > div:first-child{
+    display:flex;gap:5px;flex-wrap:nowrap;overflow-x:auto;padding-bottom:4px;
+    scrollbar-width:none;-ms-overflow-style:none
+  }
+  .act-panel > .tab-body > div:first-child::-webkit-scrollbar{display:none}
+  .info-btn{white-space:nowrap;font-size:.68rem;padding:3px 8px;flex-shrink:0}
+
+  /* popups: full width */
+  .pop-ov{padding:10px}
+  .pop-box{padding:16px;border-radius:20px;max-height:92vh}
+  .pop-title{font-size:1.2rem}
+  .pop-ico{font-size:2.6rem;margin:6px 0 3px}
+  .pop-sub{font-size:.75rem}
+  .pop-btn{padding:11px;font-size:.85rem}
+  .guide-grid{grid-template-columns:repeat(3,1fr);gap:5px}
+  .guide-chip{padding:7px 4px;font-size:.62rem}
+
+  /* challenge card */
+  .ch-card{padding:12px}
+  .ch-icon{font-size:1.4rem}
+  .ch-name{font-size:.9rem}
+  .ch-desc{font-size:.72rem}
+  .ch-btn{padding:9px;font-size:.82rem}
+
+  /* dp card */
+  .dp-card{padding:10px 12px}
+  .dp-val{font-size:1.3rem}
+  .dp-title{font-size:.82rem}
+
+  /* milk card */
+  .milk-card{padding:10px}
+  .milk-top{font-size:.72rem}
+
+  /* info panel cards */
+  .icard{padding:12px}
+  .icard h3{font-size:.88rem}
+  .vax-list{max-height:200px}
+  .ms-list{max-height:180px}
+  .album-grid{grid-template-columns:repeat(4,1fr)}
+  .log-wrap{max-height:110px}
+
+  /* daily task */
+  .daily-task{padding:9px 11px;gap:7px}
+  .dt-ico{font-size:1.3rem}
+  .dt-text{font-size:.72rem}
+  .dt-btn{padding:7px 10px;font-size:.67rem}
+
+  /* toast: bottom center on mobile */
+  .toast{bottom:12px;right:10px;left:10px;max-width:none;font-size:.78rem;padding:10px 14px}
+
+  /* save indicator */
+  .save-ind{bottom:8px;left:8px;font-size:.65rem;padding:5px 10px}
+
+  /* setup card */
+  .setup-card{padding:24px 20px;border-radius:24px}
+  .setup-top .big{font-size:2.4rem}
+  .setup-top h1{font-size:1.6rem}
+  .fgrp input{font-size:.88rem;padding:10px 14px}
+  .start-btn{font-size:1.1rem;padding:14px}
+
+  /* vitals */
+  .baby-vitals{gap:10px;font-size:.67rem}
+  .vital-val{font-size:.9rem}
+
+  /* mom card */
+  .mom-card{padding:11px}
+  .mom-msg{font-size:.7rem}
+
+  /* dad section */
+  .dad-hdr{padding:10px 12px}
+  .dad-hdr-title{font-size:.82rem}
+}
 @media(max-width:680px){.grid{grid-template-columns:1fr}.info-panel{grid-template-columns:1fr}.hdr{flex-direction:column;align-items:flex-start}}
 </style>
 </head>
