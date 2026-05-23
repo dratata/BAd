@@ -388,6 +388,8 @@ body{font-family:'Nunito',sans-serif;background:linear-gradient(135deg,#FFF5F8,#
 .diary-card.available{background:#FFF0F5;border-color:#FF9A9E}
 .diary-card.done{background:#F0FFF4;border-color:#52B788}
 .diary-card.locked{background:#F5F5F5;border-color:#E0E0E0;opacity:.65}
+.quiz-opt{width:100%;padding:10px 14px;border:2px solid #E0D7FF;border-radius:12px;background:#fff;cursor:pointer;font-family:'Nunito',sans-serif;font-size:.8rem;font-weight:700;color:var(--text);text-align:left;transition:all .15s}
+.quiz-opt:hover:not(:disabled){background:var(--soft);border-color:var(--purple)}
 
 /* scrollbars */
 ::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--purple);border-radius:10px}
@@ -462,7 +464,8 @@ body{font-family:'Nunito',sans-serif;background:linear-gradient(135deg,#FFF5F8,#
       <button onclick="toggleSound()" id="soundBtn" style="background:rgba(199,125,255,.3);color:#fff;border:none;padding:5px 11px;border-radius:20px;font-size:.72rem;font-weight:700;cursor:pointer;font-family:'Nunito',sans-serif" title="Ses Aç/Kapat">🔊 Ses</button>
       <button onclick="showAllGuides()" style="background:rgba(72,202,228,.3);color:#fff;border:none;padding:5px 11px;border-radius:20px;font-size:.72rem;font-weight:700;cursor:pointer;font-family:'Nunito',sans-serif" title="Tüm Rehberler">📚 Rehberler</button>
       <button onclick="showBabyDiary()" style="background:rgba(255,107,157,.3);color:#fff;border:none;padding:5px 11px;border-radius:20px;font-size:.72rem;font-weight:700;cursor:pointer;font-family:'Nunito',sans-serif" title="Bebek Günlüğü">📖 Günlük</button>
-      <span id="seasonBadge" title="Mevsim" style="font-size:1.1rem;cursor:default" title="İlkbahar">🌸</span>
+      <button onclick="showParentingQuiz()" style="background:rgba(255,209,102,.35);color:#fff;border:none;padding:5px 11px;border-radius:20px;font-size:.72rem;font-weight:700;cursor:pointer;font-family:'Nunito',sans-serif" title="Günlük Test">🎓 Test</button>
+      <span id="seasonBadge" title="Mevsim" style="font-size:1.1rem;cursor:default">🌸</span>
     </div>
   </header>
   <div class="night-tint" id="nightTint" style="opacity:0"></div>
@@ -679,6 +682,8 @@ body{font-family:'Nunito',sans-serif;background:linear-gradient(135deg,#FFF5F8,#
           <button class="info-btn" onclick="showRedFlags()">⚠️ Uyarılar</button>
           <button class="info-btn" onclick="showTravelGuide()">✈️ Seyahat</button>
           <button class="info-btn" onclick="showPottyGuide()">🚽 Tuvalet</button>
+          <button class="info-btn" onclick="showBabyPoems()">📜 Şiirler</button>
+          <button class="info-btn" onclick="showGrowthJournal()">📏 Büyüme</button>
         </div>
         <div class="act-grid">
           <button class="abt care" onclick="doAct('uyut')">
@@ -1118,6 +1123,32 @@ const BABY_SAFETY = [
   'Pencere koruyucuları takıldı ✅',
 ];
 
+const QUIZ_QUESTIONS = [
+  {q:'Bebek ilk 6 ay için en iyi besin kaynağı hangisidir?',opts:['Anne sütü','Formül mama','İnek sütü','Meyve suyu'],ans:0,fact:'WHO ve DSÖ ilk 6 ay yalnızca anne sütü, 2 yaşa kadar destekleyici olarak önerir.'},
+  {q:'Yenidoğan bebek günde kaç saat uyur (ortalama)?',opts:['8-10 saat','12-14 saat','16-18 saat','20+ saat'],ans:2,fact:'Yenidoğanlar günde 16-18 saat uyur, ancak 2-3 saatlik periyotlarda.'},
+  {q:'Tummy Time (karna yatış) ne zaman başlanmalı?',opts:['3. aydan itibaren','6. aydan itibaren','Doğumdan itibaren','Emeklemeye başlayınca'],ans:2,fact:'Tummy Time doğumdan itibaren, kısa süreli ve gözetimli olarak başlanabilir. Boyun ve sırt kaslarını güçlendirir.'},
+  {q:'Bebek arabası koltuğu nasıl yerleştirilmeli?',opts:['İleri bakan','Geriye bakan (en az 2 yaşa kadar)','Yan bakan','Önemli değil'],ans:1,fact:'AAP önerisi: en az 2 yaşa kadar geriye bakan koltuk. Bu pozisyon kazalarda boynu korur.'},
+  {q:'Katı gıdaya geçiş için ideal yaş nedir?',opts:['3. ay','4. ay','6. ay','8. ay'],ans:2,fact:'WHO 6. ayı önerir. Sindirim sistemi 6. ayda hazır olur. Çok erken başlamak alerji riskini artırabilir.'},
+  {q:'Bebek "anne sütü sarılığı" (sarılık) için ne yapılmalı?',opts:['Emzirmeyi bırak','Daha sık emzir','Güneşe çıkar','Doktora git hemen'],ans:1,fact:'Fizyolojik sarılıkta daha sık emzirme bilirubin düşürmeye yardımcı olur. Ancak değerler yüksekse mutlaka doktora.'},
+  {q:'Bebek D vitamini ne zaman başlanmalı?',opts:['3. aydan','6. aydan','1. aydan (doğumdan itibaren)','12. aydan'],ans:2,fact:'Türkiye\'de D vitamini desteği doğumdan itibaren (ilk birkaç günden) önerilir. Güneş ışığından yeterince yararlanamayan bebekler için kritik.'},
+  {q:'"Wonder Weeks" (gelişim atlaması) nedir?',opts:['Bebeğin hafızası','Beynin hızlı gelişim dönemleri','Uyku süresi','Büyüme krizi'],ans:1,fact:'Gelişim atlamaları beynin yeniden yapılandığı dönemlerdir. Bebek daha sinirli olur ama ardından büyük bir beceri gelir!'},
+  {q:'Ayrılık kaygısı (separation anxiety) hangi ayda zirveye ulaşır?',opts:['2-4 ay','6-8 ay','12-18 ay','24 ay'],ans:2,fact:'Ayrılık kaygısı 12-18. aylarda zirve yapar. Sağlıklı bağlanmanın işareti! Nesne kalıcılığı kavramını öğrenirken yaşanır.'},
+  {q:'İlk dişler genellikle ne zaman çıkar?',opts:['2-3 ay','4-7 ay','9-12 ay','12-18 ay'],ans:1,fact:'İlk dişler genellikle 4-7. aylarda çıkar, alt ön dişlerden başlar. 3 ay veya 12 ay da normal kabul edilir.'},
+  {q:'Bebek ağladığında kucağa almak ne yapar?',opts:['Şımartır','Stres hormonu artırır','Güven ve bağlanmayı güçlendirir','Uyku düzenini bozar'],ans:2,fact:'Araştırmalar kucağa alınan bebeklerin daha güvende hissettiğini ve kortizol seviyelerinin düştüğünü gösteriyor. Bebek şımartılamaz!'},
+  {q:'Bebekte hangi uyku pozisyonu güvenlidir?',opts:['Yüzükoyun','Yan yatış','Sırtüstü','Ebeveyn kolunda'],ans:2,fact:'AAP ve tüm dünya kuruluşları sırtüstü uyku pozisyonunu öneriyor. SIDS (beşik ölümü) riskini önemli ölçüde azaltır.'},
+];
+
+const BABY_POEMS = [
+  {title:'Bebek Gülüşü',author:'Halk',text:'Bebek güler felek durur\nMelek bakar hayran olur\nAnne bakar melting olur\nBu dünyanın en tatlı sesi\nO küçücük diş gülüşü\n\nGüldükçe büyür dünyamız\nGüldükçe dolur içimiz\nGüldükçe güneş doğar bizden\nO küçücük, o tatlı sesle.'},
+  {title:'Beşik Şiiri',author:'Halk',text:'Uyu uyu da uyu\nAnnen seni seviyor\nBaban dizde oyun kurar\nDeden masallar anlatır\n\nYıldızlar seninle uyur\nAy seni bekler sabaha\nRüyanda çiçekler açar\nUyu yavrum, uyu tatlı.'},
+  {title:'Küçük Eller',author:'Halk',text:'Küçücük ellerin var\nDünyaya sığmayan ellerin\nTuttukça kalbim dolup taşar\nBıraktıkça eksik kalır\n\nO elleri tutmak için\nKoca koca oldum ben\nSen büyüdükçe ben de büyüdüm\nEllerinle hayatı gördüm.'},
+  {title:'Bebeğime',author:'Anne şiiri',text:'Sen doğduğunda dünya yenilendi\nBir şeyler değişti içimde\nSevmek bu kadar da ağır olurmuş\nBilmiyordum seni tanımadan\n\nŞimdi biliyorum:\nSen varsın ya — yeter.\nBen varım ya — yeter.\nBiz varız ya — bu yeter.'},
+  {title:'Baba Eller',author:'Halk',text:'Babanın elleri büyüktür\nSeni tutmak için doğdu\nSert ama nazik, büyük ama yumuşak\nO eller senin için var\n\nBabanın sesi derindir\nAma ninniyle yavaşlar\nO ses senin en güvenli limanın\nHep orada, hep seninle.'},
+  {title:'Yenidoğan',author:'Halk',text:'Tıkır tıkır, küçücük\nBir mucize doğdu bu gece\nDünyaya merhaba dedi\nOn parmak, on parmak — hepsi tamam\n\nAnne ağladı, baba ağladı\nHemşire gülümsedi\nO küçük avuç içi\nBütün dünyayı tuttu o an.'},
+];
+
+const GROWTH_LOG = []; // {month, weight, height, note, date}
+
 const CHALLENGES = [
   {id:'bez',icon:'💩',name:'Bez Değiştir!',desc:'Bebeğin bezi doldu ve pişik yapıyor!',urgent:true,action:'Hemen Bez Değiştir!',resolve:{diaper:100,happy:10,dp:8},penaltyMsg:'Bez değiştirilmedi! Pişik oluştu.',info:'Yenidoğanlar günde 8-10 kez bez kirletir. Her değişimde pişik önleme kremleri kullanın. Kırmızılık, ağlama ve bacakları çekme kirliliğin işaretleridir.',tip:'Bezi değiştirirken bebeğinizle konuşun, göz teması kurun. Bu rutin anlar bağlanmayı güçlendirir!'},
   {id:'agla',icon:'😭',name:'Ağlama Krizi!',desc:'Bebek ağlıyor, neden olduğu bilinmiyor!',urgent:true,action:'Sakinleştir & Bak',resolve:{happy:20,energy:5,dp:10},penaltyMsg:'Bebek uzun süre ağladı!',info:'Bebekler ağlayarak ihtiyaçlarını anlatır. Sırasıyla kontrol edin: Acıkmış mı? Bezi kirli mi? Karnı mı ağrıyor? Sıcak/soğuk mu? Sadece kucak mı istiyor?',tip:'Bebeği sakinleştirmek için: kucağa alın, hafifçe sallayın, "şşş" sesi çıkarın veya müzik açın. Paniklemeden sakin kalın!'},
@@ -1130,6 +1161,9 @@ const CHALLENGES = [
   {id:'babagunu',icon:'👨',name:'Baba Tek Başına!',desc:'Anne dinleniyor. Baba bebek ile yalnız zaman geçirmeli!',urgent:false,action:'Baba Üstleniyor!',resolve:{dadScore:20,happy:18,dp:28,energy:5},penaltyMsg:'Baba fırsatı kaçırdı!',info:'Baba-bebek baş başa zamanı hem bebeğin gelişimi hem de baba-bebek bağı için kritiktir. Araştırmalar gösteriyor ki düzenli baba katılımı bebeğin bilişsel ve sosyal gelişimini hızlandırıyor!',tip:'Baba tek başına bakım yapabilir! Beslenme, banyo, uyutma — hepsini öğrenin. Anne dinlenirken baba güven kazanır, bebek de farklı bir bakış açısı deneyimler.'},
   {id:'ayrilikaygisi',icon:'😢',name:'Ayrılık Kaygısı!',desc:'Bebek yanında olmayan ebeveynin arkasından ağlıyor!',urgent:false,action:'Veda Ritüeli Yap',resolve:{happy:20,dp:18},penaltyMsg:'Ayrılık kaygısı uzadı!',info:'Ayrılık kaygısı 6-18. aylarda normaldir ve aslında sağlıklı bir bağlanmanın göstergesidir! Bebek sizin gideceğinizi ama döneceğinizi anlamayı öğreniyor.',tip:'Kısa "saklambaç" oyunları ayrılık kaygısını azaltır. Veda ritüeli geliştirin: "Gidiyorum, dönüyorum" deyin ve sözünüzü tutun. Kaçarak gitmeyin — bu kaygıyı artırır!'},
   {id:'kucakred',icon:'😤',name:'Kucak Reddediyor!',desc:'Bebek artık daha bağımsız — kucaktan kaçıyor!',urgent:false,action:'Zemine Bırak & Takip Et',resolve:{happy:15,dp:20},penaltyMsg:'Bebek hayal kırıklığıyla ağladı!',info:'Kucak reddetmek bağımsızlık gelişiminin sağlıklı bir işaretidir. Bebek keşfetmek istiyor! Bu "ben büyüdüm" mesajının bir parçasıdır.',tip:'Kucak reddini kişisel almayın — bu gelişimin kutlanacak bir adımı. Zemine oturun, onun seviyesine inin ve keşfetmesine eşlik edin. Dönünce sarılmak için bekleyin!'},
+  {id:'disfircasi',icon:'🪥',name:'Diş Fırçası Savaşı!',desc:'Diş fırçalamak istemiyor — ağlıyor ve direniyor!',urgent:false,action:'Oyunla Fırçala',resolve:{health:15,happy:8,dp:14},penaltyMsg:'Diş fırçalanamadı!',info:'Diş fırçalamaya direnç çok yaygındır! İlk dişten itibaren diş sağlığı alışkanlığı kazandırmak önemlidir. Ağız sağlığı genel sağlıkla doğrudan ilişkilidir.',tip:'Fırçayı oyuncak gibi tanıtın. Siz de yanında fırçalayın — taklit büyük motivasyon sağlar. "Diş fırçası şarkısı" söyleyin ya da 2 dakikalık müzik koyun!'},
+  {id:'panimod',icon:'🌪️',name:'Kaos Anı!',desc:'Her şey aynı anda oldu — bez, ağlama, açlık!',urgent:true,action:'Derin Nefes & Önceliklendır',resolve:{happy:20,hunger:15,diaper:30,dp:22},penaltyMsg:'Panik anı iyi geçmedi!',info:'Her ebeveyn bu anı yaşar! Birden fazla şey aynı anda olduğunda önceliklendirme hayat kurtarır: 1) Güvenlik, 2) Ağlama, 3) Bez, 4) Beslenme.',tip:'Kaos anlarında derin nefes alın. Bebek sizin enerjinizi hisseder. Sakin kalmak hem sizi hem bebeği yatıştırır. Bu geçecek!'},
+  {id:'ilkyemek',icon:'🥦',name:'Sebze Reddi!',desc:'Bebek sebzeyi reddediyor — her şeyi tükürdü!',urgent:false,action:'Sabırla Tekrar Dene',resolve:{happy:10,health:8,dp:16},penaltyMsg:'Bebek aç kaldı!',info:'Bir bebeğin yeni bir gıdayı kabul etmesi 10-15 maruziyeti gerektirebilir. İlk reddetme normal ve beklenen bir davranıştır — pes etmeyin!',tip:'Yüz ifadenizi olumlu tutun, siz de bebeğin yanında aynı sebzeyi yiyin. Oyunlaştırın: "uçak geliyorr!" Israr etmeden, baskı yapmadan tekrar sunun.'},
 ];
 
 // ══════════════════════════════════════════════════════
@@ -1157,6 +1191,9 @@ function saveGame(){
     actCounts:S.actCounts||{feed:0,care:0,play:0,dev:0,dad:0},
     weekDay:S.weekDay||0, weekSummaryShown:S.weekSummaryShown||0,
     readLangPro:S.readLangPro||false, readTravel:S.readTravel||false, readDiscipline:S.readDiscipline||false,
+    quizDone:S.quizDone||false, quizDay:S.quizDay||0, quizTotal:S.quizTotal||0,
+    quizPerfect:S.quizPerfect||false, poemsRead:S.poemsRead||0,
+    growthLog:S.growthLog||[],
     savedAt:Date.now(),
   };
   try { localStorage.setItem(SAVE_KEY, JSON.stringify(data)); } catch(e){}
@@ -1194,6 +1231,12 @@ function applySaveData(d){
   S.readLangPro = d.readLangPro||false;
   S.readTravel = d.readTravel||false;
   S.readDiscipline = d.readDiscipline||false;
+  S.quizDone = d.quizDone||false;
+  S.quizDay = d.quizDay||0;
+  S.quizTotal = d.quizTotal||0;
+  S.quizPerfect = d.quizPerfect||false;
+  S.growthLog = d.growthLog||[];
+  S.poemsRead = d.poemsRead||0;
   S.started = true;
 }
 
@@ -1307,6 +1350,10 @@ const ACHIEVEMENTS = [
   {id:'langpro',     icon:'💬', name:'Dil Ustası',         desc:'Dil Gelişim Programı\'nı okudun',   check:s=>(s.readLangPro||false)},
   {id:'travelread',  icon:'✈️', name:'Gezgin Aile',        desc:'Seyahat Rehberi\'ni okudun',        check:s=>(s.readTravel||false)},
   {id:'discipline',  icon:'🌿', name:'Nazik Ebeveyn',      desc:'Nazik Disiplin Rehberi\'ni okudun', check:s=>(s.readDiscipline||false)},
+  {id:'quiz1',       icon:'🎓', name:'Akıllı Ebeveyn',     desc:'İlk ebeveynlik testini tamamladın', check:s=>(s.quizTotal||0)>=1},
+  {id:'quizpro',     icon:'🏅', name:'Uzman Ebeveyn',      desc:'Testte 5/5 tam puan aldın!',        check:s=>(s.quizPerfect||false)},
+  {id:'growthlog5',  icon:'📏', name:'Büyüme Takipçisi',   desc:'5 büyüme ölçümü kaydedildi',        check:s=>(s.growthLog&&s.growthLog.length>=5)},
+  {id:'poems3',      icon:'📜', name:'Şair Ebeveyn',       desc:'3 bebek şiiri okundu',              check:s=>(s.poemsRead||0)>=3},
 ];
 
 const TIPS = [
@@ -1429,6 +1476,12 @@ const S = {
   readLangPro:false,
   readTravel:false,
   readDiscipline:false,
+  quizDone:false,
+  quizDay:0,
+  quizTotal:0,
+  quizPerfect:false,
+  growthLog:[],
+  poemsRead:0,
 };
 
 // ══════════════════════════════════════════════════════
@@ -1551,6 +1604,8 @@ function tick(){
     S.dailyTaskIdx=Math.floor(Math.random()*DAILY_TASKS.length);
     renderDailyTask();
   }
+  // reset daily quiz
+  if(curDay!==S.quizDay) S.quizDone=false;
   // weekly summary (every 7 game days)
   const curWeek=Math.floor(S.dayTime/7);
   if(curWeek>S.weekSummaryShown&&S.dayTime>7){
@@ -1686,6 +1741,8 @@ function spawnChallenge(){
     if(c.id==='babagunu'&&S.dadScore<10) return false;
     if(c.id==='ayrilikaygisi'&&S.ageMonths<6) return false;
     if(c.id==='kucakred'&&S.ageMonths<8) return false;
+    if(c.id==='disfircasi'&&S.ageMonths<8) return false;
+    if(c.id==='ilkyemek'&&S.ageMonths<6) return false;
     return true;
   });
   const ch=avail[Math.floor(Math.random()*avail.length)];
@@ -3033,6 +3090,9 @@ function showAllGuides(){
     {ico:'🌿',name:'Nazik Disiplin',fn:'showGentleDiscipline()'},
     {ico:'✈️',name:'Seyahat Rehberi',fn:'showTravelGuide()'},
     {ico:'🚽',name:'Tuvalet Eğitimi',fn:'showPottyGuide()'},
+    {ico:'🎓',name:'Ebeveynlik Testi',fn:'showParentingQuiz()'},
+    {ico:'📏',name:'Büyüme Günlüğü',fn:'showGrowthJournal()'},
+    {ico:'📜',name:'Bebek Şiirleri',fn:'showBabyPoems()'},
   ];
   const chips=guides.map(g=>`<button class="guide-chip" onclick="${g.fn};this.closest('.pop-ov').remove()">${g.ico}<br>${g.name}</button>`).join('');
   const h=`<div class="pop-ov" onclick="if(event.target===this)this.remove()">
@@ -3165,6 +3225,167 @@ function showRedFlags(){
 }
 
 // ══════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════
+// PARENTING QUIZ
+// ══════════════════════════════════════════════════════
+function showParentingQuiz(){
+  if(S.quizDone){
+    showToast('📝 Bugünkü test tamamlandı! Yarın tekrar gelebilirsin. 🌟');
+    return;
+  }
+  // pick 5 random questions
+  const pool=[...QUIZ_QUESTIONS].sort(()=>Math.random()-.5).slice(0,5);
+  let current=0, score=0;
+  const qEl=document.getElementById('quizQuestion');
+  const optsEl=document.getElementById('quizOpts');
+  const progEl=document.getElementById('quizProg');
+  const resultEl=document.getElementById('quizResult');
+  function renderQ(){
+    if(current>=pool.length){ endQuiz(); return; }
+    const q=pool[current];
+    progEl.textContent=`Soru ${current+1}/${pool.length}`;
+    qEl.textContent=q.q;
+    optsEl.innerHTML=q.opts.map((o,i)=>`<button class="quiz-opt" onclick="answerQuiz(${i})">${String.fromCharCode(65+i)}) ${o}</button>`).join('');
+    resultEl.style.display='none';
+  }
+  window._quizPool=pool;
+  window._quizState={current,score,renderQ};
+  function endQuiz(){
+    const dpEarned=score*20;
+    S.dp+=dpEarned;
+    S.quizDone=true;
+    S.quizDay=Math.floor(S.dayTime);
+    S.quizTotal=(S.quizTotal||0)+1;
+    if(score===pool.length) S.quizPerfect=true;
+    spawnParticles(['🎓','⭐','🌟'],5);
+    playSound('achieve');
+    qEl.textContent=`Test tamamlandı! ${score}/${pool.length} doğru`;
+    optsEl.innerHTML='';
+    progEl.textContent='';
+    resultEl.innerHTML=`<div style="text-align:center;margin-top:10px"><div style="font-size:2rem">${score===pool.length?'🏅':score>=3?'⭐':'📚'}</div><div style="font-family:'Fredoka One',cursive;font-size:1.3rem;color:var(--text)">${score}/${pool.length} Doğru</div><div style="font-size:.75rem;color:#888;margin:4px 0">+${dpEarned} Gelişim Puanı kazandın!</div><button class="pop-btn" style="margin-top:10px" onclick="this.closest('.pop-ov').remove()">Harika! 🎓</button></div>`;
+    resultEl.style.display='block';
+  }
+  window._quizEnd=endQuiz;
+  const h=`<div class="pop-ov" onclick="if(event.target===this)this.remove()">
+  <div class="pop-box">
+    <div class="pop-rainbow"></div>
+    <span class="pop-ico">🎓</span>
+    <div class="pop-title">Ebeveynlik Testi</div>
+    <div class="pop-sub">5 soru · +20 GP her doğru yanıt</div>
+    <div id="quizProg" style="font-size:.75rem;font-weight:700;color:var(--purple);margin:8px 0">Soru 1/5</div>
+    <div id="quizQuestion" style="font-size:.85rem;font-weight:700;color:var(--text);line-height:1.5;min-height:48px;margin-bottom:10px"></div>
+    <div id="quizOpts" style="display:flex;flex-direction:column;gap:6px"></div>
+    <div id="quizResult" style="display:none"></div>
+  </div></div>`;
+  document.body.insertAdjacentHTML('beforeend',h);
+  setTimeout(renderQ,50);
+}
+
+function answerQuiz(idx){
+  const state=window._quizState;
+  if(!state)return;
+  const q=window._quizPool[state.current];
+  const correct=idx===q.ans;
+  if(correct) state.score++;
+  const optsEl=document.getElementById('quizOpts');
+  const resultEl=document.getElementById('quizResult');
+  // highlight correct/wrong
+  optsEl.querySelectorAll('.quiz-opt').forEach((b,i)=>{
+    b.disabled=true;
+    if(i===q.ans) b.style.cssText+='background:#E8F5E9;border-color:#52B788;color:#2E7D32;font-weight:800';
+    else if(i===idx&&!correct) b.style.cssText+='background:#FFEBEE;border-color:#FF4757;color:#C62828';
+  });
+  resultEl.innerHTML=`<div style="margin-top:8px;padding:8px;border-radius:10px;background:${correct?'#E8F5E9':'#FFF9C4'};font-size:.72rem;color:#444;line-height:1.5">${correct?'✅ Doğru!':'⚠️ Yanlış.'} <strong>${q.fact}</strong></div>`;
+  resultEl.style.display='block';
+  state.current++;
+  setTimeout(()=>{
+    if(state.current>=window._quizPool.length){ window._quizEnd(); }
+    else { state.renderQ(); }
+  },2200);
+}
+
+// ══════════════════════════════════════════════════════
+// GROWTH JOURNAL
+// ══════════════════════════════════════════════════════
+function showGrowthJournal(){
+  const log=S.growthLog||[];
+  const logRows=log.slice().reverse().map(e=>{
+    const who=BABY_GROWTH[Math.min(24,e.month)]||BABY_GROWTH[0];
+    const wDiff=e.weight?(e.weight-who.w).toFixed(1):null;
+    const wColor=wDiff===null?'#aaa':parseFloat(wDiff)>=-1&&parseFloat(wDiff)<=2?'#2E7D32':'#E65100';
+    return `<div style="background:#F8F9FA;border-radius:10px;padding:8px 10px;margin-bottom:6px;font-size:.72rem">
+      <div style="display:flex;justify-content:space-between;font-weight:800;color:var(--text)">${e.month}. Ay <span style="color:#aaa;font-weight:400">${e.date}</span></div>
+      ${e.weight?`<div style="color:${wColor}">⚖️ ${e.weight} kg <span style="font-size:.65rem">(WHO ortalama: ${who.w} kg)</span></div>`:''}
+      ${e.height?`<div style="color:#1565C0">📏 ${e.height} cm <span style="font-size:.65rem">(WHO ortalama: ${who.h} cm)</span></div>`:''}
+      ${e.note?`<div style="color:#888;margin-top:3px">📝 ${e.note}</div>`:''}
+    </div>`;
+  }).join('') || '<div style="color:#aaa;text-align:center;padding:20px">Henüz ölçüm eklenmedi.</div>';
+  const h=`<div class="pop-ov" onclick="if(event.target===this)this.remove()">
+  <div class="pop-box">
+    <div class="pop-rainbow" style="background:linear-gradient(90deg,#E8F5E9,#F1F8E9)"></div>
+    <span class="pop-ico">📏</span>
+    <div class="pop-title">Büyüme Günlüğü</div>
+    <div class="pop-sub">${S.babyName}'in ölçümleri · ${log.length} kayıt</div>
+    <div style="background:#F8F9FA;border-radius:14px;padding:12px;margin:8px 0">
+      <div style="font-size:.75rem;font-weight:700;color:var(--text);margin-bottom:8px">➕ Yeni Ölçüm Ekle (${S.ageMonths}. ay)</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:6px">
+        <input id="gjWeight" type="number" step="0.1" min="1" max="20" placeholder="Kilo (kg)" style="padding:8px;border:2px solid #E0D7FF;border-radius:10px;font-family:'Nunito',sans-serif;font-size:.8rem;outline:none">
+        <input id="gjHeight" type="number" step="0.5" min="40" max="100" placeholder="Boy (cm)" style="padding:8px;border:2px solid #E0D7FF;border-radius:10px;font-family:'Nunito',sans-serif;font-size:.8rem;outline:none">
+      </div>
+      <input id="gjNote" type="text" placeholder="Not (isteğe bağlı)" style="width:100%;padding:8px;border:2px solid #E0D7FF;border-radius:10px;font-family:'Nunito',sans-serif;font-size:.8rem;outline:none;margin-bottom:6px">
+      <button onclick="addGrowthEntry()" style="width:100%;padding:9px;background:linear-gradient(135deg,var(--green),#81C784);color:#fff;border:none;border-radius:10px;font-family:'Nunito',sans-serif;font-weight:800;font-size:.8rem;cursor:pointer">Kaydet 📏</button>
+    </div>
+    <div style="max-height:240px;overflow-y:auto">${logRows}</div>
+    <button class="pop-btn" style="background:linear-gradient(135deg,#43A047,#66BB6A);margin-top:8px" onclick="this.closest('.pop-ov').remove()">Kapat</button>
+  </div></div>`;
+  document.body.insertAdjacentHTML('beforeend',h);
+}
+
+function addGrowthEntry(){
+  const w=parseFloat(document.getElementById('gjWeight').value)||null;
+  const h2=parseFloat(document.getElementById('gjHeight').value)||null;
+  const note=document.getElementById('gjNote').value.trim()||null;
+  if(!w&&!h2){showToast('Kilo veya boy giriniz!'); return;}
+  if(!S.growthLog) S.growthLog=[];
+  const today=new Date().toLocaleDateString('tr-TR');
+  S.growthLog.push({month:S.ageMonths,weight:w,height:h2,note,date:today});
+  S.dp+=15;
+  spawnParticles(['📏','⭐'],3);
+  showToast('📏 Büyüme ölçümü kaydedildi! +15 GP');
+  document.querySelector('.pop-ov').remove();
+  showGrowthJournal();
+}
+
+// ══════════════════════════════════════════════════════
+// BABY POEMS
+// ══════════════════════════════════════════════════════
+function showBabyPoems(){
+  const cards=BABY_POEMS.map((p,i)=>`
+    <div class="ninni-card" onclick="markPoemRead()" style="cursor:pointer">
+      <span class="ninni-type">${p.author}</span>
+      <div class="ninni-title">${p.title}</div>
+      <div class="ninni-text">${p.text}</div>
+    </div>`).join('');
+  const h=`<div class="pop-ov" onclick="if(event.target===this)this.remove()">
+  <div class="pop-box">
+    <div class="pop-rainbow" style="background:linear-gradient(90deg,#FCE4EC,#F8BBD9,#FCE4EC)"></div>
+    <span class="pop-ico">📜</span>
+    <div class="pop-title">Bebek Şiirleri</div>
+    <div class="pop-sub">Anne, baba ve bebek için kalp dokunuşu</div>
+    <div style="max-height:380px;overflow-y:auto">${cards}</div>
+    <button class="pop-btn" style="background:linear-gradient(135deg,#E91E8C,#FF6B9D)" onclick="this.closest('.pop-ov').remove()">💖 Güzel Şiirler!</button>
+  </div></div>`;
+  document.body.insertAdjacentHTML('beforeend',h);
+}
+
+function markPoemRead(){
+  if(!S.poemsRead) S.poemsRead=0;
+  if(S.poemsRead<BABY_POEMS.length){
+    S.poemsRead++;
+    if(S.poemsRead===3) showToast('📜 "Şair Ebeveyn" başarısı kazanıldı! 🏅');
+  }
+}
+
 // FIRST BIRTHDAY CELEBRATION
 // ══════════════════════════════════════════════════════
 function showFirstBirthday(){
