@@ -484,6 +484,9 @@ body{font-family:'Nunito',sans-serif;background:linear-gradient(135deg,#FFF5F8,#
         <div class="baby-info">
           <div class="baby-nm" id="babyNm">Bebek</div>
           <div class="baby-stg" id="babyStg">Yenidoğan</div>
+          <div style="cursor:pointer" onclick="showPersonalityProfile()" title="Kişilik Profili">
+            <span class="baby-stg" id="babyPersonality" style="background:#FFF0F5;color:#FF6B9D;margin-left:4px">⚖️ Dengeli</span>
+          </div>
           <div class="baby-mood" id="babyMoodTxt">😊 Mutlu ve Sağlıklı</div>
         </div>
         <div class="baby-vitals" style="cursor:pointer" onclick="showGrowthChart()" title="Büyüme grafiğini gör">
@@ -575,9 +578,11 @@ body{font-family:'Nunito',sans-serif;background:linear-gradient(135deg,#FFF5F8,#
 
       <!-- TAB: BESLENME -->
       <div class="tab-body on" id="tab-beslenme">
-        <div style="display:flex;gap:5px;margin-bottom:4px">
+        <div style="display:flex;gap:5px;margin-bottom:4px;flex-wrap:wrap">
           <button class="info-btn" onclick="showBreastfeedingGuide()">🤱 Emzirme Rehberi</button>
           <button class="info-btn" onclick="showNutritionGuide()">🥣 Beslenme Bilgisi</button>
+          <button class="info-btn" onclick="showFoodRecipes()">👨‍🍳 Tarifler</button>
+          <button class="info-btn" onclick="showSleepTrainingGuide()">🌙 Uyku Eğitimi</button>
         </div>
         <button class="abt special" onclick="doAct('annesutu')">
           <span class="ai">🤱</span>
@@ -745,6 +750,10 @@ body{font-family:'Nunito',sans-serif;background:linear-gradient(135deg,#FFF5F8,#
         <div class="mom-card">
           <div class="mom-title">💖 Annelere Saygı</div>
           <div class="mom-msg" id="momMsg">"Anneler 24 saat, 7 gün, ücret almadan dünyanın en değerli işini yapıyorlar. Her biri bir kahraman! 💖"</div>
+        </div>
+        <div style="display:flex;gap:5px;flex-wrap:wrap;margin-top:4px">
+          <button class="info-btn" onclick="showDadGuide()">👨‍👶 Baba Rehberi</button>
+          <button class="info-btn" onclick="showPersonalityProfile()">🌟 Kişilik Profili</button>
         </div>
         <div class="lohusa-card">
           <div class="lohusa-title">💜 Doğum Sonrası Anne Sağlığı</div>
@@ -1141,6 +1150,8 @@ function saveGame(){
     dailyTaskDone:S.dailyTaskDone, dailyTaskDay:S.dailyTaskDay, dailyTaskIdx:S.dailyTaskIdx,
     diary:[...S.diary], season:S.season||0,
     grandvisit:S.grandvisit||false,
+    actCounts:S.actCounts||{feed:0,care:0,play:0,dev:0,dad:0},
+    weekDay:S.weekDay||0, weekSummaryShown:S.weekSummaryShown||0,
     savedAt:Date.now(),
   };
   try { localStorage.setItem(SAVE_KEY, JSON.stringify(data)); } catch(e){}
@@ -1172,6 +1183,9 @@ function applySaveData(d){
   S.season = d.season||0;
   S.grandvisit = d.grandvisit||false;
   S.grandvisitTimer = 200+Math.random()*300;
+  S.actCounts = d.actCounts||{feed:0,care:0,play:0,dev:0,dad:0};
+  S.weekDay = d.weekDay||0;
+  S.weekSummaryShown = d.weekSummaryShown||0;
   S.started = true;
 }
 
@@ -1397,6 +1411,9 @@ const S = {
   season:0,
   grandvisit:false,
   grandvisitTimer:200+Math.random()*300,
+  actCounts:{feed:0,care:0,play:0,dev:0,dad:0},
+  weekDay:0,
+  weekSummaryShown:0,
 };
 
 // ══════════════════════════════════════════════════════
@@ -1519,6 +1536,12 @@ function tick(){
     S.dailyTaskIdx=Math.floor(Math.random()*DAILY_TASKS.length);
     renderDailyTask();
   }
+  // weekly summary (every 7 game days)
+  const curWeek=Math.floor(S.dayTime/7);
+  if(curWeek>S.weekSummaryShown&&S.dayTime>7){
+    S.weekSummaryShown=curWeek;
+    setTimeout(showWeeklySummary,2000);
+  }
   // season update (every 30 game days)
   const newSeason=Math.floor(S.dayTime/30)%4;
   if(newSeason!==S.season){
@@ -1602,6 +1625,13 @@ function doAct(id){
   if(a.dadPts) S.dadScore=Math.min(100,S.dadScore+a.dadPts);
   if(a.momWbPts) applyMomWb(a.momWbPts);
   if(id==='biberon'||id==='mama'||id==='annesutu') S.totalFeeds++;
+  // track activity category for personality system
+  if(!S.actCounts) S.actCounts={feed:0,care:0,play:0,dev:0,dad:0};
+  if(['annesutu','biberon','mama','su','vitamin'].includes(id)) S.actCounts.feed++;
+  else if(['uyut','saril','banyo','bez','atesol','ninni','mom-dinlen','masaj'].includes(id)) S.actCounts.care++;
+  else if(['muzik','bloklar','sekilrenk','sarki','duyusal','yuzme','jimnastik'].includes(id)) S.actCounts.play++;
+  else if(['kitap','konus','tummytime','tekerleme'].includes(id)) S.actCounts.dev++;
+  else if(id.startsWith('dad-')) S.actCounts.dad++;
   const msg=typeof a.msg==='function'?a.msg(S.gender,S.babyName,S.dadName):a.msg;
   addLog(msg, id.startsWith('dad-')?'dad':'');
   spawnParticles(a.sfx||['✨'],3);
@@ -1796,6 +1826,8 @@ function updateUI(){
   document.getElementById('babyNm').textContent=S.babyName;
   document.getElementById('babyStg').textContent=BABY_STAGES[st].name;
   document.getElementById('babyMoodTxt').textContent=getMood();
+  const pEl=document.getElementById('babyPersonality');
+  if(pEl){const p=getBabyPersonality();pEl.textContent=p.ico+' '+p.name;}
   // header
   document.getElementById('hAge').textContent=`${S.gender==='kiz'?'👧':'👦'} ${S.ageMonths}. Ay`;
   document.getElementById('hDay').textContent=`📅 ${Math.floor(S.dayTime)}. Gün`;
@@ -2977,6 +3009,10 @@ function showAllGuides(){
     {ico:'📖',name:'Bebek Günlüğü',fn:'showBabyDiary()'},
     {ico:'🔍',name:'Efsane mi Gerçek mi',fn:'showBabyMythsGuide()'},
     {ico:'🎯',name:'Aktivite Fikirleri',fn:'showActivityIdeas()'},
+    {ico:'👨‍👶',name:'Baba Rehberi',fn:'showDadGuide()'},
+    {ico:'👨‍🍳',name:'Bebek Tarifleri',fn:'showFoodRecipes()'},
+    {ico:'🌙',name:'Uyku Eğitimi',fn:'showSleepTrainingGuide()'},
+    {ico:'🌟',name:'Kişilik Profili',fn:'showPersonalityProfile()'},
   ];
   const chips=guides.map(g=>`<button class="guide-chip" onclick="${g.fn};this.closest('.pop-ov').remove()">${g.ico}<br>${g.name}</button>`).join('');
   const h=`<div class="pop-ov" onclick="if(event.target===this)this.remove()">
@@ -3181,6 +3217,247 @@ function showActivityIdeas(){
     <div style="display:flex;flex-direction:column;gap:8px;max-height:380px;overflow-y:auto;margin:10px 0">${cards||'<p style="color:#aaa;text-align:center">Yaşa uygun aktiviteler bekleniyor!</p>'}</div>
     <div class="pop-tip"><div class="pop-tip-t">💡 Hatırlatma</div><p>Her aktivite 5-10 dakika yeter — bebekler kısa dikkat süresine sahip. Aktiviteyi bırakmak istediğinde zorlamayın. Keyifli olduğunda tekrar deneyin!</p></div>
     <button class="pop-btn" style="background:linear-gradient(135deg,#FF9A3C,#FFD166)" onclick="this.closest('.pop-ov').remove()">🎯 Hadi Başlayalım!</button>
+  </div></div>`;
+  document.body.insertAdjacentHTML('beforeend',h);
+}
+
+// ══════════════════════════════════════════════════════
+// PERSONALITY PROFILE
+// ══════════════════════════════════════════════════════
+const PERSONALITIES = [
+  {id:'kitapkurdu', ico:'📚', name:'Kitap Kurdu',   color:'#5C6BC0', desc:'Bu bebek öğrenmeyi seviyor! Bol okuma ve konuşma sayesinde dil gelişimi üst düzeyde.', advice:'Her gün yeni kelimeler öğretin, farklı sesler taklit edin. Bu çocuk ileride dil, edebiyat veya bilim alanında parıldayabilir!'},
+  {id:'sporcu',     ico:'🏋️', name:'Sporcu Bebek',  color:'#43A047', desc:'Hareketli ve enerjik! Fiziksel aktiviteler ile motor gelişimi olağanüstü ilerliyor.', advice:'Güvenli bir keşif ortamı yaratın. Emekleme, yürüme, tırmanma — hepsine izin verin. Bu çocuk aktif bir yaşam sürecek!'},
+  {id:'muzisyen',   ico:'🎵', name:'Müzisyen',      color:'#8E24AA', desc:'Müziğe ve ritme duyarlı bir bebek! Sesler, melodi ve ritim öğrenimi hızlandırıyor.', advice:'Her türlü müziği paylaşın. Farklı enstrümanlar denettirin. Bu bebek ritim duyusuyla öne çıkacak!'},
+  {id:'sosyal',     ico:'🤗', name:'Sosyal Kelebek',color:'#FF6B9D', desc:'Bağlanma ve iletişim becerileri harika gelişiyor! Sevgi dolu bir ortamda büyüyor.', advice:'Farklı insanlarla tanıştırın, oyun gruplarına götürün. Bu bebek liderlik ve empati özellikleri sergileyecek!'},
+  {id:'babababasi', ico:'👨‍👶',name:'Baba\'nın Şampiyonu',color:'#4169E1',desc:'Baba katılımı mükemmel! Araştırmalar bu tür çocukların daha güvenli bireyler olduğunu gösteriyor.', advice:'Baba-bebek aktivitelerini sürdürün. Bu güçlü bağ, bebeğin tüm hayatına olumlu yansıyacak!'},
+  {id:'dengeli',    ico:'⚖️', name:'Dengeli Bebek', color:'#FF9A3C', desc:'Her alanda dengeli bir gelişim! Çok yönlü büyüyen bir bebek.', advice:'Bu dengeyi koruyun. Farklı türde aktiviteler sunmaya devam edin. Her alanda güçlü bir birey yetişiyor!'},
+];
+
+function getBabyPersonality(){
+  const c=S.actCounts||{feed:0,care:0,play:0,dev:0,dad:0};
+  const total=Object.values(c).reduce((a,b)=>a+b,0);
+  if(total<5) return PERSONALITIES[5]; // dengeli
+  const max=Math.max(c.feed,c.care,c.play,c.dev,c.dad);
+  if(c.dev>=max) return PERSONALITIES[0];      // kitap kurdu
+  if(c.play>=max&&c.play>=c.dev) return PERSONALITIES[2]; // müzisyen/sporcu
+  if(c.care>=max) return PERSONALITIES[3];     // sosyal
+  if(c.dad>=max) return PERSONALITIES[4];      // baba şampiyonu
+  return PERSONALITIES[5];                     // dengeli
+}
+
+function showPersonalityProfile(){
+  const p=getBabyPersonality();
+  const c=S.actCounts||{feed:0,care:0,play:0,dev:0,dad:0};
+  const cats=[
+    {lbl:'🍼 Beslenme',  val:c.feed||0, color:'#FF9A3C'},
+    {lbl:'🤗 Bakım',    val:c.care||0, color:'#FF6B9D'},
+    {lbl:'🎵 Oyun',     val:c.play||0, color:'#C77DFF'},
+    {lbl:'📚 Gelişim',  val:c.dev||0,  color:'#52B788'},
+    {lbl:'👨 Baba',    val:c.dad||0,  color:'#4169E1'},
+  ];
+  const maxVal=Math.max(...cats.map(x=>x.val),1);
+  const bars=cats.map(x=>`
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:5px">
+      <div style="width:80px;font-size:.7rem;font-weight:700;color:#555">${x.lbl}</div>
+      <div style="flex:1;height:8px;background:#F0E6FF;border-radius:4px;overflow:hidden">
+        <div style="width:${Math.round(x.val/maxVal*100)}%;height:100%;background:${x.color};border-radius:4px;transition:width .5s"></div>
+      </div>
+      <div style="width:24px;font-size:.68rem;font-weight:700;color:#aaa">${x.val}</div>
+    </div>`).join('');
+  const h=`<div class="pop-ov" onclick="if(event.target===this)this.remove()">
+  <div class="pop-box">
+    <div class="pop-rainbow" style="background:linear-gradient(90deg,${p.color}33,${p.color}11)"></div>
+    <span class="pop-ico">${p.ico}</span>
+    <div class="pop-title">${S.babyName}'in Kişiliği</div>
+    <div class="pop-sub" style="color:${p.color};font-weight:800">${p.name}</div>
+    <div style="background:${p.color}15;border-radius:14px;padding:12px;margin-bottom:12px;border:2px solid ${p.color}33">
+      <p style="font-size:.75rem;color:#444;line-height:1.5">${p.desc}</p>
+    </div>
+    <div class="pop-sec"><h4>📊 Aktivite Dengesi</h4>${bars}</div>
+    <div class="pop-tip"><div class="pop-tip-t">💡 Ebeveyn Önerisi</div><p>${p.advice}</p></div>
+    <button class="pop-btn" style="background:linear-gradient(135deg,${p.color},${p.color}99)" onclick="this.closest('.pop-ov').remove()">💖 Harika!</button>
+  </div></div>`;
+  document.body.insertAdjacentHTML('beforeend',h);
+}
+
+// ══════════════════════════════════════════════════════
+// WEEKLY SUMMARY
+// ══════════════════════════════════════════════════════
+function showWeeklySummary(){
+  const p=getBabyPersonality();
+  const week=S.weekSummaryShown;
+  const tips=[
+    'Bu hafta en az 3 kez tummy time yapın — boyun kasları gelişiyor!',
+    'Bebeğinize günde 200+ kelime söyleyin. Yüksek sesle kitap okuyun!',
+    'Baba bu hafta en az 1 gece uyanma sorumluluğu alsın.',
+    'Yeni bir duyusal aktivite deneyin — su, kum, parmak boyası.',
+    'Bebek masajını uyku rutinine ekleyin.',
+    'Bu hafta bir büyükanne/büyükbaba ziyareti planlayın.',
+    'Bebeğinizi dışarı çıkarın — doğa hem sizi hem de bebeği canlandırır.',
+    'Aynadaki kendini gösterin — "Bu sen!" diye gösterin.',
+  ];
+  const tip=tips[(week-1)%tips.length];
+  const h=`<div class="pop-ov" onclick="if(event.target===this)this.remove()">
+  <div class="pop-box">
+    <div class="pop-rainbow" style="background:linear-gradient(90deg,#E8F5E9,#F3E5F5,#E3F2FD)"></div>
+    <span class="pop-ico">📋</span>
+    <div class="pop-title">${week}. Hafta Özeti</div>
+    <div class="pop-sub">${S.babyName} · ${S.ageMonths}. Ay · ${Math.floor(S.dp)} GP</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:10px 0;font-size:.73rem">
+      <div style="background:#E8F5E9;border-radius:12px;padding:10px;text-align:center">
+        <div style="font-size:1.3rem">💉</div>
+        <div style="font-weight:800;color:#2E7D32">${S.doneVax.size}/${VACCINES.length}</div>
+        <div style="color:#aaa">Aşı</div>
+      </div>
+      <div style="background:#FFF8E1;border-radius:12px;padding:10px;text-align:center">
+        <div style="font-size:1.3rem">🏆</div>
+        <div style="font-weight:800;color:#F57F17">${S.unlocked.size}/20</div>
+        <div style="color:#aaa">Basamak</div>
+      </div>
+      <div style="background:#E3F2FD;border-radius:12px;padding:10px;text-align:center">
+        <div style="font-size:1.3rem">👨</div>
+        <div style="font-weight:800;color:#1565C0">${S.dadScore}%</div>
+        <div style="color:#aaa">Baba Destek</div>
+      </div>
+      <div style="background:#FFF0F5;border-radius:12px;padding:10px;text-align:center">
+        <div style="font-size:1.3rem">${p.ico}</div>
+        <div style="font-weight:800;color:#C62828;font-size:.65rem">${p.name}</div>
+        <div style="color:#aaa">Kişilik</div>
+      </div>
+    </div>
+    <div class="pop-sec" style="background:#FFF9C4">
+      <h4>🎯 Bu Hafta Öneri</h4>
+      <p>${tip}</p>
+    </div>
+    <div class="pop-tip"><div class="pop-tip-t">💖 ${S.momName} &amp; ${S.dadName}</div><p>Her geçen hafta sizi daha deneyimli ebeveynler yapıyor. Mükemmel olmak zorunda değilsiniz — tutarlı, sevgi dolu ve meraklı olmak yeterli! 🌟</p></div>
+    <button class="pop-btn" onclick="this.closest('.pop-ov').remove()">Harika, Devam! 💪</button>
+  </div></div>`;
+  document.body.insertAdjacentHTML('beforeend',h);
+}
+
+// ══════════════════════════════════════════════════════
+// DAD'S GUIDE
+// ══════════════════════════════════════════════════════
+function showDadGuide(){
+  const byMonth=[
+    {range:'0-1 Ay', ico:'👶', acts:['Anne emzirirken sırtını destekle','Gece bezi değiştirmeyi üstlen','Anne uyurken bebeği tut','Ziyaretçileri düzenle, anneyi koru','Yemek pişir, ev işlerini üstlen']},
+    {range:'1-3 Ay', ico:'😊', acts:['Her gün en az 30 dk bebek tut','Uyku rutinini birlikte oluşturun','Ninni söyle — sesin aşina olsun','Banyo ve bez değişimini üstlen','Annenin gece molasını ver']},
+    {range:'3-6 Ay', ico:'🤸', acts:['Tummy time egzersizine eşlik et','Çıngırak ve görsel oyuncaklar sun','Anneye haftada 1 tam gece izni','Bebek masajını öğren ve uygula','Birlikte kitap oku']},
+    {range:'6-9 Ay', ico:'🐢', acts:['Emeklemeyi teşvik et — zemine in','İlk katı gıdayı birlikte ver','Peekaboo ve saklambaç oyna','Babysitting en az 3 saat/hafta','Bebek güvenliğini kontrol et']},
+    {range:'9-12 Ay', ico:'🚶', acts:['Tutunarak yürümeye destek ol','İlk kelimeleri öğret — "Baba" dé!','Park ve dış mekan aktiviteleri','Ayrılık kaygısına nazik yaklaş','Anne ile birlikte hep söyle']},
+    {range:'12-18 Ay',ico:'🏃', acts:['Yürürken eşlik et, bırakma!','Oyun parkına haftalık git','Basit kitapları birlikte oku','Yemek sofrasında bir arada ol','Davranış sınırlarını tutarlı koy']},
+    {range:'18-24 Ay',ico:'💬', acts:['Kelime hazinesini geliştir — konuş','Sayma ve renk öğret','Küçük ev görevleri ver (toplamak)','Drama ve hayal oyunları oyna','Birlikte müzik yap, dans et']},
+  ];
+  const current=byMonth.find(b=>{
+    const [mn,mx]=b.range.replace(' Ay','').split('-').map(Number);
+    return S.ageMonths>=mn&&S.ageMonths<=mx;
+  })||byMonth[byMonth.length-1];
+  const allCards=byMonth.map(b=>{
+    const isCur=b===current;
+    return `<div style="border-radius:12px;padding:10px;margin-bottom:8px;background:${isCur?'#E3F2FD':'#F5F5F5'};border:${isCur?'2px solid #1565C0':'2px solid transparent'}">
+      <div style="font-weight:800;font-size:.78rem;color:${isCur?'#1565C0':'#888'}">${b.ico} ${b.range}${isCur?' ← Şu An':''}</div>
+      <ul style="font-size:.7rem;color:${isCur?'#333':'#aaa'};padding-left:14px;margin-top:4px">${b.acts.map(x=>`<li style="margin-bottom:2px">${x}</li>`).join('')}</ul>
+    </div>`;
+  }).join('');
+  const h=`<div class="pop-ov" onclick="if(event.target===this)this.remove()">
+  <div class="pop-box">
+    <div class="pop-rainbow" style="background:linear-gradient(90deg,#BBDEFB,#E3F2FD,#E8EAF6)"></div>
+    <span class="pop-ico">👨‍👶</span>
+    <div class="pop-title">Baba Rehberi</div>
+    <div class="pop-sub">Aya göre baba görevleri — ${S.dadName} için!</div>
+    <div class="pop-sec" style="background:#E8F5E9">
+      <h4>💡 Araştırmalar Ne Diyor?</h4>
+      <p>Aktif katılımlı babalar yetişen çocukların IQ puanları daha yüksek, sosyal becerileri daha güçlü ve duygusal dengeleri daha sağlam oluyor. Baba etkisi GERÇEK ve büyük!</p>
+    </div>
+    <div style="max-height:320px;overflow-y:auto">${allCards}</div>
+    <div class="pop-tip"><div class="pop-tip-t">💙 ${S.dadName}'e Not</div><p>Mükemmel baba olmak zorunda değilsiniz. Sadece ORAYA olun. Her bez değiştirdiğinizde, her gece kalktığınızda, her kitap okuduğunuzda — ${S.babyName}'in beynine yatırım yapıyorsunuz!</p></div>
+    <button class="pop-btn" style="background:linear-gradient(135deg,#1565C0,#4169E1)" onclick="this.closest('.pop-ov').remove()">💪 Baba Hazır!</button>
+  </div></div>`;
+  document.body.insertAdjacentHTML('beforeend',h);
+}
+
+// ══════════════════════════════════════════════════════
+// BABY FOOD RECIPES
+// ══════════════════════════════════════════════════════
+function showFoodRecipes(){
+  const recipes=[
+    {age:'6 Ay',ico:'🍎',name:'Elma Püresi',ing:'1 elma, biraz su',steps:['Elmayı soy ve küçük parçala','Buharda 10 dk pişir','Blenderdan geçir, ince pürüsüz olsun','Ilıtarak ver'],tip:'İlk gıda olarak idealdir. Tatlı tadı bebeğin ilgisini çeker!'},
+    {age:'6 Ay',ico:'🥕',name:'Havuç Püresi',ing:'1-2 havuç, su',steps:['Havucu yıka, soy, doğra','Buharda 15 dk pişir','Blenderla pürüsüz hale getir','Gerekirse biraz anne sütü ekle'],tip:'Beta-karoten içerir, göz gelişimine katkı sağlar!'},
+    {age:'6 Ay',ico:'🍐',name:'Armut-Muz Püresi',ing:'½ armut, ½ muz',steps:['Armutun kabuğunu soy, doğra','5 dk buharda pişir','Muzla birlikte pürüsüz yap','Soğutarak ver'],tip:'Doğal tatlılığı ile bebeğin favori olabilir!'},
+    {age:'7 Ay',ico:'🎃',name:'Balkabağı-Elma',ing:'100g balkabağı, ½ elma',steps:['İkisini de soyup küple doğra','Birlikte buharda 12 dk pişir','Pürüsüz blenderdan geçir','Az tarçın eklenebilir (7ay+)'],tip:'Kış sebzesi, bağışıklık için harika!'},
+    {age:'8 Ay',ico:'🍗',name:'Tavuklu Sebze',ing:'50g tavuk göğsü, havuç, patates',steps:['Tavuğu küple doğra, sebzeleri hazırla','Birlikte 20 dk pişir','Biraz suda blenderdan geçir','Tuzlanmaz!'],tip:'İlk protein kaynağı. Bebeğin büyümesini destekler!'},
+    {age:'8 Ay',ico:'🥑',name:'Avokado Püresi',ing:'½ olgun avokado',steps:['Avokadoyu ikiye böl, çekirdeği çıkar','Kaşıkla ezip pürüsüz hale getir','Biraz limon suyu ekle (kararmasın)','Hemen servis et'],tip:'Sağlıklı yağ açısından zengin, beyin gelişimini destekler!'},
+    {age:'10 Ay',ico:'🧀',name:'Peynirli Yumurta',ing:'1 yumurta, az az taze peynir',steps:['Yumurtayı kırıp çırp','Peyniri ufalayıp ekle','Az yağda pişir','Küçük parçalara böl'],tip:'Parmak yemeği! İnce motor beceriyi geliştirir.'},
+    {age:'12 Ay',ico:'🍝',name:'Makarna-Domates',ing:'İnce makarna, domates, zeytinyağı',steps:['Makarnayı al dente pişir','Domatesi kabuksuz rendeye çek','Zeytinyağında 5 dk pişir','Sosu makarnaya karıştır'],tip:'Artık aile sofrası! Sağlıklı yağlar ve karbonhidrat.'},
+  ];
+  const cards=recipes.map(r=>`
+    <div style="background:#FFF8F0;border-radius:12px;padding:11px;border-left:3px solid #FF9A3C;margin-bottom:8px">
+      <div style="display:flex;align-items:center;gap:6px;margin-bottom:5px">
+        <span style="font-size:1.3rem">${r.ico}</span>
+        <div><div style="font-weight:800;font-size:.78rem;color:var(--text)">${r.name}</div>
+        <div style="font-size:.65rem;color:#FF9A3C;font-weight:700">${r.age}+</div></div>
+      </div>
+      <div style="font-size:.68rem;color:#888;margin-bottom:4px">🧂 ${r.ing}</div>
+      <ol style="font-size:.68rem;color:#666;padding-left:14px;margin-bottom:4px">${r.steps.map(s=>`<li style="margin-bottom:2px">${s}</li>`).join('')}</ol>
+      <div style="font-size:.66rem;color:#FF6B9D;font-style:italic">💡 ${r.tip}</div>
+    </div>`).join('');
+  const h=`<div class="pop-ov" onclick="if(event.target===this)this.remove()">
+  <div class="pop-box">
+    <div class="pop-rainbow" style="background:linear-gradient(90deg,#FFF8E1,#FFE0B2,#FFF3E0)"></div>
+    <span class="pop-ico">👨‍🍳</span>
+    <div class="pop-title">Bebek Yemek Tarifleri</div>
+    <div class="pop-sub">Sağlıklı, kolay, evde yapılabilir ${S.babyName} için!</div>
+    <div class="pop-sec" style="background:#FFF9C4">
+      <h4>⚠️ Önemli Kurallar</h4>
+      <ul style="font-size:.7rem;color:#BF360C;padding-left:14px">
+        <li>1 yaş altında bal, tuz, şeker, inek sütü YASAK</li>
+        <li>Yeni gıdaları 3-5 gün arayla tek tek tanıtın</li>
+        <li>Yuvarlak meyve/sebzeyi küçük kesin — boğulma riski</li>
+        <li>Tüm gıdalar pişirilmeli (çiğ bal dahil)</li>
+      </ul>
+    </div>
+    <div style="max-height:340px;overflow-y:auto">${cards}</div>
+    <button class="pop-btn" style="background:linear-gradient(135deg,#FF9A3C,#FFD166)" onclick="this.closest('.pop-ov').remove()">👨‍🍳 Afiyet Olsun!</button>
+  </div></div>`;
+  document.body.insertAdjacentHTML('beforeend',h);
+}
+
+// ══════════════════════════════════════════════════════
+// SLEEP TRAINING METHODS
+// ══════════════════════════════════════════════════════
+function showSleepTrainingGuide(){
+  const methods=[
+    {name:'Ferber Yöntemi (Kademeli Kontrol)', ico:'⏱️', age:'5ay+', difficulty:'Orta', pro:'Çoğu bebek 3-7 günde bağımsız uyur', con:'Birkaç gün ağlama dönemi olabilir', steps:['Uyku rutinini tamamlayın','Bebeği uyanık ama uyku halinde bırakın','Ağlarsa belirli aralıklarla girin (3dk→5dk→10dk)','Her gece bekleme süresini uzatın','İçeri girince sakinleştirin ama kucağa almayın']},
+    {name:'No Cry Yöntemi (Ağlatsız)', ico:'💜', age:'Her yaş', difficulty:'Uzun süreç', pro:'Stressiz, bağlanmayı güçlendirir', con:'Sonuç 2-4 hafta alabilir', steps:['Uyku işaretlerini erken tanıyın (göz ovma, esnemek)','Uyku rutini oluşturun (banyo→ninni→uyku)','Uyurken koldan yavaşça yatağa bırakın','Her uyanışta sakinleştirin, ama kucağa almayı azaltın','Sabırlı ve tutarlı olun']},
+    {name:'Kolcu Koşu (Pick Up/Put Down)', ico:'🔄', age:'4-8 ay', difficulty:'Kolay', pro:'Kucak hakkını korur', con:'Bazı bebekler daha uyarılır', steps:['Ağladığında kucağa alın','Sakinleşince tekrar yatağa bırakın','Yatakta ağlarsa tekrar kucağa alın','Döngü sakinleşene kadar tekrarlayın','Günler içinde sayı azalır']},
+    {name:'Beşik Dönemi (Kendi Başına)', ico:'🌙', age:'Ebeveyn kararı', difficulty:'Çok zor', pro:'Hızlı sonuç (1-3 gece)', con:'Uzun ağlama dönemi olabilir', steps:['Bu yöntemi kullanmadan önce pediatristinize danışın','Bebeği yatağa bırakıp odadan çıkın','Ağlarsa belirli süre bekleyin','Güvenlik kontrolleri dışında müdahale etmeyin','Tutarlı olun']},
+  ];
+  const cards=methods.map(m=>`
+    <div style="background:#F5F5F5;border-radius:12px;padding:11px;margin-bottom:8px">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
+        <span style="font-size:1.4rem">${m.ico}</span>
+        <div><div style="font-weight:800;font-size:.78rem;color:var(--text)">${m.name}</div>
+        <div style="font-size:.65rem;color:#888">${m.age} · Zorluk: ${m.difficulty}</div></div>
+      </div>
+      <div style="font-size:.68rem;margin-bottom:5px;display:flex;gap:6px">
+        <span style="color:#2E7D32">✅ ${m.pro}</span> · <span style="color:#C62828">⚠️ ${m.con}</span>
+      </div>
+      <div style="font-size:.68rem;color:#666;font-weight:700;margin-bottom:3px">Nasıl Uygulanır:</div>
+      <ol style="font-size:.67rem;color:#777;padding-left:14px">${m.steps.map(s=>`<li style="margin-bottom:2px">${s}</li>`).join('')}</ol>
+    </div>`).join('');
+  const h=`<div class="pop-ov" onclick="if(event.target===this)this.remove()">
+  <div class="pop-box">
+    <div class="pop-rainbow" style="background:linear-gradient(90deg,#E8EAF6,#C5CAE9)"></div>
+    <span class="pop-ico">🌙</span>
+    <div class="pop-title">Uyku Eğitimi Yöntemleri</div>
+    <div class="pop-sub">Doğru yöntemi birlikte seçin</div>
+    <div class="pop-sec" style="background:#FFF9C4">
+      <h4>⚠️ Önce Bunları Kontrol Edin</h4>
+      <p style="font-size:.7rem;color:#BF360C">Uyku eğitimi başlamadan: bebek en az 4-6 aylık olmalı · açlık/hastalık/seyahat döneminde yapılmaz · her iki ebeveyn de hazır olmalı · pediatrist onayı alın</p>
+    </div>
+    <div style="max-height:340px;overflow-y:auto">${cards}</div>
+    <div class="pop-tip"><div class="pop-tip-t">💡 En İyi Yöntem</div><p>Aileniz için en iyi yöntem yok. Tutarlı ve sevgi dolu olan her yaklaşım işe yarar. Ebeveyn sezgisine ve bebeğin mizacına göre karar verin!</p></div>
+    <button class="pop-btn" style="background:linear-gradient(135deg,#3F51B5,#7986CB)" onclick="this.closest('.pop-ov').remove()">🌙 Anladım!</button>
   </div></div>`;
   document.body.insertAdjacentHTML('beforeend',h);
 }
