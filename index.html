@@ -605,9 +605,11 @@ body{font-family:'Nunito',sans-serif;background:linear-gradient(135deg,#FFF5F8,#
 
       <!-- TAB: GELİŞİM -->
       <div class="tab-body" id="tab-gelisim">
-        <div style="display:flex;gap:5px;margin-bottom:6px">
+        <div style="display:flex;gap:5px;margin-bottom:6px;flex-wrap:wrap">
           <button class="info-btn" onclick="showToyGuide()">🧸 Oyuncak Rehberi</button>
           <button class="info-btn" onclick="showScreenTimeGuide()">📱 Ekran Süresi</button>
+          <button class="info-btn" onclick="showActivityIdeas()">🎯 Aktivite Fikirleri</button>
+          <button class="info-btn" onclick="showBabyMythsGuide()">🔍 Efsane mi Gerçek mi</button>
         </div>
         <div class="stab-nav">
           <button class="stab-btn on" onclick="switchSubTab('fizik')" id="stab-fizik">🏋️ Fiziksel</button>
@@ -901,6 +903,8 @@ const POS_EVENTS_EARLY = [ // 0-6 months
   {msg:(n,d)=>`💤 ${n} 4 saat kesintisiz uyudu! Siz de biraz dinlenin!`, dp:20, sfx:['💤','✨'],fx:{energy:15}},
   {msg:(n,d)=>`👀 ${n} oyuncağını 10 dakika inceledi — merakı gelişiyor!`, dp:15, sfx:['👀','🧠'],fx:{smart:3}},
   {msg:(n,d)=>`🎵 Ninni söylediğinizde anında sakinleşti!`, dp:14, sfx:['🎵','💙'],fx:{energy:8}},
+  {msg:(n,d)=>`🫁 ${n} ilk "baa" sesini çıkardı!`, dp:20, sfx:['🗣️','🌟'],fx:{smart:3,happy:8}},
+  {msg:(n,d)=>`🤩 Yabancı birine gülümsedi — sosyal gelişim harika!`, dp:16, sfx:['😊','✨'],fx:{happy:10}},
 ];
 const POS_EVENTS_MID = [ // 6-12 months
   {msg:(n,d)=>`🍌 ${n} ilk katı gıdasını sevdi! Afiyetle!`, dp:22, sfx:['🍌','😋'],fx:{hunger:10}},
@@ -1110,6 +1114,9 @@ const CHALLENGES = [
   {id:'ates',icon:'🤒',name:'Ateş!',desc:'Bebeğin ateşi yükseldi! Hemen kontrol et!',urgent:true,action:'Doktoru Ara / Ateş Düşür',resolve:{health:20,happy:8,dp:12},penaltyMsg:'Ateş tedavi edilmedi!',info:'3 aydan küçük bebeklerde 38°C ateşte HEMEN doktora gidin. Büyük bebeklerde 38.5°C altı ateş genellikle zararlı değildir. Bol sıvı verin, uygun ateş düşürücü kullanın.',tip:'Ateş ölçümünde koltuk altı normalden 0.5°C düşük gösterir. Kulak termometresi veya rektal ölçüm daha doğrudur.'},
   {id:'kolik',icon:'😫',name:'Kolik Krizi!',desc:'Bebek saatlerce ağlıyor — gaz sancısı şiddetli!',urgent:true,action:'Karın Masajı & Sallama',resolve:{happy:22,health:10,dp:18,energy:-5},penaltyMsg:'Kolik uzun sürdü, bebek tüpüne döndü!',info:'Kolik, sağlıklı bebeklerde haftada 3+ gün, günde 3+ saat süren ağlama olarak tanımlanır. 3. ayda zirveye ulaşır ve genellikle 4. ayda kendiliğinden geçer. Kesin nedeni bilinmemektedir.',tip:'3 S: Sallama (sallanmak), Sarılma (sıkıca), Seslendirme (şşş). Bu üçlü kombinasyon çoğu zaman işe yarar. Sabırlı olun — bu geçecek!'},
   {id:'atlama',icon:'🧠',name:'Gelişim Atlaması!',desc:'Bebek birden huysuzlaştı — bu gelişim atlamasının işareti!',urgent:false,action:'Sabırlı Ol & Fazla Sarıl',resolve:{happy:18,dp:25,energy:-3},penaltyMsg:'Gelişim atlaması zor geçti!',info:'Gelişim atlamaları (Wonder Weeks) beynin hızlı büyüdüğü dönemlerdir. Bebek daha sinirli, uyumsuz ve sarılmak ister. Bu kısa sürer ve ardından büyük bir gelişim gelir!',tip:'Gelişim atlaması sırasında fazladan sarılın, rutini koruyun ve sabırlı olun. Atlama bittikten sonra bebeğiniz tamamen farklı bir beceri kazanmış olacak!'},
+  {id:'babagunu',icon:'👨',name:'Baba Tek Başına!',desc:'Anne dinleniyor. Baba bebek ile yalnız zaman geçirmeli!',urgent:false,action:'Baba Üstleniyor!',resolve:{dadScore:20,happy:18,dp:28,energy:5},penaltyMsg:'Baba fırsatı kaçırdı!',info:'Baba-bebek baş başa zamanı hem bebeğin gelişimi hem de baba-bebek bağı için kritiktir. Araştırmalar gösteriyor ki düzenli baba katılımı bebeğin bilişsel ve sosyal gelişimini hızlandırıyor!',tip:'Baba tek başına bakım yapabilir! Beslenme, banyo, uyutma — hepsini öğrenin. Anne dinlenirken baba güven kazanır, bebek de farklı bir bakış açısı deneyimler.'},
+  {id:'ayrilikaygisi',icon:'😢',name:'Ayrılık Kaygısı!',desc:'Bebek yanında olmayan ebeveynin arkasından ağlıyor!',urgent:false,action:'Veda Ritüeli Yap',resolve:{happy:20,dp:18},penaltyMsg:'Ayrılık kaygısı uzadı!',info:'Ayrılık kaygısı 6-18. aylarda normaldir ve aslında sağlıklı bir bağlanmanın göstergesidir! Bebek sizin gideceğinizi ama döneceğinizi anlamayı öğreniyor.',tip:'Kısa "saklambaç" oyunları ayrılık kaygısını azaltır. Veda ritüeli geliştirin: "Gidiyorum, dönüyorum" deyin ve sözünüzü tutun. Kaçarak gitmeyin — bu kaygıyı artırır!'},
+  {id:'kucakred',icon:'😤',name:'Kucak Reddediyor!',desc:'Bebek artık daha bağımsız — kucaktan kaçıyor!',urgent:false,action:'Zemine Bırak & Takip Et',resolve:{happy:15,dp:20},penaltyMsg:'Bebek hayal kırıklığıyla ağladı!',info:'Kucak reddetmek bağımsızlık gelişiminin sağlıklı bir işaretidir. Bebek keşfetmek istiyor! Bu "ben büyüdüm" mesajının bir parçasıdır.',tip:'Kucak reddini kişisel almayın — bu gelişimin kutlanacak bir adımı. Zemine oturun, onun seviyesine inin ve keşfetmesine eşlik edin. Dönünce sarılmak için bekleyin!'},
 ];
 
 // ══════════════════════════════════════════════════════
@@ -1133,6 +1140,7 @@ function saveGame(){
     momNeverLow:S.momNeverLow, safetydone:S.safetydone, safetyPopupShown:S.safetyPopupShown,
     dailyTaskDone:S.dailyTaskDone, dailyTaskDay:S.dailyTaskDay, dailyTaskIdx:S.dailyTaskIdx,
     diary:[...S.diary], season:S.season||0,
+    grandvisit:S.grandvisit||false,
     savedAt:Date.now(),
   };
   try { localStorage.setItem(SAVE_KEY, JSON.stringify(data)); } catch(e){}
@@ -1162,6 +1170,8 @@ function applySaveData(d){
   S.dailyTaskIdx = d.dailyTaskIdx||0;
   S.diary = new Set(d.diary||[]);
   S.season = d.season||0;
+  S.grandvisit = d.grandvisit||false;
+  S.grandvisitTimer = 200+Math.random()*300;
   S.started = true;
 }
 
@@ -1267,6 +1277,10 @@ const ACHIEVEMENTS = [
   {id:'allvax',      icon:'💉', name:'Aşı Tamamlandı!',    desc:'21 aşının tamamı yapıldı',        check:s=>s.doneVax.size>=21},
   {id:'momhero',     icon:'🌺', name:'Süper Anne',         desc:'Anne enerjisi hiç 30 altına düşmedi (12 ay)', check:s=>(s.momNeverLow||false)},
   {id:'safety',      icon:'🛡️', name:'Güvenli Yuva',       desc:'Bebek güvenlik listesi tamamlandı',check:s=>(s.safetydone||false)},
+  {id:'diary5',      icon:'📖', name:'Anı Avcısı',         desc:'5 özel anı günlüğe kaydettin',     check:s=>(s.diary&&s.diary.size>=5)},
+  {id:'diary_all',   icon:'💝', name:'Tam Günlük',         desc:'Tüm diary anıları kaydedildi!',    check:s=>(s.diary&&s.diary.size>=DIARY_MOMENTS.length)},
+  {id:'challenge20', icon:'🦸', name:'Süper Ebeveyn',      desc:'20 zorlu anı çözdün!',             check:s=>(s.challengesSolved||0)>=20},
+  {id:'grandvisit',  icon:'👴', name:'Aile Buluşması',     desc:'Büyükanne/büyükbaba ziyareti oldu!',check:s=>(s.grandvisit||false)},
 ];
 
 const TIPS = [
@@ -1381,6 +1395,8 @@ const S = {
   dailyTaskIdx:0,
   diary:new Set(),
   season:0,
+  grandvisit:false,
+  grandvisitTimer:200+Math.random()*300,
 };
 
 // ══════════════════════════════════════════════════════
@@ -1515,6 +1531,11 @@ function tick(){
   // positive events
   S.posEventTimer-=dt;
   if(S.posEventTimer<=0){ spawnPositiveEvent(); S.posEventTimer=60+Math.random()*80; }
+  // grandparent visit (random special event)
+  if(!S.grandvisit){
+    S.grandvisitTimer=(S.grandvisitTimer||300)-dt;
+    if(S.grandvisitTimer<=0) triggerGrandparentVisit();
+  }
   // age
   const newAge=Math.min(24,Math.floor(S.dp/600));
   if(newAge!==S.ageMonths){
@@ -1616,6 +1637,9 @@ function spawnChallenge(){
     if(c.id==='gece'&&S.ageMonths>12&&Math.random()<.6) return false;
     if(c.id==='kolik'&&S.ageMonths>4) return false;
     if(c.id==='atlama'&&(S.ageMonths<2||S.ageMonths>14)) return false;
+    if(c.id==='babagunu'&&S.dadScore<10) return false;
+    if(c.id==='ayrilikaygisi'&&S.ageMonths<6) return false;
+    if(c.id==='kucakred'&&S.ageMonths<8) return false;
     return true;
   });
   const ch=avail[Math.floor(Math.random()*avail.length)];
@@ -1650,6 +1674,7 @@ function resolveChallenge(){
   const ch=S.activeChallenge;
   applyFx(ch.resolve||{});
   if(ch.id==='bez'||ch.id==='gece') S.diaper=Math.min(100,S.diaper+20);
+  if(ch.resolve&&ch.resolve.dadScore) S.dadScore=Math.min(100,S.dadScore+(ch.resolve.dadScore||0));
   S.challengesSolved=(S.challengesSolved||0)+1;
   clearChallenge();
   spawnParticles(['✅','⭐','🎉'],4);
@@ -2185,6 +2210,44 @@ function showPosToast(msg){
   d.textContent=msg;
   document.body.appendChild(d);
   setTimeout(()=>d.remove(),3500);
+}
+
+// ══════════════════════════════════════════════════════
+// GRANDPARENT VISIT
+// ══════════════════════════════════════════════════════
+function triggerGrandparentVisit(){
+  S.grandvisit=true;
+  S.dp+=60;
+  S.happy=clamp(S.happy+25);
+  S.momWellbeing=clamp(S.momWellbeing+30);
+  S.dadScore=Math.min(100,S.dadScore+5);
+  spawnParticles(['👴','👵','💖','🎉'],6);
+  playSound('milestone');
+  addLog(`👴👵 Büyükanne ve büyükbaba ziyarete geldi! Herkes mutlu! +60 GP`,'ms');
+  const h=`<div class="pop-ov" onclick="if(event.target===this)this.remove()">
+  <div class="pop-box">
+    <div class="pop-rainbow" style="background:linear-gradient(90deg,#FFD54F,#FFECB3,#FFF9C4)"></div>
+    <span class="pop-ico">👴👵</span>
+    <div class="pop-title">Büyükanne & Büyükbaba Ziyareti!</div>
+    <div class="pop-sub">Aile bir araya geldi — ${S.babyName} çok mutlu!</div>
+    <div class="pop-sec" style="background:#FFF9C4">
+      <h4>🌟 +60 GP · +25 Mutluluk · +30 Anne Enerjisi!</h4>
+      <p>Büyükanne ve büyükbabalar çocuk gelişimine paha biçilmez katkı sağlar. Masal, deneyim, sıcaklık ve sonsuz sevgi — bunların hepsini getirirler!</p>
+    </div>
+    <div class="pop-sec">
+      <h4>💡 Büyükanne/Büyükbaba ile Kaliteli Zaman</h4>
+      <ul style="font-size:.73rem;color:#555;padding-left:14px;line-height:1.6">
+        <li>Masallar ve aile hikayeleri dil gelişimini destekler</li>
+        <li>Farklı jenerasyonla etkileşim sosyal beceriyi artırır</li>
+        <li>Büyükanneler anneye destek — burnout'u önler</li>
+        <li>Büyükbaba-torun bağı erkek çocuk gelişiminde çok önemli</li>
+        <li>Kültürel aktarım: yemekler, şarkılar, gelenekler</li>
+      </ul>
+    </div>
+    <div class="pop-tip"><div class="pop-tip-t">💖 Annelere Not</div><p>Büyükanne desteği kabul etmek zayıflık değil, aksine akıllıca bir karardır. "Bir köy büyütür" gerçektir. Yardımı kabul edin, biraz nefes alın. ${S.momName}, sen harika yapıyorsun!</p></div>
+    <button class="pop-btn" style="background:linear-gradient(135deg,#FFB300,#FF8F00)" onclick="this.closest('.pop-ov').remove()">👴👵 Ne Güzel Aile!</button>
+  </div></div>`;
+  document.body.insertAdjacentHTML('beforeend',h);
 }
 
 // ══════════════════════════════════════════════════════
@@ -2912,6 +2975,8 @@ function showAllGuides(){
     {ico:'💆',name:'Bebek Masajı',fn:'showMassageGuide()'},
     {ico:'⚠️',name:'Uyarı İşaretleri',fn:'showRedFlags()'},
     {ico:'📖',name:'Bebek Günlüğü',fn:'showBabyDiary()'},
+    {ico:'🔍',name:'Efsane mi Gerçek mi',fn:'showBabyMythsGuide()'},
+    {ico:'🎯',name:'Aktivite Fikirleri',fn:'showActivityIdeas()'},
   ];
   const chips=guides.map(g=>`<button class="guide-chip" onclick="${g.fn};this.closest('.pop-ov').remove()">${g.ico}<br>${g.name}</button>`).join('');
   const h=`<div class="pop-ov" onclick="if(event.target===this)this.remove()">
@@ -3039,6 +3104,83 @@ function showRedFlags(){
     ${rows}
     <div class="pop-tip"><div class="pop-tip-t">🩺 Ne Zaman Doktora Gitmeliyim?</div><p>Bu listede belirtilen dönemlerde söz konusu becerileri görmüyorsanız, doktor kontrolünü beklemeyin. Sormak için bir neden her zaman yeterlidir. Ebeveyn içgüdüsüne güvenin!</p></div>
     <button class="pop-btn" style="background:linear-gradient(135deg,#FF7043,#FF5722)" onclick="this.closest('.pop-ov').remove()">⚠️ Anladım</button>
+  </div></div>`;
+  document.body.insertAdjacentHTML('beforeend',h);
+}
+
+// ══════════════════════════════════════════════════════
+// BABY MYTHS GUIDE
+// ══════════════════════════════════════════════════════
+function showBabyMythsGuide(){
+  const myths=[
+    {myth:'❌ "Bebek şımarır, çok kucağa alma!"',fact:'✅ Gerçek: Kucağa almak güven ve bağlanmayı pekiştirir. Bebekler şımartılamaz! 0-12 aylık bebekler tepkilerine göre değil, ihtiyaçlarına göre cevap verilmesi gerekiyor.',src:'American Academy of Pediatrics'},
+    {myth:'❌ "Ağlasın, ciğeri güçlenir!"',fact:'✅ Gerçek: Uzun süreli kontrolsüz ağlama kortizol (stres hormonu) seviyesini yükseltir. Stres hormonu yüksek bebekler daha zor sakinleşir ve bağlanma sorunu yaşayabilir.',src:'Harvard Child Development'},
+    {myth:'❌ "Gece mama verin, uyusun!"',fact:'✅ Gerçek: Bebek hazır değilken katı gıda vermek sindirim sorunlarına ve alerjiye neden olabilir. WHO 6. aya kadar sadece anne sütü/mama önerir.',src:'WHO 2023'},
+    {myth:'❌ "Bebek geceleri uyumalı, uyutun!"',fact:'✅ Gerçek: 0-3 ay arası bebekler gece her 2-3 saatte beslenme ihtiyacı duyar. Bu tamamen fizyolojiktir. Zorla uyutmak zarar verir.',src:'AAP Safe Sleep Guidelines'},
+    {myth:'❌ "Bebek dışarı çıkmamalı, hasta olur!"',fact:'✅ Gerçek: Temiz havada zaman geçirmek bağışıklık sistemini güçlendirir. İlk birkaç hafta yoğun kalabalıktan kaçınmak yeterli.',src:'NHS UK'},
+    {myth:'❌ "Emzirmek çocuğu bağımlı yapar!"',fact:'✅ Gerçek: Emzirme ihtiyaca cevap vermektir. Uzun süre emzirilen çocuklar araştırmalara göre daha bağımsız ve güvenli bireylere dönüşüyor.',src:'La Leche League International'},
+    {myth:'❌ "Bebek katı gıdaya geç başlarsa geç yürür!"',fact:'✅ Gerçek: Yürüme ile beslenme başlangıcı arasında bilimsel bağlantı yok. Yürüme tamamen motor gelişim ile ilgilidir.',src:'Pediatrics Journal'},
+    {myth:'❌ "Bebek uyurken müzik çalmayın, uyku alışkanlığı bozulur!"',fact:'✅ Gerçek: Beyaz gürültü ve ninni bebek uyku kalitesini artırır. Bebek anne karnındayken hiç sessiz ortamda olmadı!',src:'Sleep Medicine Reviews'},
+  ];
+  const rows=myths.map(m=>`
+    <div style="background:#FFF;border-radius:12px;padding:11px;margin-bottom:8px;border:1px solid #F0E6FF">
+      <div style="font-size:.73rem;color:#C62828;font-weight:700;margin-bottom:4px">${m.myth}</div>
+      <div style="font-size:.72rem;color:#2E7D32;line-height:1.4;margin-bottom:3px">${m.fact}</div>
+      <div style="font-size:.62rem;color:#aaa">Kaynak: ${m.src}</div>
+    </div>`).join('');
+  const h=`<div class="pop-ov" onclick="if(event.target===this)this.remove()">
+  <div class="pop-box">
+    <div class="pop-rainbow" style="background:linear-gradient(90deg,#E8F5E9,#E3F2FD)"></div>
+    <span class="pop-ico">🔍</span>
+    <div class="pop-title">Bebek Efsaneleri & Gerçekler</div>
+    <div class="pop-sub">Bilim ne diyor? Doğruları öğrenin!</div>
+    <div style="max-height:380px;overflow-y:auto;margin:10px 0">${rows}</div>
+    <button class="pop-btn" style="background:linear-gradient(135deg,#43A047,#66BB6A)" onclick="this.closest('.pop-ov').remove()">✅ Gerçekleri Öğrendim!</button>
+  </div></div>`;
+  document.body.insertAdjacentHTML('beforeend',h);
+}
+
+// ══════════════════════════════════════════════════════
+// ACTIVITY IDEAS
+// ══════════════════════════════════════════════════════
+function showActivityIdeas(){
+  const age=S.ageMonths;
+  const allActs=[
+    {minAge:0,maxAge:3,  ico:'🖐️', name:'Dokunma & Doku Keşfi',    desc:'Farklı dokudaki kumaşlar, peluş ve sert yüzeylerle bebeğin dokunma duyusunu geliştirin. Ellerini nazikçe gezdir.'},
+    {minAge:0,maxAge:3,  ico:'🎨', name:'Yüksek Kontrast Kartlar',  desc:'Siyah-beyaz geometrik şekiller yenidoğanların görmesine en uygun. Yüzden 20-30 cm mesafede gösterin.'},
+    {minAge:0,maxAge:6,  ico:'🎵', name:'Müzik & Ritim',            desc:'Her türlü müzik beyin bağlantılarını güçlendirir. Ninni, klasik, halk müziği — hepsi değerli!'},
+    {minAge:1,maxAge:6,  ico:'🪞', name:'Ayna Oyunu',               desc:'Bebek aynaya baktıkça yüz ifadelerini keşfeder. "Bu sen!" deyin, gülümseyin, değişik yüzler yapın.'},
+    {minAge:2,maxAge:8,  ico:'🫧', name:'Baloncuk Oyunu',           desc:'Renkli balonlar görsel takip becerisini geliştirir. Patladığında şaşırma tepkisi — beklenti duygusu gelişiyor!'},
+    {minAge:3,maxAge:24, ico:'📚', name:'Kitap Okuma',              desc:'Her gün aynı kitabı defalarca okumak normaldir — tekrar öğrenmeyi güçlendirir! Resimli kitapları işaret ederek okuyun.'},
+    {minAge:4,maxAge:12, ico:'🫴', name:'Çıngırak & Tutma',         desc:'Elini açıp kapamayı, yakalayıp bırakmayı geliştirin. El becerisi ve koordinasyon için temel alıştırma.'},
+    {minAge:5,maxAge:12, ico:'🎭', name:'Peekaboo (Cee!)',          desc:'"Cee-ee!" oyunu nesne kalıcılığı kavramını öğretir. Bir şey gözden kaybolsa da VAR OLMAYA devam eder!'},
+    {minAge:6,maxAge:24, ico:'🫙', name:'Kap-Çıkar Oyunu',         desc:'Kaplara nesne koyup çıkarmak ince motor becerisini ve neden-sonuç ilişkisini öğretir.'},
+    {minAge:6,maxAge:18, ico:'🌊', name:'Su Oyunu',                 desc:'Leğende su, havlu, kap — dökme, doldurma, taşıma. Duyusal gelişim için mükemmel!'},
+    {minAge:8,maxAge:24, ico:'🧱', name:'Blok Yıkma',              desc:'Siz kurun, bebek yıksın! Neden-sonuç ilişkisi + büyük motor becerisi + eşsiz mutluluk!'},
+    {minAge:9,maxAge:24, ico:'🎨', name:'Parmak Boyası',           desc:'Bebek boyası (yutulsa zararsız) ile büyük kağıt üzerinde özgür sanat. Yaratıcılık ve duyusal gelişim.'},
+    {minAge:10,maxAge:24,ico:'🔔', name:'Müzik Aletleri',          desc:'Kaşık-kap davulları, çıngırak — ritim duyusunu ve koordinasyonu geliştirir. Baba da katılsın!'},
+    {minAge:12,maxAge:24,ico:'🧩', name:'Basit Puzzle',            desc:'2-3 parçalık ahşap puzzlelar problem çözme ve ince motor becerisini geliştirir. Başlangıçta yardım edin.'},
+    {minAge:12,maxAge:24,ico:'🌿', name:'Doğa Yürüyüşü',          desc:'Yaprak, taş, kum — doğal malzemelerle dokunma, koklama, görme duyularını geliştirin.'},
+    {minAge:15,maxAge:24,ico:'🏃', name:'Koşma & Saklambaç',       desc:'Kaçma-kovalama, gizlenme, bulma — sosyal oyun ve büyük motor becerisinin altın çağı!'},
+  ];
+  const available=allActs.filter(a=>age>=a.minAge&&age<=a.maxAge);
+  const cards=available.map(a=>`
+    <div style="background:#FFF8F0;border-radius:12px;padding:10px;border-left:3px solid #FF9A3C">
+      <div style="display:flex;align-items:center;gap:6px;margin-bottom:4px">
+        <span style="font-size:1.3rem">${a.ico}</span>
+        <div style="font-weight:800;font-size:.78rem;color:var(--text)">${a.name}</div>
+      </div>
+      <div style="font-size:.7rem;color:#666;line-height:1.4">${a.desc}</div>
+    </div>`).join('');
+  const h=`<div class="pop-ov" onclick="if(event.target===this)this.remove()">
+  <div class="pop-box">
+    <div class="pop-rainbow" style="background:linear-gradient(90deg,#FFF8E1,#FFF3E0,#FFE0B2)"></div>
+    <span class="pop-ico">🎯</span>
+    <div class="pop-title">Aktivite Fikirleri</div>
+    <div class="pop-sub">${S.babyName} için ${age}. ay aktiviteleri — ${available.length} öneri</div>
+    <div style="display:flex;flex-direction:column;gap:8px;max-height:380px;overflow-y:auto;margin:10px 0">${cards||'<p style="color:#aaa;text-align:center">Yaşa uygun aktiviteler bekleniyor!</p>'}</div>
+    <div class="pop-tip"><div class="pop-tip-t">💡 Hatırlatma</div><p>Her aktivite 5-10 dakika yeter — bebekler kısa dikkat süresine sahip. Aktiviteyi bırakmak istediğinde zorlamayın. Keyifli olduğunda tekrar deneyin!</p></div>
+    <button class="pop-btn" style="background:linear-gradient(135deg,#FF9A3C,#FFD166)" onclick="this.closest('.pop-ov').remove()">🎯 Hadi Başlayalım!</button>
   </div></div>`;
   document.body.insertAdjacentHTML('beforeend',h);
 }
