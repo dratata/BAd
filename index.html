@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>🍼 Bebek Büyütme Macerası</title>
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Nunito:ital,wght@0,400;0,600;0,700;0,800;1,400&subset=latin,latin-ext&display=swap');
 
 :root {
   --pink:#FF6B9D; --purple:#C77DFF; --blue:#48CAE4; --green:#52B788;
@@ -24,7 +24,7 @@ body{font-family:'Nunito',sans-serif;background:linear-gradient(135deg,#FFF5F8,#
 .setup-top{text-align:center;margin-bottom:26px}
 .setup-top .big{font-size:3rem;animation:wobble 2s ease-in-out infinite}
 @keyframes wobble{0%,100%{transform:rotate(-5deg)}50%{transform:rotate(5deg)}}
-.setup-top h1{font-family:'Fredoka One',cursive;font-size:1.9rem;color:var(--text);margin-bottom:4px}
+.setup-top h1{font-family:'Fredoka',sans-serif;font-size:1.9rem;color:var(--text);margin-bottom:4px}
 .setup-top p{color:#888;font-size:.88rem}
 .fgrp{margin-bottom:16px}
 .fgrp label{display:block;font-weight:800;font-size:.85rem;color:var(--text);margin-bottom:7px}
@@ -34,12 +34,12 @@ body{font-family:'Nunito',sans-serif;background:linear-gradient(135deg,#FFF5F8,#
 .gbtn{padding:14px;border:3px solid #E0E0E0;border-radius:16px;background:#fff;cursor:pointer;font-family:'Nunito',sans-serif;font-size:1rem;font-weight:800;color:#666;transition:all .2s}
 .gbtn.girl.sel{border-color:var(--pink);background:#FFF0F5;color:var(--pink);box-shadow:0 4px 15px rgba(255,107,157,.3)}
 .gbtn.boy.sel{border-color:#4169E1;background:#EEF2FF;color:#4169E1;box-shadow:0 4px 15px rgba(65,105,225,.3)}
-.start-btn{width:100%;padding:16px;background:linear-gradient(135deg,var(--pink),var(--purple));color:#fff;border:none;border-radius:20px;font-family:'Fredoka One',cursive;font-size:1.2rem;cursor:pointer;transition:all .2s;margin-top:6px;box-shadow:0 6px 20px rgba(199,125,255,.4)}
+.start-btn{width:100%;padding:16px;background:linear-gradient(135deg,var(--pink),var(--purple));color:#fff;border:none;border-radius:20px;font-family:'Fredoka',sans-serif;font-size:1.2rem;cursor:pointer;transition:all .2s;margin-top:6px;box-shadow:0 6px 20px rgba(199,125,255,.4)}
 .start-btn:hover{transform:translateY(-3px);box-shadow:0 10px 30px rgba(199,125,255,.5)}
 
 /* ── HEADER ─────────────────────────────────────────── */
 .hdr{background:linear-gradient(90deg,var(--text),#5B2FBE);padding:10px 18px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;box-shadow:0 4px 20px rgba(61,44,141,.3)}
-.hdr-left h1{font-family:'Fredoka One',cursive;color:#fff;font-size:1.25rem}
+.hdr-left h1{font-family:'Fredoka',sans-serif;color:#fff;font-size:1.25rem}
 .hdr-sub{font-size:.72rem;color:rgba(255,255,255,.65);margin-top:2px}
 .hdr-stats{display:flex;gap:6px;flex-wrap:wrap}
 .hbadge{background:rgba(255,255,255,.15);color:#fff;padding:5px 11px;border-radius:20px;font-size:.72rem;font-weight:700;backdrop-filter:blur(4px)}
@@ -60,7 +60,7 @@ body{font-family:'Nunito',sans-serif;background:linear-gradient(135deg,#FFF5F8,#
 .baby-body-deco{font-size:1.6rem;margin-top:-8px;text-align:center}
 .scene-fx{position:absolute;inset:0;z-index:3;pointer-events:none;display:flex;justify-content:flex-end;align-items:flex-start;padding:8px;font-size:1.6rem}
 .baby-info{padding:10px 16px 14px;text-align:center}
-.baby-nm{font-family:'Fredoka One',cursive;font-size:1.3rem;color:var(--text)}
+.baby-nm{font-family:'Fredoka',sans-serif;font-size:1.3rem;color:var(--text)}
 .baby-stg{display:inline-block;font-size:.72rem;font-weight:700;color:var(--purple);background:var(--soft);padding:2px 10px;border-radius:10px;margin:3px 0}
 .baby-mood{font-size:.82rem;color:#888;margin-top:3px}
 
@@ -71,7 +71,7 @@ body{font-family:'Nunito',sans-serif;background:linear-gradient(135deg,#FFF5F8,#
 @keyframes chPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.01)}}
 .ch-top{display:flex;align-items:center;gap:8px;margin-bottom:6px}
 .ch-icon{font-size:1.6rem}
-.ch-name{font-family:'Fredoka One',cursive;font-size:1rem;flex:1}
+.ch-name{font-family:'Fredoka',sans-serif;font-size:1rem;flex:1}
 .ch-tbar{width:55px;height:8px;background:rgba(255,255,255,.3);border-radius:4px;overflow:hidden}
 .ch-tfill{height:100%;background:#fff;border-radius:4px;transition:width .3s linear}
 .ch-desc{font-size:.78rem;opacity:.92;margin-bottom:10px;line-height:1.4}
@@ -95,8 +95,8 @@ body{font-family:'Nunito',sans-serif;background:linear-gradient(135deg,#FFF5F8,#
 /* dp */
 .dp-card{background:linear-gradient(135deg,var(--text),#5B2FBE);border-radius:18px;padding:12px 14px;color:#fff}
 .dp-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:5px}
-.dp-title{font-family:'Fredoka One',cursive;font-size:.88rem;opacity:.9}
-.dp-val{font-family:'Fredoka One',cursive;font-size:1.5rem}
+.dp-title{font-family:'Fredoka',sans-serif;font-size:.88rem;opacity:.9}
+.dp-val{font-family:'Fredoka',sans-serif;font-size:1.5rem}
 .dp-bar{height:10px;background:rgba(255,255,255,.2);border-radius:10px;overflow:hidden;margin-bottom:5px}
 .dp-fill{height:100%;background:linear-gradient(90deg,var(--yellow),var(--orange));border-radius:10px;transition:width .5s}
 .dp-nxt{font-size:.68rem;opacity:.7}
@@ -108,7 +108,7 @@ body{font-family:'Nunito',sans-serif;background:linear-gradient(135deg,#FFF5F8,#
 .tnav-btn{padding:7px 4px;border:none;border-radius:10px;background:transparent;cursor:pointer;font-family:'Nunito',sans-serif;font-weight:700;font-size:.65rem;color:var(--text);transition:all .2s;text-align:center;line-height:1.2}
 .tnav-btn.on{background:#fff;box-shadow:0 2px 8px rgba(0,0,0,.08);color:var(--purple)}
 .tab-body{display:none}.tab-body.on{display:flex;flex-direction:column;gap:8px}
-.act-stitle{font-family:'Fredoka One',cursive;font-size:.82rem;color:var(--text);margin:6px 0 4px;padding-left:2px}
+.act-stitle{font-family:'Fredoka',sans-serif;font-size:.82rem;color:var(--text);margin:6px 0 4px;padding-left:2px}
 .act-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px}
 .abt{padding:11px 8px;border:none;border-radius:15px;cursor:pointer;font-family:'Nunito',sans-serif;font-weight:800;font-size:.72rem;color:#fff;transition:all .2s;display:flex;flex-direction:column;align-items:center;gap:3px;position:relative;overflow:hidden}
 .abt:hover:not(:disabled){transform:translateY(-3px);box-shadow:0 6px 18px rgba(0,0,0,.2)}
@@ -141,20 +141,20 @@ body{font-family:'Nunito',sans-serif;background:linear-gradient(135deg,#FFF5F8,#
 
 /* dad section */
 .dad-hdr{background:linear-gradient(135deg,#EEF2FF,#E3F2FD);border-radius:16px;padding:12px 14px;border:2px solid #C5CAE9;margin-bottom:6px}
-.dad-hdr-title{font-family:'Fredoka One',cursive;font-size:.88rem;color:#283593;margin-bottom:6px}
+.dad-hdr-title{font-family:'Fredoka',sans-serif;font-size:.88rem;color:#283593;margin-bottom:6px}
 .dad-bar{height:10px;background:rgba(40,53,147,.15);border-radius:10px;overflow:hidden;margin-bottom:4px}
 .dad-fill{height:100%;background:linear-gradient(90deg,#3949AB,#7986CB);border-radius:10px;transition:width .5s}
 .dad-score-lbl{font-size:.68rem;color:#3949AB;font-weight:700}
 
 /* mom honor */
 .mom-card{background:linear-gradient(135deg,#FCE4EC,#F8BBD9);border-radius:16px;padding:14px;border:2px solid #F48FB1;text-align:center;margin-top:6px}
-.mom-title{font-family:'Fredoka One',cursive;font-size:.95rem;color:#C2185B;margin-bottom:8px}
+.mom-title{font-family:'Fredoka',sans-serif;font-size:.95rem;color:#C2185B;margin-bottom:8px}
 .mom-msg{font-size:.76rem;color:#880E4F;line-height:1.5;font-style:italic}
 
 /* ── INFO PANEL ─────────────────────────────────────────── */
 .info-panel{display:flex;flex-direction:column;gap:14px}
 .icard{background:#fff;border-radius:20px;padding:16px;box-shadow:var(--shadow)}
-.icard h3{font-family:'Fredoka One',cursive;font-size:.95rem;color:var(--text);margin-bottom:10px;display:flex;align-items:center;gap:6px}
+.icard h3{font-family:'Fredoka',sans-serif;font-size:.95rem;color:var(--text);margin-bottom:10px;display:flex;align-items:center;gap:6px}
 .icard h3 span{font-size:.72rem;font-weight:600;color:#888;margin-left:auto}
 
 /* vaccine list */
@@ -198,7 +198,7 @@ body{font-family:'Nunito',sans-serif;background:linear-gradient(135deg,#FFF5F8,#
 @keyframes popIn{from{transform:scale(.5) translateY(30px);opacity:0}to{transform:scale(1) translateY(0);opacity:1}}
 .pop-rainbow{position:absolute;top:0;left:0;right:0;height:6px;background:linear-gradient(90deg,#FF6B9D,#FFD166,#52B788,#48CAE4,#C77DFF)}
 .pop-ico{font-size:4rem;display:block;text-align:center;margin:12px 0 6px}
-.pop-title{font-family:'Fredoka One',cursive;font-size:1.6rem;color:var(--text);text-align:center;margin-bottom:5px}
+.pop-title{font-family:'Fredoka',sans-serif;font-size:1.6rem;color:var(--text);text-align:center;margin-bottom:5px}
 .pop-sub{text-align:center;color:#888;font-size:.82rem;margin-bottom:14px}
 .pop-tag{display:inline-block;background:var(--soft);color:var(--purple);font-size:.68rem;font-weight:700;padding:3px 10px;border-radius:12px;margin-bottom:10px}
 .pop-sec{background:#F8F8FF;border-radius:14px;padding:13px;margin-bottom:10px}
@@ -252,7 +252,7 @@ body{font-family:'Nunito',sans-serif;background:linear-gradient(135deg,#FFF5F8,#
 
 /* setup saved game card */
 .saved-banner{background:linear-gradient(135deg,#E8F5E9,#E3F2FD);border:2px solid var(--green);border-radius:16px;padding:14px;margin-bottom:16px;text-align:center}
-.saved-banner h4{font-family:'Fredoka One',cursive;color:#2E7D32;font-size:1rem;margin-bottom:6px}
+.saved-banner h4{font-family:'Fredoka',sans-serif;color:#2E7D32;font-size:1rem;margin-bottom:6px}
 .saved-banner p{font-size:.78rem;color:#555;margin-bottom:10px}
 .saved-btns{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 .load-btn{padding:11px;background:linear-gradient(135deg,var(--green),#2DC653);color:#fff;border:none;border-radius:14px;font-family:'Nunito',sans-serif;font-weight:800;font-size:.85rem;cursor:pointer;transition:all .2s}
@@ -268,7 +268,7 @@ body{font-family:'Nunito',sans-serif;background:linear-gradient(135deg,#FFF5F8,#
 
 /* achievements */
 .ach-card{background:#fff;border-radius:20px;padding:14px;box-shadow:var(--shadow)}
-.ach-card h3{font-family:'Fredoka One',cursive;font-size:.95rem;color:var(--text);margin-bottom:10px;display:flex;align-items:center;gap:6px}
+.ach-card h3{font-family:'Fredoka',sans-serif;font-size:.95rem;color:var(--text);margin-bottom:10px;display:flex;align-items:center;gap:6px}
 .ach-list{display:flex;flex-direction:column;gap:5px}
 .ach-item{display:flex;align-items:center;gap:9px;padding:8px 10px;border-radius:12px;border:2px solid transparent;transition:all .3s}
 .ach-item.done{background:linear-gradient(135deg,#FFF9E4,#FFF3CD);border-color:var(--yellow)}
@@ -290,7 +290,7 @@ body{font-family:'Nunito',sans-serif;background:linear-gradient(135deg,#FFF5F8,#
 /* baby vitals */
 .baby-vitals{display:flex;justify-content:center;gap:16px;padding:8px 16px;background:var(--soft);font-size:.72rem;font-weight:700;color:var(--text)}
 .vital{text-align:center}
-.vital-val{font-family:'Fredoka One',cursive;font-size:1rem;color:var(--purple)}
+.vital-val{font-family:'Fredoka',sans-serif;font-size:1rem;color:var(--purple)}
 .vital-lbl{font-size:.6rem;color:#888;margin-top:1px}
 
 /* achievement popup */
@@ -352,7 +352,7 @@ body{font-family:'Nunito',sans-serif;background:linear-gradient(135deg,#FFF5F8,#
 
 /* lohusalık card */
 .lohusa-card{background:linear-gradient(135deg,#FFF0F5,#F8BBD9);border-radius:14px;padding:12px;border:2px solid #F48FB1;margin-top:8px}
-.lohusa-title{font-family:'Fredoka One',cursive;font-size:.88rem;color:#C2185B;margin-bottom:6px}
+.lohusa-title{font-family:'Fredoka',sans-serif;font-size:.88rem;color:#C2185B;margin-bottom:6px}
 .lohusa-sign{display:flex;align-items:center;gap:6px;padding:4px 0;font-size:.72rem;color:#880E4F;border-bottom:1px solid rgba(244,143,177,.3)}
 .lohusa-sign:last-child{border-bottom:none}
 
@@ -370,7 +370,7 @@ body{font-family:'Nunito',sans-serif;background:linear-gradient(135deg,#FFF5F8,#
 
 /* ninni card */
 .ninni-card{background:linear-gradient(135deg,#E8EAF6,#EDE7F6);border-radius:12px;padding:12px;margin-bottom:8px}
-.ninni-title{font-family:'Fredoka One',cursive;font-size:.85rem;color:#283593;margin-bottom:5px}
+.ninni-title{font-family:'Fredoka',sans-serif;font-size:.85rem;color:#283593;margin-bottom:5px}
 .ninni-text{font-size:.72rem;color:#3949AB;line-height:1.7;font-style:italic;white-space:pre-line}
 .ninni-type{display:inline-block;font-size:.6rem;font-weight:700;padding:2px 8px;border-radius:10px;background:#C5CAE9;color:#283593;margin-bottom:6px}
 
@@ -3374,7 +3374,7 @@ function showBirthStory(){
       <input id="bsMomFeel" placeholder="💖 Anne olarak ne hissettiniz?" style="padding:9px;border:2px solid #FFB3C6;border-radius:10px;font-family:'Nunito',sans-serif;font-size:.8rem;outline:none">
       <input id="bsDadFeel" placeholder="💙 Baba olarak ne hissettiniz?" style="padding:9px;border:2px solid #FFB3C6;border-radius:10px;font-family:'Nunito',sans-serif;font-size:.8rem;outline:none">
     </div>
-    <button onclick="saveBirthStory()" style="width:100%;padding:12px;background:linear-gradient(135deg,#FF6B9D,#FF9A9E);color:#fff;border:none;border-radius:14px;font-family:'Fredoka One',cursive;font-size:1rem;cursor:pointer">💖 Hikayemi Kaydet</button>
+    <button onclick="saveBirthStory()" style="width:100%;padding:12px;background:linear-gradient(135deg,#FF6B9D,#FF9A9E);color:#fff;border:none;border-radius:14px;font-family:'Fredoka',sans-serif;font-size:1rem;cursor:pointer">💖 Hikayemi Kaydet</button>
     <button style="width:100%;padding:9px;background:#eee;color:#555;border:none;border-radius:12px;font-family:'Nunito',sans-serif;font-weight:700;font-size:.8rem;cursor:pointer;margin-top:6px" onclick="this.closest('.pop-ov').remove()">Kapat</button>
   </div></div>`;
   document.body.insertAdjacentHTML('beforeend',h);
@@ -3580,7 +3580,7 @@ function showFirstWords(){
       <input id="newWordInput" placeholder='Kelimeyi yaz (ör: "mama", "baba", "su")' style="padding:9px;border:2px solid #A5D6A7;border-radius:10px;font-family:'Nunito',sans-serif;font-size:.8rem;outline:none">
       <input id="newWordContext" placeholder="Bağlam (ör: mutfakta, oynarken)" style="padding:9px;border:2px solid #A5D6A7;border-radius:10px;font-family:'Nunito',sans-serif;font-size:.8rem;outline:none">
     </div>
-    <button onclick="saveFirstWord()" style="width:100%;padding:11px;background:linear-gradient(135deg,#43A047,#81C784);color:#fff;border:none;border-radius:13px;font-family:'Fredoka One',cursive;font-size:.95rem;cursor:pointer">🗣️ Kelimeyi Kaydet</button>
+    <button onclick="saveFirstWord()" style="width:100%;padding:11px;background:linear-gradient(135deg,#43A047,#81C784);color:#fff;border:none;border-radius:13px;font-family:'Fredoka',sans-serif;font-size:.95rem;cursor:pointer">🗣️ Kelimeyi Kaydet</button>
     <div class="pop-tip"><div class="pop-tip-t">🧠 Ne zaman başlar?</div><p>İlk anlamlı kelimeler genellikle 10-14. aylarda gelir. 12 ayda 1-2 kelime, 18 ayda 10-20 kelime normaldir. Daha erken de gelebilir — her bebek farklı!</p></div>
     <button class="pop-btn" style="background:#eee;color:#555;margin-top:6px" onclick="this.closest('.pop-ov').remove()">Kapat</button>
   </div></div>`;
@@ -3784,7 +3784,7 @@ function showSleepLog(){
         </div>
       </div>
       <input id="sleepLabel" placeholder="Etiket (ör: Gece uykusu, Öğlen uykusu)" style="width:100%;padding:7px;border:2px solid #9FA8DA;border-radius:8px;font-family:'Nunito',sans-serif;font-size:.75rem;outline:none;box-sizing:border-box;margin-bottom:6px">
-      <button onclick="saveSleepEntry()" style="width:100%;padding:9px;background:linear-gradient(135deg,#3949AB,#7986CB);color:#fff;border:none;border-radius:10px;font-family:'Fredoka One',cursive;cursor:pointer">😴 Kaydet</button>
+      <button onclick="saveSleepEntry()" style="width:100%;padding:9px;background:linear-gradient(135deg,#3949AB,#7986CB);color:#fff;border:none;border-radius:10px;font-family:'Fredoka',sans-serif;cursor:pointer">😴 Kaydet</button>
     </div>
     <div class="pop-tip"><div class="pop-tip-t">😴 Uyku İhtiyacı (Aylara Göre)</div><p>0-3 ay: 14-17s · 4-11 ay: 12-15s · 1-2 yaş: 11-14s. Toplam uyku gündüz+gece uyku dahildir.</p></div>
     <button class="pop-btn" style="background:#eee;color:#555" onclick="this.closest('.pop-ov').remove()">Kapat</button>
@@ -3852,7 +3852,7 @@ function showFeedLog(){
         </div>
       </div>
       <input id="feedNote" placeholder="Not (ör: sol taraf, sebze püresi)" style="width:100%;padding:7px;border:2px solid #A5D6A7;border-radius:8px;font-family:'Nunito',sans-serif;font-size:.75rem;outline:none;box-sizing:border-box;margin-bottom:6px">
-      <button onclick="saveFeedEntry()" style="width:100%;padding:9px;background:linear-gradient(135deg,#388E3C,#66BB6A);color:#fff;border:none;border-radius:10px;font-family:'Fredoka One',cursive;cursor:pointer">🍽️ Kaydet</button>
+      <button onclick="saveFeedEntry()" style="width:100%;padding:9px;background:linear-gradient(135deg,#388E3C,#66BB6A);color:#fff;border:none;border-radius:10px;font-family:'Fredoka',sans-serif;cursor:pointer">🍽️ Kaydet</button>
     </div>
     <div class="pop-tip"><div class="pop-tip-t">🤱 Emzirme Takibi</div><p>Her emzirmeyi kaydetmek süt üretimini takip etmenize yardımcı olur. Günde 8-12 emzirme yenidoğan için normal — bu sayıyı görünce paniklemeyeceksiniz!</p></div>
     <button class="pop-btn" style="background:#eee;color:#555" onclick="this.closest('.pop-ov').remove()">Kapat</button>
@@ -3961,7 +3961,7 @@ function showColorShapeGame(){
     box.innerHTML=`
       <div style="text-align:center;padding:14px 0">
         <div style="font-size:5rem;margin-bottom:10px;cursor:pointer" onclick="nextCard()" title="Devam et">${c.shape}</div>
-        <div style="font-size:1.4rem;font-weight:800;color:${c.color};font-family:'Fredoka One',cursive">${c.colorName}</div>
+        <div style="font-size:1.4rem;font-weight:800;color:${c.color};font-family:'Fredoka',sans-serif">${c.colorName}</div>
         <div style="font-size:.9rem;color:#777;margin-top:3px">${c.name}</div>
         <div style="font-size:.65rem;color:#aaa;margin-top:8px">${idx+1}/${cards.length} — Resme tıkla!</div>
       </div>`;
@@ -4028,7 +4028,7 @@ function showParentingQuiz(){
     qEl.textContent=`Test tamamlandı! ${score}/${pool.length} doğru`;
     optsEl.innerHTML='';
     progEl.textContent='';
-    resultEl.innerHTML=`<div style="text-align:center;margin-top:10px"><div style="font-size:2rem">${score===pool.length?'🏅':score>=3?'⭐':'📚'}</div><div style="font-family:'Fredoka One',cursive;font-size:1.3rem;color:var(--text)">${score}/${pool.length} Doğru</div><div style="font-size:.75rem;color:#888;margin:4px 0">+${dpEarned} Gelişim Puanı kazandın!</div><button class="pop-btn" style="margin-top:10px" onclick="this.closest('.pop-ov').remove()">Harika! 🎓</button></div>`;
+    resultEl.innerHTML=`<div style="text-align:center;margin-top:10px"><div style="font-size:2rem">${score===pool.length?'🏅':score>=3?'⭐':'📚'}</div><div style="font-family:'Fredoka',sans-serif;font-size:1.3rem;color:var(--text)">${score}/${pool.length} Doğru</div><div style="font-size:.75rem;color:#888;margin:4px 0">+${dpEarned} Gelişim Puanı kazandın!</div><button class="pop-btn" style="margin-top:10px" onclick="this.closest('.pop-ov').remove()">Harika! 🎓</button></div>`;
     resultEl.style.display='block';
   }
   window._quizEnd=endQuiz;
@@ -4708,7 +4708,7 @@ function showReportCard(){
     <div class="pop-sub">${age}. Ay · ${gd.w}kg · ${gd.h}cm</div>
 
     <div style="background:linear-gradient(135deg,#FFF9E4,#FFF3CD);border-radius:16px;padding:12px;margin-bottom:12px;text-align:center">
-      <div style="font-family:'Fredoka One',cursive;font-size:2.2rem;color:#E65100">${overallScore}</div>
+      <div style="font-family:'Fredoka',sans-serif;font-size:2.2rem;color:#E65100">${overallScore}</div>
       <div style="font-size:.72rem;color:#BF360C;font-weight:700">/ 100 Ebeveynlik Puanı</div>
       <div style="height:10px;background:#FFE0B2;border-radius:5px;margin-top:6px;overflow:hidden"><div ${barStyle(overallScore,'linear-gradient(90deg,#FF9A3C,#FFD166)')}></div></div>
     </div>
@@ -4716,22 +4716,22 @@ function showReportCard(){
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px;font-size:.73rem">
       <div style="background:#F0FFF4;border-radius:12px;padding:10px">
         <div style="font-weight:800;color:#2E7D32;margin-bottom:4px">🏅 Gelişim Basamakları</div>
-        <div style="font-size:1.2rem;font-family:'Fredoka One',cursive;color:#388E3C">${msDone}<span style="font-size:.8rem">/20</span></div>
+        <div style="font-size:1.2rem;font-family:'Fredoka',sans-serif;color:#388E3C">${msDone}<span style="font-size:.8rem">/20</span></div>
         <div style="height:6px;background:#C8E6C9;border-radius:3px;overflow:hidden;margin-top:4px"><div ${barStyle(msDone/20*100,'#52B788')}></div></div>
       </div>
       <div style="background:#E8F5E9;border-radius:12px;padding:10px">
         <div style="font-weight:800;color:#1565C0;margin-bottom:4px">💉 Aşılar</div>
-        <div style="font-size:1.2rem;font-family:'Fredoka One',cursive;color:#1976D2">${vaxDone}<span style="font-size:.8rem">/${VACCINES.length}</span></div>
+        <div style="font-size:1.2rem;font-family:'Fredoka',sans-serif;color:#1976D2">${vaxDone}<span style="font-size:.8rem">/${VACCINES.length}</span></div>
         <div style="height:6px;background:#BBDEFB;border-radius:3px;overflow:hidden;margin-top:4px"><div ${barStyle(vaxDone/VACCINES.length*100,'#48CAE4')}></div></div>
       </div>
       <div style="background:#FFF8E1;border-radius:12px;padding:10px">
         <div style="font-weight:800;color:#E65100;margin-bottom:4px">🩺 Doktor Kontrolleri</div>
-        <div style="font-size:1.2rem;font-family:'Fredoka One',cursive;color:#F57C00">${docDone}<span style="font-size:.8rem">/11</span></div>
+        <div style="font-size:1.2rem;font-family:'Fredoka',sans-serif;color:#F57C00">${docDone}<span style="font-size:.8rem">/11</span></div>
         <div style="height:6px;background:#FFE0B2;border-radius:3px;overflow:hidden;margin-top:4px"><div ${barStyle(docDone/11*100,'#FF9A3C')}></div></div>
       </div>
       <div style="background:#EEF2FF;border-radius:12px;padding:10px">
         <div style="font-weight:800;color:#283593;margin-bottom:4px">👨 Baba Desteği</div>
-        <div style="font-size:1.2rem;font-family:'Fredoka One',cursive;color:#3949AB">${Math.round(S.dadScore)}<span style="font-size:.8rem">%</span></div>
+        <div style="font-size:1.2rem;font-family:'Fredoka',sans-serif;color:#3949AB">${Math.round(S.dadScore)}<span style="font-size:.8rem">%</span></div>
         <div style="height:6px;background:#C5CAE9;border-radius:3px;overflow:hidden;margin-top:4px"><div ${barStyle(S.dadScore,'linear-gradient(90deg,#3949AB,#7986CB)')}></div></div>
       </div>
     </div>
@@ -4825,11 +4825,11 @@ function showGrandFinale(){
       <p style="font-size:.78rem;color:#555;margin-top:8px">Bu yolculukta emek veren herkese sonsuz teşekkür...</p>
     </div>
     <div style="background:#FCE4EC;border-radius:14px;padding:14px;text-align:center;margin-bottom:12px">
-      <div style="font-family:'Fredoka One',cursive;font-size:1.1rem;color:#C2185B">💖 ${S.momName}</div>
+      <div style="font-family:'Fredoka',sans-serif;font-size:1.1rem;color:#C2185B">💖 ${S.momName}</div>
       <div style="font-size:.76rem;color:#880E4F;margin-top:4px">"Sen 24 saat, 7 gün, yıllarca bu bebeğe hayat verdin. Her damlası için, her uyumayan gece için TEŞEKKÜRLER. Sen gerçek bir kahramansın."</div>
     </div>
     <div style="background:#EEF2FF;border-radius:14px;padding:12px;text-align:center;margin-bottom:14px">
-      <div style="font-family:'Fredoka One',cursive;font-size:1rem;color:#283593">💙 ${S.dadName}</div>
+      <div style="font-family:'Fredoka',sans-serif;font-size:1rem;color:#283593">💙 ${S.dadName}</div>
       <div style="font-size:.74rem;color:#3949AB;margin-top:4px">"Baba olarak burada olmak, katılmak, destek vermek — bu en büyük hediyeydi. ${S.babyName} büyüdüğünde bunu hatırlayacak."</div>
     </div>
     <button class="pop-btn" onclick="this.closest('.pop-ov').remove()" style="background:linear-gradient(135deg,#FF6B9D,#FFD166,#52B788,#C77DFF);background-size:300% 300%;animation:gradShift 3s ease infinite">🌟 Muhteşem Bir Yolculuktu!</button>
