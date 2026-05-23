@@ -611,10 +611,12 @@ body{font-family:'Nunito',sans-serif;background:linear-gradient(135deg,#FFF5F8,#
       <!-- TAB: GELİŞİM -->
       <div class="tab-body" id="tab-gelisim">
         <div style="display:flex;gap:5px;margin-bottom:6px;flex-wrap:wrap">
-          <button class="info-btn" onclick="showToyGuide()">🧸 Oyuncak Rehberi</button>
-          <button class="info-btn" onclick="showScreenTimeGuide()">📱 Ekran Süresi</button>
-          <button class="info-btn" onclick="showActivityIdeas()">🎯 Aktivite Fikirleri</button>
-          <button class="info-btn" onclick="showBabyMythsGuide()">🔍 Efsane mi Gerçek mi</button>
+          <button class="info-btn" onclick="showToyGuide()">🧸 Oyuncak</button>
+          <button class="info-btn" onclick="showScreenTimeGuide()">📱 Ekran</button>
+          <button class="info-btn" onclick="showActivityIdeas()">🎯 Aktivite</button>
+          <button class="info-btn" onclick="showBabyMythsGuide()">🔍 Efsaneler</button>
+          <button class="info-btn" onclick="showLanguageProgram()">💬 Dil Gelişimi</button>
+          <button class="info-btn" onclick="showGentleDiscipline()">🌿 Disiplin</button>
         </div>
         <div class="stab-nav">
           <button class="stab-btn on" onclick="switchSubTab('fizik')" id="stab-fizik">🏋️ Fiziksel</button>
@@ -674,7 +676,9 @@ body{font-family:'Nunito',sans-serif;background:linear-gradient(135deg,#FFF5F8,#
           <button class="info-btn" onclick="showNinniLibrary()">🎵 Ninniler</button>
           <button class="info-btn" onclick="showSignLanguage()">👋 İşaret Dili</button>
           <button class="info-btn" onclick="showMassageGuide()">💆 Masaj</button>
-          <button class="info-btn" onclick="showRedFlags()">⚠️ Uyarı İşaretleri</button>
+          <button class="info-btn" onclick="showRedFlags()">⚠️ Uyarılar</button>
+          <button class="info-btn" onclick="showTravelGuide()">✈️ Seyahat</button>
+          <button class="info-btn" onclick="showPottyGuide()">🚽 Tuvalet</button>
         </div>
         <div class="act-grid">
           <button class="abt care" onclick="doAct('uyut')">
@@ -1152,6 +1156,7 @@ function saveGame(){
     grandvisit:S.grandvisit||false,
     actCounts:S.actCounts||{feed:0,care:0,play:0,dev:0,dad:0},
     weekDay:S.weekDay||0, weekSummaryShown:S.weekSummaryShown||0,
+    readLangPro:S.readLangPro||false, readTravel:S.readTravel||false, readDiscipline:S.readDiscipline||false,
     savedAt:Date.now(),
   };
   try { localStorage.setItem(SAVE_KEY, JSON.stringify(data)); } catch(e){}
@@ -1186,6 +1191,9 @@ function applySaveData(d){
   S.actCounts = d.actCounts||{feed:0,care:0,play:0,dev:0,dad:0};
   S.weekDay = d.weekDay||0;
   S.weekSummaryShown = d.weekSummaryShown||0;
+  S.readLangPro = d.readLangPro||false;
+  S.readTravel = d.readTravel||false;
+  S.readDiscipline = d.readDiscipline||false;
   S.started = true;
 }
 
@@ -1295,6 +1303,10 @@ const ACHIEVEMENTS = [
   {id:'diary_all',   icon:'💝', name:'Tam Günlük',         desc:'Tüm diary anıları kaydedildi!',    check:s=>(s.diary&&s.diary.size>=DIARY_MOMENTS.length)},
   {id:'challenge20', icon:'🦸', name:'Süper Ebeveyn',      desc:'20 zorlu anı çözdün!',             check:s=>(s.challengesSolved||0)>=20},
   {id:'grandvisit',  icon:'👴', name:'Aile Buluşması',     desc:'Büyükanne/büyükbaba ziyareti oldu!',check:s=>(s.grandvisit||false)},
+  {id:'birthday1',   icon:'🎂', name:'İlk Doğum Günü!',   desc:'Bebek 1 yaşına geldi!',             check:s=>s.ageMonths>=12},
+  {id:'langpro',     icon:'💬', name:'Dil Ustası',         desc:'Dil Gelişim Programı\'nı okudun',   check:s=>(s.readLangPro||false)},
+  {id:'travelread',  icon:'✈️', name:'Gezgin Aile',        desc:'Seyahat Rehberi\'ni okudun',        check:s=>(s.readTravel||false)},
+  {id:'discipline',  icon:'🌿', name:'Nazik Ebeveyn',      desc:'Nazik Disiplin Rehberi\'ni okudun', check:s=>(s.readDiscipline||false)},
 ];
 
 const TIPS = [
@@ -1414,6 +1426,9 @@ const S = {
   actCounts:{feed:0,care:0,play:0,dev:0,dad:0},
   weekDay:0,
   weekSummaryShown:0,
+  readLangPro:false,
+  readTravel:false,
+  readDiscipline:false,
 };
 
 // ══════════════════════════════════════════════════════
@@ -1577,6 +1592,7 @@ function onAgeChange(mo){
   if(mo===12){
     document.getElementById('milkCard').style.opacity='0.4';
     addLog(`🤱 ${S.babyName} 12 aya geldi! Anne sütü tamamlandı — tebrikler ${S.momName}! 💖`,'ms');
+    setTimeout(showFirstBirthday, 7000);
   }
   triggerVaxDue(mo);
   renderDoc();
@@ -3013,6 +3029,10 @@ function showAllGuides(){
     {ico:'👨‍🍳',name:'Bebek Tarifleri',fn:'showFoodRecipes()'},
     {ico:'🌙',name:'Uyku Eğitimi',fn:'showSleepTrainingGuide()'},
     {ico:'🌟',name:'Kişilik Profili',fn:'showPersonalityProfile()'},
+    {ico:'💬',name:'Dil Gelişimi',fn:'showLanguageProgram()'},
+    {ico:'🌿',name:'Nazik Disiplin',fn:'showGentleDiscipline()'},
+    {ico:'✈️',name:'Seyahat Rehberi',fn:'showTravelGuide()'},
+    {ico:'🚽',name:'Tuvalet Eğitimi',fn:'showPottyGuide()'},
   ];
   const chips=guides.map(g=>`<button class="guide-chip" onclick="${g.fn};this.closest('.pop-ov').remove()">${g.ico}<br>${g.name}</button>`).join('');
   const h=`<div class="pop-ov" onclick="if(event.target===this)this.remove()">
@@ -3140,6 +3160,212 @@ function showRedFlags(){
     ${rows}
     <div class="pop-tip"><div class="pop-tip-t">🩺 Ne Zaman Doktora Gitmeliyim?</div><p>Bu listede belirtilen dönemlerde söz konusu becerileri görmüyorsanız, doktor kontrolünü beklemeyin. Sormak için bir neden her zaman yeterlidir. Ebeveyn içgüdüsüne güvenin!</p></div>
     <button class="pop-btn" style="background:linear-gradient(135deg,#FF7043,#FF5722)" onclick="this.closest('.pop-ov').remove()">⚠️ Anladım</button>
+  </div></div>`;
+  document.body.insertAdjacentHTML('beforeend',h);
+}
+
+// ══════════════════════════════════════════════════════
+// FIRST BIRTHDAY CELEBRATION
+// ══════════════════════════════════════════════════════
+function showFirstBirthday(){
+  spawnParticles(['🎂','🎉','🎈','⭐','🌟','💖','🥳'],12);
+  playSound('milestone');
+  const h=`<div class="pop-ov" onclick="if(event.target===this)this.remove()">
+  <div class="pop-box">
+    <div class="pop-rainbow" style="background:linear-gradient(90deg,#FF9A9E,#FAD0C4,#FEF9D7,#A1C4FD)"></div>
+    <span class="pop-ico" style="animation:wobble 1s ease-in-out infinite">🎂</span>
+    <div class="pop-title" style="font-size:1.6rem">🎉 İLK DOĞUM GÜNÜ! 🎉</div>
+    <div class="pop-sub">${S.babyName} 1 Yaşında!</div>
+    <div style="background:linear-gradient(135deg,#FFF9E4,#FFF3CD);border-radius:16px;padding:16px;margin:12px 0;text-align:center">
+      <div style="font-size:2.5rem;margin-bottom:8px">🥳</div>
+      <p style="font-size:.85rem;color:#E65100;font-weight:700;line-height:1.6">12 ay önce küçücük bir mucize dünyaya geldi.<br>Bugün 1 yaşında! Bu yolculuk için her şeyi yaptınız!</p>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:10px 0;font-size:.72rem">
+      <div style="background:#E8F5E9;border-radius:12px;padding:10px;text-align:center"><div style="font-size:1.4rem">🤱</div><div style="font-weight:800;color:#2E7D32">${S.milkFeeds} kez</div><div style="color:#aaa">Anne Sütü</div></div>
+      <div style="background:#FFF0F5;border-radius:12px;padding:10px;text-align:center"><div style="font-size:1.4rem">💉</div><div style="font-weight:800;color:#C62828">${S.doneVax.size} aşı</div><div style="color:#aaa">Yapıldı</div></div>
+      <div style="background:#E3F2FD;border-radius:12px;padding:10px;text-align:center"><div style="font-size:1.4rem">👨</div><div style="font-weight:800;color:#1565C0">${S.dadScore}%</div><div style="color:#aaa">Baba Puanı</div></div>
+      <div style="background:#FFF8E1;border-radius:12px;padding:10px;text-align:center"><div style="font-size:1.4rem">🏆</div><div style="font-weight:800;color:#F57F17">${S.unlocked.size}/20</div><div style="color:#aaa">Basamak</div></div>
+    </div>
+    <div class="pop-sec" style="background:#FFF0F5">
+      <h4>💖 ${S.momName}'e — Süper Anneye</h4>
+      <p>365 gün. 365 gece. Hiç bitmeyecek gibiydi ama bitti. Sütünüzü verdiniz, ağlamanızla kalktınız, sevginizi hiç esirgemedidiniz. <strong>${S.babyName} en iyi anneye sahip!</strong></p>
+    </div>
+    <div class="pop-sec" style="background:#E3F2FD">
+      <h4>💙 ${S.dadName}'e — Kahraman Babaya</h4>
+      <p>Her adımda oraya olduğunuz için teşekkürler. <strong>${S.dadName}'in varlığı ${S.babyName}'in hayatında büyük fark yaratıyor!</strong> Kutluyoruz!</p>
+    </div>
+    <button class="pop-btn" style="background:linear-gradient(135deg,#FF6B9D,#FF9A9E,#FFD166);font-size:1rem;padding:14px" onclick="this.closest('.pop-ov').remove();spawnParticles(['🎂','🎉','🎈','💖'],8)">🎉 Mutlu Doğum Günleri ${S.babyName}! 🎉</button>
+  </div></div>`;
+  document.body.insertAdjacentHTML('beforeend',h);
+}
+
+// ══════════════════════════════════════════════════════
+// LANGUAGE DEVELOPMENT PROGRAM
+// ══════════════════════════════════════════════════════
+function showLanguageProgram(){
+  S.readLangPro=true;
+  const stages=[
+    {range:'0-2 Ay',ico:'👂',title:'Dinleme Dönemi',skills:['Seslere tepki verir','Anne sesini tanır','Sakinleştirici sesleri tercih eder'],tips:['Bebekle sürekli konuşun — her şeyi anlatın!','Müzik ve ninniler söyleyin','Yüksek perdeli, yavaş konuşma (motherese) kullanın']},
+    {range:'2-4 Ay',ico:'🗣️',title:'İlk Sesler',skills:['"Ağu", "gu" sesleri başlar','Gülümsemeye sese tepki verir','Sesinizin yönüne bakar'],tips:['Sesine tepki verin, "konuşmayı" taklit edin','Yüz ifadelerini abartılı kullanın','Sıraya göre konuşun — bebek sesi → siz → bebek']},
+    {range:'4-6 Ay',ico:'🎵',title:'Heceleme Başlıyor',skills:['"Ba ba", "ma ma", "da da" sesleri','Tonlamanızı taklit eder','Farklı sesler çıkarır'],tips:['Heceleri tekrarlayın ve yankılayın','Bebek kitapları okuyun — sese tepki verin','Şarkı söyleyin, ritimleri birlikte vurgulayın']},
+    {range:'6-9 Ay',ico:'👋',title:'Sosyal İletişim',skills:['İsmine döner','"Hayır" tonunu anlar','Jestleri anlamaya başlar'],tips:['İsareti destekleyin (el sallamak, işaret etmek)','Resimlere bakın, isimlendirin','Günlük rutinleri sürekli anlatın']},
+    {range:'9-12 Ay',ico:'💬',title:'İlk Kelimeler Eşiği',skills:['"Anne/Baba/Mam" anlamlı kullanım','2-3 kelime anlar','İstediği şeye işaret eder'],tips:['Her nesneyi defalarca isimlendirin','Basit isteklerine konuşarak yanıt verin','Kitaplardaki resimleri birlikte işaret edin']},
+    {range:'12-18 Ay',ico:'🌟',title:'Kelime Patlaması',skills:['5-20 kelime kullanır','Basit komutları anlar (Gel, Dur)','Başkalarının konuşmasını taklit eder'],tips:['"Genişlet" yöntemini kullanın: "Top!" → "Evet, kırmızı top!"','Günde 1000+ kelime hedefleyin','TV yerine canlı konuşma tercih edin']},
+    {range:'18-24 Ay',ico:'🗨️',title:'Cümle Dönemi',skills:['2 kelimeli cümleler kurar','50+ kelime kullanır','Sorulara basit yanıt verir'],tips:['Çok kelimeli cümleler kurun yanıtlarda','Oyun sırasında hikayeler anlatın','Kitap okurken sorular sorun: "Peki ne oldu?"']},
+  ];
+  const curStage=stages.find(s=>{
+    const [mn,mx]=s.range.split('-').map(x=>parseInt(x));
+    return S.ageMonths>=mn&&S.ageMonths<=mx;
+  })||stages[stages.length-1];
+  const cards=stages.map(s=>{
+    const isCur=s===curStage;
+    return `<div style="border-radius:12px;padding:10px;margin-bottom:7px;background:${isCur?'#E8F5E9':'#F5F5F5'};border:${isCur?'2px solid #52B788':'2px solid transparent'}">
+      <div style="font-weight:800;font-size:.78rem;color:${isCur?'#2E7D32':'#888'}">${s.ico} ${s.range} — ${s.title}${isCur?' ← Şu An':''}</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:5px;font-size:.67rem">
+        <div><div style="font-weight:700;color:#555;margin-bottom:2px">📊 Beceriler</div><ul style="padding-left:10px;color:${isCur?'#333':'#aaa'}">${s.skills.map(x=>`<li>${x}</li>`).join('')}</ul></div>
+        <div><div style="font-weight:700;color:#555;margin-bottom:2px">💡 Nasıl Destekleyin</div><ul style="padding-left:10px;color:${isCur?'#333':'#aaa'}">${s.tips.map(x=>`<li>${x}</li>`).join('')}</ul></div>
+      </div>
+    </div>`;
+  }).join('');
+  const h=`<div class="pop-ov" onclick="if(event.target===this)this.remove()">
+  <div class="pop-box">
+    <div class="pop-rainbow" style="background:linear-gradient(90deg,#E8F5E9,#DCEDC8,#F1F8E9)"></div>
+    <span class="pop-ico">💬</span>
+    <div class="pop-title">Dil Gelişimi Programı</div>
+    <div class="pop-sub">${S.babyName} için aya göre dil gelişim haritası</div>
+    <div class="pop-sec" style="background:#E8F5E9">
+      <h4>🔬 Araştırma Bulgusu</h4>
+      <p>Günde 1000+ kelime duyan bebekler daha geniş kelime dağarcığına sahip oluyor. "Konuşma farkı" (word gap) gerçek ve önemli — her konuşma beyni besliyor!</p>
+    </div>
+    <div style="max-height:330px;overflow-y:auto">${cards}</div>
+    <button class="pop-btn" style="background:linear-gradient(135deg,#43A047,#81C784)" onclick="this.closest('.pop-ov').remove()">💬 Konuşmaya Başla!</button>
+  </div></div>`;
+  document.body.insertAdjacentHTML('beforeend',h);
+}
+
+// ══════════════════════════════════════════════════════
+// GENTLE DISCIPLINE GUIDE
+// ══════════════════════════════════════════════════════
+function showGentleDiscipline(){
+  S.readDiscipline=true;
+  const h=`<div class="pop-ov" onclick="if(event.target===this)this.remove()">
+  <div class="pop-box">
+    <div class="pop-rainbow" style="background:linear-gradient(90deg,#E8F5E9,#DCEDC8)"></div>
+    <span class="pop-ico">🌿</span>
+    <div class="pop-title">Nazik Disiplin Rehberi</div>
+    <div class="pop-sub">Sevgiyle sınır koymak</div>
+    <div class="pop-sec" style="background:#FFF9C4">
+      <h4>💡 Temel İlke</h4>
+      <p>Disiplin "ceza" değil, "öğretmek" demektir. Amaç çocuğun korkudan değil, anlayıştan doğru davranışı seçmesidir. Beyin gelişimi tamamlanmadan (25 yaşa kadar) tam öz-denetim beklenmemelidir.</p>
+    </div>
+    <div class="pop-sec">
+      <h4>🧠 Yaşa Göre Beklentiler</h4>
+      <ul style="font-size:.72rem;color:#555;padding-left:14px;line-height:1.7">
+        <li><strong>0-12 ay:</strong> Disiplin için çok erken. Sadece ihtiyaçları karşılayın.</li>
+        <li><strong>12-18 ay:</strong> "Hayır" anlarlar ama dürtülerini kontrol edemezler. Yönlendirin.</li>
+        <li><strong>18-24 ay:</strong> Kısa, net sınırlar. Alternatif sunun. Tantrum normaldir.</li>
+        <li><strong>2-3 yaş:</strong> Sonuçlardan öğrenmeye başlarlar. Tutarlılık şart.</li>
+      </ul>
+    </div>
+    <div class="pop-sec">
+      <h4>✅ Nazik Disiplin Araçları</h4>
+      <ul style="font-size:.72rem;color:#444;padding-left:14px;line-height:1.7">
+        <li><strong>Duyguyu onayla, davranışı reddet:</strong> "Sinirlendiğini görüyorum, ama vurman olmaz."</li>
+        <li><strong>Yönlendirme:</strong> "Kanepede zıplama" yerine "Yerde zıplayabilirsin!"</li>
+        <li><strong>Kısa, net kurallar:</strong> Çok kural koyma. 2-3 temel kural seç.</li>
+        <li><strong>Tutarlılık:</strong> Her seferinde aynı tepki. İki ebeveyn aynı çizgide.</li>
+        <li><strong>Bağlantı önce:</strong> Kural koymadan önce duygusal bağlantı kur.</li>
+        <li><strong>Zaman ayrımı (timeout):</strong> Ceza değil, sakinlenme alanı. Kısa tutun.</li>
+      </ul>
+    </div>
+    <div class="pop-sec">
+      <h4>🌋 Tantrum Anında Ne Yapılır?</h4>
+      <ul style="font-size:.72rem;color:#555;padding-left:14px;line-height:1.7">
+        <li>Sakin kalın — tantrum onların sorunudur, sizin değil</li>
+        <li>Güvende olduklarından emin olun, yan başına oturun</li>
+        <li>Uzun açıklamalar yapmayın — mantıklı konuşma geçmez</li>
+        <li>Tantrum bitince duyguyu sözleştirin: "Çok üzüldün, değil mi?"</li>
+        <li>İstediği şeyi tantrum ile almalarına izin vermeyin</li>
+      </ul>
+    </div>
+    <div class="pop-tip"><div class="pop-tip-t">💙 Babalar İçin Not</div><p>Babaların tutarlı sınır koyması çocukların güvenlik duygusunu artırır. "Hayır" diyebilen sevgi dolu bir baba, çocuğun en iyi hediyesi. ${S.dadName}, sınır koyun — ama sevgiyle!</p></div>
+    <button class="pop-btn" style="background:linear-gradient(135deg,#43A047,#66BB6A)" onclick="this.closest('.pop-ov').remove()">🌿 Anlıyorum!</button>
+  </div></div>`;
+  document.body.insertAdjacentHTML('beforeend',h);
+}
+
+// ══════════════════════════════════════════════════════
+// TRAVEL WITH BABY GUIDE
+// ══════════════════════════════════════════════════════
+function showTravelGuide(){
+  S.readTravel=true;
+  const packing=[
+    {cat:'👶 Temel',items:['Yeterli bez (yolculuk saatine göre 2x hesap)', 'Islak mendil — çok sayıda','Pişik kremi','Yedek kıyafetler (en az 3 takım)','Mama ve biberon seti','Çıngırak ve küçük oyuncaklar']},
+    {cat:'🏥 Sağlık',items:['Bebek ateş düşürücü (doktor onaylı)','Burun spreyi / aspiratör','Termometre','Aile sağlık belgesi / aşı kartı','Alerjik reaksiyon için antihistaminik (doktor onaylı)']},
+    {cat:'😴 Uyku',items:['Taşınabilir beşik veya uyku tulumu','Beyaz gürültü uygulaması (telefon)','Bebeğin sevdiği uyku oyuncağı','Yedek emzik (2 adet)']},
+    {cat:'✈️ Uçakta',items:['Kalkış-iniş sırasında emzirin veya emzik verin (kulak basıncı)','Fazladan kıyafet SİZE de alın!','Kapı bagajına arabası alın','Aisle koltuğu tercih edin — hareket kolaylığı','Bebeğin son uyumasından bu yana ne kadar sürdüğünü takip edin']},
+    {cat:'🚗 Arabada',items:['Bebek koltuğu doğru monte edilmeli','Hiçbir zaman bebeği kucakta taşımayın','Uzun yolculuklarda her 2 saatte mola','Araç içi güneşlik takın','Arka koltuğa birini oturtun mümkünse']},
+  ];
+  const blocks=packing.map(p=>`
+    <div style="background:#F8F9FA;border-radius:12px;padding:10px;margin-bottom:7px">
+      <div style="font-weight:800;font-size:.78rem;color:var(--text);margin-bottom:5px">${p.cat}</div>
+      <ul style="font-size:.7rem;color:#555;padding-left:14px;line-height:1.6">${p.items.map(x=>`<li>${x}</li>`).join('')}</ul>
+    </div>`).join('');
+  const h=`<div class="pop-ov" onclick="if(event.target===this)this.remove()">
+  <div class="pop-box">
+    <div class="pop-rainbow" style="background:linear-gradient(90deg,#E3F2FD,#BBDEFB,#E8EAF6)"></div>
+    <span class="pop-ico">✈️</span>
+    <div class="pop-title">Bebek ile Seyahat Rehberi</div>
+    <div class="pop-sub">Plan yapın, tadını çıkarın!</div>
+    <div class="pop-sec" style="background:#FFF9C4">
+      <h4>⏰ En İyi Seyahat Zamanı</h4>
+      <p style="font-size:.72rem;color:#BF360C">3-9 ay arası en kolay dönem: bebek henüz emeklemiyor, daha sabırlı. Uçak için bebeğin normal uyku saatini tercih edin.</p>
+    </div>
+    <div style="max-height:330px;overflow-y:auto">${blocks}</div>
+    <div class="pop-tip"><div class="pop-tip-t">💡 Rutini Koruyun</div><p>Seyahatte en önemli şey rutini mümkün olduğunca korumak — aynı saatte yatış, aynı uyku ritüeli, aynı ninni. Bebek ortam değişse de rutin ona güvenli hissettirir.</p></div>
+    <button class="pop-btn" style="background:linear-gradient(135deg,#1565C0,#42A5F5)" onclick="this.closest('.pop-ov').remove()">✈️ Yolcu Olsun!</button>
+  </div></div>`;
+  document.body.insertAdjacentHTML('beforeend',h);
+}
+
+// ══════════════════════════════════════════════════════
+// POTTY TRAINING PREVIEW
+// ══════════════════════════════════════════════════════
+function showPottyGuide(){
+  const h=`<div class="pop-ov" onclick="if(event.target===this)this.remove()">
+  <div class="pop-box">
+    <div class="pop-rainbow" style="background:linear-gradient(90deg,#F3E5F5,#E1BEE7)"></div>
+    <span class="pop-ico">🚽</span>
+    <div class="pop-title">Tuvalet Eğitimine Hazırlık</div>
+    <div class="pop-sub">18-36 ay — hazır olduğunuzda başlayın</div>
+    <div class="pop-sec" style="background:#FFF9C4">
+      <h4>⚠️ Ne Zaman Başlamalı?</h4>
+      <p>Tuvalet eğitimi için <strong>yaş değil, hazırlık işaretleri</strong> önemlidir. Çoğu çocuk 18-30 ay arasında hazır olur. Erkeklerde biraz daha geç olabilir.</p>
+    </div>
+    <div class="pop-sec">
+      <h4>✅ Hazırlık İşaretleri</h4>
+      <ul style="font-size:.72rem;color:#555;padding-left:14px;line-height:1.7">
+        <li>Bezi ıslak/kirli olduğunda fark ediyor ve söylüyor</li>
+        <li>Tuvalete gitmek istediğini önceden belirtiyor</li>
+        <li>En az 2 saat kuru kalabiliyor</li>
+        <li>Basit talimatları takip edebiliyor</li>
+        <li>Pantolonunu indirebilip giyebiliyor</li>
+        <li>Tuvalet kavramını anlıyor, yetişkinleri taklit etmek istiyor</li>
+      </ul>
+    </div>
+    <div class="pop-sec">
+      <h4>🎯 Başlangıç İpuçları</h4>
+      <ul style="font-size:.72rem;color:#444;padding-left:14px;line-height:1.7">
+        <li>Çocuk tuvaletini erkenden tanıtın — korkutmayın</li>
+        <li>Düzenli aralıklarda tuvalete götürün (her 1.5-2 saatte)</li>
+        <li>Başarıları bol övgüyle kutlayın — küçük ödüller etkili</li>
+        <li>Kazalar için kızmayın — "Oldu, hadi temizleyelim" deyin</li>
+        <li>Yolculuk, yeni kardeş, taşınma dönemlerinde ertelemeyi düşünün</li>
+        <li>Gece eğitimi gündüzden sonra başlar (ortalama 1 yıl sonra)</li>
+      </ul>
+    </div>
+    <div class="pop-tip"><div class="pop-tip-t">💡 Sabır Sihirli Kelimedir</div><p>Tuvalet eğitimi için zorlamak geri tepebilir. Hazır olduğunda — inanılmaz hızlı öğrenir! Baskı yapılmadan ve sevgiyle yapılan eğitim hem daha hızlı hem daha sağlıklı sonuç verir.</p></div>
+    <button class="pop-btn" style="background:linear-gradient(135deg,#8E24AA,#CE93D8)" onclick="this.closest('.pop-ov').remove()">🚽 Anladım!</button>
   </div></div>`;
   document.body.insertAdjacentHTML('beforeend',h);
 }
