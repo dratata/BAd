@@ -356,6 +356,34 @@ body{font-family:'Nunito',sans-serif;background:linear-gradient(135deg,#FFF5F8,#
 .lohusa-sign{display:flex;align-items:center;gap:6px;padding:4px 0;font-size:.72rem;color:#880E4F;border-bottom:1px solid rgba(244,143,177,.3)}
 .lohusa-sign:last-child{border-bottom:none}
 
+/* daily task */
+.daily-task{background:linear-gradient(135deg,#FFF9E4,#FFF3CD);border-radius:16px;padding:11px 14px;border:2px solid var(--yellow);display:flex;align-items:center;gap:10px}
+.dt-ico{font-size:1.5rem}
+.dt-body{flex:1}
+.dt-title{font-size:.68rem;font-weight:800;color:var(--orange);text-transform:uppercase;letter-spacing:.5px}
+.dt-text{font-size:.78rem;font-weight:700;color:var(--text);margin-top:1px}
+.dt-reward{font-size:.63rem;color:#888;margin-top:2px}
+.dt-btn{padding:8px 12px;background:linear-gradient(135deg,var(--yellow),var(--orange));color:#fff;border:none;border-radius:12px;font-family:'Nunito',sans-serif;font-weight:800;font-size:.72rem;cursor:pointer;white-space:nowrap;transition:all .2s}
+.dt-btn:hover:not(:disabled){transform:scale(1.05)}
+.dt-btn:disabled{opacity:.5;cursor:default}
+.dt-done{font-size:.72rem;color:var(--green);font-weight:800;text-align:center;padding:4px}
+
+/* ninni card */
+.ninni-card{background:linear-gradient(135deg,#E8EAF6,#EDE7F6);border-radius:12px;padding:12px;margin-bottom:8px}
+.ninni-title{font-family:'Fredoka One',cursive;font-size:.85rem;color:#283593;margin-bottom:5px}
+.ninni-text{font-size:.72rem;color:#3949AB;line-height:1.7;font-style:italic;white-space:pre-line}
+.ninni-type{display:inline-block;font-size:.6rem;font-weight:700;padding:2px 8px;border-radius:10px;background:#C5CAE9;color:#283593;margin-bottom:6px}
+
+/* toy guide */
+.toy-age{background:#FFF0F5;border-radius:10px;padding:8px 11px;margin-bottom:6px}
+.toy-age-label{font-weight:800;font-size:.74rem;color:var(--purple);margin-bottom:4px}
+.toy-list{font-size:.71rem;color:#555;line-height:1.6}
+
+/* guides quick-access */
+.guide-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.guide-chip{padding:9px 6px;border:2px solid #E0D7FF;border-radius:12px;background:#fff;cursor:pointer;font-family:'Nunito',sans-serif;font-size:.68rem;font-weight:700;color:var(--text);text-align:center;transition:all .2s;line-height:1.3}
+.guide-chip:hover{background:var(--soft);border-color:var(--purple);color:var(--purple);transform:translateY(-2px)}
+
 /* scrollbars */
 ::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--purple);border-radius:10px}
 
@@ -427,6 +455,7 @@ body{font-family:'Nunito',sans-serif;background:linear-gradient(135deg,#FFF5F8,#
       <button onclick="manualSave()" style="background:rgba(82,183,136,.3);color:#fff;border:none;padding:5px 11px;border-radius:20px;font-size:.72rem;font-weight:700;cursor:pointer;font-family:'Nunito',sans-serif" title="Kaydet">💾 Kaydet</button>
       <button onclick="showReportCard()" style="background:rgba(255,209,102,.3);color:#fff;border:none;padding:5px 11px;border-radius:20px;font-size:.72rem;font-weight:700;cursor:pointer;font-family:'Nunito',sans-serif" title="Bebek Karnesi">📊 Karne</button>
       <button onclick="toggleSound()" id="soundBtn" style="background:rgba(199,125,255,.3);color:#fff;border:none;padding:5px 11px;border-radius:20px;font-size:.72rem;font-weight:700;cursor:pointer;font-family:'Nunito',sans-serif" title="Ses Aç/Kapat">🔊 Ses</button>
+      <button onclick="showAllGuides()" style="background:rgba(72,202,228,.3);color:#fff;border:none;padding:5px 11px;border-radius:20px;font-size:.72rem;font-weight:700;cursor:pointer;font-family:'Nunito',sans-serif" title="Tüm Rehberler">📚 Rehberler</button>
     </div>
   </header>
   <div class="night-tint" id="nightTint" style="opacity:0"></div>
@@ -526,6 +555,17 @@ body{font-family:'Nunito',sans-serif;background:linear-gradient(135deg,#FFF5F8,#
         <button class="tnav-btn"    onclick="switchTab('baba')"     id="tnav-baba"    >👨<br>Baba</button>
       </div>
 
+      <!-- DAILY TASK -->
+      <div class="daily-task" id="dailyTaskCard">
+        <div class="dt-ico" id="dtIco">⭐</div>
+        <div class="dt-body">
+          <div class="dt-title">🌟 Günün Görevi</div>
+          <div class="dt-text" id="dtText">Yükleniyor...</div>
+          <div class="dt-reward" id="dtReward">+50 Gelişim Puanı</div>
+        </div>
+        <button class="dt-btn" id="dtBtn" onclick="completeDailyTask()">Yaptım! ✓</button>
+      </div>
+
       <!-- TAB: BESLENME -->
       <div class="tab-body on" id="tab-beslenme">
         <div style="display:flex;gap:5px;margin-bottom:4px">
@@ -558,6 +598,10 @@ body{font-family:'Nunito',sans-serif;background:linear-gradient(135deg,#FFF5F8,#
 
       <!-- TAB: GELİŞİM -->
       <div class="tab-body" id="tab-gelisim">
+        <div style="display:flex;gap:5px;margin-bottom:6px">
+          <button class="info-btn" onclick="showToyGuide()">🧸 Oyuncak Rehberi</button>
+          <button class="info-btn" onclick="showScreenTimeGuide()">📱 Ekran Süresi</button>
+        </div>
         <div class="stab-nav">
           <button class="stab-btn on" onclick="switchSubTab('fizik')" id="stab-fizik">🏋️ Fiziksel</button>
           <button class="stab-btn"    onclick="switchSubTab('zihin')" id="stab-zihin">🧠 Zihinsel</button>
@@ -609,10 +653,12 @@ body{font-family:'Nunito',sans-serif;background:linear-gradient(135deg,#FFF5F8,#
 
       <!-- TAB: BAKIM -->
       <div class="tab-body" id="tab-bakim">
-        <div style="display:flex;gap:5px;margin-bottom:4px">
-          <button class="info-btn" onclick="showSleepGuide()">😴 Uyku Rehberi</button>
-          <button class="info-btn" onclick="showDentalGuide()">🦷 Diş Bakımı</button>
-          <button class="info-btn" onclick="showDailyRoutine()">🗓️ Günlük Rutin</button>
+        <div style="display:flex;gap:5px;margin-bottom:4px;flex-wrap:wrap">
+          <button class="info-btn" onclick="showSleepGuide()">😴 Uyku</button>
+          <button class="info-btn" onclick="showDentalGuide()">🦷 Diş</button>
+          <button class="info-btn" onclick="showDailyRoutine()">🗓️ Rutin</button>
+          <button class="info-btn" onclick="showNinniLibrary()">🎵 Ninniler</button>
+          <button class="info-btn" onclick="showSignLanguage()">👋 İşaret Dili</button>
         </div>
         <div class="act-grid">
           <button class="abt care" onclick="doAct('uyut')">
@@ -923,6 +969,54 @@ const VACCINES = [
   {id:'kkk2',ay:24,name:'KKK 2. Doz',type:'rutin',info:'KKK aşısının ikinci dozu. Uzun süreli koruma.',tip:'24. ay kontrolünde yapılır.'},
 ];
 
+const DAILY_TASKS = [
+  {ico:'🤱',text:'3 kez anne sütü veya biberon ver',reward:50,act:'annesutu'},
+  {ico:'💪',text:'Tummy Time egzersizi yap',reward:35,act:'tummytime'},
+  {ico:'💆',text:'Bebek masajı yap',reward:35,act:'masaj'},
+  {ico:'🎵',text:'Ninni söyle ve sakinleştir',reward:30,act:'ninni'},
+  {ico:'📚',text:'Bebek kitabı oku',reward:40,act:'kitap'},
+  {ico:'🛁',text:'Banyo rutini uygula',reward:30,act:'banyo'},
+  {ico:'🎮',text:'Baba ile oyun zamanı',reward:45,act:'dad-oyna'},
+  {ico:'💊',text:'D Vitamini ver',reward:25,act:'vitamin'},
+  {ico:'💬',text:'Bebekle yüz yüze konuş',reward:30,act:'konus'},
+  {ico:'🤗',text:'Bol bol sarıl ve öp',reward:30,act:'saril'},
+  {ico:'🎤',text:'Şarkı söyle — her türlü şarkı!',reward:35,act:'sarki'},
+  {ico:'⭐',text:'Gece uyanmasında baba kalksın',reward:55,act:'dad-gece'},
+  {ico:'🌈',text:'Duyusal oyun oyna',reward:40,act:'duyusal'},
+  {ico:'🤸',text:'Bebek jimnastiği yap',reward:40,act:'jimnastik'},
+  {ico:'☕',text:'Anne mola versin — iyi hak etti!',reward:35,act:'mom-dinlen'},
+  {ico:'💐',text:'Baba anneye destek versin',reward:45,act:'dad-anne'},
+  {ico:'🏊',text:'Bebek yüzme seansı',reward:45,act:'yuzme'},
+  {ico:'🧱',text:'Renkli bloklar veya oyuncaklar',reward:40,act:'bloklar'},
+  {ico:'🎭',text:'Tekerleme söyle',reward:35,act:'tekerleme'},
+  {ico:'🩺',text:'Bugün bir doktor kontrolü yap',reward:60,act:null},
+];
+
+const LULLABIES = [
+  {type:'Ninni',title:'Dandini Dandini',text:'Dandini dandini dastana\nDanalar girmiş bostana\nKov bostancı danayı\nYemesin lahanayı\n\nDandini dandini al beşik\nİçinde yatar bir eşik\nBüyüyünce ne olur?\nAnasının baş tacı!'},
+  {type:'Ninni',title:'Ninni de Bebek Ninni',text:'Ninni de bebek ninni\nUyu da bebek ninni\nAnnen seni sevmez mi\nUyu da bebek ninni\n\nUyu da gözlerini kapat\nRüyalar seni çağırıyor\nAnne seni seviyor\nUyu da bebek ninni...'},
+  {type:'Ninni',title:'Allı Turnam',text:'Allı turnam, allı turnam\nNereye gidiyorsun?\nBen de geldim bebeğime\nNinni söylüyorum\n\nUyu yavrum, uyu tatli\nAnnen seni seviyor\nGözlerin kapalı olsun\nTatlı rüyalar görüyorsun'},
+  {type:'Ninni',title:'Uyusun da Büyüsün',text:'Uyusun da büyüsün\nBir güzel şey olsun\nAnnenin sevgilisi\nNinni, ninni, ninni\n\nDağlar kadar büyüsün\nGüneş gibi parlasın\nBabası gibi olsun\nNinni, ninni, ninni'},
+  {type:'Tekerleme',title:'Beşik Tekerleme',text:'Beşiğimi salla annem\nUykum geldi ninni\nRüzgar gelsin çayırdan\nUykum geldi ninni\n\nKuşlar ötsün dallarda\nBen uyuyayım yavaşça\nAnnem yanımda olsun\nUykum geldi ninni'},
+  {type:'Şarkı',title:'Baş Parmak Nerede',text:'Baş parmak nerede?\nBuradayım, buradayım!\nNasılsın bugün?\nÇok iyiyim, teşekkürler!\nHaydi, uzak dur!\n\n(İşaret parmak, orta parmak,\nyüzük parmak, serçe parmak...)'},
+  {type:'Tekerleme',title:'Bir Bilet Aldım',text:'Bir bilet aldım\nBinmek için trene\nTren gider vişşş\nDurmadan, durmadan\n\nBebek güler şşşş\nUyur mu acep?\nNinni söyleriz\nUyu da büyü!'},
+];
+
+const SIGN_LANGUAGE = [
+  {sign:'🤲',word:'Daha / More',tr:'İki elin parmaklarını birbirine dokun',eng:'Fingertips touch together'},
+  {sign:'🙌',word:'Bitti / All Done',tr:'İki elin içini dışa çevir, salla',eng:'Wave hands outward'},
+  {sign:'🤏',word:'Yemek / Eat',tr:'Parmakları dudağa doğru götür',eng:'Fingers to mouth'},
+  {sign:'✊',word:'Süt / Milk',tr:'Eli yumruk yap ve aç, tut',eng:'Open and close fist'},
+  {sign:'🤟',word:'Su / Water',tr:'W işareti yap, çeneye dokun',eng:'W sign touch chin'},
+  {sign:'🙏',word:'Lütfen / Please',tr:'Avuç içini göğüste daire çiz',eng:'Circle palm on chest'},
+  {sign:'🫂',word:'Sarıl / Hug',tr:'Kollarını kendin çapraz sar',eng:'Hug yourself'},
+  {sign:'📖',word:'Kitap / Book',tr:'İki avucu kitap gibi aç',eng:'Open palms like book'},
+  {sign:'😴',word:'Uyku / Sleep',tr:'Başı ellerle yan yatır',eng:'Head on joined hands'},
+  {sign:'🐕',word:'Köpek / Dog',tr:'Uyluğuna hafif vur',eng:'Pat thigh'},
+  {sign:'💖',word:'Seni Seviyorum',tr:'İşaret + orta parmak + baş parmak aç',eng:'I love you handshape'},
+  {sign:'🙂',word:'Teşekkür / Thank You',tr:'El çeneden öne doğru uzat',eng:'Hand from chin forward'},
+];
+
 const FIRST_AID = [
   {id:'bogulma',icon:'😮‍💨',name:'Boğulma / Hava Yolu Tıkanıklığı',urgency:'acil',
    symptoms:'Öksüremiyor, ses çıkaramıyor, yüzü kızarıyor ya da morarıyor',
@@ -993,6 +1087,7 @@ function saveGame(){
     shownRegressions:[...S.shownRegressions],
     soundEnabled:S.soundEnabled,
     momNeverLow:S.momNeverLow, safetydone:S.safetydone, safetyPopupShown:S.safetyPopupShown,
+    dailyTaskDone:S.dailyTaskDone, dailyTaskDay:S.dailyTaskDay, dailyTaskIdx:S.dailyTaskIdx,
     savedAt:Date.now(),
   };
   try { localStorage.setItem(SAVE_KEY, JSON.stringify(data)); } catch(e){}
@@ -1017,6 +1112,9 @@ function applySaveData(d){
   S.momNeverLow = d.momNeverLow!==undefined ? d.momNeverLow : true;
   S.safetydone = d.safetydone||false;
   S.safetyPopupShown = d.safetyPopupShown||false;
+  S.dailyTaskDone = d.dailyTaskDone||false;
+  S.dailyTaskDay = d.dailyTaskDay||0;
+  S.dailyTaskIdx = d.dailyTaskIdx||0;
   S.started = true;
 }
 
@@ -1034,7 +1132,7 @@ function loadSavedGame(){
   // unlock buttons by age
   applyAgeUnlocks(S.ageMonths);
   if(S.ageMonths>=12) document.getElementById('milkCard').style.opacity='0.4';
-  renderVax(); renderMs(); renderAch(); renderAlbum(); renderDoc(); renderFaid();
+  renderVax(); renderMs(); renderAch(); renderAlbum(); renderDoc(); renderFaid(); renderDailyTask();
   initStars(); updateUI();
   setInterval(tick,100);
   setInterval(()=>{saveGame();},30000);
@@ -1228,6 +1326,9 @@ const S = {
   momNeverLow:true,
   safetydone:false,
   safetyPopupShown:false,
+  dailyTaskDone:false,
+  dailyTaskDay:0,
+  dailyTaskIdx:0,
 };
 
 // ══════════════════════════════════════════════════════
@@ -1268,7 +1369,7 @@ function startGame(){
   document.getElementById('hdrSub').textContent=`${mn} 💖 ${dn} 💙 · ${bn}'in ailesi`;
   addLog(`🍼 ${bn} dünyaya geldi! ${mn} ve ${dn} ailesine hayırlı olsun! Maceranız başlıyor...`,'ms');
   addLog('💡 İpucu: Bebeğe tıkla, aktiviteler yap, zorlu anları çöz ve gelişimi izle!');
-  renderVax(); renderMs(); renderAch(); renderAlbum(); renderDoc(); renderFaid();
+  renderVax(); renderMs(); renderAch(); renderAlbum(); renderDoc(); renderFaid(); renderDailyTask();
   setTimeout(()=>triggerVaxDue(0),2000);
   initStars(); updateUI();
   setInterval(tick,100);
@@ -1342,6 +1443,14 @@ function tick(){
   const nightOpacity=isNight?Math.sin((dayPhase-0.5)*Math.PI)*0.3:0;
   const nt=document.getElementById('nightTint');
   if(nt) nt.style.opacity=nightOpacity;
+  // daily task day check
+  const curDay=Math.floor(S.dayTime);
+  if(curDay!==S.dailyTaskDay){
+    S.dailyTaskDay=curDay;
+    S.dailyTaskDone=false;
+    S.dailyTaskIdx=Math.floor(Math.random()*DAILY_TASKS.length);
+    renderDailyTask();
+  }
   // achievements
   checkAchievements();
   // positive events
@@ -2550,6 +2659,200 @@ function showPostpartumGuide(){
       </div>
     </div>
     <button class="pop-btn" onclick="this.closest('.pop-ov').remove()" style="background:linear-gradient(135deg,#E91E8C,#C77DFF)">💜 Anladım, Destek Olacağım</button>
+  </div></div>`;
+  document.body.insertAdjacentHTML('beforeend',h);
+}
+
+// ══════════════════════════════════════════════════════
+// DAILY TASK
+// ══════════════════════════════════════════════════════
+function renderDailyTask(){
+  const t=DAILY_TASKS[S.dailyTaskIdx%DAILY_TASKS.length];
+  const ico=document.getElementById('dtIco');
+  const txt=document.getElementById('dtText');
+  const rwd=document.getElementById('dtReward');
+  const btn=document.getElementById('dtBtn');
+  if(!ico||!txt)return;
+  ico.textContent=t.ico;
+  txt.textContent=t.text;
+  rwd.textContent=`+${t.reward} Gelişim Puanı 🌟`;
+  if(S.dailyTaskDone){
+    btn.textContent='✅ Tamamlandı!';btn.disabled=true;
+  } else {
+    btn.textContent='Yaptım! ✓';btn.disabled=false;
+  }
+}
+
+function completeDailyTask(){
+  if(S.dailyTaskDone)return;
+  const t=DAILY_TASKS[S.dailyTaskIdx%DAILY_TASKS.length];
+  S.dailyTaskDone=true;
+  S.dp+=t.reward;
+  if(t.act) doAct(t.act);
+  spawnParticles(['⭐','🌟','✅'],5);
+  playSound('achieve');
+  addLog(`✅ Günlük görev tamamlandı: ${t.text} +${t.reward} GP`,'ms');
+  showToast(`🌟 Günün görevi tamamlandı! +${t.reward} GP`);
+  renderDailyTask();
+}
+
+// ══════════════════════════════════════════════════════
+// NINNI LIBRARY
+// ══════════════════════════════════════════════════════
+function showNinniLibrary(){
+  const cards=LULLABIES.map((n,i)=>`
+    <div class="ninni-card">
+      <span class="ninni-type">${n.type}</span>
+      <div class="ninni-title">${n.title}</div>
+      <div class="ninni-text">${n.text}</div>
+    </div>`).join('');
+  const h=`<div class="pop-ov" onclick="if(event.target===this)this.remove()">
+  <div class="pop-box">
+    <div class="pop-rainbow" style="background:linear-gradient(90deg,#E8EAF6,#C5CAE9,#EDE7F6)"></div>
+    <span class="pop-ico">🎵</span>
+    <div class="pop-title">Ninni Kütüphanesi</div>
+    <div class="pop-sub">Türk Ninnileri, Tekerlemeleri &amp; Şarkıları</div>
+    <div class="pop-sec" style="background:#F5F5F5">
+      <h4>💡 Neden Ninni Söylemeli?</h4>
+      <p>Ninni sesleri bebeğin kalp atışını sakinleştirir, kortizol (stres hormonu) seviyesini düşürür ve bağlanmayı güçlendirir. Anne sesini tanıyan bebek daha hızlı sakinleşir!</p>
+    </div>
+    ${cards}
+    <button class="pop-btn" style="background:linear-gradient(135deg,#7986CB,#5C6BC0)" onclick="this.closest('.pop-ov').remove()">🎵 Güzel Ninniler!</button>
+  </div></div>`;
+  document.body.insertAdjacentHTML('beforeend',h);
+}
+
+// ══════════════════════════════════════════════════════
+// BABY SIGN LANGUAGE
+// ══════════════════════════════════════════════════════
+function showSignLanguage(){
+  const rows=SIGN_LANGUAGE.map(s=>`
+    <div style="display:flex;align-items:center;gap:10px;padding:7px 0;border-bottom:1px solid #F0E6FF">
+      <span style="font-size:1.6rem;width:36px;text-align:center">${s.sign}</span>
+      <div style="flex:1">
+        <div style="font-weight:800;font-size:.75rem;color:var(--text)">${s.word}</div>
+        <div style="font-size:.68rem;color:#888;margin-top:2px">🇹🇷 ${s.tr}</div>
+      </div>
+    </div>`).join('');
+  const h=`<div class="pop-ov" onclick="if(event.target===this)this.remove()">
+  <div class="pop-box">
+    <div class="pop-rainbow"></div>
+    <span class="pop-ico">👋</span>
+    <div class="pop-title">Bebek İşaret Dili</div>
+    <div class="pop-sub">Konuşmadan önce iletişim kur!</div>
+    <div class="pop-sec">
+      <h4>🧠 Neden İşaret Dili?</h4>
+      <p>Bebekler 8-12. aydan itibaren işaretleri anlayabilir ve 10-14. ayda kullanabilir. Konuşma gelişmeden önce iletişim kurulmasını sağlar, hayal kırıklığı krizlerini azaltır!</p>
+    </div>
+    <div class="pop-sec"><h4>✋ Temel İşaretler</h4>${rows}</div>
+    <div class="pop-tip"><div class="pop-tip-t">💡 Nasıl Öğretilir?</div><p>Her aktivitede işareti kullanın. Tekrar ve tutarlılık şarttır. 2-4 hafta düzenli kullanımda bebek ilk işareti geri yapabilir. Sabırlı olun — mucizevi an gelecek!</p></div>
+    <button class="pop-btn" onclick="this.closest('.pop-ov').remove()">👋 Öğrenmeye Başlayalım!</button>
+  </div></div>`;
+  document.body.insertAdjacentHTML('beforeend',h);
+}
+
+// ══════════════════════════════════════════════════════
+// TOY GUIDE
+// ══════════════════════════════════════════════════════
+function showToyGuide(){
+  const ages=[
+    {label:'0-3 Ay',toys:'📱 Yüksek kontrastlı siyah-beyaz kartlar · 🎶 Yumuşak müzik kutusu · 🤲 Çıngırak · 🪞 Bebek aynası · 🧸 Yumuşak peluş'},
+    {label:'3-6 Ay',toys:'🪀 Asılı dönen oyuncak (mobile) · 🔊 Çıngıraklı halkalar · 🌈 Duyusal matras · 🎵 Piyano mat · 🦆 Diş kaşıyıcı'},
+    {label:'6-9 Ay',toys:'📦 Büyük yumuşak bloklar · 🎯 Yuvarlama-tutma oyuncakları · 📚 Bez kitaplar · 🥄 Mutfak kapları seti · 🎸 Bebek enstrümanları'},
+    {label:'9-12 Ay',toys:'🏗️ Küçük lego/blok seti · 📚 Sert kartonlu kitaplar · 🎠 İtme arabası · 🌊 Banyo oyuncakları · 🎪 Aktivite masası'},
+    {label:'12-18 Ay',toys:'🚗 Push araçlar · 🧩 Büyük parça puzzle · 🪣 Küçük oyun hamuru · 🎨 Yıkanabilir boyalar · 🏀 Top setleri'},
+    {label:'18-24 Ay',toys:'🧱 DUPLO/Lego Duplo · 🎭 Kukla ve bebek · 🎵 Gerçekçi enstrümanlar · 🎨 Boya + kağıt seti · 🚂 Tren rayı seti'},
+  ];
+  const html=ages.map(a=>`<div class="toy-age"><div class="toy-age-label">📦 ${a.label}</div><div class="toy-list">${a.toys}</div></div>`).join('');
+  const h=`<div class="pop-ov" onclick="if(event.target===this)this.remove()">
+  <div class="pop-box">
+    <div class="pop-rainbow"></div>
+    <span class="pop-ico">🧸</span>
+    <div class="pop-title">Yaşa Uygun Oyuncak Rehberi</div>
+    <div class="pop-sub">Her yaş için doğru oyuncak gelişimi destekler!</div>
+    <div class="pop-sec">
+      <h4>🔒 Güvenlik Kuralları</h4>
+      <ul style="padding-left:14px;font-size:.72rem;color:#555;line-height:1.7">
+        <li>3 yaş altı için 3 cm'den küçük parça OLMAMALI</li>
+        <li>CE güvenlik damgasını kontrol edin</li>
+        <li>Mıknatıslı oyuncaklar 3 yaş altında tehlikeli</li>
+        <li>Pil gözleri kilitli olmalı</li>
+      </ul>
+    </div>
+    ${html}
+    <div class="pop-tip"><div class="pop-tip-t">💡 En İyi Oyuncak</div><p>Araştırmalar gösteriyor: Boş karton kutu, kap-kacak, renkli eşarplar ve ebeveyn dikkati — pahalı oyuncaklardan çok daha değerli. Kaliteli vakit geçirin!</p></div>
+    <button class="pop-btn" onclick="this.closest('.pop-ov').remove()">🧸 Harika Rehber!</button>
+  </div></div>`;
+  document.body.insertAdjacentHTML('beforeend',h);
+}
+
+// ══════════════════════════════════════════════════════
+// SCREEN TIME GUIDE
+// ══════════════════════════════════════════════════════
+function showScreenTimeGuide(){
+  const h=`<div class="pop-ov" onclick="if(event.target===this)this.remove()">
+  <div class="pop-box">
+    <div class="pop-rainbow" style="background:linear-gradient(90deg,#FF4757,#FF9A3C,#52B788)"></div>
+    <span class="pop-ico">📱</span>
+    <div class="pop-title">Ekran Süresi Rehberi</div>
+    <div class="pop-sub">WHO &amp; AAP Önerileri</div>
+    <div class="pop-sec" style="background:#FFF5F5">
+      <h4 style="color:#C62828">🚫 0-18 Ay: Ekran Yok!</h4>
+      <p>WHO: 18 aylıktan küçük bebekler için <strong>sıfır ekran süresi</strong> (video görüşme hariç). Ekran, beyin gelişimini olumsuz etkiler, dil gelişimini geciktirir.</p>
+    </div>
+    <div class="pop-sec" style="background:#FFF8E1">
+      <h4>⚠️ 18-24 Ay: Çok Sınırlı</h4>
+      <p>Sadece kaliteli içerik, ebeveynle birlikte izleme. Yalnız bırakmayın. Günde 30 dakikayı geçmeyin.</p>
+    </div>
+    <div class="pop-sec" style="background:#F0FFF4">
+      <h4>✅ 2-5 Yaş: Günde 1 Saat</h4>
+      <p>Kaliteli eğitici içerik tercih edin. Yemek ve uyku saatlerinde ekran kapatın. Ekran aktivitesi hakkında konuşun.</p>
+    </div>
+    <div class="pop-sec">
+      <h4>💡 Bunun Yerine Ne Yapmalı?</h4>
+      <ul style="padding-left:14px;font-size:.72rem;color:#555;line-height:1.7">
+        <li>Yüz yüze konuşma ve göz teması</li>
+        <li>Kitap okuma ve şarkı söyleme</li>
+        <li>Duyusal oyun (hamur, su, kum)</li>
+        <li>Dışarı çıkma ve doğa keşfi</li>
+        <li>Bebek masajı ve beden oyunları</li>
+      </ul>
+    </div>
+    <div class="pop-tip"><div class="pop-tip-t">💡 Gerçek</div><p>Bebekler dil gelişimini CANLI insanlardan öğrenir. Video'daki dil, canlı etkileşimin yerini tutmaz. ${S.babyName}'e konuşun, okuyun, şarkı söyleyin — ekrandan çok daha etkilidir!</p></div>
+    <button class="pop-btn" onclick="this.closest('.pop-ov').remove()">📴 Anlıyorum!</button>
+  </div></div>`;
+  document.body.insertAdjacentHTML('beforeend',h);
+}
+
+// ══════════════════════════════════════════════════════
+// ALL GUIDES QUICK ACCESS
+// ══════════════════════════════════════════════════════
+function showAllGuides(){
+  const guides=[
+    {ico:'📈',name:'Büyüme Grafiği',fn:'showGrowthChart()'},
+    {ico:'🤱',name:'Emzirme Rehberi',fn:'showBreastfeedingGuide()'},
+    {ico:'🥣',name:'Katı Gıda Rehberi',fn:'showSolidFoodGuide()'},
+    {ico:'😴',name:'Uyku Rehberi',fn:'showSleepGuide()'},
+    {ico:'🦷',name:'Diş Bakımı',fn:'showDentalGuide()'},
+    {ico:'🗓️',name:'Günlük Rutin',fn:'showDailyRoutine()'},
+    {ico:'🎵',name:'Ninni Kütüphanesi',fn:'showNinniLibrary()'},
+    {ico:'👋',name:'İşaret Dili',fn:'showSignLanguage()'},
+    {ico:'🧸',name:'Oyuncak Rehberi',fn:'showToyGuide()'},
+    {ico:'📱',name:'Ekran Süresi',fn:'showScreenTimeGuide()'},
+    {ico:'💜',name:'Lohusalık Rehberi',fn:'showPostpartumGuide()'},
+    {ico:'🚨',name:'Acil Rehberi',fn:'document.getElementById(\"faidList\").scrollIntoView()'},
+    {ico:'🛡️',name:'Güvenlik Listesi',fn:'showSafetyChecklist()'},
+    {ico:'📊',name:'Bebek Karnesi',fn:'showReportCard()'},
+  ];
+  const chips=guides.map(g=>`<button class="guide-chip" onclick="${g.fn};this.closest('.pop-ov').remove()">${g.ico}<br>${g.name}</button>`).join('');
+  const h=`<div class="pop-ov" onclick="if(event.target===this)this.remove()">
+  <div class="pop-box">
+    <div class="pop-rainbow"></div>
+    <span class="pop-ico">📚</span>
+    <div class="pop-title">Tüm Rehberler</div>
+    <div class="pop-sub">Ebeveynlik yolculuğunuzda her rehber bir tık uzağınızda</div>
+    <div class="guide-grid">${chips}</div>
+    <button class="pop-btn" style="margin-top:12px" onclick="this.closest('.pop-ov').remove()">Kapat</button>
   </div></div>`;
   document.body.insertAdjacentHTML('beforeend',h);
 }
