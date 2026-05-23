@@ -384,6 +384,11 @@ body{font-family:'Nunito',sans-serif;background:linear-gradient(135deg,#FFF5F8,#
 .guide-chip{padding:9px 6px;border:2px solid #E0D7FF;border-radius:12px;background:#fff;cursor:pointer;font-family:'Nunito',sans-serif;font-size:.68rem;font-weight:700;color:var(--text);text-align:center;transition:all .2s;line-height:1.3}
 .guide-chip:hover{background:var(--soft);border-color:var(--purple);color:var(--purple);transform:translateY(-2px)}
 
+.diary-card{border-radius:12px;padding:10px;border:2px solid transparent}
+.diary-card.available{background:#FFF0F5;border-color:#FF9A9E}
+.diary-card.done{background:#F0FFF4;border-color:#52B788}
+.diary-card.locked{background:#F5F5F5;border-color:#E0E0E0;opacity:.65}
+
 /* scrollbars */
 ::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--purple);border-radius:10px}
 
@@ -456,6 +461,8 @@ body{font-family:'Nunito',sans-serif;background:linear-gradient(135deg,#FFF5F8,#
       <button onclick="showReportCard()" style="background:rgba(255,209,102,.3);color:#fff;border:none;padding:5px 11px;border-radius:20px;font-size:.72rem;font-weight:700;cursor:pointer;font-family:'Nunito',sans-serif" title="Bebek Karnesi">📊 Karne</button>
       <button onclick="toggleSound()" id="soundBtn" style="background:rgba(199,125,255,.3);color:#fff;border:none;padding:5px 11px;border-radius:20px;font-size:.72rem;font-weight:700;cursor:pointer;font-family:'Nunito',sans-serif" title="Ses Aç/Kapat">🔊 Ses</button>
       <button onclick="showAllGuides()" style="background:rgba(72,202,228,.3);color:#fff;border:none;padding:5px 11px;border-radius:20px;font-size:.72rem;font-weight:700;cursor:pointer;font-family:'Nunito',sans-serif" title="Tüm Rehberler">📚 Rehberler</button>
+      <button onclick="showBabyDiary()" style="background:rgba(255,107,157,.3);color:#fff;border:none;padding:5px 11px;border-radius:20px;font-size:.72rem;font-weight:700;cursor:pointer;font-family:'Nunito',sans-serif" title="Bebek Günlüğü">📖 Günlük</button>
+      <span id="seasonBadge" title="Mevsim" style="font-size:1.1rem;cursor:default" title="İlkbahar">🌸</span>
     </div>
   </header>
   <div class="night-tint" id="nightTint" style="opacity:0"></div>
@@ -659,6 +666,8 @@ body{font-family:'Nunito',sans-serif;background:linear-gradient(135deg,#FFF5F8,#
           <button class="info-btn" onclick="showDailyRoutine()">🗓️ Rutin</button>
           <button class="info-btn" onclick="showNinniLibrary()">🎵 Ninniler</button>
           <button class="info-btn" onclick="showSignLanguage()">👋 İşaret Dili</button>
+          <button class="info-btn" onclick="showMassageGuide()">💆 Masaj</button>
+          <button class="info-btn" onclick="showRedFlags()">⚠️ Uyarı İşaretleri</button>
         </div>
         <div class="act-grid">
           <button class="abt care" onclick="doAct('uyut')">
@@ -716,6 +725,15 @@ body{font-family:'Nunito',sans-serif;background:linear-gradient(135deg,#FFF5F8,#
           </button>
           <button class="abt dad" onclick="doAct('dad-bez')">
             <span class="ai">🧻</span><span class="an">Baba Bez Değiştirsin</span><span class="ae">Bez sıfırla · +5 GP</span>
+          </button>
+          <button class="abt dad" onclick="doAct('dad-okut')">
+            <span class="ai">📚</span><span class="an">Baba Kitap Okusun</span><span class="ae">+Zeka · +Mutluluk · +16 GP</span>
+          </button>
+          <button class="abt dad" onclick="doAct('dad-banyo')">
+            <span class="ai">🛁</span><span class="an">Baba Banyo Yaptırsın</span><span class="ae">+Sağlık · +Mutluluk · +14 GP</span>
+          </button>
+          <button class="abt dad" onclick="doAct('dad-sarki')">
+            <span class="ai">🎵</span><span class="an">Baba Şarkı Söylesin</span><span class="ae">+Mutluluk · Anne enerji · +12 GP</span>
           </button>
           <button class="abt dad" style="grid-column:1/-1;background:linear-gradient(135deg,#E91E8C,#C2185B);flex-direction:row;padding:12px 14px;gap:10px" onclick="doAct('dad-anne')">
             <span class="ai" style="font-size:1.6rem">💐</span>
@@ -969,6 +987,32 @@ const VACCINES = [
   {id:'kkk2',ay:24,name:'KKK 2. Doz',type:'rutin',info:'KKK aşısının ikinci dozu. Uzun süreli koruma.',tip:'24. ay kontrolünde yapılır.'},
 ];
 
+const DIARY_MOMENTS = [
+  {id:'ilk_gulus',   icon:'😊', title:'İlk Gülüş',         minAge:1, dp:40,  desc:'Bebek ilk kez gülümsedi! Bu an ebeveynlerin yüreğini eritir. Sosyal gülümseme genellikle 6-8. haftada ortaya çıkar.'},
+  {id:'ilk_agu',     icon:'🗣️', title:'İlk "Ağu" Sesi',     minAge:1, dp:35,  desc:'Bebek ilk sesli tepkisini verdi! Ağulama 1-3. aylarda başlar — beyin dil gelişiminin ilk adımı.'},
+  {id:'bas_tutma',   icon:'💪', title:'Başını Tuttu',       minAge:2, dp:45,  desc:'Bebek başını dik tutabildi! Boyun kasları güçleniyor. Tummy Time egzersizi bu gelişimi destekler.'},
+  {id:'el_inceleme', icon:'🖐️', title:'Ellerini Keşfetti',  minAge:2, dp:30,  desc:'Bebek kendi ellerini merakla inceledi. El-göz koordinasyonunun başlangıcı — gelişimin güzel işareti!'},
+  {id:'donme',       icon:'🔄', title:'İlk Dönme',          minAge:3, dp:50,  desc:'Bebek sırt üstünden yana döndü! Bu büyük bir motor gelişim adımı. Artık daha dikkatli olmak gerekiyor.'},
+  {id:'kahkaha',     icon:'😂', title:'İlk Kahkaha',        minAge:3, dp:55,  desc:'Bebek gerçekten güldü! Güçlü bir kahkaha duymak — bu anın eşi yoktur. Sosyal-duygusal gelişim ilerliyor!'},
+  {id:'obje_tanima', icon:'👀', title:'Yüzünü Tanıdı',      minAge:3, dp:40,  desc:'Bebek sizi tanıdığında özel bir reaksiyon verdi! Bellek ve bağlanma gelişiyor.'},
+  {id:'oturma',      icon:'🧘', title:'Destekle Oturdu',    minAge:5, dp:60,  desc:'Bebek destekle oturabildi! Sırt ve karın kasları gelişiyor. 6-8. ayda bağımsız oturma bekleniyor.'},
+  {id:'ilk_dis',     icon:'🦷', title:'İlk Diş Çıktı!',    minAge:5, dp:65,  desc:'İlk dişçik göründü — genellikle alt ön dişler ilk çıkar. Diş bakımı artık başlıyor!'},
+  {id:'emekleme',    icon:'🐢', title:'İlk Emekleme',       minAge:7, dp:80,  desc:'Bebek emekledi! Artık her şeye ulaşabilir. Ev güvenliğini gözden geçirme zamanı!'},
+  {id:'ilk_kelime',  icon:'💬', title:'İlk Kelime',         minAge:9, dp:100, desc:'Bebek ilk anlamlı kelimesini söyledi! "Anne", "Baba" veya "Mam" — bu an hiç unutulmaz.'},
+  {id:'el_sallama',  icon:'👋', title:'El Salladı',         minAge:8, dp:50,  desc:'Bebek el sallamayı öğrendi! Sosyal ipuçlarını anlıyor ve iletişim kurmaya çalışıyor.'},
+  {id:'ilk_adim',    icon:'👣', title:'İlk Adım!',          minAge:10,dp:150, desc:'BÜYÜK GÜN! Bebek ilk adımını attı! Bu an her ebeveynin hayatında efsane olarak kalır. Tebrikler!'},
+  {id:'ilk_yemek',   icon:'🥣', title:'İlk Katı Gıda',     minAge:5, dp:55,  desc:'Bebek ilk katı gıdayı tattı! Bu yeni dünya ona çok heyecan verici geldi. Tat alma duyusu gelişiyor.'},
+  {id:'ayna_taninma',icon:'🪞', title:'Aynadaki Kendisi',   minAge:9, dp:45,  desc:'Bebek aynada kendisini fark etti! Öz-farkındalığın başlangıcı — bilişsel gelişimin önemli adımı.'},
+  {id:'dans',        icon:'💃', title:'Müziğe Dans Etti',   minAge:8, dp:50,  desc:'Bebek müzik duyunca sallanmaya başladı! Ritim duyusu ve müzik sevgisi gelişiyor.'},
+];
+
+const SEASONS = [
+  {name:'İlkbahar 🌸', colors:'linear-gradient(90deg,#E8F5E9,#F3E5F5)', emoji:'🌸'},
+  {name:'Yaz ☀️',      colors:'linear-gradient(90deg,#FFF9C4,#FFE0B2)', emoji:'☀️'},
+  {name:'Sonbahar 🍂', colors:'linear-gradient(90deg,#FFF3E0,#EFEBE9)', emoji:'🍂'},
+  {name:'Kış ❄️',      colors:'linear-gradient(90deg,#E3F2FD,#E8EAF6)', emoji:'❄️'},
+];
+
 const DAILY_TASKS = [
   {ico:'🤱',text:'3 kez anne sütü veya biberon ver',reward:50,act:'annesutu'},
   {ico:'💪',text:'Tummy Time egzersizi yap',reward:35,act:'tummytime'},
@@ -1088,6 +1132,7 @@ function saveGame(){
     soundEnabled:S.soundEnabled,
     momNeverLow:S.momNeverLow, safetydone:S.safetydone, safetyPopupShown:S.safetyPopupShown,
     dailyTaskDone:S.dailyTaskDone, dailyTaskDay:S.dailyTaskDay, dailyTaskIdx:S.dailyTaskIdx,
+    diary:[...S.diary], season:S.season||0,
     savedAt:Date.now(),
   };
   try { localStorage.setItem(SAVE_KEY, JSON.stringify(data)); } catch(e){}
@@ -1115,6 +1160,8 @@ function applySaveData(d){
   S.dailyTaskDone = d.dailyTaskDone||false;
   S.dailyTaskDay = d.dailyTaskDay||0;
   S.dailyTaskIdx = d.dailyTaskIdx||0;
+  S.diary = new Set(d.diary||[]);
+  S.season = d.season||0;
   S.started = true;
 }
 
@@ -1300,6 +1347,9 @@ const ACT_DATA = {
   'dad-masaj':{sfx:['💆','💙'], msg:(g,n,d)=>`${d} masaj yaptı 💆`,          fx:{happy:12,health:5,dp:10},dadPts:8},
   'dad-bez':  {sfx:['🧻','💙'], msg:(g,n,d)=>`${d} bez değiştirdi! 💙`,      fx:{happy:5,dp:5},dadPts:10,special:'diaper100'},
   'dad-anne': {sfx:['💐','💖'], msg:(g,n,d)=>`${d} anneye destek verdi! 💐`, fx:{happy:8,dp:15},dadPts:12,momWbPts:30},
+  'dad-okut': {sfx:['📚','💙'], msg:(g,n,d)=>`${d} kitap okudu! 📚`,          fx:{smart:12,happy:10,dp:16},dadPts:10},
+  'dad-banyo':{sfx:['🛁','💙'], msg:(g,n,d)=>`${d} banyo yaptırdı! 🛁`,       fx:{health:10,happy:12,dp:14},dadPts:12,special:'diaper100'},
+  'dad-sarki':{sfx:['🎵','💙'], msg:(g,n,d)=>`${d} şarkı söyledi! 🎵`,         fx:{happy:14,smart:6,dp:12},dadPts:8,momWbPts:10},
   'mom-dinlen':{sfx:['☕','🌸'],msg:(g,n)=>`Kısa mola — anne enerjisi yenileniyor ☕`,fx:{dp:15},momWbPts:22},
 };
 
@@ -1329,6 +1379,8 @@ const S = {
   dailyTaskDone:false,
   dailyTaskDay:0,
   dailyTaskIdx:0,
+  diary:new Set(),
+  season:0,
 };
 
 // ══════════════════════════════════════════════════════
@@ -1451,6 +1503,13 @@ function tick(){
     S.dailyTaskIdx=Math.floor(Math.random()*DAILY_TASKS.length);
     renderDailyTask();
   }
+  // season update (every 30 game days)
+  const newSeason=Math.floor(S.dayTime/30)%4;
+  if(newSeason!==S.season){
+    S.season=newSeason;
+    const sn=document.getElementById('seasonBadge');
+    if(sn){sn.textContent=SEASONS[newSeason].emoji;sn.title=SEASONS[newSeason].name;}
+  }
   // achievements
   checkAchievements();
   // positive events
@@ -1490,6 +1549,13 @@ function onAgeChange(mo){
   if(SLEEP_REGRESSIONS[mo]&&!S.shownRegressions.has(mo)){
     S.shownRegressions.add(mo);
     setTimeout(()=>showSleepRegressionPopup(SLEEP_REGRESSIONS[mo]), 4000);
+  }
+  // Notify unlocked diary moments
+  const newMoments=DIARY_MOMENTS.filter(m=>m.minAge<=mo&&m.minAge>(mo-1)&&!S.diary.has(m.id));
+  if(newMoments.length>0){
+    setTimeout(()=>{
+      newMoments.forEach(m=>showToast(`📖 Yeni anı fırsatı: "${m.title}" — Günlüğe kaydet! +${m.dp} GP`));
+    },3000);
   }
   // Play age milestone sound
   playSound('age');
@@ -2843,6 +2909,9 @@ function showAllGuides(){
     {ico:'🚨',name:'Acil Rehberi',fn:'document.getElementById(\"faidList\").scrollIntoView()'},
     {ico:'🛡️',name:'Güvenlik Listesi',fn:'showSafetyChecklist()'},
     {ico:'📊',name:'Bebek Karnesi',fn:'showReportCard()'},
+    {ico:'💆',name:'Bebek Masajı',fn:'showMassageGuide()'},
+    {ico:'⚠️',name:'Uyarı İşaretleri',fn:'showRedFlags()'},
+    {ico:'📖',name:'Bebek Günlüğü',fn:'showBabyDiary()'},
   ];
   const chips=guides.map(g=>`<button class="guide-chip" onclick="${g.fn};this.closest('.pop-ov').remove()">${g.ico}<br>${g.name}</button>`).join('');
   const h=`<div class="pop-ov" onclick="if(event.target===this)this.remove()">
@@ -2853,6 +2922,123 @@ function showAllGuides(){
     <div class="pop-sub">Ebeveynlik yolculuğunuzda her rehber bir tık uzağınızda</div>
     <div class="guide-grid">${chips}</div>
     <button class="pop-btn" style="margin-top:12px" onclick="this.closest('.pop-ov').remove()">Kapat</button>
+  </div></div>`;
+  document.body.insertAdjacentHTML('beforeend',h);
+}
+
+// ══════════════════════════════════════════════════════
+// BABY DIARY
+// ══════════════════════════════════════════════════════
+function showBabyDiary(){
+  const items=DIARY_MOMENTS.map(m=>{
+    const locked=S.ageMonths<m.minAge;
+    const done=S.diary.has(m.id);
+    const cls=done?'diary-card done':locked?'diary-card locked':'diary-card available';
+    const btnHtml=done?`<span style="color:#52B788;font-weight:800;font-size:.75rem">✅ Kaydedildi!</span>`:
+      locked?`<span style="color:#aaa;font-size:.7rem">🔒 ${m.minAge}. ayda açılır</span>`:
+      `<button class="dt-btn" onclick="recordDiary('${m.id}');this.closest('.pop-ov').remove()" style="margin-top:6px;padding:6px 14px;font-size:.75rem">📸 Kaydet! +${m.dp} GP</button>`;
+    return `<div class="${cls}">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
+        <span style="font-size:1.4rem">${m.icon}</span>
+        <div style="flex:1"><div style="font-weight:800;font-size:.8rem;color:${done?'#52B788':locked?'#aaa':'var(--text)'}">${m.title}</div>
+        <div style="font-size:.65rem;color:#888">${m.minAge}+ ay</div></div>
+        ${btnHtml}
+      </div>
+      ${!locked?`<div style="font-size:.68rem;color:#888;line-height:1.4">${m.desc}</div>`:''}
+    </div>`;
+  }).join('');
+  const recorded=S.diary.size;
+  const h=`<div class="pop-ov" onclick="if(event.target===this)this.remove()">
+  <div class="pop-box">
+    <div class="pop-rainbow" style="background:linear-gradient(90deg,#FF9A9E,#FAD0C4,#FFECD2)"></div>
+    <span class="pop-ico">📖</span>
+    <div class="pop-title">${S.babyName}'in Günlüğü</div>
+    <div class="pop-sub">${recorded}/${DIARY_MOMENTS.length} özel an kaydedildi 💖</div>
+    <div style="max-height:360px;overflow-y:auto;display:flex;flex-direction:column;gap:8px;margin:12px 0">${items}</div>
+    <button class="pop-btn" style="background:linear-gradient(135deg,#FF6B9D,#FF9A9E)" onclick="this.closest('.pop-ov').remove()">💖 Kapat</button>
+  </div></div>`;
+  document.body.insertAdjacentHTML('beforeend',h);
+}
+
+function recordDiary(id){
+  const m=DIARY_MOMENTS.find(x=>x.id===id);
+  if(!m||S.diary.has(m.id)||S.ageMonths<m.minAge)return;
+  S.diary.add(m.id);
+  S.dp+=m.dp;
+  spawnParticles([m.icon,'⭐','💖'],5);
+  playSound('achieve');
+  showToast(`📖 "${m.title}" günlüğe kaydedildi! +${m.dp} GP 💖`);
+  addLog(`📸 Özel an: ${m.title} — hatıralar sonsuza 💖`,'ms');
+}
+
+// ══════════════════════════════════════════════════════
+// MASSAGE GUIDE
+// ══════════════════════════════════════════════════════
+function showMassageGuide(){
+  const techniques=[
+    {age:'0-3 Ay',ico:'👶',title:'Hafif Dokunuşlar',desc:'Bebeği sırtüstü yatırın. Hafif, yavaş ve ritmik hareketlerle karın bölgesini saat yönünde masaj yapın. Gaz sancısı için çok etkilidir!',tips:['Hipoalerjenik bebek yağı kullanın','Yemekten 30-45 dk sonra yapın','Bebek uyanık ve sakin olmalı','Her seansta 10-15 dakika yeterli']},
+    {age:'3-6 Ay',ico:'🤸',title:'Bacak ve Kol Masajı',desc:'Bacaklarını ve kollarını "sağma" hareketiyle masaj yapın. "Bisiklet" hareketi hem gaz çıkarmaya hem de bacak kaslarını güçlendirmeye yardımcı olur.',tips:['Bacakları hafifçe büküp açın','Her parçağı 10 kez tekrarlayın','Gülümseyin ve göz teması kurun','Şarkı söyleyebilirsiniz']},
+    {age:'6-12 Ay',ico:'🧘',title:'Sırt Masajı',desc:'Bebeği yüz aşağı yatırın (Tummy Time). Sırtını boyundan bele doğru hafif kaydırarak masaj yapın. Omurga çevresini atlayın.',tips:['Omurgaya doğrudan baskı uygulamayın','Omuz başlarını dairesel hareketle masaj yapın','Bebeğin tepkisine göre ayarlayın','Uyku öncesi mükemmel bir rutin']},
+    {age:'12+ Ay',ico:'🚶',title:'Ayak Masajı',desc:'Ayak tabanlarını baş parmakla küçük dairesel hareketlerle masaj yapın. Her parmağı nazikçe çekin. Refleks noktaları tüm vücudu rahatlatır.',tips:['Yürümeye başlayan bebeklerde özellikle faydalı','Her ayağa 5 dakika ayırın','Eğlenceli bir oyuna dönüştürün','Uyumadan önce uygulayın']},
+  ];
+  const cards=techniques.map(t=>`
+    <div style="background:#FFF8F0;border-radius:14px;padding:12px;margin-bottom:10px">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+        <span style="font-size:1.4rem">${t.ico}</span>
+        <div><div style="font-weight:800;font-size:.82rem;color:var(--text)">${t.title}</div>
+        <div style="font-size:.68rem;color:#FF9A3C;font-weight:700">${t.age}</div></div>
+      </div>
+      <p style="font-size:.72rem;color:#555;line-height:1.5;margin-bottom:8px">${t.desc}</p>
+      <ul style="font-size:.68rem;color:#777;padding-left:14px">${t.tips.map(x=>`<li style="margin-bottom:3px">${x}</li>`).join('')}</ul>
+    </div>`).join('');
+  const h=`<div class="pop-ov" onclick="if(event.target===this)this.remove()">
+  <div class="pop-box">
+    <div class="pop-rainbow" style="background:linear-gradient(90deg,#FFE0B2,#FFF3E0,#FFCCBC)"></div>
+    <span class="pop-ico">💆</span>
+    <div class="pop-title">Bebek Masajı Rehberi</div>
+    <div class="pop-sub">Dokunuşla büyüyen bir sevgi bağı</div>
+    <div class="pop-sec">
+      <h4>💡 Masajın Faydaları</h4>
+      <p>Düzenli bebek masajı <strong>uyku kalitesini artırır</strong>, gaz sancısını azaltır, kilo alımını destekler ve anne-baba-bebek bağını güçlendirir. Araştırmalar, düzenli masaj yapılan bebeklerin daha hızlı geliştiğini gösteriyor!</p>
+    </div>
+    ${cards}
+    <div class="pop-tip"><div class="pop-tip-t">💙 Baba da Masaj Yapabilir!</div><p>Masaj sadece annenin işi değil. Baba masajı bebek-baba bağını muazzam güçlendirir. Bebek babasının ellerinin sıcaklığını ve sesini tanır!</p></div>
+    <button class="pop-btn" style="background:linear-gradient(135deg,#FF9A3C,#FFD166)" onclick="this.closest('.pop-ov').remove()">💆 Harika, Deneyeceğim!</button>
+  </div></div>`;
+  document.body.insertAdjacentHTML('beforeend',h);
+}
+
+// ══════════════════════════════════════════════════════
+// DEVELOPMENTAL RED FLAGS
+// ══════════════════════════════════════════════════════
+function showRedFlags(){
+  const flags=[
+    {age:'2 Ay',ico:'👁️',signs:['Işığa tepki vermiyor','Gülümsemiyor','Başını kısa süre de olsa tutamıyor','Ellere tutturulunca itmek için baskı yapamıyor']},
+    {age:'4 Ay',ico:'🗣️',signs:['Sesli "ağu" sesi çıkarmıyor','Hareketli nesneleri gözle takip etmiyor','Yüze bakmıyor veya tanımıyor','Yüz ifadelerine tepki vermiyor']},
+    {age:'6 Ay',ico:'🤸',signs:['Destekle oturamıyor','Obje almak için uzanmıyor','Ebeveyn yüzlerine ilgi göstermiyor','Heceleme (ba, ma, da) yapmıyor']},
+    {age:'9 Ay',ico:'🧠',signs:['İsmine tepki vermiyor','Başkalarının yüzlerine ilgi göstermiyor','Nesneleri transferle taşıyamıyor','El sallama/veda gibi jestler yok']},
+    {age:'12 Ay',ico:'💬',signs:['Tek kelime bile söylemiyor','Parmakla işaret etmiyor','Basitten emir anlamıyor','"Anne/Baba" dememiş'],},
+    {age:'18 Ay',ico:'🚶',signs:['Yürüyemiyor','6-10 kelime yok','Basit emirleri anlamıyor','Başkalarını taklit etmiyor']},
+    {age:'24 Ay',ico:'🗨️',signs:['İki kelimeli cümle kuramıyor','Tanıdık nesneleri işaret edemiyor','Yetişkinlerin söylediklerini anlamıyor','Bağımsız yürüyemiyorsa']},
+  ];
+  const rows=flags.map(f=>`
+    <div style="background:#FFF5F5;border-radius:12px;padding:10px;margin-bottom:8px;border-left:3px solid #FF9A9E">
+      <div style="font-weight:800;font-size:.78rem;color:#C62828;margin-bottom:5px">${f.ico} ${f.age} İtibarıyla</div>
+      <ul style="font-size:.7rem;color:#666;padding-left:14px">${f.signs.map(s=>`<li style="margin-bottom:3px">${s}</li>`).join('')}</ul>
+    </div>`).join('');
+  const h=`<div class="pop-ov" onclick="if(event.target===this)this.remove()">
+  <div class="pop-box">
+    <div class="pop-rainbow" style="background:linear-gradient(90deg,#FFCDD2,#FFE0B2)"></div>
+    <span class="pop-ico">⚠️</span>
+    <div class="pop-title">Gelişim Uyarı İşaretleri</div>
+    <div class="pop-sub">Şüphe duyduğunuzda mutlaka pediatristinize danışın</div>
+    <div class="pop-sec" style="background:#FFF9C4">
+      <h4>💛 Önemli Hatırlatma</h4>
+      <p>Her bebek kendi hızında gelişir. Bu liste "kırmızı bayrak" işaretleri içermektedir — endişelenmeniz için DEĞİL, dikkat etmeniz için. Herhangi bir belirtiyi gördüğünüzde değerlendirme için pediatristinize danışın. Erken müdahale en iyi sonucu verir.</p>
+    </div>
+    ${rows}
+    <div class="pop-tip"><div class="pop-tip-t">🩺 Ne Zaman Doktora Gitmeliyim?</div><p>Bu listede belirtilen dönemlerde söz konusu becerileri görmüyorsanız, doktor kontrolünü beklemeyin. Sormak için bir neden her zaman yeterlidir. Ebeveyn içgüdüsüne güvenin!</p></div>
+    <button class="pop-btn" style="background:linear-gradient(135deg,#FF7043,#FF5722)" onclick="this.closest('.pop-ov').remove()">⚠️ Anladım</button>
   </div></div>`;
   document.body.insertAdjacentHTML('beforeend',h);
 }
