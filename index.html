@@ -337,6 +337,25 @@ body{font-family:'Nunito',sans-serif;background:linear-gradient(135deg,#FFF5F8,#
 .sleep-row{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-top:5px}
 .sleep-chip{background:rgba(72,202,228,.2);border-radius:8px;padding:3px 8px;font-size:.65rem;font-weight:700;color:#0277BD}
 
+/* growth chart */
+.gchart-bar-wrap{display:flex;align-items:center;gap:8px;margin-bottom:6px}
+.gchart-lbl{font-size:.68rem;font-weight:700;color:var(--text);min-width:38px;text-align:right}
+.gchart-track{flex:1;height:14px;background:#F0E6FF;border-radius:7px;position:relative;overflow:visible}
+.gchart-range{position:absolute;height:100%;border-radius:7px;background:rgba(82,183,136,.25)}
+.gchart-avg{position:absolute;top:0;height:100%;width:3px;background:rgba(82,183,136,.6);border-radius:2px}
+.gchart-dot{position:absolute;top:50%;transform:translateY(-50%);width:14px;height:14px;border-radius:50%;border:2px solid #fff;box-shadow:0 2px 6px rgba(0,0,0,.2);z-index:2}
+.gchart-val{font-size:.65rem;font-weight:700;color:var(--purple);min-width:48px}
+
+/* info-btn inline style */
+.info-btn{background:none;border:none;cursor:pointer;font-size:.75rem;padding:2px 6px;border-radius:8px;background:var(--soft);color:var(--purple);font-weight:700;transition:all .2s}
+.info-btn:hover{background:var(--purple);color:#fff}
+
+/* lohusalık card */
+.lohusa-card{background:linear-gradient(135deg,#FFF0F5,#F8BBD9);border-radius:14px;padding:12px;border:2px solid #F48FB1;margin-top:8px}
+.lohusa-title{font-family:'Fredoka One',cursive;font-size:.88rem;color:#C2185B;margin-bottom:6px}
+.lohusa-sign{display:flex;align-items:center;gap:6px;padding:4px 0;font-size:.72rem;color:#880E4F;border-bottom:1px solid rgba(244,143,177,.3)}
+.lohusa-sign:last-child{border-bottom:none}
+
 /* scrollbars */
 ::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--purple);border-radius:10px}
 
@@ -431,10 +450,11 @@ body{font-family:'Nunito',sans-serif;background:linear-gradient(135deg,#FFF5F8,#
           <div class="baby-stg" id="babyStg">Yenidoğan</div>
           <div class="baby-mood" id="babyMoodTxt">😊 Mutlu ve Sağlıklı</div>
         </div>
-        <div class="baby-vitals">
+        <div class="baby-vitals" style="cursor:pointer" onclick="showGrowthChart()" title="Büyüme grafiğini gör">
           <div class="vital"><div class="vital-val" id="vitalWeight">3.2 kg</div><div class="vital-lbl">⚖️ Kilo</div></div>
           <div class="vital"><div class="vital-val" id="vitalHeight">50 cm</div><div class="vital-lbl">📏 Boy</div></div>
           <div class="vital"><div class="vital-val" id="vitalAge">0. Ay</div><div class="vital-lbl">🎂 Yaş</div></div>
+          <div class="vital"><div class="vital-val" style="font-size:.75rem">📈</div><div class="vital-lbl">Grafik</div></div>
         </div>
       </div>
 
@@ -508,6 +528,10 @@ body{font-family:'Nunito',sans-serif;background:linear-gradient(135deg,#FFF5F8,#
 
       <!-- TAB: BESLENME -->
       <div class="tab-body on" id="tab-beslenme">
+        <div style="display:flex;gap:5px;margin-bottom:4px">
+          <button class="info-btn" onclick="showBreastfeedingGuide()">🤱 Emzirme Rehberi</button>
+          <button class="info-btn" onclick="showNutritionGuide()">🥣 Beslenme Bilgisi</button>
+        </div>
         <button class="abt special" onclick="doAct('annesutu')">
           <span class="ai">🤱</span>
           <div>
@@ -585,6 +609,11 @@ body{font-family:'Nunito',sans-serif;background:linear-gradient(135deg,#FFF5F8,#
 
       <!-- TAB: BAKIM -->
       <div class="tab-body" id="tab-bakim">
+        <div style="display:flex;gap:5px;margin-bottom:4px">
+          <button class="info-btn" onclick="showSleepGuide()">😴 Uyku Rehberi</button>
+          <button class="info-btn" onclick="showDentalGuide()">🦷 Diş Bakımı</button>
+          <button class="info-btn" onclick="showDailyRoutine()">🗓️ Günlük Rutin</button>
+        </div>
         <div class="act-grid">
           <button class="abt care" onclick="doAct('uyut')">
             <span class="ai">😴</span><span class="an">Uyut</span><span class="ae">+28 Dinçlik · +8 GP</span>
@@ -650,6 +679,11 @@ body{font-family:'Nunito',sans-serif;background:linear-gradient(135deg,#FFF5F8,#
         <div class="mom-card">
           <div class="mom-title">💖 Annelere Saygı</div>
           <div class="mom-msg" id="momMsg">"Anneler 24 saat, 7 gün, ücret almadan dünyanın en değerli işini yapıyorlar. Her biri bir kahraman! 💖"</div>
+        </div>
+        <div class="lohusa-card">
+          <div class="lohusa-title">💜 Doğum Sonrası Anne Sağlığı</div>
+          <div style="font-size:.7rem;color:#880E4F;margin-bottom:8px">Aşağıdaki belirtileri gördüğünüzde profesyonel yardım alın:</div>
+          <button class="info-btn" style="width:100%;margin-bottom:4px" onclick="showPostpartumGuide()">🔍 Lohusalık Rehberi &amp; Belirtiler →</button>
         </div>
       </div>
 
@@ -2184,6 +2218,340 @@ function completeSafety(){
   addLog('🛡️ Bebek güvenlik listesi tamamlandı! +30 GP','ms');
   showToast('🛡️ Güvenli Yuva Oluşturuldu! +30 GP','');
   checkAchievements();
+}
+
+// ══════════════════════════════════════════════════════
+// GROWTH CHART POPUP
+// ══════════════════════════════════════════════════════
+// WHO weight P3/P50/P97 by month (approx, mixed sex)
+const WHO_W=[
+  [2.4,3.2,4.3],[3.0,4.1,5.5],[3.9,5.1,6.6],[4.7,6.0,7.7],
+  [5.3,6.6,8.5],[5.8,7.1,9.1],[6.2,7.6,9.7],[6.5,7.9,10.1],
+  [6.8,8.3,10.5],[7.1,8.6,10.9],[7.3,8.8,11.2],[7.5,9.0,11.5],
+  [7.7,9.2,11.8],[7.9,9.4,12.0],[8.1,9.6,12.3],[8.3,9.8,12.6],
+  [8.5,10.0,12.9],[8.7,10.2,13.2],[8.9,10.4,13.5],[9.1,10.6,13.8],
+  [9.3,10.8,14.1],[9.5,11.0,14.4],[9.7,11.2,14.7],[9.9,11.5,15.0],
+  [10.1,11.7,15.3]
+];
+const WHO_H=[
+  [45.5,50.0,54.7],[50.8,54.7,58.7],[54.4,58.4,62.5],[57.7,61.8,65.9],
+  [60.4,64.6,68.9],[62.7,67.0,71.3],[64.8,69.2,73.6],[66.7,71.1,75.5],
+  [68.4,72.8,77.4],[70.0,74.5,79.1],[71.5,76.0,80.6],[72.9,77.5,82.2],
+  [74.3,78.9,83.7],[75.7,80.3,85.1],[77.0,81.7,86.5],[78.3,83.0,87.9],
+  [79.6,84.3,89.3],[80.8,85.6,90.6],[82.0,86.9,91.9],[83.2,88.1,93.2],
+  [84.4,89.3,94.4],[85.5,90.5,95.6],[86.7,91.7,96.7],[87.8,92.9,97.9],
+  [89.0,94.0,99.1]
+];
+
+function showGrowthChart(){
+  const mo=Math.min(24,S.ageMonths);
+  const gd=BABY_GROWTH[mo];
+  const wWHO=WHO_W[mo]||WHO_W[24];
+  const hWHO=WHO_H[mo]||WHO_H[24];
+  const wPct=v=>`${Math.min(100,Math.max(0,((v-wWHO[0])/(wWHO[2]-wWHO[0]))*100)).toFixed(0)}%`;
+  const hPct=v=>`${Math.min(100,Math.max(0,((v-hWHO[0])/(hWHO[2]-hWHO[0]))*100)).toFixed(0)}%`;
+  const avgWPct=`${((wWHO[1]-wWHO[0])/(wWHO[2]-wWHO[0])*100).toFixed(0)}%`;
+  const avgHPct=`${((hWHO[1]-hWHO[0])/(hWHO[2]-hWHO[0])*100).toFixed(0)}%`;
+  const babyWPct=wPct(gd.w);const babyHPct=hPct(gd.h);
+  const wColor=gd.w<wWHO[0]?'#FF4757':gd.w>wWHO[2]?'#FF9A3C':'#52B788';
+  const hColor=gd.h<hWHO[0]?'#FF4757':gd.h>hWHO[2]?'#FF9A3C':'#52B788';
+  const wStatus=gd.w<wWHO[0]?'Düşük (doktora danışın)':gd.w>wWHO[2]?'Yüksek (doktora danışın)':'Normal aralıkta ✅';
+  const hStatus=gd.h<hWHO[0]?'Düşük (doktora danışın)':gd.h>hWHO[2]?'Yüksek (doktora danışın)':'Normal aralıkta ✅';
+
+  // Mini chart for last 6 months
+  const hist=[];
+  for(let i=Math.max(0,mo-5);i<=mo;i++){
+    const g=BABY_GROWTH[i]; hist.push(`<div style="flex:1;text-align:center"><div style="height:${30+g.w*3}px;background:linear-gradient(0deg,#52B788,#B2DFDB);border-radius:4px 4px 0 0;margin-bottom:2px"></div><div style="font-size:.55rem;color:#888">${i}ay<br>${g.w}kg</div></div>`);
+  }
+
+  const h=`<div class="pop-ov" onclick="if(event.target===this)this.remove()">
+  <div class="pop-box">
+    <div class="pop-rainbow"></div>
+    <span class="pop-ico">📈</span>
+    <div class="pop-title">${S.babyName} Büyüme Grafiği</div>
+    <div class="pop-sub">${mo}. Ay · WHO Referans Değerleri ile Karşılaştırma</div>
+
+    <div style="display:flex;align-items:flex-end;gap:4px;background:#F8F8FF;border-radius:12px;padding:12px;margin-bottom:12px;height:80px">
+      ${hist.join('')}
+    </div>
+
+    <div class="pop-sec">
+      <h4>⚖️ Kilo — ${gd.w} kg</h4>
+      <div class="gchart-bar-wrap" style="margin-top:8px">
+        <span class="gchart-lbl">P3<br>${wWHO[0]}kg</span>
+        <div class="gchart-track">
+          <div class="gchart-range" style="left:0;width:100%"></div>
+          <div class="gchart-avg" style="left:${avgWPct}"></div>
+          <div class="gchart-dot" style="left:calc(${babyWPct} - 7px);background:${wColor}"></div>
+        </div>
+        <span class="gchart-lbl">P97<br>${wWHO[2]}kg</span>
+      </div>
+      <div style="font-size:.72rem;font-weight:700;color:${wColor};margin-top:4px">${wStatus} · WHO 50. persentil: ${wWHO[1]} kg</div>
+    </div>
+
+    <div class="pop-sec">
+      <h4>📏 Boy — ${gd.h} cm</h4>
+      <div class="gchart-bar-wrap" style="margin-top:8px">
+        <span class="gchart-lbl">P3<br>${hWHO[0]}cm</span>
+        <div class="gchart-track">
+          <div class="gchart-range" style="left:0;width:100%"></div>
+          <div class="gchart-avg" style="left:${avgHPct}"></div>
+          <div class="gchart-dot" style="left:calc(${babyHPct} - 7px);background:${hColor}"></div>
+        </div>
+        <span class="gchart-lbl">P97<br>${hWHO[2]}cm</span>
+      </div>
+      <div style="font-size:.72rem;font-weight:700;color:${hColor};margin-top:4px">${hStatus} · WHO 50. persentil: ${hWHO[1]} cm</div>
+    </div>
+
+    <div class="pop-tip"><div class="pop-tip-t">💡 Grafik Hakkında</div><p>Yeşil alan normal büyüme aralığını (P3–P97) gösterir. Çizgi WHO ortalamasıdır (P50). Önemli olan tek bir ölçüm değil, büyüme TRENDIDIR. Her kontrol doktora grafiği gösterin.</p></div>
+    <button class="pop-btn" onclick="this.closest('.pop-ov').remove()">✅ Anladım</button>
+  </div></div>`;
+  document.body.insertAdjacentHTML('beforeend',h);
+}
+
+// ══════════════════════════════════════════════════════
+// BREASTFEEDING GUIDE
+// ══════════════════════════════════════════════════════
+function showBreastfeedingGuide(){
+  const positions=[
+    {name:'🤱 Beşik Tutma',info:'En klasik pozisyon. Başı dirsek çukuruna, bedeni ön tarafa gelecek şekilde tutulur. Yeni anneler için kolay başlangıç.'},
+    {name:'✝️ Çapraz Beşik',info:'El, başın karşı tarafından tutulur (sağ meme → sol el). Tutunma sorunlarında daha iyi kontrol sağlar.'},
+    {name:'🏈 Top Tutma',info:'Bebek yan tutulur, ayakları annenin altında. C-section sonrası veya büyük göğüslerde idealdir.'},
+    {name:'🛌 Yan Yatış',info:'Hem anne hem bebek yan yatar. Gece emzirme için ideal. Annenin dinlenebileceği pozisyon.'},
+    {name:'↘️ Doğal Akış',info:'Anne geriye yaslanır, bebek göğse yüzüstü yatar. Güçlü süt akışında veya reflüde etkili.'},
+  ];
+  const posHtml=positions.map(p=>`<div style="background:#FFF0F5;border-radius:10px;padding:9px;margin-bottom:6px"><div style="font-weight:800;font-size:.75rem;color:#C2185B">${p.name}</div><div style="font-size:.71rem;color:#880E4F;margin-top:3px;line-height:1.4">${p.info}</div></div>`).join('');
+  const h=`<div class="pop-ov" onclick="if(event.target===this)this.remove()">
+  <div class="pop-box">
+    <div class="pop-rainbow"></div>
+    <span class="pop-ico">🤱</span>
+    <div class="pop-title">Emzirme Rehberi</div>
+    <div class="pop-sub" style="color:var(--pink);font-weight:700">💖 ${S.momName}, sen harikasın!</div>
+    <div class="pop-sec"><h4>📍 Emzirme Pozisyonları</h4>${posHtml}</div>
+    <div class="pop-sec" style="background:#FFF5F5">
+      <h4>🔴 Sorun Giderme</h4>
+      <ul style="padding-left:14px;font-size:.73rem;color:#555;line-height:1.7">
+        <li><strong>Nipple acısı:</strong> Tutunma kontrolleyin — ağzı geniş açmalı, areola büyük bölümünü kapsamalı</li>
+        <li><strong>Dolgunluk/engorgement:</strong> Sık sık emzirin, ılık kompres, sütü biraz boşaltın</li>
+        <li><strong>Mastit:</strong> Ateş + sertlik + kızarıklık → doktora gidin, emzirmeye devam edin</li>
+        <li><strong>Az süt hissi:</strong> Bebek ıslak bez + kilo alıyorsa yeterlidir. Daha fazla emzirmek üretimi artırır</li>
+      </ul>
+    </div>
+    <div class="pop-tip"><div class="pop-tip-t">💡 WHO Altın Kural</div><p>İlk 6 ay SADECE anne sütü. 6. aydan itibaren destekleyici katı gıda + anne sütü. Tercihen 2 yaşa kadar devam edin. ${S.momName}, her damlası için teşekkürler! 🌸</p></div>
+    <button class="pop-btn" onclick="this.closest('.pop-ov').remove()">💖 Teşekkürler!</button>
+  </div></div>`;
+  document.body.insertAdjacentHTML('beforeend',h);
+}
+
+// ══════════════════════════════════════════════════════
+// NUTRITION GUIDE (solid foods reminder)
+// ══════════════════════════════════════════════════════
+function showNutritionGuide(){
+  if(S.ageMonths<6){showPopupInfo({icon:'🥣',title:'Katı Gıda Henüz Yok!',sub:'6. aya kadar sadece anne sütü / mama',info:'WHO önerisine göre ilk 6 ay TÜM besin ihtiyacı anne sütü veya mama ile karşılanabilir. Erken katı gıda sindirim sistemine zarar verebilir.',tip:'6. ayda başlamak için sabırsızlanın! Katı gıda rehberini 6. ayda açabilirsiniz.',btnTxt:'Anladım'});return;}
+  showSolidFoodGuide();
+}
+
+// ══════════════════════════════════════════════════════
+// SLEEP TRAINING GUIDE
+// ══════════════════════════════════════════════════════
+function showSleepGuide(){
+  const mo=S.ageMonths;
+  const methods=[
+    {name:'😊 Nazik Yöntem (Önerilen)',age:'Her yaş',
+     desc:'Bebeği sakinleştirin, uyukluyor ama uyanıkken yatağa bırakın. Uyursa ödüllendirin. Çok sabır gerektiren ama kalıcı sonuç veren yöntem.',best:true},
+    {name:'🎵 Rutinle Uyutma',age:'0-6 ay',
+     desc:'Banyo → masaj → ninni → ışıkları kapat → emzir. Aynı sırayı her gece tekrarlayın. 2-3 haftada beyin bu sinyali tanır.'},
+    {name:'⏱️ Ferber Yöntemi',age:'4+ ay',
+     desc:'Bebeği uyku hazır bırakın, ağlarsa artan aralıklarla gidin (5dk → 10dk → 15dk). Kontrollü ağlatma. Bazı ailelere uygun olmayabilir.'},
+    {name:'🤗 No-Cry Çözümü',age:'Her yaş',
+     desc:'Kucakla, sakinleştir, yatağa bırak. Ağlarsa tekrar al. Uzun sürer ama bebek hiç ağlamaz. Sabır gerektiren yumuşak geçiş.'},
+  ];
+  const recAge=mo<4?'Henüz uyku eğitimi önerilmez (4. ay altında)':mo<6?'Rutinle uyutma en uygunudur':'Tüm yöntemler denenebilir';
+  const mHtml=methods.map(m=>`<div style="background:${m.best?'#F0FFF4':'#F8F8FF'};border-radius:10px;padding:9px;margin-bottom:6px;border:${m.best?'2px solid #B2DFDB':'1px solid #E0D7FF'}"><div style="display:flex;align-items:center;gap:6px;margin-bottom:3px"><span style="font-weight:800;font-size:.74rem;color:var(--text)">${m.name}</span><span style="font-size:.6rem;background:var(--soft);color:var(--purple);padding:1px 6px;border-radius:6px;font-weight:700">${m.age}</span>${m.best?'<span style="font-size:.6rem;background:#52B788;color:#fff;padding:1px 6px;border-radius:6px;font-weight:700">Önerilen</span>':''}</div><div style="font-size:.71rem;color:#555;line-height:1.4">${m.desc}</div></div>`).join('');
+  const h=`<div class="pop-ov" onclick="if(event.target===this)this.remove()">
+  <div class="pop-box">
+    <div class="pop-rainbow" style="background:linear-gradient(90deg,#48CAE4,#5B8DEE,#C77DFF)"></div>
+    <span class="pop-ico">😴</span>
+    <div class="pop-title">Bebek Uyku Rehberi</div>
+    <div class="pop-sub">${mo}. Ay · ${recAge}</div>
+    <div class="pop-sec">
+      <h4>🌙 Uyku Eğitimi Yöntemleri</h4>
+      ${mHtml}
+    </div>
+    <div class="pop-sec" style="background:#E3F2FD">
+      <h4>⏰ ${mo}. Ayda Uyku İhtiyacı</h4>
+      <p style="font-size:.75rem;font-weight:700;color:#1565C0">${SLEEP_HOURS[mo]||'11-14 saat'} (toplam)</p>
+      <ul style="padding-left:14px;font-size:.71rem;color:#555;line-height:1.7;margin-top:4px">
+        <li>Gece uyku sürekliliği 4. ayda gelişir</li>
+        <li>Gündüz uykuları 18. ayda birleşerek 1'e iner</li>
+        <li>Tutarlı uyku zamanı en önemli faktördür</li>
+      </ul>
+    </div>
+    <div class="pop-tip"><div class="pop-tip-t">💙 ${S.dadName} için</div><p>Uyku rutinini sen de üstlen! Baba yatıştırması bebek için farklı ama bir o kadar değerlidir. Annenin dinlenmesini sağla.</p></div>
+    <button class="pop-btn" style="background:linear-gradient(135deg,#48CAE4,#5B8DEE)" onclick="this.closest('.pop-ov').remove()">🌙 Güzel Uykular!</button>
+  </div></div>`;
+  document.body.insertAdjacentHTML('beforeend',h);
+}
+
+// ══════════════════════════════════════════════════════
+// DENTAL GUIDE
+// ══════════════════════════════════════════════════════
+function showDentalGuide(){
+  const h=`<div class="pop-ov" onclick="if(event.target===this)this.remove()">
+  <div class="pop-box">
+    <div class="pop-rainbow"></div>
+    <span class="pop-ico">🦷</span>
+    <div class="pop-title">Bebek Diş Bakımı</div>
+    <div class="pop-sub">İlk dişten itibaren diş sağlığı başlar!</div>
+    <div class="pop-sec">
+      <h4>📅 Diş Çıkma Sırası</h4>
+      <div style="font-size:.72rem;color:#555;line-height:1.8">
+        <div>🦷 <strong>4-7. ay:</strong> Alt ön dişler (2 adet)</div>
+        <div>🦷 <strong>8-12. ay:</strong> Üst ön dişler (4 adet)</div>
+        <div>🦷 <strong>9-13. ay:</strong> Yan kesici dişler</div>
+        <div>🦷 <strong>13-19. ay:</strong> İlk azı dişler</div>
+        <div>🦷 <strong>16-23. ay:</strong> Köpek dişleri</div>
+        <div>🦷 <strong>23-33. ay:</strong> İkinci azı dişler</div>
+      </div>
+    </div>
+    <div class="pop-sec">
+      <h4>🪥 Bakım Rehberi</h4>
+      <ul style="padding-left:14px;font-size:.72rem;color:#555;line-height:1.7">
+        <li>İlk diş çıkmadan: Islak gazlı bezle diş etlerini temizleyin</li>
+        <li>İlk dişle: Yumuşak bebek diş fırçası + pirinç tanesi büyüklüğünde florürlü macun</li>
+        <li>3 yaştan: Bezelye büyüklüğünde macun, çocuk fırçası</li>
+        <li>Biberon uyku bozukluğu: Suyu şeker veya meyveli sıvıyla doldurmayın</li>
+        <li>İlk diş = ilk diş hekimi ziyareti!</li>
+      </ul>
+    </div>
+    <div class="pop-tip"><div class="pop-tip-t">💡 Diş Çıkarma Ağrısı</div><p>Soğutulmuş diş kaşıyıcı, sert lastik oyuncaklar. Diş çıkarma jeli için pediatrist onayı alın. Diş çıkarma ateşe neden OLMAZ — ateş ayrı bir sorunun işaretidir!</p></div>
+    <button class="pop-btn" onclick="this.closest('.pop-ov').remove()">🦷 Anladım!</button>
+  </div></div>`;
+  document.body.insertAdjacentHTML('beforeend',h);
+}
+
+// ══════════════════════════════════════════════════════
+// DAILY ROUTINE GUIDE
+// ══════════════════════════════════════════════════════
+function showDailyRoutine(){
+  const mo=S.ageMonths;
+  let routine=[];
+  if(mo<3) routine=[
+    {t:'07:00','a':'Günaydın & ilk emzirme'},
+    {t:'08:30','a':'Uyku (45-90 dk)'},
+    {t:'10:00','a':'Emzirme + tummy time (5-10 dk)'},
+    {t:'11:30','a':'Uyku'},
+    {t:'13:00','a':'Emzirme + masaj'},
+    {t:'14:30','a':'Uyku'},
+    {t:'16:00','a':'Emzirme + duyusal oyun'},
+    {t:'17:30','a':'Uyku (kısa)'},
+    {t:'19:00','a':'Banyo (gün aşırı) + emzirme'},
+    {t:'20:00','a':'Gece uykusu (gece 2-3 kez uyanma normal)'},
+  ];
+  else if(mo<6) routine=[
+    {t:'07:00','a':'Uyanış & emzirme'},
+    {t:'08:30','a':'Uyku (1. şekerleme — 1.5 saat)'},
+    {t:'10:00','a':'Emzirme + jimnastik / oyun zamanı'},
+    {t:'12:00','a':'Uyku (2. şekerleme — 1.5 saat)'},
+    {t:'13:30','a':'Emzirme + sosyal etkileşim'},
+    {t:'15:30','a':'Uyku (3. şekerleme — 45 dk)'},
+    {t:'16:30','a':'Emzirme + kitap okuma'},
+    {t:'18:30','a':'Banyo rutini'},
+    {t:'19:00','a':'Son emzirme + ninni'},
+    {t:'19:30','a':'Gece uykusu'},
+  ];
+  else if(mo<12) routine=[
+    {t:'07:00','a':'Uyanış & emzirme/mama'},
+    {t:'09:00','a':'Sabah şekerlemesi (1-1.5 saat)'},
+    {t:'11:00','a':'Katı gıda + emzirme'},
+    {t:'12:30','a':'Öğlen şekerlemesi (1-2 saat)'},
+    {t:'14:30','a':'Emzirme + aktif oyun'},
+    {t:'16:00','a':'Katı gıda atıştırmalık'},
+    {t:'17:30','a':'Kısa şekerleme (opsiyonel)'},
+    {t:'18:30','a':'Akşam yemeği + banyo'},
+    {t:'19:30','a':'Emzirme + kitap'},
+    {t:'20:00','a':'Gece uykusu'},
+  ];
+  else routine=[
+    {t:'07:30','a':'Kahvaltı (toddler tabağı)'},
+    {t:'10:00','a':'Serbest oyun + dışarı çıkış'},
+    {t:'12:00','a':'Öğle yemeği'},
+    {t:'13:00','a':'Öğle şekerlemesi (1-2 saat)'},
+    {t:'15:00','a':'Atıştırmalık + sanat/oyun'},
+    {t:'17:30','a':'Akşam yemeği'},
+    {t:'19:00','a':'Banyo rutini'},
+    {t:'19:30','a':'Kitap okuma'},
+    {t:'20:00','a':'Uyku'},
+  ];
+  const rHtml=routine.map(r=>`<div style="display:flex;gap:10px;align-items:center;padding:5px 0;border-bottom:1px solid #F0E6FF"><span style="font-size:.65rem;font-weight:800;color:var(--purple);min-width:38px">${r.t}</span><span style="font-size:.72rem;color:#555">${r.a}</span></div>`).join('');
+  const h=`<div class="pop-ov" onclick="if(event.target===this)this.remove()">
+  <div class="pop-box">
+    <div class="pop-rainbow"></div>
+    <span class="pop-ico">🗓️</span>
+    <div class="pop-title">Günlük Rutin Önerisi</div>
+    <div class="pop-sub">${mo}. Ay için yaklaşık program (esneklikle uygulayın)</div>
+    <div class="pop-sec">${rHtml}</div>
+    <div class="pop-tip"><div class="pop-tip-t">💡 Rutin Hakkında</div><p>Bu örnek bir rehberdir — her bebek farklıdır! Rutini bebeğinizin uyku işaretlerine göre ayarlayın. Tutarlılık önemlidir, dakika mükemmeliyeti değil.</p></div>
+    <button class="pop-btn" onclick="this.closest('.pop-ov').remove()">🌟 Harika Rehber!</button>
+  </div></div>`;
+  document.body.insertAdjacentHTML('beforeend',h);
+}
+
+// ══════════════════════════════════════════════════════
+// POSTPARTUM GUIDE
+// ══════════════════════════════════════════════════════
+function showPostpartumGuide(){
+  const signs=[
+    {s:'😢','t':'2 haftadan uzun süren üzüntü veya boşluk hissi'},
+    {s:'😴','t':'Aşırı yorgunluk — uyku fırsatına rağmen uyuyamamak'},
+    {s:'😤','t':'Bebeğe karşı bağlanma güçlüğü veya ilgisizlik'},
+    {s:'😰','t':'Aşırı endişe, panik atakları'},
+    {s:'💭','t':'Kendine veya bebeğe zarar verme düşünceleri (ACİL!)'},
+    {s:'🍽️','t':'Yemek yiyememek veya aşırı yemek'},
+    {s:'👥','t':'Sosyal izolasyon isteği, kimseyle görüşmemek'},
+    {s:'😡','t':'Aşırı sinirlilik veya öfke patlamaları'},
+  ];
+  const sHtml=signs.map(s=>`<div class="lohusa-sign"><span>${s.s}</span><span>${s.t}</span></div>`).join('');
+  const h=`<div class="pop-ov" onclick="if(event.target===this)this.remove()">
+  <div class="pop-box">
+    <div class="pop-rainbow" style="background:linear-gradient(90deg,#E91E8C,#C77DFF,#FF6B9D)"></div>
+    <span class="pop-ico">💜</span>
+    <div class="pop-title">Doğum Sonrası Anne Sağlığı</div>
+    <div class="pop-sub">Lohusalık ve Postpartum Depresyon Rehberi</div>
+
+    <div class="pop-sec" style="background:#FFF0F5">
+      <h4>🌸 Normal mi, Depresyon mu?</h4>
+      <p style="font-size:.72rem;color:#555;line-height:1.5">Doğumdan sonra <strong>2 hafta</strong> içinde ağlama, duygu dalgalanması, yorgunluk normaldir — buna "Baby Blues" denir ve kendi kendine geçer. 2 haftadan uzun sürerse <strong>yardım isteyin</strong>.</p>
+    </div>
+
+    <div class="pop-sec" style="background:#FFF5F5">
+      <h4 style="color:#C62828">🔴 Dikkat Edilmesi Gereken Belirtiler</h4>
+      <div>${sHtml}</div>
+    </div>
+
+    <div class="pop-sec" style="background:#E8F5E9">
+      <h4 style="color:#2E7D32">✅ ${S.dadName} için — Ne Yapmalı?</h4>
+      <ul style="padding-left:14px;font-size:.72rem;color:#555;line-height:1.7">
+        <li>Dinlemek — tavsiye vermeden sadece dinlemek</li>
+        <li>"Bebeği iyi yönetemiyorsun" gibi yargılamaktan kaçın</li>
+        <li>Ev işlerini paylaş — bunu sormadan yap</li>
+        <li>Anne uykusu için gece nöbetine katıl</li>
+        <li>Doktor randevusuna birlikte git</li>
+        <li>Belirtiler görürsen hemen doktora yönlendir</li>
+      </ul>
+    </div>
+
+    <div style="background:#FCE4EC;border-radius:12px;padding:10px;margin-bottom:14px;text-align:center">
+      <div style="font-weight:800;color:#C2185B;margin-bottom:4px">🆘 Yardım Hatları (Türkiye)</div>
+      <div style="font-size:.72rem;color:#880E4F;line-height:1.6">
+        Alo 182 — Psikiyatri Yardım Hattı<br>
+        ALO 171 — Aile Danışma Merkezi<br>
+        Acil durum: 112
+      </div>
+    </div>
+    <button class="pop-btn" onclick="this.closest('.pop-ov').remove()" style="background:linear-gradient(135deg,#E91E8C,#C77DFF)">💜 Anladım, Destek Olacağım</button>
+  </div></div>`;
+  document.body.insertAdjacentHTML('beforeend',h);
 }
 
 // ══════════════════════════════════════════════════════
