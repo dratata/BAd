@@ -466,6 +466,8 @@ body{font-family:'Nunito',sans-serif;background:linear-gradient(135deg,#FFF5F8,#
       <button onclick="showBabyDiary()" style="background:rgba(255,107,157,.3);color:#fff;border:none;padding:5px 11px;border-radius:20px;font-size:.72rem;font-weight:700;cursor:pointer;font-family:'Nunito',sans-serif" title="Bebek Günlüğü">📖 Günlük</button>
       <button onclick="showParentingQuiz()" style="background:rgba(255,209,102,.35);color:#fff;border:none;padding:5px 11px;border-radius:20px;font-size:.72rem;font-weight:700;cursor:pointer;font-family:'Nunito',sans-serif" title="Günlük Test">🎓 Test</button>
       <button onclick="showBirthStory()" style="background:rgba(255,154,60,.35);color:#fff;border:none;padding:5px 11px;border-radius:20px;font-size:.72rem;font-weight:700;cursor:pointer;font-family:'Nunito',sans-serif" title="Doğum Hikayesi">👶 Hikaye</button>
+      <button onclick="showFirstWords()" style="background:rgba(76,175,80,.35);color:#fff;border:none;padding:5px 11px;border-radius:20px;font-size:.72rem;font-weight:700;cursor:pointer;font-family:'Nunito',sans-serif" title="İlk Kelimeler">🗣️ Kelimeler</button>
+      <button onclick="showTeethMap()" style="background:rgba(33,150,243,.35);color:#fff;border:none;padding:5px 11px;border-radius:20px;font-size:.72rem;font-weight:700;cursor:pointer;font-family:'Nunito',sans-serif" title="Dişlenme Haritası">🦷 Dişler</button>
       <span id="seasonBadge" title="Mevsim" style="font-size:1.1rem;cursor:default">🌸</span>
     </div>
   </header>
@@ -688,6 +690,7 @@ body{font-family:'Nunito',sans-serif;background:linear-gradient(135deg,#FFF5F8,#
           <button class="info-btn" onclick="showPottyGuide()">🚽 Tuvalet</button>
           <button class="info-btn" onclick="showBabyPoems()">📜 Şiirler</button>
           <button class="info-btn" onclick="showGrowthJournal()">📏 Büyüme</button>
+          <button class="info-btn" onclick="showCryDecoder()">😭 Ağlama Kodu</button>
         </div>
         <div class="act-grid">
           <button class="abt care" onclick="doAct('uyut')">
@@ -1168,6 +1171,8 @@ const CHALLENGES = [
   {id:'disfircasi',icon:'🪥',name:'Diş Fırçası Savaşı!',desc:'Diş fırçalamak istemiyor — ağlıyor ve direniyor!',urgent:false,action:'Oyunla Fırçala',resolve:{health:15,happy:8,dp:14},penaltyMsg:'Diş fırçalanamadı!',info:'Diş fırçalamaya direnç çok yaygındır! İlk dişten itibaren diş sağlığı alışkanlığı kazandırmak önemlidir. Ağız sağlığı genel sağlıkla doğrudan ilişkilidir.',tip:'Fırçayı oyuncak gibi tanıtın. Siz de yanında fırçalayın — taklit büyük motivasyon sağlar. "Diş fırçası şarkısı" söyleyin ya da 2 dakikalık müzik koyun!'},
   {id:'panimod',icon:'🌪️',name:'Kaos Anı!',desc:'Her şey aynı anda oldu — bez, ağlama, açlık!',urgent:true,action:'Derin Nefes & Önceliklendır',resolve:{happy:20,hunger:15,diaper:30,dp:22},penaltyMsg:'Panik anı iyi geçmedi!',info:'Her ebeveyn bu anı yaşar! Birden fazla şey aynı anda olduğunda önceliklendirme hayat kurtarır: 1) Güvenlik, 2) Ağlama, 3) Bez, 4) Beslenme.',tip:'Kaos anlarında derin nefes alın. Bebek sizin enerjinizi hisseder. Sakin kalmak hem sizi hem bebeği yatıştırır. Bu geçecek!'},
   {id:'ilkyemek',icon:'🥦',name:'Sebze Reddi!',desc:'Bebek sebzeyi reddediyor — her şeyi tükürdü!',urgent:false,action:'Sabırla Tekrar Dene',resolve:{happy:10,health:8,dp:16},penaltyMsg:'Bebek aç kaldı!',info:'Bir bebeğin yeni bir gıdayı kabul etmesi 10-15 maruziyeti gerektirebilir. İlk reddetme normal ve beklenen bir davranıştır — pes etmeyin!',tip:'Yüz ifadenizi olumlu tutun, siz de bebeğin yanında aynı sebzeyi yiyin. Oyunlaştırın: "uçak geliyorr!" Israr etmeden, baskı yapmadan tekrar sunun.'},
+  {id:'yabanci',icon:'😰',name:'Yabancı Kaygısı!',desc:'Tanımadık biri geldi — bebek ağlamaya başladı!',urgent:false,action:'Güvenli Ortam Yarat',resolve:{happy:18,dp:20},penaltyMsg:'Yabancı kaygısı kötü geçti!',info:'Yabancı kaygısı 6-8. aylarda başlar ve 2 yaşa kadar sürebilir. Bu, sağlıklı bir ebeveyn-bebek bağının göstergesidir. Bebek, bakımveren ile yabancı arasındaki farkı öğreniyor.',tip:'Yeni insanları tanıştırırken sabırlı olun. Önce siz tanıştırın, ebeveyn yanındayken yaklaşmalarına izin verin. Asla zorlamayın — bebek kendi hızında sosyalleşir.'},
+  {id:'buyumeatlamasi',icon:'📈',name:'Büyüme Sıçraması!',desc:'Bebek aniden çok acıktı — büyüme sıçraması başladı!',urgent:false,action:'Daha Sık Besle',resolve:{hunger:40,health:8,dp:18},penaltyMsg:'Büyüme sıçraması desteklenmedi!',info:'Büyüme sıçramaları genellikle 3, 6, 9. aylarda olur. Bu dönemde bebek daha sık emer, daha huysuz olur ve daha fazla uyur. Anne sütü talebi artınca süt de artar — bu normal!',tip:'Büyüme sıçraması sırasında isteğe bağlı besleyin, daha sık emzirin. Genellikle 2-3 günde geçer. Formüle geçmeye gerek yok — talep artınca süt artar!'},
 ];
 
 // ══════════════════════════════════════════════════════
@@ -1201,6 +1206,7 @@ function saveGame(){
     comboCount:S.comboCount||0, lastActTime:S.lastActTime||0, maxCombo:S.maxCombo||0,
     dailyStreak:S.dailyStreak||0, lastStreakDay:S.lastStreakDay||0, maxStreak:S.maxStreak||0,
     birthStory:S.birthStory||null,
+    firstWords:S.firstWords||[], teethDone:[...S.teethDone||new Set()], cryDecoderUsed:S.cryDecoderUsed||false, sensoryRead:S.sensoryRead||false,
     savedAt:Date.now(),
   };
   try { localStorage.setItem(SAVE_KEY, JSON.stringify(data)); } catch(e){}
@@ -1251,6 +1257,10 @@ function applySaveData(d){
   S.lastStreakDay = d.lastStreakDay||0;
   S.maxStreak = d.maxStreak||0;
   S.birthStory = d.birthStory||null;
+  S.firstWords = d.firstWords||[];
+  S.teethDone = new Set(d.teethDone||[]);
+  S.cryDecoderUsed = d.cryDecoderUsed||false;
+  S.sensoryRead = d.sensoryRead||false;
   S.started = true;
 }
 
@@ -1372,6 +1382,10 @@ const ACHIEVEMENTS = [
   {id:'streak14',    icon:'💎', name:'Adanmış Ebeveyn',    desc:'14 gün üst üste günlük görev',      check:s=>(s.dailyStreak||0)>=14},
   {id:'combo5',      icon:'🔥', name:'Aktivite Koşucusu',  desc:'5\'li combo yaptın!',               check:s=>(s.maxCombo||0)>=5},
   {id:'birthstory',  icon:'📖', name:'Doğum Anımız',       desc:'Doğum hikayesi kaydedildi',         check:s=>!!(s.birthStory)},
+  {id:'firstword',  icon:'🗣️', name:'İlk Kelime!',        desc:'Bebeğin ilk kelimesi kaydedildi',     check:s=>(s.firstWords&&s.firstWords.length>=1)},
+  {id:'words5',     icon:'💬', name:'Konuşkan Bebek',      desc:'5 ilk kelime kaydedildi!',             check:s=>(s.firstWords&&s.firstWords.length>=5)},
+  {id:'teeth5',     icon:'🦷', name:'Dişli Gülümseme',     desc:'5 diş çıktı!',                        check:s=>(s.teethDone&&s.teethDone.size>=5)},
+  {id:'sensory',    icon:'🌈', name:'Duyusal Keşif',       desc:'Duyusal Gelişim Rehberi okundu',       check:s=>(s.sensoryRead||false)},
 ];
 
 const TIPS = [
@@ -1507,6 +1521,10 @@ const S = {
   lastStreakDay:0,
   maxStreak:0,
   birthStory:null,
+  firstWords:[],
+  teethDone:new Set(),
+  cryDecoderUsed:false,
+  sensoryRead:false,
 };
 
 // ══════════════════════════════════════════════════════
@@ -3146,6 +3164,10 @@ function showAllGuides(){
     {ico:'🏃',name:'Motor Gelişim',fn:'showMotorGuide()'},
     {ico:'🛡️',name:'Bağışıklık Rehberi',fn:'showImmunityGuide()'},
     {ico:'🤝',name:'Sosyal Gelişim',fn:'showSocialGuide()'},
+    {ico:'😭',name:'Ağlama Kodu',fn:'showCryDecoder()'},
+    {ico:'🗣️',name:'İlk Kelimeler',fn:'showFirstWords()'},
+    {ico:'🦷',name:'Dişlenme Haritası',fn:'showTeethMap()'},
+    {ico:'🌈',name:'Duyusal Gelişim',fn:'showSensoryGuide()'},
   ];
   const chips=guides.map(g=>`<button class="guide-chip" onclick="${g.fn};this.closest('.pop-ov').remove()">${g.ico}<br>${g.name}</button>`).join('');
   const h=`<div class="pop-ov" onclick="if(event.target===this)this.remove()">
@@ -3463,6 +3485,230 @@ function showSocialGuide(){
     <button class="pop-btn" style="background:linear-gradient(135deg,#FF9A3C,#FFD166)" onclick="this.closest('.pop-ov').remove()">🤝 Sosyal Gelişimi Destekle!</button>
   </div></div>`;
   document.body.insertAdjacentHTML('beforeend',h);
+}
+
+// ══════════════════════════════════════════════════════
+// CRY DECODER
+// ══════════════════════════════════════════════════════
+function showCryDecoder(){
+  S.cryDecoderUsed=true;
+  const cries=[
+    {ico:'🍼',name:'Açlık',signs:'Ritmik, tekrarlayan, yükselen ton. Genellikle 2-3 saatte bir. Öncesinde dudak şapırdatma, parmak emme.',action:'Hemen besle. Emzirme veya biberon.'},
+    {ico:'💩',name:'Kirli Bez',signs:'Ani, şikayetçi ağlama. Bacakları çeker. Yüzünü buruşturur.',action:'Bez kontrol et. Değiştir ve temizle.'},
+    {ico:'😴',name:'Uyku',signs:'Yavaşlayan, monoton ağlama. Kulakları çekme, gözleri ovuşturma. Giderek azalan.',action:'Sakin ortam, sallama, ninni. Uyutmaya çalış.'},
+    {ico:'😖',name:'Gaz/Karın Ağrısı',signs:'Güçlü, keskin ağlama. Bacaklarını karnına çeker. Yüzü kızarır. Mide gergin.',action:'Dik tut, sırtını hafifçe vur. Bisiklet hareketi yap. Karın masajı (saat yönü).'},
+    {ico:'🌡️',name:'Hasta/Ağrı',signs:'Yüksek perdeli, sıradan olmayan ses. Duraksız, sakinleşmez. Rengi değişir.',action:'Ateş ölç. Pediatristi ara. Normal olmayan herhangi bir belirtide doktora git.'},
+    {ico:'🤗',name:'Dikkat/Kucak',signs:'Dalgalı, aralıklı ağlama. Kaldırınca durur, yere koyunca devam eder.',action:'Kucağa al, göz teması kur. Baby-wearing ile özgür el.'},
+    {ico:'🌪️',name:'Uyarı Aşımı',signs:'Baş çevirme, gözleri yumma, elleri yüzüne götürme öncesinde. Sonra yüksek ağlama.',action:'Sakin, loş, sessiz ortama al. Uyarıcıları azalt. Sıkıca sar.'},
+  ];
+  const cards=cries.map((c,i)=>`
+    <div style="background:#FFF8F0;border-radius:12px;padding:10px;margin-bottom:6px;border-left:4px solid #FF9A3C">
+      <div style="font-weight:800;font-size:.8rem;color:#FF6B35;margin-bottom:3px">${c.ico} ${c.name}</div>
+      <div style="font-size:.67rem;color:#555;margin-bottom:4px"><span style="font-weight:700;color:#888">İşaretler:</span> ${c.signs}</div>
+      <div style="font-size:.67rem;background:#FFF3E0;border-radius:8px;padding:5px 7px;color:#E65100"><span style="font-weight:700">✅ Ne yapmalı:</span> ${c.action}</div>
+    </div>`).join('');
+  const h=`<div class="pop-ov" onclick="if(event.target===this)this.remove()">
+  <div class="pop-box">
+    <div class="pop-rainbow" style="background:linear-gradient(90deg,#FFE0B2,#FFCC80)"></div>
+    <span class="pop-ico">😭</span>
+    <div class="pop-title">Ağlama Kodu Çözücü</div>
+    <div class="pop-sub">7 farklı ağlama türünü tanı ve doğru yanıt ver</div>
+    <div style="max-height:380px;overflow-y:auto;margin:8px 0">${cards}</div>
+    <div class="pop-tip"><div class="pop-tip-t">💡 Altın Kural</div><p>Ağlamayı çözmekte zorlandığınızda: A-C-D-E yöntemi. <strong>A</strong>çlık → <strong>C</strong>irkin bez → <strong>D</strong>ikkat → <strong>E</strong>ziyyet (ağrı). Bu sırayla kontrol et!</p></div>
+    <button class="pop-btn" style="background:linear-gradient(135deg,#FF9A3C,#FFD166)" onclick="this.closest('.pop-ov').remove()">😊 Anladım!</button>
+  </div></div>`;
+  document.body.insertAdjacentHTML('beforeend',h);
+  checkAchievements();
+}
+
+// ══════════════════════════════════════════════════════
+// FIRST WORDS TRACKER
+// ══════════════════════════════════════════════════════
+function showFirstWords(){
+  const words=S.firstWords||[];
+  const list=words.length?words.map((w,i)=>`
+    <div style="display:flex;align-items:center;gap:8px;background:#F0FFF4;border-radius:10px;padding:7px 10px;margin-bottom:5px">
+      <span style="font-size:1.1rem">🗣️</span>
+      <div style="flex:1">
+        <div style="font-weight:800;font-size:.8rem;color:var(--text)">"${w.word}"</div>
+        <div style="font-size:.65rem;color:#888">${w.month}. ay · ${w.context||''}</div>
+      </div>
+    </div>`).join('')
+    : '<div style="text-align:center;color:#aaa;font-size:.75rem;padding:16px">Henüz kelime kaydedilmedi. İlk kelimeyi kaydetmeye hazır mısın? 🎉</div>';
+  const h=`<div class="pop-ov" onclick="if(event.target===this)this.remove()">
+  <div class="pop-box">
+    <div class="pop-rainbow" style="background:linear-gradient(90deg,#E8F5E9,#C8E6C9)"></div>
+    <span class="pop-ico">🗣️</span>
+    <div class="pop-title">İlk Kelimeler</div>
+    <div class="pop-sub">${S.babyName}'in dil yolculuğunu kaydet 💬</div>
+    <div id="firstWordsList" style="max-height:200px;overflow-y:auto;margin:8px 0">${list}</div>
+    <div style="display:flex;flex-direction:column;gap:6px;margin:8px 0">
+      <input id="newWordInput" placeholder='Kelimeyi yaz (ör: "mama", "baba", "su")' style="padding:9px;border:2px solid #A5D6A7;border-radius:10px;font-family:'Nunito',sans-serif;font-size:.8rem;outline:none">
+      <input id="newWordContext" placeholder="Bağlam (ör: mutfakta, oynarken)" style="padding:9px;border:2px solid #A5D6A7;border-radius:10px;font-family:'Nunito',sans-serif;font-size:.8rem;outline:none">
+    </div>
+    <button onclick="saveFirstWord()" style="width:100%;padding:11px;background:linear-gradient(135deg,#43A047,#81C784);color:#fff;border:none;border-radius:13px;font-family:'Fredoka One',cursive;font-size:.95rem;cursor:pointer">🗣️ Kelimeyi Kaydet</button>
+    <div class="pop-tip"><div class="pop-tip-t">🧠 Ne zaman başlar?</div><p>İlk anlamlı kelimeler genellikle 10-14. aylarda gelir. 12 ayda 1-2 kelime, 18 ayda 10-20 kelime normaldir. Daha erken de gelebilir — her bebek farklı!</p></div>
+    <button class="pop-btn" style="background:#eee;color:#555;margin-top:6px" onclick="this.closest('.pop-ov').remove()">Kapat</button>
+  </div></div>`;
+  document.body.insertAdjacentHTML('beforeend',h);
+}
+
+function saveFirstWord(){
+  const word=document.getElementById('newWordInput').value.trim();
+  if(!word){showToast('Lütfen bir kelime girin! 🗣️'); return;}
+  const context=document.getElementById('newWordContext').value.trim();
+  S.firstWords=S.firstWords||[];
+  S.firstWords.push({word,month:S.ageMonths,context});
+  S.dp+=60;
+  spawnParticles(['🗣️','⭐','💬'],5);
+  playSound('milestone');
+  addLog(`🗣️ İlk kelime kaydedildi: "${word}" — ${S.ageMonths}. ayda!`,'ms');
+  showToast(`🗣️ "${word}" kaydedildi! +60 GP`);
+  document.querySelector('.pop-ov').remove();
+  checkAchievements();
+  showFirstWords();
+}
+
+// ══════════════════════════════════════════════════════
+// TEETHING MAP
+// ══════════════════════════════════════════════════════
+function showTeethMap(){
+  const teeth=[
+    {id:'ull',name:'Sol Üst Merkez',abbr:'UL',typical:'6-10 ay',x:42,y:15},
+    {id:'ulr',name:'Sağ Üst Merkez',abbr:'UR',typical:'6-10 ay',x:58,y:15},
+    {id:'ul2l',name:'Sol Üst Yan',abbr:'UL2',typical:'9-13 ay',x:32,y:20},
+    {id:'ul2r',name:'Sağ Üst Yan',abbr:'UR2',typical:'9-13 ay',x:68,y:20},
+    {id:'ulkl',name:'Sol Üst Köpek',abbr:'UCL',typical:'16-22 ay',x:22,y:27},
+    {id:'ulkr',name:'Sağ Üst Köpek',abbr:'UCR',typical:'16-22 ay',x:78,y:27},
+    {id:'ulml',name:'Sol Üst 1. Azı',abbr:'UM1L',typical:'13-19 ay',x:13,y:35},
+    {id:'ulmr',name:'Sağ Üst 1. Azı',abbr:'UM1R',typical:'13-19 ay',x:87,y:35},
+    {id:'ulm2l',name:'Sol Üst 2. Azı',abbr:'UM2L',typical:'25-33 ay',x:7,y:44},
+    {id:'ulm2r',name:'Sağ Üst 2. Azı',abbr:'UM2R',typical:'25-33 ay',x:93,y:44},
+    {id:'dll',name:'Sol Alt Merkez',abbr:'DL',typical:'6-10 ay',x:42,y:85},
+    {id:'dlr',name:'Sağ Alt Merkez',abbr:'DR',typical:'6-10 ay',x:58,y:85},
+    {id:'dl2l',name:'Sol Alt Yan',abbr:'DL2',typical:'10-16 ay',x:32,y:80},
+    {id:'dl2r',name:'Sağ Alt Yan',abbr:'DR2',typical:'10-16 ay',x:68,y:80},
+    {id:'dlkl',name:'Sol Alt Köpek',abbr:'DCL',typical:'17-23 ay',x:22,y:73},
+    {id:'dlkr',name:'Sağ Alt Köpek',abbr:'DCR',typical:'17-23 ay',x:78,y:73},
+    {id:'dlml',name:'Sol Alt 1. Azı',abbr:'DM1L',typical:'14-18 ay',x:13,y:65},
+    {id:'dlmr',name:'Sağ Alt 1. Azı',abbr:'DM1R',typical:'14-18 ay',x:87,y:65},
+    {id:'dlm2l',name:'Sol Alt 2. Azı',abbr:'DM2L',typical:'23-31 ay',x:7,y:56},
+    {id:'dlm2r',name:'Sağ Alt 2. Azı',abbr:'DM2R',typical:'23-31 ay',x:93,y:56},
+  ];
+  const done=S.teethDone||new Set();
+  const dots=teeth.map(t=>{
+    const isDone=done.has(t.id);
+    const color=isDone?'#4CAF50':'#E0E0E0';
+    const border=isDone?'#2E7D32':'#9E9E9E';
+    return `<div onclick="toggleTooth('${t.id}')" title="${t.name} (${t.typical})" style="position:absolute;left:${t.x}%;top:${t.y}%;transform:translate(-50%,-50%);width:26px;height:26px;border-radius:50%;background:${color};border:2.5px solid ${border};cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:.55rem;font-weight:700;color:${isDone?'#fff':'#666'};transition:all .2s" id="tooth-${t.id}">${isDone?'✓':''}</div>`;
+  }).join('');
+  const count=done.size;
+  const h=`<div class="pop-ov" onclick="if(event.target===this)this.remove()">
+  <div class="pop-box">
+    <div class="pop-rainbow" style="background:linear-gradient(90deg,#E3F2FD,#BBDEFB)"></div>
+    <span class="pop-ico">🦷</span>
+    <div class="pop-title">Dişlenme Haritası</div>
+    <div class="pop-sub">${count}/20 diş çıktı — dişe tıkla işaretle!</div>
+    <div style="position:relative;width:100%;padding-bottom:60%;background:linear-gradient(180deg,#FFF8E1 0%,#FFF8E1 50%,#E8F5E9 50%,#E8F5E9 100%);border-radius:14px;margin:10px 0;border:2px solid #E0E0E0">
+      ${dots}
+      <div style="position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);font-size:1.8rem;pointer-events:none">😁</div>
+    </div>
+    <div style="display:flex;gap:10px;justify-content:center;margin-bottom:8px">
+      <span style="font-size:.68rem;color:#4CAF50">● Çıktı</span>
+      <span style="font-size:.68rem;color:#9E9E9E">● Henüz çıkmadı</span>
+    </div>
+    <div class="pop-tip"><div class="pop-tip-t">🦷 İlk diş ne zaman çıkar?</div><p>İlk dişler genellikle 6-10. ayda alt ön dişlerle başlar. Bazı bebekler 3. ayda, bazıları 12. ayda çıkarır — geniş bir normal aralık var. 13. aya kadar hiç diş çıkmadıysa diş hekimine danışın.</p></div>
+    <button class="pop-btn" style="background:linear-gradient(135deg,#1976D2,#42A5F5)" onclick="this.closest('.pop-ov').remove()">🦷 Harika!</button>
+  </div></div>`;
+  document.body.insertAdjacentHTML('beforeend',h);
+}
+
+function toggleTooth(id){
+  S.teethDone=S.teethDone||new Set();
+  if(S.teethDone.has(id)){
+    S.teethDone.delete(id);
+  } else {
+    S.teethDone.add(id);
+    S.dp+=15;
+    spawnParticles(['🦷','✨'],3);
+    showToast('🦷 Yeni diş! +15 GP');
+  }
+  checkAchievements();
+  const el=document.getElementById('tooth-'+id);
+  if(el){
+    const isDone=S.teethDone.has(id);
+    el.style.background=isDone?'#4CAF50':'#E0E0E0';
+    el.style.border=`2.5px solid ${isDone?'#2E7D32':'#9E9E9E'}`;
+    el.style.color=isDone?'#fff':'#666';
+    el.textContent=isDone?'✓':'';
+  }
+  const sub=document.querySelector('.pop-sub');
+  if(sub) sub.textContent=`${S.teethDone.size}/20 diş çıktı — dişe tıkla işaretle!`;
+}
+
+// ══════════════════════════════════════════════════════
+// SENSORY DEVELOPMENT GUIDE
+// ══════════════════════════════════════════════════════
+function showSensoryGuide(){
+  S.sensoryRead=true;
+  const senses=[
+    {ico:'👁️',name:'Görme',color:'#E3F2FD',items:[
+      '0-1 ay: 20-30 cm mesafede net görür (yüz mesafesi)',
+      '1-3 ay: Kontrast renklere ilgi (siyah-beyaz)',
+      '3-6 ay: Renkleri ayırt eder, hareketli nesneleri takip eder',
+      '6-12 ay: Derinlik algısı gelişir (renkli oyuncaklar çekici)',
+      '12-24 ay: Küçük nesneleri fark eder, resimlere ilgi gösterir',
+    ]},
+    {ico:'👂',name:'İşitme',color:'#F3E5F5',items:[
+      '0-1 ay: Doğumdan itibaren işitiyor — sesinizi tanıyor!',
+      '1-3 ay: Sesin yönüne döner, tanıdık sese sakinleşir',
+      '3-6 ay: Müziğe tepki verir, adına döner',
+      '6-12 ay: Farklı ses tonlarını anlar, "hayır" duyduğunda durur',
+      '12-24 ay: Basit komutları anlar, 200+ kelime duyar ve işler',
+    ]},
+    {ico:'🤲',name:'Dokunma',color:'#E8F5E9',items:[
+      '0-3 ay: Derideki basınç ve sıcaklığa duyarlı, kucak dinginleştirir',
+      '3-6 ay: Farklı dokuları keşfeder, her şeyi ağza götürür',
+      '6-12 ay: Parmak uçlarıyla ince dokunma (pincer grasp gelişiyor)',
+      '12-24 ay: Çamur, kum, su — duyusal oyun beyin geliştirir',
+    ]},
+    {ico:'👃',name:'Koku',color:'#FFF8E1',items:[
+      'Yenidoğan annesinin sütünü ve kokusunu tanır',
+      '2. haftada anneyi ten kokusundan ayırt eder',
+      'Koku-duygusal bellek çok güçlü — pozitif bağlantılar kurar',
+      'Keskin kokuları reddeder (koruyucu refleks)',
+    ]},
+    {ico:'👅',name:'Tat',color:'#FCE4EC',items:[
+      'Yenidoğan tatlıyı (süt) tercih eder, acıyı reddeder',
+      '4-6 ay: Yeni tatları denemeye hazır — çeşitliliğe açık dönem',
+      '6-12 ay: Tat hafızası güçlü — bu dönemde çeşitli tat sunun',
+      '12-24 ay: "Seçici yeme" başlayabilir — normal, ısrar etmeyin',
+    ]},
+    {ico:'⚖️',name:'Denge & Hareket',color:'#E0F2F1',items:[
+      'Vestibüler sistem (denge) doğumdan aktif',
+      'Sallama ve taşıma sinir sistemini düzenler',
+      '3-6 ay: Tummy time denge sistemini güçlendirir',
+      '6-12 ay: Oturma → denge yeniden kalibre edilir',
+      '12-24 ay: Yürüme ve koşma vestibüler sistemi olgunlaştırır',
+    ]},
+  ];
+  const cards=senses.map(s=>`
+    <div style="border-radius:12px;padding:10px;margin-bottom:7px;background:${s.color}">
+      <div style="font-weight:800;font-size:.8rem;color:var(--text);margin-bottom:5px">${s.ico} ${s.name}</div>
+      ${s.items.map(i=>`<div style="font-size:.67rem;color:#555;margin-bottom:2px;padding-left:10px">• ${i}</div>`).join('')}
+    </div>`).join('');
+  const h=`<div class="pop-ov" onclick="if(event.target===this)this.remove()">
+  <div class="pop-box">
+    <div class="pop-rainbow" style="background:linear-gradient(90deg,#FCE4EC,#F3E5F5,#E3F2FD,#E8F5E9,#FFF8E1)"></div>
+    <span class="pop-ico">🌈</span>
+    <div class="pop-title">Duyusal Gelişim Rehberi</div>
+    <div class="pop-sub">6 duyunun 0-24 ay yolculuğu</div>
+    <div style="max-height:370px;overflow-y:auto;margin:8px 0">${cards}</div>
+    <div class="pop-tip"><div class="pop-tip-t">🧠 Duyusal Entegrasyon</div><p>Beyin, 6 duyuyu birlikte işlemeyi öğrenir — buna "duyusal entegrasyon" denir. Çeşitli duyusal deneyimler (kum, su, müzik, doku) bu entegrasyonu hızlandırır ve öğrenme kapasitesini artırır!</p></div>
+    <button class="pop-btn" style="background:linear-gradient(135deg,#E91E63,#FF9800)" onclick="checkAchievements();this.closest('.pop-ov').remove()">🌈 Harika Bilgi!</button>
+  </div></div>`;
+  document.body.insertAdjacentHTML('beforeend',h);
+  checkAchievements();
 }
 
 // ══════════════════════════════════════════════════════
