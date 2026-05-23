@@ -591,6 +591,8 @@ body{font-family:'Nunito',sans-serif;background:linear-gradient(135deg,#FFF5F8,#
           <button class="info-btn" onclick="showNutritionGuide()">🥣 Beslenme Bilgisi</button>
           <button class="info-btn" onclick="showFoodRecipes()">👨‍🍳 Tarifler</button>
           <button class="info-btn" onclick="showSleepTrainingGuide()">🌙 Uyku Eğitimi</button>
+          <button class="info-btn" onclick="showWHONutritionGuide()">🌍 WHO Rehberi</button>
+          <button class="info-btn" onclick="showDevScreeningGuide()">🔍 Gelişim Tarama</button>
         </div>
         <button class="abt special" onclick="doAct('annesutu')">
           <span class="ai">🤱</span>
@@ -629,6 +631,8 @@ body{font-family:'Nunito',sans-serif;background:linear-gradient(135deg,#FFF5F8,#
           <button class="info-btn" onclick="showImmunityGuide()">🛡️ Bağışıklık</button>
           <button class="info-btn" onclick="showSocialGuide()">🤝 Sosyal</button>
           <button class="info-btn" onclick="showColorShapeGame()">🎨 Renk & Şekil</button>
+          <button class="info-btn" onclick="showDigitalHealthGuide()">📵 Dijital Sağlık</button>
+          <button class="info-btn" onclick="showAttachmentGuide()">💞 Bağlanma</button>
         </div>
         <div class="stab-nav">
           <button class="stab-btn on" onclick="switchSubTab('fizik')" id="stab-fizik">🏋️ Fiziksel</button>
@@ -695,6 +699,8 @@ body{font-family:'Nunito',sans-serif;background:linear-gradient(135deg,#FFF5F8,#
           <button class="info-btn" onclick="showGrowthJournal()">📏 Büyüme</button>
           <button class="info-btn" onclick="showCryDecoder()">😭 Ağlama Kodu</button>
           <button class="info-btn" onclick="showStressChecker()">🧘 Stres Ölçer</button>
+          <button class="info-btn" onclick="showSafeSleepGuide()">🛡️ Güvenli Uyku</button>
+          <button class="info-btn" onclick="showAttachmentGuide()">💞 Bağlanma</button>
         </div>
         <div class="act-grid">
           <button class="abt care" onclick="doAct('uyut')">
@@ -1497,7 +1503,7 @@ const S = {
   dp:0, ageMonths:0, dayTime:1,
   unlocked:new Set([1]), doneVax:new Set(), unlockedAch:new Set(), doneDoc:new Set(),
   activeChallenge:null, challengeTimer:0,
-  nextChallengeIn:45,
+  nextChallengeIn:90,
   lastTick:Date.now(), currentStage:0,
   momMsgIdx:0, momMsgTimer:0,
   tipIdx:0, tipTimer:0,
@@ -1601,20 +1607,20 @@ function tick(){
   // dp accumulation
   const idleRate=0.5+S.dadScore*0.004+S.unlocked.size*0.05;
   S.dp+=idleRate*dt;
-  // stat decay
-  S.hunger=clamp(S.hunger-0.025*dt*60);
-  S.happy=clamp(S.happy-0.018*dt*60);
-  S.energy=clamp(S.energy-0.013*dt*60);
-  S.diaper=clamp(S.diaper-0.008*dt*60);
+  // stat decay — tuned for comfortable play pace (~3-5 min per stat cycle)
+  S.hunger=clamp(S.hunger-0.010*dt*60);
+  S.happy=clamp(S.happy-0.007*dt*60);
+  S.energy=clamp(S.energy-0.005*dt*60);
+  S.diaper=clamp(S.diaper-0.004*dt*60);
   // milk regen
-  if(S.ageMonths<12) S.milk=Math.min(100,S.milk+0.12*dt*60);
+  if(S.ageMonths<12) S.milk=Math.min(100,S.milk+0.10*dt*60);
   // mom wellbeing decay — faster without dad support
-  const momDecayRate = S.dadScore>50 ? 0.006 : S.dadScore>25 ? 0.010 : 0.015;
+  const momDecayRate = S.dadScore>50 ? 0.003 : S.dadScore>25 ? 0.005 : 0.008;
   S.momWellbeing = clamp(S.momWellbeing - momDecayRate*dt*60);
   // low mom wellbeing affects baby
   if(S.momWellbeing<30){
-    S.happy  = clamp(S.happy  - 0.012*dt*60);
-    S.energy = clamp(S.energy - 0.008*dt*60);
+    S.happy  = clamp(S.happy  - 0.005*dt*60);
+    S.energy = clamp(S.energy - 0.003*dt*60);
   }
   // track mom never low achievement
   if(S.momWellbeing<30) S.momNeverLow=false;
@@ -1643,8 +1649,8 @@ function tick(){
   }
   // auto challenges from low stats
   if(!S.activeChallenge){
-    if(S.diaper<15) forceChallenge('bez');
-    else if(S.hunger<12) forceChallenge('agla');
+    if(S.diaper<8) forceChallenge('bez');
+    else if(S.hunger<8) forceChallenge('agla');
   }
   // mom msg rotation
   S.momMsgTimer+=dt;
@@ -1822,7 +1828,7 @@ function spawnChallenge(){
   });
   const ch=avail[Math.floor(Math.random()*avail.length)];
   activateChallenge(ch);
-  S.nextChallengeIn=30+Math.random()*60;
+  S.nextChallengeIn=75+Math.random()*90;
 }
 
 function forceChallenge(id){
@@ -1833,7 +1839,7 @@ function forceChallenge(id){
 
 function activateChallenge(ch){
   S.activeChallenge=ch;
-  S.challengeTimer=45;
+  S.challengeTimer=60;
   playSound('challenge');
   const el=document.getElementById('chCard');
   el.style.display='block';
@@ -1862,9 +1868,9 @@ function resolveChallenge(){
 
 function failChallenge(){
   const ch=S.activeChallenge;
-  S.hunger=clamp(S.hunger-15);
-  S.happy=clamp(S.happy-20);
-  S.health=clamp(S.health-10);
+  S.hunger=clamp(S.hunger-8);
+  S.happy=clamp(S.happy-12);
+  S.health=clamp(S.health-5);
   clearChallenge();
   addLog(`⚠️ ${ch.penaltyMsg} İstatistikler düştü!`,'ch');
   showToast(`⚠️ ${ch.penaltyMsg}`,'red');
@@ -1874,7 +1880,7 @@ function clearChallenge(){
   S.activeChallenge=null;
   S.challengeTimer=0;
   document.getElementById('chCard').style.display='none';
-  S.nextChallengeIn=30+Math.random()*50;
+  S.nextChallengeIn=60+Math.random()*80;
 }
 
 // ══════════════════════════════════════════════════════
@@ -3191,6 +3197,11 @@ function showAllGuides(){
     {ico:'🍽️',name:'Beslenme Günlüğü',fn:'showFeedLog()'},
     {ico:'🧘',name:'Stres Ölçeri',fn:'showStressChecker()'},
     {ico:'🎨',name:'Renk & Şekil',fn:'showColorShapeGame()'},
+    {ico:'🛡️',name:'Güvenli Uyku (AAP)',fn:'showSafeSleepGuide()'},
+    {ico:'💞',name:'Bağlanma Teorisi',fn:'showAttachmentGuide()'},
+    {ico:'🌍',name:'WHO Beslenme',fn:'showWHONutritionGuide()'},
+    {ico:'🔍',name:'Gelişim Tarama',fn:'showDevScreeningGuide()'},
+    {ico:'📵',name:'Dijital Sağlık',fn:'showDigitalHealthGuide()'},
   ];
   const chips=guides.map(g=>`<button class="guide-chip" onclick="${g.fn};this.closest('.pop-ov').remove()">${g.ico}<br>${g.name}</button>`).join('');
   const h=`<div class="pop-ov" onclick="if(event.target===this)this.remove()">
@@ -4836,6 +4847,176 @@ function initStars(){
     s.style.cssText=`width:${sz}px;height:${sz}px;left:${Math.random()*100}vw;top:${Math.random()*100}vh;background:${colors[Math.floor(Math.random()*colors.length)]};animation-delay:${Math.random()*3}s;animation-duration:${2+Math.random()*3}s`;
     c.appendChild(s);
   }
+}
+
+// ══════════════════════════════════════════════════════
+// AAP SAFE SLEEP GUIDE
+// ══════════════════════════════════════════════════════
+function showSafeSleepGuide(){
+  const rules=[
+    {ico:'🛏️',title:'Sırt Üstü Uyut (Back to Sleep)',src:'AAP 2022',desc:'Her uyku seansında bebeği sırt üstü yatırın — gündüz, gece, uyku saati her zaman. Yan veya karna yatırma SIDS (beşik ölümü) riskini artırır.'},
+    {ico:'🪵',title:'Sert, Düz Yüzey',src:'AAP 2022',desc:'Sertleştirilmiş beşik/karyola matrası kullanın. Yumuşak yataklar, koltuklar, çocuk arabası SIDS riski taşır. Matrası örtü ile sarmayın.'},
+    {ico:'🚫',title:'Beşikte Sadece Bebek',src:'AAP 2022',desc:'Bebek uyku alanında yastık, yorgan, oyuncak, tampon yok. Uyku torbaları (sleeping bag) daha güvenlidir. Anne-baba yatağında uyutmaktan kaçının.'},
+    {ico:'🌡️',title:'Oda Sıcaklığı 18-20°C',src:'AAP/WHO',desc:'Aşırı sıcaklık SIDS riskini artırır. Bebek hafif uyku tulumunda rahat uyumalı. Yüz terliyorsa ya da boynu sıcaksa soğutun.'},
+    {ico:'🍼',title:'Anne Sütü SIDS\'i Azaltır',src:'AAP/Lancet 2021',desc:'Emzirme SIDS riskini %50\'ye kadar azaltır. Emzirdikten sonra bebeği kendi beşiğine alın — aynı odada ama ayrı yatakta uyku önerilir (6 ay).'},
+    {ico:'🚬',title:'Sigara = En Büyük Risk',src:'CDC/WHO',desc:'Gebelikte veya doğum sonrası ebeveyn sigara içmesi SIDS riskini 3-5 kat artırır. Pasif sigara da tehlikelidir. Bebek ortamı tamamen dumansız olmalı.'},
+    {ico:'🤱',title:'Emzik Koruyucu',src:'AAP 2022',desc:'Uyku sırasında emzik vermek SIDS riskini azaltır. Emzik bebeğin elinden düşerse yeniden takmanıza gerek yok — koruyucu etki devam eder.'},
+  ];
+  const cards=rules.map(r=>`
+    <div style="background:#EEF2FF;border-radius:12px;padding:10px;margin-bottom:6px;border-left:4px solid #3949AB">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:3px">
+        <div style="font-weight:800;font-size:.78rem;color:#283593">${r.ico} ${r.title}</div>
+        <span style="font-size:.58rem;background:#3949AB;color:#fff;border-radius:6px;padding:1px 5px;flex-shrink:0">${r.src}</span>
+      </div>
+      <div style="font-size:.68rem;color:#555;line-height:1.5">${r.desc}</div>
+    </div>`).join('');
+  const h=`<div class="pop-ov" onclick="if(event.target===this)this.remove()">
+  <div class="pop-box">
+    <div class="pop-rainbow" style="background:linear-gradient(90deg,#1A237E,#283593,#3949AB)"></div>
+    <span class="pop-ico">🛡️</span>
+    <div class="pop-title">Güvenli Uyku Rehberi</div>
+    <div class="pop-sub">AAP 2022 · SIDS önleme kılavuzu</div>
+    <div style="max-height:380px;overflow-y:auto;margin:8px 0">${cards}</div>
+    <div class="pop-tip"><div class="pop-tip-t">📊 SIDS Türkiye</div><p>Türkiye'de her yıl yaklaşık 150-200 bebek beşik ölümü (SIDS) nedeniyle kaybedilmektedir. Bu ölümlerin büyük çoğunluğu güvenli uyku kurallarıyla önlenebilir.</p></div>
+    <button class="pop-btn" style="background:linear-gradient(135deg,#1A237E,#42A5F5)" onclick="this.closest('.pop-ov').remove()">🛡️ Güvenli Uyku!</button>
+  </div></div>`;
+  document.body.insertAdjacentHTML('beforeend',h);
+}
+
+// ══════════════════════════════════════════════════════
+// ATTACHMENT THEORY GUIDE
+// ══════════════════════════════════════════════════════
+function showAttachmentGuide(){
+  const types=[
+    {name:'Güvenli Bağlanma',ico:'💚',pct:'~60%',signs:'Ebeveyn gidince üzülür, dönünce mutlanır. Ortamı keşfeder, yabancılarla rahat.',parent:'Tutarlı ve duyarlı bakım. İhtiyaçlara hızlı yanıt. Tahmin edilebilir rutin.',outcome:'En iyi gelişimsel sonuç. Yüksek öz saygı, sağlıklı ilişkiler, duygusal düzenleme.'},
+    {name:'Kaygılı Bağlanma',ico:'💛',pct:'~20%',signs:'Ebeveyn gidince çok yoğun tepki. Dönünce hem sarılmak hem de reddeder.',parent:'Tutarsız bakım — bazen duyarlı, bazen değil. Bebek güvensizlik nedeniyle "aşırı uyarır".',outcome:'Daha kaygılı, bağımlı kişilik. Terapi ve tutarlılıkla büyük ölçüde iyileşir.'},
+    {name:'Kaçınan Bağlanma',ico:'🟠',pct:'~15%',signs:'Ebeveyn gidince/gelince çok az tepki. Görünüşte bağımsız ama içten stresli.',parent:'Duygusal ihtiyaçlara reddedici yanıt. "Ağlayarak bırak" aşırı uygulaması.',outcome:'Duygusal uzaklaşma, yakınlık güçlüğü. Farkındalıkla düzeltilebilir.'},
+    {name:'Dağınık Bağlanma',ico:'🔴',pct:'~5%',signs:'Tutarsız, öngörülemeyen tepkiler. Bazen donar, bazen aşırı tepki.',parent:'Ciddi travma, ihmal veya şiddet geçmişi olan bakıcı.',outcome:'En yüksek risk grubu. Profesyonel destek gereklidir.'},
+  ];
+  const cards=types.map(t=>`
+    <div style="background:#FFF8F0;border-radius:12px;padding:10px;margin-bottom:7px;border-left:4px solid ${t.ico==='💚'?'#4CAF50':t.ico==='💛'?'#FFC107':t.ico==='🟠'?'#FF9800':'#F44336'}">
+      <div style="display:flex;justify-content:space-between;margin-bottom:3px">
+        <div style="font-weight:800;font-size:.78rem;color:var(--text)">${t.ico} ${t.name}</div>
+        <span style="font-size:.65rem;color:#888">Yaygınlık: ${t.pct}</span>
+      </div>
+      <div style="font-size:.67rem;color:#555;margin-bottom:3px"><b>Belirtiler:</b> ${t.signs}</div>
+      <div style="font-size:.67rem;color:#555;margin-bottom:3px"><b>Ebeveyn davranışı:</b> ${t.parent}</div>
+      <div style="font-size:.67rem;color:#388E3C"><b>Sonuç:</b> ${t.outcome}</div>
+    </div>`).join('');
+  const h=`<div class="pop-ov" onclick="if(event.target===this)this.remove()">
+  <div class="pop-box">
+    <div class="pop-rainbow" style="background:linear-gradient(90deg,#FCE4EC,#F8BBD9,#FCE4EC)"></div>
+    <span class="pop-ico">💞</span>
+    <div class="pop-title">Bağlanma Teorisi</div>
+    <div class="pop-sub">Bowlby & Ainsworth · Güvenli bağlanmanın temelleri</div>
+    <div style="max-height:380px;overflow-y:auto;margin:8px 0">${cards}</div>
+    <div class="pop-tip"><div class="pop-tip-t">💡 En Önemli İlke</div><p><b>"Güvenli üs"</b> olmak: Bebek keşfetmek istediğinde bırakın, geri döndüğünde her zaman orada olun. Bu tutarlılık güvenli bağlanmanın temelidir. Mükemmel değil, <em>yeterince iyi</em> ebeveyn olmak yeterli!</p></div>
+    <button class="pop-btn" style="background:linear-gradient(135deg,#E91E63,#F48FB1)" onclick="this.closest('.pop-ov').remove()">💞 Güvenli Bağ!</button>
+  </div></div>`;
+  document.body.insertAdjacentHTML('beforeend',h);
+}
+
+// ══════════════════════════════════════════════════════
+// WHO NUTRITION GUIDE
+// ══════════════════════════════════════════════════════
+function showWHONutritionGuide(){
+  const stages=[
+    {age:'0-6 Ay',ico:'🤱',title:'Yalnızca Anne Sütü',src:'WHO 2023',items:['İlk 6 ay yalnızca anne sütü — su bile verilmez','İstek üzerine emzirin, saat takip etmeyin','Kolosktrum (ilk süt) altındır — asla atlamayın','Biberon ve emzik ilk 4 haftada önerilmez (emme karışıklığı)','Anne sütü yetmiyorsa önce laktasyon uzmanına danışın']},
+    {age:'6-12 Ay',ico:'🥄',title:'Tamamlayıcı Beslenme Başlangıcı',src:'WHO/ESPGHAN 2022',items:['6. ayda tamamlayıcı beslenme başlatın (erken/geç değil)','Anne sütüne devam edin — tamamlayıcı beslenme EKLEMEdir, KESmek değil','Önce et, balık, baklagil — demir kritik öneme sahip','Tuzsuz, şekersiz, katkısız yiyecekler','Püreden parçalıya kademeli geçiş (BLW veya kaşıkla)']},
+    {age:'12-24 Ay',ico:'🍽️',title:'Aile Sofrasına Geçiş',src:'ESPGHAN 2022',items:['Anne sütüne en az 2 yaşa kadar devam edin (WHO)','Aile yemeklerinden ufak parçalar sunun','Günde 3 ana öğün + 1-2 ara öğün','İnek sütü 1 yaştan itibaren günde 2-3 su bardağı','Bal 1 yaş altında kesinlikle yasak (botulizm riski)','Gıda seçiciliği normaldir — 10-15 maruziyet sunun']},
+  ];
+  const cards=stages.map(s=>`
+    <div style="background:#E8F5E9;border-radius:12px;padding:10px;margin-bottom:7px">
+      <div style="display:flex;justify-content:space-between;margin-bottom:4px">
+        <div style="font-weight:800;font-size:.8rem;color:#1B5E20">${s.ico} ${s.age} — ${s.title}</div>
+        <span style="font-size:.58rem;background:#2E7D32;color:#fff;border-radius:6px;padding:1px 5px">${s.src}</span>
+      </div>
+      ${s.items.map(i=>`<div style="font-size:.67rem;color:#333;margin-bottom:2px;padding-left:10px">• ${i}</div>`).join('')}
+    </div>`).join('');
+  const h=`<div class="pop-ov" onclick="if(event.target===this)this.remove()">
+  <div class="pop-box">
+    <div class="pop-rainbow" style="background:linear-gradient(90deg,#E8F5E9,#C8E6C9,#A5D6A7)"></div>
+    <span class="pop-ico">🌍</span>
+    <div class="pop-title">WHO Bebek Beslenmesi</div>
+    <div class="pop-sub">Dünya Sağlık Örgütü · 2023 kılavuzu</div>
+    <div style="max-height:380px;overflow-y:auto;margin:8px 0">${cards}</div>
+    <div class="pop-tip"><div class="pop-tip-t">🌍 Türkiye İstatistiği</div><p>Türkiye'de ilk 6 ay yalnızca anne sütü oranı %41'dir (TÜİK 2022). WHO hedefi %50+. Her emzirilen bebek hem sağlıklı hem de ülke için ekonomik katkıdır.</p></div>
+    <button class="pop-btn" style="background:linear-gradient(135deg,#1B5E20,#43A047)" onclick="this.closest('.pop-ov').remove()">🌍 Teşekkürler!</button>
+  </div></div>`;
+  document.body.insertAdjacentHTML('beforeend',h);
+}
+
+// ══════════════════════════════════════════════════════
+// DEVELOPMENTAL SCREENING GUIDE
+// ══════════════════════════════════════════════════════
+function showDevScreeningGuide(){
+  const screens=[
+    {age:'2 Ay',ico:'👁️',tool:'ASQ-3 / Rutin Muayene',checks:['Göz teması kuruyor mu?','Sese tepki veriyor mu?','Gülümsüyor mu?','Başını kaldırabiliyor mu?'],redFlags:['Hiç gülümsememek','Sese tepki vermemek']},
+    {age:'9 Ay',ico:'👋',tool:'ASQ-3',checks:['"Mama/baba" sesleri çıkarıyor mu?','İşaret edilen yere bakıyor mu?','Yabancılara kaygı duyuyor mu (normal!)','Nesnelere uzanıyor mu?'],redFlags:['Adına bakmamak','Hiç babbling yapmamak']},
+    {age:'18 Ay',ico:'🗣️',tool:'M-CHAT-R (Otizm Taraması)',checks:['En az 10 kelime söylüyor mu?','İşaret ediyor mu?','Basit komutları anlıyor mu?','Sembolik oyun oynuyor mu?'],redFlags:['10 kelimeden az','İşaret etmemek','Adına bakmamak']},
+    {age:'24 Ay',ico:'🧩',tool:'M-CHAT-R / ASQ-3',checks:['2-kelimeli cümle kuruyor mu?','En az 50 kelime?','Başkalarının oyununu taklit ediyor mu?','Basit talimatları izliyor mu?'],redFlags:['Kazanılan becerilerin kaybı','Göz teması yokluğu','İzolasyon']},
+  ];
+  const cards=screens.map(s=>`
+    <div style="background:#EDE7F6;border-radius:12px;padding:10px;margin-bottom:7px">
+      <div style="display:flex;justify-content:space-between;margin-bottom:4px">
+        <div style="font-weight:800;font-size:.78rem;color:#4527A0">${s.ico} ${s.age} — Tarama Zamanı</div>
+        <span style="font-size:.58rem;background:#512DA8;color:#fff;border-radius:6px;padding:1px 5px">${s.tool}</span>
+      </div>
+      <div style="font-size:.67rem;color:#333;margin-bottom:4px">${s.checks.map(c=>`✓ ${c}`).join(' · ')}</div>
+      <div style="background:#FCE4EC;border-radius:8px;padding:5px 7px;font-size:.65rem;color:#B71C1C">⚠️ Uzman görüşü için: ${s.redFlags.join(', ')}</div>
+    </div>`).join('');
+  const h=`<div class="pop-ov" onclick="if(event.target===this)this.remove()">
+  <div class="pop-box">
+    <div class="pop-rainbow" style="background:linear-gradient(90deg,#EDE7F6,#D1C4E9)"></div>
+    <span class="pop-ico">🔍</span>
+    <div class="pop-title">Gelişimsel Tarama Rehberi</div>
+    <div class="pop-sub">AAP · ASQ-3 · M-CHAT-R standartları</div>
+    <div style="max-height:370px;overflow-y:auto;margin:8px 0">${cards}</div>
+    <div class="pop-tip"><div class="pop-tip-t">💡 Erken Müdahale = En Etkili Müdahale</div><p>Gelişimsel gecikmeler ne kadar erken fark edilirse müdahale o kadar etkili olur. Şüphe duyduğunuzda pediatristinizden ASQ-3 veya M-CHAT-R taraması isteyin — ücretsizdir ve 10-15 dakika sürer.</p></div>
+    <button class="pop-btn" style="background:linear-gradient(135deg,#4527A0,#7E57C2)" onclick="this.closest('.pop-ov').remove()">🔍 Takip Edeceğim!</button>
+  </div></div>`;
+  document.body.insertAdjacentHTML('beforeend',h);
+}
+
+// ══════════════════════════════════════════════════════
+// DIGITAL HEALTH / SCREEN TIME (AAP 2023)
+// ══════════════════════════════════════════════════════
+function showDigitalHealthGuide(){
+  const rules=[
+    {age:'0-18 Ay',ico:'🚫',rule:'Ekran Yok (Video Görüşme Hariç)',src:'AAP 2023',detail:'Video/telefon/tablet/TV beyin gelişimine katkısı yoktur — aksine dil gelişimini geciktirebilir. Tek istisna: sevdiklerle video görüşme (FaceTime vb.).'},
+    {age:'18-24 Ay',ico:'👨‍👩‍👧',rule:'Yalnızca Birlikte, Yüksek Kalite',src:'AAP 2023',detail:'Ebeveyn yanında, PBS Kids gibi kaliteli içerik, günde max 30 dk. Ebeveyn içeriği açıklayarak "dil köprüsü" kurmalı — pasif izleme fayda sağlamaz.'},
+    {age:'2-5 Yaş',ico:'⏱️',rule:'Günde max 1 Saat',src:'AAP 2023',detail:'Yüksek kaliteli, eğitici içerik. Sosyal etkileşim, aktif oyun ve uyku ekrandan önce gelir. Yemek ve uyku zamanında kesinlikle ekran yok.'},
+  ];
+  const harms=[
+    {ico:'💤',harm:'Uyku bozukluğu',detail:'Mavi ışık melatonin üretimini baskılar. Yatmadan 1 saat önce ekran kapatılmalı.'},
+    {ico:'🧠',harm:'Dil gelişim gecikmesi',detail:'Her 1 saatlik arka plan TV = 770 daha az ebeveyn-çocuk sözcük etkileşimi (JAMA Pediatrics).'},
+    {ico:'👁️',harm:'Miyopi riski',detail:'Yakın mesafe ekran kullanımı miyopi riskini artırır. Dışarıda geçirilen süre koruyucudur.'},
+    {ico:'🎯',harm:'Dikkat sorunları',detail:'Hızlı kesmeli içerik (YouTube Shorts, TikTok tarzı) dikkat süresi gelişimini olumsuz etkiler.'},
+  ];
+  const harmCards=harms.map(h=>`<div style="display:grid;grid-template-columns:24px 1fr;gap:6px;margin-bottom:5px;font-size:.67rem"><span>${h.ico}</span><div><b>${h.harm}:</b> ${h.detail}</div></div>`).join('');
+  const ruleCards=rules.map(r=>`
+    <div style="background:#E3F2FD;border-radius:11px;padding:9px;margin-bottom:6px">
+      <div style="display:flex;justify-content:space-between;margin-bottom:3px">
+        <div style="font-weight:800;font-size:.77rem;color:#0D47A1">${r.ico} ${r.age} — ${r.rule}</div>
+        <span style="font-size:.58rem;background:#1565C0;color:#fff;border-radius:6px;padding:1px 5px">${r.src}</span>
+      </div>
+      <div style="font-size:.67rem;color:#333">${r.detail}</div>
+    </div>`).join('');
+  const h=`<div class="pop-ov" onclick="if(event.target===this)this.remove()">
+  <div class="pop-box">
+    <div class="pop-rainbow" style="background:linear-gradient(90deg,#E3F2FD,#BBDEFB,#90CAF9)"></div>
+    <span class="pop-ico">📱</span>
+    <div class="pop-title">Dijital Sağlık Rehberi</div>
+    <div class="pop-sub">AAP 2023 · Ekran süresi kılavuzu</div>
+    <div style="max-height:360px;overflow-y:auto;margin:8px 0">
+      ${ruleCards}
+      <div style="font-weight:800;font-size:.75rem;color:#0D47A1;margin:8px 0 5px">⚠️ Riskleri Neler?</div>
+      ${harmCards}
+    </div>
+    <div class="pop-tip"><div class="pop-tip-t">💡 Pratik İpucu</div><p>Bebeğin yanında telefon kullanmak bile etki yaratır — "technoference" denen bu durum göz temasını ve duyarlılığı azaltır. Bebek uyanıkken telefonu başka odada bırakmayı deneyin.</p></div>
+    <button class="pop-btn" style="background:linear-gradient(135deg,#0D47A1,#1976D2)" onclick="this.closest('.pop-ov').remove()">📱 Denge Önemli!</button>
+  </div></div>`;
+  document.body.insertAdjacentHTML('beforeend',h);
 }
 
 // init scene on page load
