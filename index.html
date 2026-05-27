@@ -700,6 +700,7 @@ body{font-family:'Nunito',sans-serif;background:linear-gradient(135deg,#FFF5F8,#
         <div class="dp-bar"><div class="dp-fill" id="dpFill" style="width:0%"></div></div>
         <div class="dp-nxt" id="dpNxt">Sonraki gelişim: 200 GP</div>
         <div class="dp-rate" id="dpRate">⏱ +0.5 GP/sn otomatik</div>
+        <div id="rankBadge" style="margin-top:5px;text-align:center;font-size:.72rem;font-weight:700;color:#5C6BC0"></div>
       </div>
 
     </div><!-- /baby-panel -->
@@ -1375,6 +1376,8 @@ function saveGame(){
     siblingRead:S.siblingRead||false, creativePlayRead:S.creativePlayRead||false,
     milestoneTimelineRead:S.milestoneTimelineRead||false,
     vitDStreak:S.vitDStreak||0, lastVitDDay:S.lastVitDDay||-1,
+    seasonalRead:S.seasonalRead||false, blwRead:S.blwRead||false,
+    parentHealthRead:S.parentHealthRead||false, earlyAllergenRead:S.earlyAllergenRead||false,
     savedAt:Date.now(),
   };
   try { localStorage.setItem(SAVE_KEY, JSON.stringify(data)); } catch(e){}
@@ -1449,6 +1452,10 @@ function applySaveData(d){
   S.milestoneTimelineRead = d.milestoneTimelineRead||false;
   S.vitDStreak = d.vitDStreak||0;
   S.lastVitDDay = d.lastVitDDay||-1;
+  S.seasonalRead = d.seasonalRead||false;
+  S.blwRead = d.blwRead||false;
+  S.parentHealthRead = d.parentHealthRead||false;
+  S.earlyAllergenRead = d.earlyAllergenRead||false;
   S.started = true;
 }
 
@@ -1591,6 +1598,12 @@ const ACHIEVEMENTS = [
   {id:'sibling1',   icon:'👶', name:'Büyük Kardeş',       desc:'Kardeş hazırlığı rehberi okundu',        check:s=>(s.siblingRead||false)},
   {id:'creative',   icon:'🎨', name:'Yaratıcı Ebeveyn',   desc:'Yaratıcı oyun rehberi okundu',           check:s=>(s.creativePlayRead||false)},
   {id:'vitd7',      icon:'☀️', name:'Güneş Bebeği',       desc:'7 gün üst üste D vitamini verildi',      check:s=>(s.vitDStreak||0)>=7},
+  {id:'seasonal',   icon:'🌡️', name:'Mevsim Ustası',      desc:'Mevsimsel bakım rehberi okundu',         check:s=>(s.seasonalRead||false)},
+  {id:'blw',        icon:'🥑', name:'BLW Uzmanı',          desc:'Bebek yönlendirmeli beslenme öğrenildi', check:s=>(s.blwRead||false)},
+  {id:'parentfit',  icon:'💪', name:'Sağlıklı Ebeveyn',   desc:'Doğum sonrası iyileşme rehberi okundu',  check:s=>(s.parentHealthRead||false)},
+  {id:'allergen',   icon:'🥜', name:'Alerji Önleyici',    desc:'Erken alerjen tanıtım rehberi okundu',   check:s=>(s.earlyAllergenRead||false)},
+  {id:'rank_expert',icon:'⭐', name:'Bebek Uzmanı Rozeti', desc:'500 GP\'a ulaşıldı!',                   check:s=>s.dp>=500},
+  {id:'rank_master',icon:'🏆', name:'Usta Ebeveyn Rozeti',desc:'5000 GP\'a ulaşıldı!',                  check:s=>s.dp>=5000},
 ];
 
 const TIPS = [
@@ -1629,6 +1642,15 @@ const BABY_STAGES = [
   {minDP:6500, name:'Emekleyen',   faceG:'🧒‍♀️',faceE:'🧒‍♂️',body:'', bg:'linear-gradient(180deg,#E3F2FD,#BBDEFB,#E8EAF6)',    deco:'🚂🎪🎠', fx:'🌈'},
   {minDP:9000, name:'İlk Adımlar', faceG:'👧',faceE:'👦',body:'👟',      bg:'linear-gradient(180deg,#FFF3E0,#FFE0B2,#FFF8E1)',    deco:'⚽🌷🏡', fx:'🎉'},
   {minDP:13000,name:'Toddler',     faceG:'🏃‍♀️',faceE:'🏃‍♂️',body:'', bg:'linear-gradient(180deg,#E8EAF6,#C5CAE9,#EDE7F6)',    deco:'🌳🎪🎠', fx:'🎊'},
+];
+
+const PARENT_RANKS = [
+  {min:0,     ico:'🌱', title:'Yeni Ebeveyn'},
+  {min:500,   ico:'⭐', title:'Bebek Uzmanı'},
+  {min:2000,  ico:'🌟', title:'Tecrübeli Ebeveyn'},
+  {min:5000,  ico:'🏆', title:'Usta Ebeveyn'},
+  {min:10000, ico:'💎', title:'Kıdemli Ebeveyn'},
+  {min:18000, ico:'👑', title:'Efsane Ebeveyn'},
 ];
 
 const MOM_MSGS = [
@@ -1750,6 +1772,10 @@ const S = {
   milestoneTimelineRead:false,
   vitDStreak:0,
   lastVitDDay:-1,
+  seasonalRead:false,
+  blwRead:false,
+  parentHealthRead:false,
+  earlyAllergenRead:false,
 };
 
 // ══════════════════════════════════════════════════════
@@ -2170,6 +2196,10 @@ function updateUI(){
   }
   const idleRate=(0.5+S.dadScore*0.004+S.unlocked.size*0.05).toFixed(1);
   document.getElementById('dpRate').textContent=`⏱ +${idleRate} GP/sn otomatik`;
+  const rank=[...PARENT_RANKS].reverse().find(r=>S.dp>=r.min)||PARENT_RANKS[0];
+  const nxtRank=PARENT_RANKS.find(r=>r.min>S.dp);
+  const rb=document.getElementById('rankBadge');
+  if(rb)rb.textContent=`${rank.ico} ${rank.title}${nxtRank?' · '+(nxtRank.min-Math.floor(S.dp))+' GP → '+nxtRank.ico:' 👑 MAX!'}`;
   // challenge timer
   if(S.activeChallenge){
     const pct=(S.challengeTimer/45)*100;
@@ -3421,6 +3451,11 @@ function showAllGuides(){
     {ico:'👶',name:'Kardeş Hazırlığı',fn:'showSiblingGuide()'},
     {ico:'🎨',name:'Yaratıcı Oyun',fn:'showCreativePlayGuide()'},
     {ico:'📅',name:'0-24 Ay Zaman Çizelgesi',fn:'showMilestoneTimeline()'},
+    {ico:'🌡️',name:'Mevsimsel Bakım',fn:'showSeasonalCareGuide()'},
+    {ico:'🥑',name:'BLW Rehberi',fn:'showBLWGuide()'},
+    {ico:'🗓️',name:'Uyku Takvimi',fn:'showSleepScheduleGuide()'},
+    {ico:'💪',name:'Ebeveyn Sağlığı',fn:'showParentHealthGuide()'},
+    {ico:'🥜',name:'Erken Alerjen',fn:'showEarlyAllergenGuide()'},
   ];
   const chips=guides.map(g=>`<button class="guide-chip" onclick="${g.fn};this.closest('.pop-ov').remove()">${g.ico}<br>${g.name}</button>`).join('');
   const h=`<div class="pop-ov" onclick="if(event.target===this)this.remove()">
@@ -5234,6 +5269,185 @@ function showDigitalHealthGuide(){
     </div>
     <div class="pop-tip"><div class="pop-tip-t">💡 Pratik İpucu</div><p>Bebeğin yanında telefon kullanmak bile etki yaratır — "technoference" denen bu durum göz temasını ve duyarlılığı azaltır. Bebek uyanıkken telefonu başka odada bırakmayı deneyin.</p></div>
     <button class="pop-btn" style="background:linear-gradient(135deg,#0D47A1,#1976D2)" onclick="this.closest('.pop-ov').remove()">📱 Denge Önemli!</button>
+  </div></div>`;
+  document.body.insertAdjacentHTML('beforeend',h);
+}
+
+// ══════════════════════════════════════════════════════
+// SEASONAL CARE GUIDE
+// ══════════════════════════════════════════════════════
+function showSeasonalCareGuide(){
+  S.seasonalRead=true;checkAchievements();saveGame();
+  const seasons=[
+    {name:'Yaz Bakımı',ico:'☀️',color:'#FFF9C4',border:'#F9A825',tc:'#F57F17',tips:[
+      {t:'Sıvı Dengesi','d':'6 aydan küçük bebeklere ek su gerekmez — sadece anne sütü yeter! Sıcakta emzirme sıklığını artır. 6 ay üstünde kaynamış soğumuş su verilebilir.'},
+      {t:'Güneş Koruma','d':'6 ay altı: doğrudan güneşten uzak tut, ince pamuk kıyafet ve şapka. 6 ay+: SPF 30-50 bebek güneş kremi kullan, gün ortası (11-16) dışarı çıkma.'},
+      {t:'Isı Düzenlemesi','d':'Bebek yetişkinden 1 kat fazla giyer — ama yazın 1 kat az! Ense sıcaksa bebek sıcak. Klima 24-26°C, direkt soğuk hava akımından kaçın.'},
+      {t:'Pişik Önleme','d':'Sıcakta pişik riski artar. Her bezde ve her banyoda kuru bırak. Bez bölgesini açık bırakma süreleri artır. Pudra kullanma — neme kapan yapabilir.'},
+      {t:'Böcek Koruması','d':'6 ay altı: DEET içeren ürün kullanma! Ince kıyafet ve korunaklı arabası kullan. 6 ay+: %10-30 DEET veya pikaradin içerenler güvenlidir.'},
+    ]},
+    {name:'Kış Bakımı',ico:'❄️',color:'#E3F2FD',border:'#42A5F5',tc:'#0D47A1',tips:[
+      {t:'Katmanlı Giydirme','d':'"Soğan giysi" kuralı: yetişkinden 1 kat fazla. İç çamaşır (nem çekici) + ara kat (sıcak) + üst kat (rüzgar geçirmez). Araba koltuğunda mont yerine kalın battaniye.'},
+      {t:'Kuru Hava & Cilt','d':'Kalorifer havayı kurutur — nemlendirici kullan. Günde 1 banyo yerine 2-3 günde bir. Losyon banyodan hemen sonra uygula. Dudak bakımı için vaseliyn uygundur.'},
+      {t:'Soğuk Algınlığı Önleme','d':'Hastane/kalabalık ortamdan kaçın. Ellerini sık sık yıka. Anne sütü bağışıklık sağlar. Grip aşısı: 6 ay+ bebeklere her yıl önerilir.'},
+      {t:'Isıtma Güvenliği','d':'Oda sıcaklığı 18-20°C ideal. Sobaya/radyatöre dokunmasını engelle. Elektrikli battaniye ASLA kullanma. Yatakta birlikte uyuma güvenli değil.'},
+      {t:'D Vitamini','d':'Kış aylarında güneş azalır, D vitamini daha kritik hale gelir. Doktor önerisiyle 400 IU/gün ek D vitamini devam etmeli. Kapalı ortamda geçirilen süre artar.'},
+    ]},
+  ];
+  const cards=seasons.map(s=>`
+  <div style="background:${s.color};border-radius:12px;padding:10px;margin-bottom:10px;border-left:4px solid ${s.border}">
+    <div style="font-weight:900;font-size:.85rem;color:${s.tc};margin-bottom:8px">${s.ico} ${s.name}</div>
+    ${s.tips.map(t=>`<div style="margin-bottom:6px"><div style="font-weight:700;font-size:.7rem;color:#333">▸ ${t.t}</div><div style="font-size:.64rem;color:#555;margin-top:2px">${t.d}</div></div>`).join('')}
+  </div>`).join('');
+  const h=`<div class="pop-ov" onclick="if(event.target===this)this.remove()">
+  <div class="pop-box">
+    <div class="pop-rainbow" style="background:linear-gradient(90deg,#FFF9C4,#E3F2FD,#FFF9C4)"></div>
+    <span class="pop-ico">🌡️</span><div class="pop-title">Mevsimsel Bebek Bakımı</div>
+    <div class="pop-sub">Yaz sıcağı & kış soğuğuna hazır ol</div>
+    <div style="max-height:370px;overflow-y:auto;margin:10px 0">${cards}</div>
+    <div class="pop-tip"><div class="pop-tip-t">🌡️ İdeal Bebek Odası Sıcaklığı</div><p>Yaz: 22-24°C · Kış: 18-20°C. Oda çok sıcaksa SIDS riski artar — serin oda tercih edilmeli. Bebeğin ense sıcaklığını hisset: soğuksa kat ekle, terliyorsa çıkar.</p></div>
+    <button class="pop-btn" style="background:linear-gradient(135deg,#F57F17,#1565C0)" onclick="this.closest('.pop-ov').remove()">🌡️ Her Mevsime Hazırım!</button>
+  </div></div>`;
+  document.body.insertAdjacentHTML('beforeend',h);
+}
+
+// ══════════════════════════════════════════════════════
+// BLW GUIDE
+// ══════════════════════════════════════════════════════
+function showBLWGuide(){
+  S.blwRead=true;checkAchievements();saveGame();
+  const sections=[
+    {ico:'✅',title:'BLW Nedir?',color:'#E8F5E9',border:'#66BB6A',tc:'#1B5E20',
+     body:'Bebek Yönlendirmeli Beslenme (Baby-Led Weaning): kaşık yerine bebeğin kendi eliyle tutabileceği gıda parçaları sunmak. Püre yok, anne/baba beslemesi yok — bebek kendi hızında keşfeder.'},
+    {ico:'📋',title:'BLW İçin Hazırlık Koşulları',color:'#E3F2FD',border:'#90CAF9',tc:'#0D47A1',
+     items:['En erken 6. ay — oturma kabiliyeti tam olmalı','Başını kendi tutabiliyor','Yiyeceklere ilgi gösteriyor','Dil itiş refleksi azalmış (gıdayı dışarı atmıyor)']},
+    {ico:'🥕',title:'Güvenli İlk Gıdalar',color:'#FFF3E0',border:'#FFCC80',tc:'#E65100',
+     items:['Buharda pişirilmiş yumuşak sebzeler: havuç, kabak, brokoli çiçeği','Olgun muz, avokado, armut (kayık şekli)','Haşlanmış makarna (aldente değil, yumuşak)','Küçük parçalar DEĞİL — bebek kavrayabileceği uzun parçalar','Yuvarlak/kaygan yiyecek: üzüm (yarıla), kiraz domates (dörde kes)']},
+    {ico:'⚠️',title:'Güvenlik Kuralları',color:'#FFEBEE',border:'#EF9A9A',tc:'#B71C1C',
+     items:['Bebek asla gözetimsiz bırakılmamalı','Yatay değil dik oturmalı — sandalyede veya kucakta','Gagging (öğürme) normaldir — boğulma DEĞİL. Fark öğren!','Tuz, şeker, bal (1 yaş altı), çiğ yumurta, bütün kuruyemiş yasak','Boğazda geçme riski yüksek: sert çiğ havuç, elma, üzüm (tam)']},
+  ];
+  const cards=sections.map(s=>`
+  <div style="background:${s.color};border-radius:12px;padding:10px;margin-bottom:8px;border-left:3px solid ${s.border}">
+    <div style="font-weight:800;font-size:.78rem;color:${s.tc};margin-bottom:5px">${s.ico} ${s.title}</div>
+    ${s.body?`<div style="font-size:.66rem;color:#333">${s.body}</div>`:s.items.map(i=>`<div style="font-size:.65rem;color:#333;margin-bottom:2px">▸ ${i}</div>`).join('')}
+  </div>`).join('');
+  const h=`<div class="pop-ov" onclick="if(event.target===this)this.remove()">
+  <div class="pop-box">
+    <div class="pop-rainbow" style="background:linear-gradient(90deg,#E8F5E9,#FFF3E0,#E8F5E9)"></div>
+    <span class="pop-ico">🥑</span><div class="pop-title">BLW Rehberi</div>
+    <div class="pop-sub">Bebek Yönlendirmeli Beslenme · WHO & ESPGHAN 2023</div>
+    <div style="max-height:370px;overflow-y:auto;margin:10px 0">${cards}</div>
+    <div class="pop-tip"><div class="pop-tip-t">🔬 BLW'nin Faydaları</div><p>Araştırmalar BLW uygulayan bebeklerin daha az seçici yiyici olduğunu, daha iyi iştah düzenlemesi geliştirdiğini ve aile yemek masasına daha kolay entegre olduğunu gösteriyor. Gagging (öğürme) normaldir — boğulma değil. Farkı öğrenmek için "Boğulma vs Gagging" videolarını izleyin.</p></div>
+    <button class="pop-btn" style="background:linear-gradient(135deg,#2E7D32,#43A047)" onclick="this.closest('.pop-ov').remove()">🥑 BLW Başlıyoruz!</button>
+  </div></div>`;
+  document.body.insertAdjacentHTML('beforeend',h);
+}
+
+// ══════════════════════════════════════════════════════
+// SLEEP SCHEDULE GUIDE
+// ══════════════════════════════════════════════════════
+function showSleepScheduleGuide(){
+  saveGame();
+  const schedules=[
+    {age:'0-1 Ay',ico:'😴',total:'16-18 saat',night:'8-9 saat (2-3 uyanmayla)',naps:'Günde 4-6 kısa uyku (30-60 dk)',wake:'45-60 dk',tips:'Henüz "gece" kavramı yok. Karanlık/gündüz farkını öğretmeye başla: gündüz aydınlık ve sesli, gece karanlık ve sessiz.'},
+    {age:'2-3 Ay',ico:'🌙',total:'15-17 saat',night:'8-10 saat (1-2 uyanmayla)',naps:'Günde 3-4 uyku',wake:'1-1.5 saat',tips:'Uyku rutini başla: banyo → emzirme → ninni → yatış. Her seferinde aynı sıra beyni "uyku zamanı" ile ilişkilendirir.'},
+    {age:'4-5 Ay',ico:'🛏️',total:'14-16 saat',night:'8-10 saat (1-2 uyanmayla)',naps:'Günde 3 uyku (sabah/öğle/ikindi)',wake:'1.5-2 saat',tips:'4. ay uyku gerileme: birden çok uyanma — normal. Bu dönemde uyku eğitimi erken; sadece rutin koru.'},
+    {age:'6-8 Ay',ico:'🌟',total:'13-15 saat',night:'10-12 saat',naps:'2 uyku (sabah ve öğlen)',wake:'2-3 saat',tips:'Uyku eğitimi için en uygun dönem. Ferber veya kademeli çekme yöntemleri uygulanabilir. Gece emzirmeyi kısa tut.'},
+    {age:'9-12 Ay',ico:'🧩',total:'12-15 saat',night:'10-12 saat',naps:'2 uyku (bazıları 1\'e geçer)',wake:'3-4 saat',tips:'Ayrılık kaygısı gece uyanmayı artırabilir. Self-soothing fırsatı ver: tamamen derin uyumadan yatağa bırak. Uyku zamanında oyuncak/biberon verme.'},
+    {age:'12-18 Ay',ico:'🏃',total:'11-14 saat',night:'11-12 saat',naps:'1-2 uyku (geçiş dönemi)',wake:'4-5 saat',tips:'Tek uykuya geçiş 15-18. ayda olur. Geçiş döneminde öğle uykusu 1-2 saat — çok geç olursa gece uyku bozulabilir.'},
+    {age:'18-24 Ay',ico:'🌈',total:'11-14 saat',night:'11-12 saat',naps:'1 uyku (öğlen)',wake:'5-6 saat',tips:'Öğle uykusu 12:00-14:00 arası ideal. Gece 19:30-20:30 yatış. Yatak rutinini 20-30 dk\'ya indirmeye çalış.'},
+  ];
+  const cards=schedules.map(s=>`
+  <div style="background:#EDE7F6;border-radius:12px;padding:10px;margin-bottom:7px;border-left:3px solid #9575CD">
+    <div style="font-weight:800;font-size:.8rem;color:#4527A0;margin-bottom:4px">${s.ico} ${s.age} <span style="font-size:.65rem;font-weight:400;color:#7E57C2">· Toplam: ${s.total}</span></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px;margin-bottom:4px">
+      <div style="font-size:.62rem;color:#444"><b>🌙 Gece:</b> ${s.night}</div>
+      <div style="font-size:.62rem;color:#444"><b>☀️ Gündüz:</b> ${s.naps}</div>
+      <div style="font-size:.62rem;color:#444"><b>⏰ Uyanık:</b> ${s.wake}</div>
+    </div>
+    <div style="font-size:.63rem;color:#5E35B1;font-style:italic">💡 ${s.tips}</div>
+  </div>`).join('');
+  const h=`<div class="pop-ov" onclick="if(event.target===this)this.remove()">
+  <div class="pop-box">
+    <div class="pop-rainbow" style="background:linear-gradient(90deg,#EDE7F6,#D1C4E9,#EDE7F6)"></div>
+    <span class="pop-ico">🗓️</span><div class="pop-title">Uyku Takvimi (0-24 Ay)</div>
+    <div class="pop-sub">NSF & AAP · Yaşa göre uyku ihtiyacı rehberi</div>
+    <div style="max-height:380px;overflow-y:auto;margin:10px 0">${cards}</div>
+    <div class="pop-tip"><div class="pop-tip-t">⚠️ Bireysel Farklılıklar</div><p>Bu rakamlar ortalama değerlerdir. Bazı bebekler daha az, bazıları daha fazla uyur. En önemli göstergeler: bebek günün büyük bölümünde mutlu ve aktif mi? Büyümesi normal mi? Bunlar varsa uyku yeterli demektir.</p></div>
+    <button class="pop-btn" style="background:linear-gradient(135deg,#4527A0,#5E35B1)" onclick="this.closest('.pop-ov').remove()">😴 Uyku Planı Hazır!</button>
+  </div></div>`;
+  document.body.insertAdjacentHTML('beforeend',h);
+}
+
+// ══════════════════════════════════════════════════════
+// PARENT HEALTH GUIDE (postpartum recovery)
+// ══════════════════════════════════════════════════════
+function showParentHealthGuide(){
+  S.parentHealthRead=true;checkAchievements();saveGame();
+  const sections=[
+    {ico:'🏥',title:'Fiziksel İyileşme (Anne)',color:'#FCE4EC',border:'#F48FB1',tc:'#880E4F',
+     items:['Normal doğum: 6-8 hafta iyileşme, sezaryen: 8-12 hafta','Perine ağrısı için buz kesesi + ılık su (sitz bath)','Lohusa kanaması 4-6 haftaya kadar devam edebilir — koku ve ateş varsa doktora','Dikiş kontrolü: 4-6. günde sağlık ocağı/hastane','Emzirme ağrısı ≠ normal emzirme — laktasyon danışmanına git']},
+    {ico:'🧠',title:'Doğum Sonrası Ruh Hali',color:'#E3F2FD',border:'#90CAF9',tc:'#0D47A1',
+     items:['"Baby blues" (hüzün/ağlama): ilk 2 haftada normal, sonra geçmeli','PPD (Doğum Sonrası Depresyon): 5 anneden 1\'inde — hekime git!','Belirti: 2 haftadan uzun mutsuzluk, aşırı endişe, bebeğe ilgisizlik','Babalar da PPD yaşayabilir (%10) — sessiz kalma!','Edinburgh PPD Testi: internetten ücretsiz, 10 soruluk tarama']},
+    {ico:'💪',title:'Fiziksel Toparlanma Egzersizleri',color:'#E8F5E9',border:'#A5D6A7',tc:'#1B5E20',
+     items:['Kegel egzersizleri: doğumdan 1 gün sonra başlanabilir — gün 3×10 tekrar','4-6. haftaya kadar ağır kaldırma ve koşu yasak','6. hafta kontrolünden sonra yavaşça başla: yürüyüş → pilates → yüzme','Karın çevirme (diastasis recti) varsa klassik mekik yasaklı — fiziyoterapis','"Bebek ile yoga" dersleri hem egzersiz hem sosyalleşme fırsatı']},
+    {ico:'🍎',title:'Beslenme & Hidrasyon',color:'#FFF3E0',border:'#FFCC80',tc:'#E65100',
+     items:['Emzirirken günde +500 kalori ekstra ihtiyaç var','Demir: kırmızı et, baklagil, ıspanak + C vitamini ile birlikte al','Kalsiyum: 3 porsiyon süt ürünü (veya alternatif takviye)','Günde 10-12 bardak sıvı — emzirmede kritik','Kafein max 200 mg/gün (2 küçük fincan). Alkol emzirmede yasak']},
+  ];
+  const cards=sections.map(s=>`
+  <div style="background:${s.color};border-radius:12px;padding:10px;margin-bottom:8px;border-left:3px solid ${s.border}">
+    <div style="font-weight:800;font-size:.78rem;color:${s.tc};margin-bottom:5px">${s.ico} ${s.title}</div>
+    ${s.items.map(i=>`<div style="font-size:.65rem;color:#333;margin-bottom:2px">▸ ${i}</div>`).join('')}
+  </div>`).join('');
+  const h=`<div class="pop-ov" onclick="if(event.target===this)this.remove()">
+  <div class="pop-box">
+    <div class="pop-rainbow" style="background:linear-gradient(90deg,#FCE4EC,#E8F5E9,#FCE4EC)"></div>
+    <span class="pop-ico">💪</span><div class="pop-title">Doğum Sonrası Ebeveyn Sağlığı</div>
+    <div class="pop-sub">Fiziksel iyileşme · Ruh sağlığı · Beslenme</div>
+    <div style="max-height:370px;overflow-y:auto;margin:10px 0">${cards}</div>
+    <div class="pop-tip"><div class="pop-tip-t">📞 Destek Hatları</div><p>Doğum Sonrası Depresyon için: İstanbul PPD Destek Grubu, Türkiye Psikiyatri Derneği. ALO 182 (Sosyal Destek). Psikolog randevusu için SGK kapsamındaki ruh sağlığı merkezleri ücretsizdir.</p></div>
+    <button class="pop-btn" style="background:linear-gradient(135deg,#AD1457,#E91E63)" onclick="this.closest('.pop-ov').remove()">💪 Kendime de Bakacağım!</button>
+  </div></div>`;
+  document.body.insertAdjacentHTML('beforeend',h);
+}
+
+// ══════════════════════════════════════════════════════
+// EARLY ALLERGEN INTRODUCTION GUIDE
+// ══════════════════════════════════════════════════════
+function showEarlyAllergenGuide(){
+  S.earlyAllergenRead=true;checkAchievements();saveGame();
+  const allergens=[
+    {name:'Yumurta',ico:'🥚',intro:'6. ay',method:'İyi pişirilmiş — haşlanmış veya omlet, küçük parçalar','risk':'Çocuklarda en yaygın alerjen. Pişmiş yumurta çiğden daha az alerjik.'},
+    {name:'Fıstık (Yerfıstığı)',ico:'🥜',intro:'4-6. ay (LEAP Çalışması)',method:'Fıstık ezmesi (tuz/katkısız) — ince sulandırılmış, 1 çay kaşığı ile başla','risk':'LEAP çalışması: erken tanıtım %81 fıstık alerjisini önledi. Bütün fıstık/fındık YASAK (boğulma riski).'},
+    {name:'Süt Ürünleri',ico:'🥛',intro:'6. ay (katı gıda formunda)',method:'Yoğurt, peynir — inek sütü içeceği 12 aya kadar verilmez','risk':'Sıvı inek sütü 1 yaş altında böbrek yükü nedeniyle önerilmez. Fermente ürünler (yoğurt) daha iyi tolere edilir.'},
+    {name:'Buğday / Gluten',ico:'🌾',intro:'6. ay',method:'Yumuşak haşlanmış makarna, ekmek kabı — küçük miktarlarla başla','risk':'Çölyak hastalığı için genetik yatkınlık varsa dikkatli ol. Erken tanıtım koruyucu olabilir.'},
+    {name:'Balık & Deniz Ürünleri',ico:'🐟',intro:'6-8. ay',method:'Pişirilmiş, kılçıksız balık (somon, kod balığı) küçük parçalar','risk':'DHA açısından zengin — ayda 2-3 kez önerilir. Kılıç balığı, uskumru (yüksek cıva) 1 yaş altı için uygun değil.'},
+    {name:'Soya',ico:'🫘',intro:'6. ay',method:'Tofu, edamame — iyi pişirilmiş, küçük miktarlarla','risk':'Süt alerjisi olanlarda çapraz alerji olabilir (%15). Soya formüla pediatrist onayıyla.'},
+  ];
+  const cards=allergens.map(a=>`
+  <div style="background:#FFF3E0;border-radius:12px;padding:9px;margin-bottom:7px;border-left:3px solid #FFB74D">
+    <div style="display:flex;gap:8px;align-items:center;margin-bottom:4px">
+      <span style="font-size:1.3rem">${a.ico}</span>
+      <div>
+        <div style="font-weight:800;font-size:.76rem;color:#E65100">${a.name}</div>
+        <span style="font-size:.61rem;background:#FF8F00;color:#fff;border-radius:6px;padding:1px 5px">📅 ${a.intro}</span>
+      </div>
+    </div>
+    <div style="font-size:.63rem;color:#333;margin-bottom:2px"><b>Nasıl:</b> ${a.method}</div>
+    <div style="font-size:.62rem;color:#5D4037;font-style:italic">🔬 ${a.risk}</div>
+  </div>`).join('');
+  const protocol=`<div style="background:#E8F5E9;border-radius:10px;padding:9px;margin-bottom:8px">
+    <div style="font-weight:800;font-size:.75rem;color:#1B5E20;margin-bottom:5px">📋 Tanıtım Protokolü</div>
+    <div style="font-size:.65rem;color:#333">1️⃣ Tek alerjen — diğer yeni gıdalar tanıtmadan 3-5 gün bekle<br>2️⃣ Sabah veya öğlen ver — gece değil (reaksiyon takibi)<br>3️⃣ Küçük miktarla başla: 1/4 çay kaşığı → artır<br>4️⃣ İlk dozdan sonra 2 saat gözlemle<br>5️⃣ Aile öyküsü varsa → önce pediatrist, sonra tanıt</div>
+  </div>`;
+  const h=`<div class="pop-ov" onclick="if(event.target===this)this.remove()">
+  <div class="pop-box">
+    <div class="pop-rainbow" style="background:linear-gradient(90deg,#FFF3E0,#FFECB3,#FFF3E0)"></div>
+    <span class="pop-ico">🥜</span><div class="pop-title">Erken Alerjen Tanıtımı</div>
+    <div class="pop-sub">LEAP 2015 · NIAID 2017 · Koruyucu erken tanıtım</div>
+    <div style="max-height:370px;overflow-y:auto;margin:10px 0">${protocol}${cards}</div>
+    <div class="pop-tip"><div class="pop-tip-t">🔬 Bilim Ne Söylüyor?</div><p>Eski öneri "alerjenleri geciktir" yanlış çıktı. LEAP, EAT, STAR çalışmaları gösterdi: erken tanıtım alerji riskini %50-80 azaltıyor. Şüphe varsa → deri testi veya IgE kan testi (6 ay+).</p></div>
+    <button class="pop-btn" style="background:linear-gradient(135deg,#E65100,#F57F17)" onclick="this.closest('.pop-ov').remove()">🥜 Güvenle Tanıtacağım!</button>
   </div></div>`;
   document.body.insertAdjacentHTML('beforeend',h);
 }
