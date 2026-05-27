@@ -1330,6 +1330,8 @@ const CHALLENGES = [
   {id:'uykuregresyon2',icon:'🛏️',name:'8-9 Ay Uyku Gerileme!',minAge:8,desc:'Uyku düzeni bozuldu — bebek gece çok daha sık uyanıyor!',urgent:false,action:'Uyku Rutinini Yenile',resolve:{energy:22,happy:12,dp:18},penaltyMsg:'Uyku gerileme iyi yönetilemedi!',info:'8-9. ay uyku gerileme son derece yaygındır. Emekleme, ayrılık kaygısı ve dil gelişimi nedeniyle beyin aktivitesi artar. Genellikle 2-6 haftada geçer.',tip:'Uyku rutinini tutun, gece emzirmeyi kısa tutmaya başlayabilirsiniz, self-soothing fırsatları verin. Bu dönem geçecek!'},
   {id:'beslenmegrevi',icon:'🚫',name:'Beslenme Grevi!',minAge:5,desc:'Bebek aniden mama veya anne sütü içmek istemiyor!',urgent:true,action:'Sakin Kal, Farklı Dene',resolve:{hunger:32,happy:10,dp:16},penaltyMsg:'Bebek yeterince beslenemedi!',info:'Beslenme grevi diş ağrısı, hastalık, büyüme sıçraması veya rutin bozulmasından kaynaklanır. Genellikle 3-5 gün sürer. Ağızdan ret + ateş varsa doktora.',tip:'Baskı yapmayın, farklı pozisyonlar deneyin, sessiz ortamda emzirin. Grev sırasında anne sütünü pompalaymaya devam edin.'},
   {id:'ilkdusme',icon:'🤕',name:'İlk Düşme!',minAge:6,desc:'Bebek yüksekçe bir yerden yuvarlandı!',urgent:true,action:'Sakin Kal & Değerlendir',resolve:{health:15,happy:12,dp:14},penaltyMsg:'Düşme sonrası panik!',info:'Bebeklerin büyük çoğunluğu yürümeden önce en az bir kez düşer. Düştükten sonra: ağlıyor ve oynuyorsa genellikle iyidir. Kusma, aşırı uyuklama, bilinç değişikliği → HEMEN doktora!',tip:'Değişme masasında MUTLAKA bir el üzerinde olsun. Zemin matı kullanın. Paniklenince bebek daha çok korkar — sakin kalın!'},
+  {id:'vitamind',icon:'☀️',name:'D Vitamini Zamanı!',desc:'Günlük D vitamini vermeyi unutma!',urgent:false,action:'D Vitamini Ver',resolve:{health:12,dp:10},penaltyMsg:'D vitamini atlandı — kemik gelişimi etkilenir!',info:'Türkiye Pediatri Derneği: 0-1 yaş tüm bebeklere günde 400 IU D vitamini. Emzirilen bebekler anne sütünden yeterli alamaz. Anne sütü ile beslenen bebekler özellikle risk altındadır.',tip:'D vitamini damlaları sabah beslemeden sonra verin, böylece rutin haline gelir. Güneşten D vitamini almak için bebek günde 30 dk dışarı çıkabilir ama güneş yağı sürün (6ay+)!'},
+  {id:'alerjisuphe',icon:'🔴',minAge:5,name:'Besin Alerjisi Şüphesi!',desc:'Yeni tanıtılan gıda sonrası döküntü çıktı!',urgent:true,action:'Gıdayı Kes & Gözlemle',resolve:{health:18,happy:8,dp:16},penaltyMsg:'Alerji tepkisi kötüleşti!',info:'Katı gıdaya geçiş sırasında alerji riski en yüksek dönemdir. Yumurta, fıstık, buğday, süt, soya, balık en yaygın alerjenlerdir. Her yeni gıdayı 3-5 gün arayla tek tek tanıtın.',tip:'Alerji şüphesinde hemen gıdayı kesin ve not alın. Hafif döküntü: doktora bildirin. Nefes güçlüğü veya yüz şişmesi → HEMEN 112! Ailesinde alerji varsa erken test yaptırmayı değerlendirin.'},
 ];
 
 // ══════════════════════════════════════════════════════
@@ -1369,6 +1371,10 @@ function saveGame(){
     wellChildRead:S.wellChildRead||false, reflexRead:S.reflexRead||false,
     coupleRead:S.coupleRead||false, workReturnRead:S.workReturnRead||false,
     illnessRead:S.illnessRead||false, childcareRead:S.childcareRead||false,
+    supplementRead:S.supplementRead||false, cprRead:S.cprRead||false,
+    siblingRead:S.siblingRead||false, creativePlayRead:S.creativePlayRead||false,
+    milestoneTimelineRead:S.milestoneTimelineRead||false,
+    vitDStreak:S.vitDStreak||0, lastVitDDay:S.lastVitDDay||-1,
     savedAt:Date.now(),
   };
   try { localStorage.setItem(SAVE_KEY, JSON.stringify(data)); } catch(e){}
@@ -1436,6 +1442,13 @@ function applySaveData(d){
   S.workReturnRead = d.workReturnRead||false;
   S.illnessRead = d.illnessRead||false;
   S.childcareRead = d.childcareRead||false;
+  S.supplementRead = d.supplementRead||false;
+  S.cprRead = d.cprRead||false;
+  S.siblingRead = d.siblingRead||false;
+  S.creativePlayRead = d.creativePlayRead||false;
+  S.milestoneTimelineRead = d.milestoneTimelineRead||false;
+  S.vitDStreak = d.vitDStreak||0;
+  S.lastVitDDay = d.lastVitDDay||-1;
   S.started = true;
 }
 
@@ -1573,6 +1586,11 @@ const ACHIEVEMENTS = [
   {id:'work_return',icon:'🏢', name:'İşe Dönüş',           desc:'İşe dönüş rehberi okundu',               check:s=>(s.workReturnRead||false)},
   {id:'illness1',   icon:'🤧', name:'Hastalık Savaşçısı',  desc:'Hastalık yönetim rehberi okundu',        check:s=>(s.illnessRead||false)},
   {id:'challenge30',icon:'🏆', name:'Kriz Efsanesi',       desc:'30 zorlu anı çözdün!',                   check:s=>(s.challengesSolved||0)>=30},
+  {id:'supplement', icon:'💊', name:'Sağlıklı Başlangıç', desc:'Takviye rehberi okundu',                  check:s=>(s.supplementRead||false)},
+  {id:'cprlearn',   icon:'🚑', name:'Hayat Kurtarıcı',    desc:'Bebek CPR rehberi okundu',               check:s=>(s.cprRead||false)},
+  {id:'sibling1',   icon:'👶', name:'Büyük Kardeş',       desc:'Kardeş hazırlığı rehberi okundu',        check:s=>(s.siblingRead||false)},
+  {id:'creative',   icon:'🎨', name:'Yaratıcı Ebeveyn',   desc:'Yaratıcı oyun rehberi okundu',           check:s=>(s.creativePlayRead||false)},
+  {id:'vitd7',      icon:'☀️', name:'Güneş Bebeği',       desc:'7 gün üst üste D vitamini verildi',      check:s=>(s.vitDStreak||0)>=7},
 ];
 
 const TIPS = [
@@ -1725,6 +1743,13 @@ const S = {
   workReturnRead:false,
   illnessRead:false,
   childcareRead:false,
+  supplementRead:false,
+  cprRead:false,
+  siblingRead:false,
+  creativePlayRead:false,
+  milestoneTimelineRead:false,
+  vitDStreak:0,
+  lastVitDDay:-1,
 };
 
 // ══════════════════════════════════════════════════════
@@ -2034,6 +2059,11 @@ function resolveChallenge(){
   applyFx(ch.resolve||{});
   if(ch.id==='bez'||ch.id==='gece') S.diaper=Math.min(100,S.diaper+20);
   if(ch.resolve&&ch.resolve.dadScore) S.dadScore=Math.min(100,S.dadScore+(ch.resolve.dadScore||0));
+  if(ch.id==='vitamind'){
+    const today=S.dayTime||0;
+    S.vitDStreak=(S.lastVitDDay===today-1||(S.vitDStreak||0)===0)?(S.vitDStreak||0)+1:1;
+    S.lastVitDDay=today;
+  }
   S.challengesSolved=(S.challengesSolved||0)+1;
   clearChallenge();
   spawnParticles(['✅','⭐','🎉'],4);
@@ -3386,6 +3416,11 @@ function showAllGuides(){
     {ico:'🏢',name:'İşe Dönüş Rehberi',fn:'showWorkReturnGuide()'},
     {ico:'🤧',name:'Hastalık Yönetimi',fn:'showIllnessGuide()'},
     {ico:'🏫',name:'Kreş & Bakıcı',fn:'showChildcareGuide()'},
+    {ico:'💊',name:'Takviye Rehberi',fn:'showSupplementGuide()'},
+    {ico:'🚑',name:'Bebek CPR',fn:'showBabyCPRGuide()'},
+    {ico:'👶',name:'Kardeş Hazırlığı',fn:'showSiblingGuide()'},
+    {ico:'🎨',name:'Yaratıcı Oyun',fn:'showCreativePlayGuide()'},
+    {ico:'📅',name:'0-24 Ay Zaman Çizelgesi',fn:'showMilestoneTimeline()'},
   ];
   const chips=guides.map(g=>`<button class="guide-chip" onclick="${g.fn};this.closest('.pop-ov').remove()">${g.ico}<br>${g.name}</button>`).join('');
   const h=`<div class="pop-ov" onclick="if(event.target===this)this.remove()">
@@ -5199,6 +5234,193 @@ function showDigitalHealthGuide(){
     </div>
     <div class="pop-tip"><div class="pop-tip-t">💡 Pratik İpucu</div><p>Bebeğin yanında telefon kullanmak bile etki yaratır — "technoference" denen bu durum göz temasını ve duyarlılığı azaltır. Bebek uyanıkken telefonu başka odada bırakmayı deneyin.</p></div>
     <button class="pop-btn" style="background:linear-gradient(135deg,#0D47A1,#1976D2)" onclick="this.closest('.pop-ov').remove()">📱 Denge Önemli!</button>
+  </div></div>`;
+  document.body.insertAdjacentHTML('beforeend',h);
+}
+
+// ══════════════════════════════════════════════════════
+// SUPPLEMENT GUIDE
+// ══════════════════════════════════════════════════════
+function showSupplementGuide(){
+  S.supplementRead=true;checkAchievements();saveGame();
+  const supps=[
+    {name:'D Vitamini',ico:'☀️',dose:'400 IU/gün (0-12 ay) · 600 IU/gün (1-18 ay)',when:'Tüm bebekler doğumdan itibaren — TP Derneği 2023',why:'Anne sütü D vitamini açısından yetersizdir. D vitamini eksikliği rikets (kemik eğriliği), bağışıklık zayıflığı ve boy kısalığına yol açabilir.',when2:'Sabah beslemeden sonra, günlük rutine ekleyin.',safe:'Aşırı doz (>1000 IU/gün) toksik olabilir — kesinlikle ölçüsüz vermeyin.',color:'#FFF9C4',border:'#F9A825'},
+    {name:'Demir (Iron)',ico:'🩸',dose:'1 mg/kg/gün (preterm) · Doktor öneriyle term bebeklerde',when:'Prematüre bebekler 1. aydan, term bebekler 4-6. aydan itibaren risk değerlendirmesine göre',why:'Demir eksikliği anemisi beyin gelişimini, dikkat süresini ve öğrenme kapasitesini olumsuz etkiler.',when2:'Genellikle katı gıdayla (et, baklagil) yeterli alım sağlanır. Doktor önerisi olmadan vermeyin.',safe:'Kabızlık yapabilir. Süt ve çay demirle birlikte alınmamalı (emilimi azaltır).',color:'#FFEBEE',border:'#E57373'},
+    {name:'Omega-3 (DHA)',ico:'🐟',dose:'200-300 mg DHA/gün (emziren anneler için)',when:'Emziren anne DHA açısından zengin beslenirse bebek yeterince alır.',why:'DHA beyin ve göz gelişimi için kritiktir. Anne sütü DHA içerir — annenin diyeti belirleyicidir.',when2:'Haftada 2-3 porsiyon düşük cıvalı balık (somon, sardalya). Balık yiyemiyorsa algal DHA takviyesi.',safe:'Balık yağı takviyeleri bebeklere direkt verilmez — doktor önerisi gerekir.',color:'#E3F2FD',border:'#42A5F5'},
+    {name:'Probiyotik',ico:'🦠',dose:'Standardize doz yok — ürün bazlı',when:'Kolik, gaz, antibiyotik sonrası veya ailede alerji varsa düşünülebilir.',why:'L. reuteri koliklerde faydalı olabilir (sınırlı kanıt). Antibiyotik sonrası bağırsak florasını destekler.',when2:'Pediatrist önerisiyle, özellikle kolik şiddetliyse 1. aydan deneyebilirsiniz.',safe:'Genel bebeklerde güvenlidir; bağışıklık sorununda doktor onayı şart.',color:'#E8F5E9',border:'#66BB6A'},
+    {name:'Florür',ico:'🦷',dose:'İçme suyundaki florür düzeyine göre değişir',when:'Düşük florürlü bölgelerde 6. aydan itibaren pediatrist önerisiyle',why:'Florür diş çürüklerine karşı koruyucudur. Ancak aşırı florür (fluorosis) diş lekesine yol açar.',when2:'Yüksek florürlü su içilen bölgelerde ek florür gerekmez.',safe:'Dozu kesinlikle aşmayın. Florürlü diş macunu 0-3 yaşta pirinç tanesi kadar.',color:'#F3E5F5',border:'#AB47BC'},
+  ];
+  const cards=supps.map(s=>`
+  <div style="background:${s.color};border-radius:12px;padding:10px;margin-bottom:8px;border-left:3px solid ${s.border}">
+    <div style="font-weight:800;font-size:.8rem;color:#1A237E;margin-bottom:3px">${s.ico} ${s.name} <span style="font-size:.62rem;font-weight:400;color:#555">· ${s.dose}</span></div>
+    <div style="font-size:.64rem;color:#333;margin-bottom:2px">📋 <b>Endikasyon:</b> ${s.when}</div>
+    <div style="font-size:.64rem;color:#333;margin-bottom:2px">🧠 <b>Neden Önemli:</b> ${s.why}</div>
+    <div style="font-size:.64rem;color:#2E7D32;margin-bottom:2px">💡 <b>Kullanım:</b> ${s.when2}</div>
+    <div style="font-size:.62rem;color:#B71C1C">⚠️ ${s.safe}</div>
+  </div>`).join('');
+  const h=`<div class="pop-ov" onclick="if(event.target===this)this.remove()">
+  <div class="pop-box">
+    <div class="pop-rainbow" style="background:linear-gradient(90deg,#FFF9C4,#FFECB3,#E8F5E9)"></div>
+    <span class="pop-ico">💊</span><div class="pop-title">Bebek Takviye Rehberi</div>
+    <div class="pop-sub">Türkiye Pediatri Derneği 2023 · Kanıta dayalı</div>
+    <div style="max-height:370px;overflow-y:auto;margin:10px 0">${cards}</div>
+    <div class="pop-tip"><div class="pop-tip-t">⚠️ Önemli Uyarı</div><p>Herhangi bir takviye başlamadan önce mutlaka pediatristinize danışın. "Doğal" veya "organik" etiketli ürünler doz açısından güvenli olmayabilir. En güvenli takviye: çeşitli, dengeli beslenme ve anne sütü.</p></div>
+    <button class="pop-btn" style="background:linear-gradient(135deg,#1565C0,#1976D2)" onclick="this.closest('.pop-ov').remove()">💊 Doktorla Konuşacağım!</button>
+  </div></div>`;
+  document.body.insertAdjacentHTML('beforeend',h);
+}
+
+// ══════════════════════════════════════════════════════
+// BABY CPR GUIDE
+// ══════════════════════════════════════════════════════
+function showBabyCPRGuide(){
+  S.cprRead=true;checkAchievements();saveGame();
+  const steps=[
+    {n:'1',ico:'👁️',title:'Kontrol Et & Güvenliği Sağla',color:'#FFF9C4',
+     desc:'Sahne güvenli mi? Bebeği nazikçe dokunarak uyar: "Bebek! İyi misin?" Cevap yoksa ve nefes almıyorsa veya sadece iç çekiyorsa — CPR başlat.',
+     warn:'Baş boyun yaralanması şüphesi varsa oynama!'},
+    {n:'2',ico:'📞',title:'112\'yi Ara (veya birine bağırt)',color:'#FFECB3',
+     desc:'Sen yalnızsan: önce 2 dakika CPR yap, sonra 112\'yi ara. Yanında biri varsa: o 112\'yi arasın, sen CPR\'a başla.',
+     warn:'Telefon hoparlörde açık kalsın, 112 operatörü yönlendirir.'},
+    {n:'3',ico:'🫁',title:'Hava Yolunu Aç — 2 Nefes',color:'#E8F5E9',
+     desc:'Bebeği sırt üstü yatır. Başı hafifçe geri eğ (nötral pozisyon — çok geri değil!). Ağız ve burunu ağzınla kapat. Göğüs yükselmesini görecek kadar 2 kez hafifçe üfle (1 sn).',
+     warn:'Çok güçlü üfleme — bebek akciğerleri küçük! Göğsün hafifçe yükselmesi yeterli.'},
+    {n:'4',ico:'✋',title:'30 Göğüs Baskısı',color:'#E3F2FD',
+     desc:'İki parmağını (orta + yüzük parmağı) göğüs kemiğinin tam ortasına koy, meme uçlarının hemen altına. Göğsü 4 cm bastır, tam bırak. Dakikada 100-120 kez ritmiyle (Staying Alive şarkısı ritmi!).',
+     warn:'Baskı yeterince güçlü olmalı — "kırılır" korkusu olmasın, kırık kaburga yaşatır!'},
+    {n:'5',ico:'🔁',title:'2 Nefes + 30 Baskı Döngüsü',color:'#F3E5F5',
+     desc:'30 göğüs baskısı → 2 nefes → 30 baskı → 2 nefes... Ambulans gelene ya da bebek cevap verene kadar dur-ma. Yorgunsa değiş, ama CPR\'ı kesme.',
+     warn:'Bebek hareket eder veya ağlarsa dur. Normal nefes alıyorsa kurtarma pozisyonuna al.'},
+  ];
+  const cards=steps.map(s=>`
+  <div style="background:${s.color};border-radius:12px;padding:10px;margin-bottom:8px;border:2px solid rgba(0,0,0,.1)">
+    <div style="display:flex;gap:10px;align-items:flex-start">
+      <div style="min-width:30px;height:30px;background:#D32F2F;color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:.9rem">${s.n}</div>
+      <div style="flex:1">
+        <div style="font-weight:800;font-size:.78rem;color:#1A237E;margin-bottom:4px">${s.ico} ${s.title}</div>
+        <div style="font-size:.66rem;color:#333;margin-bottom:3px">${s.desc}</div>
+        <div style="font-size:.62rem;color:#B71C1C;font-style:italic">⚠️ ${s.warn}</div>
+      </div>
+    </div>
+  </div>`).join('');
+  const h=`<div class="pop-ov" onclick="if(event.target===this)this.remove()">
+  <div class="pop-box">
+    <div class="pop-rainbow" style="background:linear-gradient(90deg,#FFCDD2,#EF9A9A,#FFCDD2)"></div>
+    <span class="pop-ico">🚑</span><div class="pop-title">Bebek CPR Rehberi</div>
+    <div class="pop-sub">AHA 2020 Kılavuzu · Bebek için 30:2 döngüsü</div>
+    <div style="background:#FFCDD2;border-radius:10px;padding:8px;margin-bottom:8px;font-size:.72rem;font-weight:700;color:#B71C1C;text-align:center">
+      🚨 BU BİR ACİL DURUM REHBERİDİR — ÖNCE KURS AL!<br>
+      <span style="font-weight:400;font-size:.66rem">Türk Kızılay / hastane acil servisleri ücretsiz kurs sunar</span>
+    </div>
+    <div style="max-height:340px;overflow-y:auto;margin:8px 0">${cards}</div>
+    <div class="pop-tip"><div class="pop-tip-t">🎓 Kurs Almak Şart</div><p>Bu rehber bilgi amaçlıdır. Gerçek anlamda hazır olmak için mutlaka uygulamalı Bebek CPR kursu alın. Türk Kızılay, ÇÖZÜM-MER ve çoğu hastane ücretsiz kurs düzenler. Aile içindeki herkes bilmeli!</p></div>
+    <button class="pop-btn" style="background:linear-gradient(135deg,#C62828,#D32F2F)" onclick="this.closest('.pop-ov').remove()">🚑 Kurs Alacağım!</button>
+  </div></div>`;
+  document.body.insertAdjacentHTML('beforeend',h);
+}
+
+// ══════════════════════════════════════════════════════
+// SIBLING GUIDE
+// ══════════════════════════════════════════════════════
+function showSiblingGuide(){
+  S.siblingRead=true;checkAchievements();saveGame();
+  const sections=[
+    {ico:'📢',title:'Nasıl Haber Vereceğiz?',color:'#E3F2FD',border:'#90CAF9',tc:'#0D47A1',
+     items:['Karne/büyük bebek kıyafeti / oyunla anlat — karnını göster','Çok erken söyleme: 2 yaş altı zamanı kavrayamaz; 3. aydan sonra ideal','Hastanede "bebek sana hediye getirdi" deyin — olumlu bağlantı kur','Bebeğin kıyafet/oyuncak alışverişine büyük kardeşi dahil et','Kitaplar: "Ben Ağabeyim" gibi kardeş kitapları çok yardımcı olur']},
+    {ico:'😤',title:'Kıskançlık & Regresyon',color:'#FFF3E0',border:'#FFCC80',tc:'#E65100',
+     items:['Regresyon (bezi ıslatma, bebek gibi konuşma) normaldir — cezalandırma!','Büyük kardeşin özel zamanı: sadece onunla 15-20 dk/gün','Bebeği görmezden gelme dönemleri olabilir — kabul et','Kıskançlık sağlıklı bağlanmanın işareti, duygularını yargılama','Yardım isteyerek büyüklük hissi ver: "Bebeğe bezi getirir misin?"']},
+    {ico:'🤝',title:'Kardeş Bağını Güçlendirmek',color:'#E8F5E9',border:'#A5D6A7',tc:'#1B5E20',
+     items:['Kardeşleri birbiriyle tanıştır: büyük kardeş bebeği kucağında tutsun','"Bebeğin seni seviyor" diyalogları kur','Ortak fotoğraf, ortak şarkılar oluştur','Rekabeti körükleme: kardeşini sev, onu oyna değil','Ailece ritüeller: hep birlikte sabah kahvaltısı, akşam masalı']},
+  ];
+  const cards=sections.map(s=>`
+  <div style="background:${s.color};border-radius:12px;padding:10px;margin-bottom:8px;border-left:3px solid ${s.border}">
+    <div style="font-weight:800;font-size:.78rem;color:${s.tc};margin-bottom:5px">${s.ico} ${s.title}</div>
+    ${s.items.map(i=>`<div style="font-size:.66rem;color:#333;margin-bottom:3px">▸ ${i}</div>`).join('')}
+  </div>`).join('');
+  const h=`<div class="pop-ov" onclick="if(event.target===this)this.remove()">
+  <div class="pop-box">
+    <div class="pop-rainbow" style="background:linear-gradient(90deg,#E3F2FD,#E8F5E9,#FFF3E0)"></div>
+    <span class="pop-ico">👶</span><div class="pop-title">Kardeş Hazırlığı Rehberi</div>
+    <div class="pop-sub">İkinci bebek için birinci bebeği hazırlamak</div>
+    <div style="max-height:370px;overflow-y:auto;margin:10px 0">${cards}</div>
+    <div class="pop-tip"><div class="pop-tip-t">💡 Önemli Bilgi</div><p>Kardeş arası ideal yaş farkı araştırmalara göre 2-3 yıldır: büyük kardeş hem bağımsızlık kazanmış hem de yeterince olgunlaşmıştır. Ancak her aile farklıdır — hazır hissettiğinizde doğru zamandır.</p></div>
+    <button class="pop-btn" style="background:linear-gradient(135deg,#1565C0,#1976D2)" onclick="this.closest('.pop-ov').remove()">👨‍👩‍👧‍👦 Ailemiz Büyüyor!</button>
+  </div></div>`;
+  document.body.insertAdjacentHTML('beforeend',h);
+}
+
+// ══════════════════════════════════════════════════════
+// CREATIVE PLAY GUIDE
+// ══════════════════════════════════════════════════════
+function showCreativePlayGuide(){
+  S.creativePlayRead=true;checkAchievements();saveGame();
+  const ageGroups=[
+    {age:'0-3 Ay',ico:'👀',color:'#E8EAF6',border:'#9FA8DA',
+     acts:['Siyah-beyaz yüksek kontrastlı kartlar 20-30 cm mesafede göster','Müzik kutusunu çalıştır, bebeğin yüzünü izle','Annenin yüzü en sevilen "oyuncak" — göz teması ve mimikler','Hafif çıngırak sesi: hangi yönden geliyor?','Tummy time sırasında renkli oyuncakları önüne koy']},
+    {age:'4-6 Ay',ico:'✋',color:'#E8F5E9',border:'#A5D6A7',
+     acts:['Farklı dokular: kadife, kabarcıklı naylon, sünger — tut ve incele','Ayna karşısında otur — "kim bu bebek?"','Yumuşak bloklar yığ ve devir','Bebek müziği açık dans et — rit his gelişir','Su oyunu: ılık su dolu kaba plastik oyuncak koy (gözetimle)']},
+    {age:'7-9 Ay',ico:'🤚',color:'#FFF3E0',border:'#FFCC80',
+     acts:['Kova doldur-boşalt oyunu: hafif top, bez parçaları','Peek-a-boo (saklambaç) — nesne sürekliliği gelişir','Küçük kavanoza top koyma-çıkarma','Bebek güvenli boyalarla avuç içi baskısı','Evde doğa sesi çal: kuşlar, yağmur, nehir']},
+    {age:'10-12 Ay',ico:'🎨',color:'#FCE4EC',border:'#F48FB1',
+     acts:['Yenebilir parmak boyası (un + gıda boyası): büyük kağıda özgürce','Blok kulesi yap — devir!','Kapaklı kutu oyunu: içinde ne var?','Bebek güvenli çekiç-peg oyuncağı','Hayvan sesi taklidi: inek, kedi, köpek']},
+    {age:'13-18 Ay',ico:'🏃',color:'#E0F7FA',border:'#80DEEA',
+     acts:['Renkli play-doh (ev yapımı tuz hamuru): bastır, yoğur','Basit bulmaca (3-4 parça)','Kaşık+kap ritim aleti: müzisyen bebek!','Taklitçi oyun başlar: telefon tut, bebek uyut','Renkli kum veya kumsal taklidi (irmik)']},
+  ];
+  const cards=ageGroups.map(g=>`
+  <div style="background:${g.color};border-radius:12px;padding:10px;margin-bottom:8px;border-left:3px solid ${g.border}">
+    <div style="font-weight:800;font-size:.78rem;color:#1A237E;margin-bottom:5px">${g.ico} ${g.age}</div>
+    ${g.acts.map(a=>`<div style="font-size:.66rem;color:#333;margin-bottom:2px">🎯 ${a}</div>`).join('')}
+  </div>`).join('');
+  const h=`<div class="pop-ov" onclick="if(event.target===this)this.remove()">
+  <div class="pop-box">
+    <div class="pop-rainbow" style="background:linear-gradient(90deg,#FCE4EC,#FFF9C4,#E8F5E9)"></div>
+    <span class="pop-ico">🎨</span><div class="pop-title">Yaratıcı Oyun & Duyusal Sanat</div>
+    <div class="pop-sub">0-18 ay · Yaşa göre zenginleştirilmiş aktiviteler</div>
+    <div style="max-height:370px;overflow-y:auto;margin:10px 0">${cards}</div>
+    <div class="pop-tip"><div class="pop-tip-t">🧠 Neden Önemli?</div><p>Duyusal oyun; beyin bağlantılarını (nöral plastisite) güçlendirir, dil gelişimini destekler ve öz-düzenleme becerisi kazandırır. "Kirli" olmak çocuk için öğrenme fırsatıdır — kirlensin, temizlenir!</p></div>
+    <button class="pop-btn" style="background:linear-gradient(135deg,#E91E63,#F06292)" onclick="this.closest('.pop-ov').remove()">🎨 Oynayalım!</button>
+  </div></div>`;
+  document.body.insertAdjacentHTML('beforeend',h);
+}
+
+// ══════════════════════════════════════════════════════
+// MILESTONE TIMELINE 0-24 MONTHS
+// ══════════════════════════════════════════════════════
+function showMilestoneTimeline(){
+  S.milestoneTimelineRead=true;saveGame();
+  const months=[
+    {m:0, ico:'👶',label:'Doğum',milestones:['Tüm refleksler aktif (Moro, emme, kavrama)','Siyah-beyaz görebilir (20-30 cm)','Anne sesini tanır','Saatte 2-3 saat uyur']},
+    {m:1, ico:'😊',label:'1 Ay',milestones:['Sosyal gülümseme başlar','Gözleri yüzü takip eder','Başını kısaca kaldırabilir','Sesler çıkarmaya başlar']},
+    {m:2, ico:'😄',label:'2 Ay',milestones:['Gülümser ve güler','Nesneleri takip eder','Kendine bakınır','Sesle iletişim kurar']},
+    {m:4, ico:'🤲',label:'4 Ay',milestones:['Baş tutuyor!','Nesnelere uzanır','Yüz yüze oyun sever','Renkleri ayırt eder']},
+    {m:6, ico:'🤸',label:'6 Ay',milestones:['Destekle oturabilir','Rollover (yuvarlanma)','Yabancıya ilgi','Katı gıdaya hazır (WHO)']},
+    {m:9, ico:'🧩',label:'9 Ay',milestones:['Bağımsız oturur','Emekliyor veya sürünüyor','Pincer grasp (ince tutma)','Mama/baba der gibi sesler']},
+    {m:12,ico:'🎂',label:'12 Ay',milestones:['İlk adımlar (9-15 ay)','İlk kelimeler','İşaret eder','Tanıdıkları tanır']},
+    {m:15,ico:'🏃',label:'15 Ay',milestones:['Bağımsız yürüme','4-6 kelime','Kaşık kullanmaya çalışır','Taklit oyunu']},
+    {m:18,ico:'🗣️',label:'18 Ay',milestones:['10-20 kelime','Gösteri ile istek','Kaşık/çatalı kullanır','2 bloklu kule yapar']},
+    {m:24,ico:'🌟',label:'24 Ay',milestones:['50+ kelime','2-3 kelimeli cümle','Merdiven çıkar (tutunarak)','Sembolik oyun başlar']},
+  ];
+  const cards=months.map((m,i)=>{
+    const colors=['#E8EAF6','#E3F2FD','#E8F5E9','#FFF3E0','#FCE4EC','#F3E5F5','#E0F7FA','#FFF9C4','#EFEBE9','#E8F5E9'];
+    const borders=['#9FA8DA','#90CAF9','#A5D6A7','#FFCC80','#F48FB1','#CE93D8','#80DEEA','#FFF176','#BCAAA4','#80CBC4'];
+    return `<div style="display:flex;gap:10px;margin-bottom:10px">
+      <div style="min-width:44px;text-align:center">
+        <div style="font-size:1.4rem">${m.ico}</div>
+        <div style="font-size:.62rem;font-weight:800;color:#5C6BC0">${m.label}</div>
+      </div>
+      <div style="flex:1;background:${colors[i%colors.length]};border-radius:10px;padding:8px;border-left:3px solid ${borders[i%borders.length]}">
+        ${m.milestones.map(ms=>`<div style="font-size:.64rem;color:#333;margin-bottom:2px">✦ ${ms}</div>`).join('')}
+      </div>
+    </div>`;
+  }).join('');
+  const h=`<div class="pop-ov" onclick="if(event.target===this)this.remove()">
+  <div class="pop-box">
+    <div class="pop-rainbow"></div>
+    <span class="pop-ico">📅</span><div class="pop-title">0-24 Ay Gelişim Zaman Çizelgesi</div>
+    <div class="pop-sub">WHO & AAP · Her çocuk kendi temposunda gelişir</div>
+    <div style="max-height:380px;overflow-y:auto;margin:10px 0">${cards}</div>
+    <div class="pop-tip"><div class="pop-tip-t">⚠️ Önemli Hatırlatma</div><p>Bu zaman çizelgesi ortalama değerleri gösterir. Çocuklar geniş bir normal aralıkta gelişir. Belirtilen yaşlardan 2-3 ay sonrası da normal olabilir. Endişeniz varsa pediatristinizle konuşun.</p></div>
+    <button class="pop-btn" onclick="this.closest('.pop-ov').remove()">📅 Her Anı Takip Ediyorum!</button>
   </div></div>`;
   document.body.insertAdjacentHTML('beforeend',h);
 }
