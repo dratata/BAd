@@ -1326,6 +1326,10 @@ const CHALLENGES = [
   {id:'buyumeatlamasi',icon:'📈',name:'Büyüme Sıçraması!',desc:'Bebek aniden çok acıktı — büyüme sıçraması başladı!',urgent:false,action:'Daha Sık Besle',resolve:{hunger:40,health:8,dp:18},penaltyMsg:'Büyüme sıçraması desteklenmedi!',info:'Büyüme sıçramaları genellikle 3, 6, 9. aylarda olur. Bu dönemde bebek daha sık emer, daha huysuz olur ve daha fazla uyur. Anne sütü talebi artınca süt de artar — bu normal!',tip:'Büyüme sıçraması sırasında isteğe bağlı besleyin, daha sık emzirin. Genellikle 2-3 günde geçer. Formüle geçmeye gerek yok — talep artınca süt artar!'},
   {id:'tantrum',icon:'🌋',name:'Toddler Öfke Krizi!',minAge:12,desc:'Bebek yerde yuvarlanıyor ve çığlık atıyor!',urgent:false,action:'Sakin Kal & Alan Ver',resolve:{happy:20,energy:5,dp:24},penaltyMsg:'Öfke krizi yönetilemedi!',info:'"Terrible Twos" erken başlayabilir! Toddler öfke krizleri 12-36. aylarda normaldir. Bebek duygularını henüz düzenleyemiyor — prefrontal korteks gelişimi 25 yaşa kadar sürer!',tip:'Kriz sırasında: sakin kalın, tehlikeden uzaklaştırın, alan verin, geçmesini bekleyin. Sonra sarılın. Asla kriz anında müzakere etmeyin veya ödüllendirmeyin.'},
   {id:'geceteroru',icon:'👻',name:'Gece Terörü!',minAge:12,desc:'Bebek gece çığlıkla uyandı, ama aslında uyuyor!',urgent:true,action:'Sakin Ol, Uyanmaya Çalışma',resolve:{energy:15,happy:10,dp:20},penaltyMsg:'Gece terörü ebeveynleri de korkuttu!',info:'Gece terörü (pavor nocturnus) 18 ay-6 yaş arası yaygındır. Çocuk uyurgezer gibi çığlık atar ama aslında uyku durumundadır. Genellikle sabah hiçbir şey hatırlamaz.',tip:'Gece terörü sırasında: uyandırmaya çalışmayın! Güvenliğini sağlayın, sakin bekleyin. 5-15 dakikada geçer. Normal uyku düzeni ve stressiz ortam sıklığı azaltır.'},
+  {id:'hastalikvirus',icon:'🤧',name:'Soğuk Algınlığı!',desc:'Bebek hapşırıyor, burnu akıyor — ilk hastalık!',urgent:true,action:'Burun Temizle & Dinlendir',resolve:{health:20,happy:10,dp:16},penaltyMsg:'Hastalık tedavi edilmedi!',info:'Bebekler yılda 6-8 kez soğuk algınlığı geçirir — her seferinde bağışıklık sistemi güçlenir. 3 ay altında ateşsiz hafif nezle: serum + aspiratör + bol emzirme. 3 ay altında HERHANGI bir ateşte hemen doktora!',tip:'Bebek burnunu temizlemek için serum fizyolojik damlatıp aspiratörle çekin. Burun tıkalıyken emzirmek zordur — sabırlı olun, kısa kısa emzirin.'},
+  {id:'uykuregresyon2',icon:'🛏️',name:'8-9 Ay Uyku Gerileme!',minAge:8,desc:'Uyku düzeni bozuldu — bebek gece çok daha sık uyanıyor!',urgent:false,action:'Uyku Rutinini Yenile',resolve:{energy:22,happy:12,dp:18},penaltyMsg:'Uyku gerileme iyi yönetilemedi!',info:'8-9. ay uyku gerileme son derece yaygındır. Emekleme, ayrılık kaygısı ve dil gelişimi nedeniyle beyin aktivitesi artar. Genellikle 2-6 haftada geçer.',tip:'Uyku rutinini tutun, gece emzirmeyi kısa tutmaya başlayabilirsiniz, self-soothing fırsatları verin. Bu dönem geçecek!'},
+  {id:'beslenmegrevi',icon:'🚫',name:'Beslenme Grevi!',minAge:5,desc:'Bebek aniden mama veya anne sütü içmek istemiyor!',urgent:true,action:'Sakin Kal, Farklı Dene',resolve:{hunger:32,happy:10,dp:16},penaltyMsg:'Bebek yeterince beslenemedi!',info:'Beslenme grevi diş ağrısı, hastalık, büyüme sıçraması veya rutin bozulmasından kaynaklanır. Genellikle 3-5 gün sürer. Ağızdan ret + ateş varsa doktora.',tip:'Baskı yapmayın, farklı pozisyonlar deneyin, sessiz ortamda emzirin. Grev sırasında anne sütünü pompalaymaya devam edin.'},
+  {id:'ilkdusme',icon:'🤕',name:'İlk Düşme!',minAge:6,desc:'Bebek yüksekçe bir yerden yuvarlandı!',urgent:true,action:'Sakin Kal & Değerlendir',resolve:{health:15,happy:12,dp:14},penaltyMsg:'Düşme sonrası panik!',info:'Bebeklerin büyük çoğunluğu yürümeden önce en az bir kez düşer. Düştükten sonra: ağlıyor ve oynuyorsa genellikle iyidir. Kusma, aşırı uyuklama, bilinç değişikliği → HEMEN doktora!',tip:'Değişme masasında MUTLAKA bir el üzerinde olsun. Zemin matı kullanın. Paniklenince bebek daha çok korkar — sakin kalın!'},
 ];
 
 // ══════════════════════════════════════════════════════
@@ -1363,6 +1367,8 @@ function saveGame(){
     sleepLog:S.sleepLog||[], feedLog:S.feedLog||[], stressChecked:S.stressChecked||false, colorGamePlayed:S.colorGamePlayed||false,
     musicPlayed:S.musicPlayed||0, tummyTimeTotal:S.tummyTimeTotal||0, breatheCount:S.breatheCount||0,
     wellChildRead:S.wellChildRead||false, reflexRead:S.reflexRead||false,
+    coupleRead:S.coupleRead||false, workReturnRead:S.workReturnRead||false,
+    illnessRead:S.illnessRead||false, childcareRead:S.childcareRead||false,
     savedAt:Date.now(),
   };
   try { localStorage.setItem(SAVE_KEY, JSON.stringify(data)); } catch(e){}
@@ -1426,6 +1432,10 @@ function applySaveData(d){
   S.breatheCount = d.breatheCount||0;
   S.wellChildRead = d.wellChildRead||false;
   S.reflexRead = d.reflexRead||false;
+  S.coupleRead = d.coupleRead||false;
+  S.workReturnRead = d.workReturnRead||false;
+  S.illnessRead = d.illnessRead||false;
+  S.childcareRead = d.childcareRead||false;
   S.started = true;
 }
 
@@ -1559,6 +1569,10 @@ const ACHIEVEMENTS = [
   {id:'tummy10',    icon:'🤸', name:'Tummy Time Uzmanı',   desc:'10 karın üstü seansı tamamlandı',       check:s=>(s.tummyTimeTotal||0)>=10},
   {id:'breathe3',   icon:'🧘', name:'Huzurlu Ebeveyn',     desc:'3 nefes egzersizi tamamlandı',          check:s=>(s.breatheCount||0)>=3},
   {id:'reflex',     icon:'👶', name:'Refleks Uzmanı',      desc:'Yenidoğan refleks rehberi okundu',      check:s=>(s.reflexRead||false)},
+  {id:'couple1',    icon:'💑', name:'Çift Uyumu',          desc:'Çift uyumu rehberi okundu',              check:s=>(s.coupleRead||false)},
+  {id:'work_return',icon:'🏢', name:'İşe Dönüş',           desc:'İşe dönüş rehberi okundu',               check:s=>(s.workReturnRead||false)},
+  {id:'illness1',   icon:'🤧', name:'Hastalık Savaşçısı',  desc:'Hastalık yönetim rehberi okundu',        check:s=>(s.illnessRead||false)},
+  {id:'challenge30',icon:'🏆', name:'Kriz Efsanesi',       desc:'30 zorlu anı çözdün!',                   check:s=>(s.challengesSolved||0)>=30},
 ];
 
 const TIPS = [
@@ -1707,6 +1721,10 @@ const S = {
   breatheCount:0,
   wellChildRead:false,
   reflexRead:false,
+  coupleRead:false,
+  workReturnRead:false,
+  illnessRead:false,
+  childcareRead:false,
 };
 
 // ══════════════════════════════════════════════════════
@@ -3364,6 +3382,10 @@ function showAllGuides(){
     {ico:'🤸',name:'Karın Üstü Takip',fn:'showTummyTime()'},
     {ico:'🧘',name:'Nefes Egzersizi',fn:'showParentBreathing()'},
     {ico:'👶',name:'Doğumsal Refleksler',fn:'showReflexGuide()'},
+    {ico:'💑',name:'Çift Uyumu',fn:'showCoupleGuide()'},
+    {ico:'🏢',name:'İşe Dönüş Rehberi',fn:'showWorkReturnGuide()'},
+    {ico:'🤧',name:'Hastalık Yönetimi',fn:'showIllnessGuide()'},
+    {ico:'🏫',name:'Kreş & Bakıcı',fn:'showChildcareGuide()'},
   ];
   const chips=guides.map(g=>`<button class="guide-chip" onclick="${g.fn};this.closest('.pop-ov').remove()">${g.ico}<br>${g.name}</button>`).join('');
   const h=`<div class="pop-ov" onclick="if(event.target===this)this.remove()">
@@ -5177,6 +5199,147 @@ function showDigitalHealthGuide(){
     </div>
     <div class="pop-tip"><div class="pop-tip-t">💡 Pratik İpucu</div><p>Bebeğin yanında telefon kullanmak bile etki yaratır — "technoference" denen bu durum göz temasını ve duyarlılığı azaltır. Bebek uyanıkken telefonu başka odada bırakmayı deneyin.</p></div>
     <button class="pop-btn" style="background:linear-gradient(135deg,#0D47A1,#1976D2)" onclick="this.closest('.pop-ov').remove()">📱 Denge Önemli!</button>
+  </div></div>`;
+  document.body.insertAdjacentHTML('beforeend',h);
+}
+
+// ══════════════════════════════════════════════════════
+// COUPLE HARMONY GUIDE
+// ══════════════════════════════════════════════════════
+function showCoupleGuide(){
+  S.coupleRead=true;checkAchievements();saveGame();
+  const sections=[
+    {ico:'💔',title:'Neden Zorlaşıyor?',color:'#FCE4EC',border:'#EF9A9A',tc:'#B71C1C',
+     items:['Uyku yoksunluğu empatiyi zorlaştırır — ikisi de yorgun!','İletişim azalır; bebek her konuşmanın odağı olur','Fiziksel yakınlık azalır, ikisi de bundan suçluluk duyabilir','Roller değişir: "eşler" yerine "anne ve baba" olursunuz','Eşit olmayan iş bölümü en büyük kırgınlık nedenidir (araştırma: Gottman 2015)']},
+    {ico:'🗣️',title:'İletişim Altın Kuralları',color:'#E3F2FD',border:'#90CAF9',tc:'#0D47A1',
+     items:['"Sen hep..." yerine "Ben hissediyorum ki..." de — suçlayıcı dil savunmayı tetikler','Haftada 1 "çift toplantısı": bebek uyuduktan sonra 20 dk sadece sizin için','Şikayet ≠ eleştiri: sorunu tanımla, kişiyi yargılama','Gece nöbetleri, ev işleri, doktor randevuları → yazılı nöbet takvimi!','İlk 6 ay iş bölümü beklentilerini doğum öncesinde konuşun']},
+    {ico:'💞',title:'Bağlanmayı Canlı Tutmak',color:'#E8F5E9',border:'#A5D6A7',tc:'#1B5E20',
+     items:['Günde 6 saniye kucaklaşma — oksitosini artırır (Gottman)','Sabah veya gece kısa bir "check-in": "Bugün nasıl hissediyorsun?"','Bebeği büyükanne/büyükbabaya bırakıp aylık "date" yapın','Birbirinizin iyilik halinizi sorun — sadece bebek değil','Küçük jestler büyük mesaj taşır: çay yapmak, diş macunu koymak, not bırakmak']},
+    {ico:'⚖️',title:'Eşit İş Bölümü',color:'#FFF3E0',border:'#FFCC80',tc:'#E65100',
+     items:['Mental yük görünmezdir: randevu takibi, alışveriş listesi, doktor hatırlatmaları','Baba tüm bakım becerilerini öğrenmeli — yardımcı değil, ebeveyn!','Gece nöbetlerini dönüşümlü yapın — 2 gece biri, 2 gece diğeri','Ev işlerini değil, enerjiyi takip edin: kimin enerjisi var o yapar','Minnettarlığı sözle ifade edin: "Bu gece kalktığın için teşekkürler" çok güçlüdür']},
+  ];
+  const cards=sections.map(s=>`
+  <div style="background:${s.color};border-radius:12px;padding:10px;margin-bottom:8px;border-left:3px solid ${s.border}">
+    <div style="font-weight:800;font-size:.8rem;color:${s.tc};margin-bottom:6px">${s.ico} ${s.title}</div>
+    ${s.items.map(i=>`<div style="font-size:.66rem;color:#333;margin-bottom:3px;padding-left:4px">▸ ${i}</div>`).join('')}
+  </div>`).join('');
+  const h=`<div class="pop-ov" onclick="if(event.target===this)this.remove()">
+  <div class="pop-box">
+    <div class="pop-rainbow" style="background:linear-gradient(90deg,#FCE4EC,#F8BBD9,#FCE4EC)"></div>
+    <span class="pop-ico">💑</span><div class="pop-title">Çift Uyumu Rehberi</div>
+    <div class="pop-sub">Bebek sonrası ilişkiyi güçlü tutmanın bilimi</div>
+    <div style="max-height:370px;overflow-y:auto;margin:10px 0">${cards}</div>
+    <div class="pop-tip"><div class="pop-tip-t">📊 Gottman Enstitüsü Araştırması</div><p>Yeni ebeveynlerin %67'si doğumdan sonraki 3 yılda ilişki memnuniyetinde düşüş yaşar. Farkında olmak ve aktif çaba göstermek bu istatistikten sizi korur. En güçlü önlem: eşit iş bölümü ve açık iletişim.</p></div>
+    <button class="pop-btn" style="background:linear-gradient(135deg,#E91E63,#C2185B)" onclick="this.closest('.pop-ov').remove()">💑 Birlikte Güçlüyüz!</button>
+  </div></div>`;
+  document.body.insertAdjacentHTML('beforeend',h);
+}
+
+// ══════════════════════════════════════════════════════
+// RETURN TO WORK GUIDE
+// ══════════════════════════════════════════════════════
+function showWorkReturnGuide(){
+  S.workReturnRead=true;checkAchievements();saveGame();
+  const steps=[
+    {week:-4,ico:'📋',title:'İşe Dönüşten 4 Hafta Önce',items:['Bakıcı/kreşi kesinleştir ve deneme günleri planla','Uyku ve beslenme rutinini bakıcıya öğret','Süt pompasını ve saklama kaplarını hazırla','İşverenle emzirme odası/molaları konuş']},
+    {week:-1,ico:'🎽',title:'Son Haftada',items:['Bebek ile birkaç saatlik ayrılık provası yap','Acil iletişim listesi hazırla (doktor, bakıcı, eczane)','İlk haftanın kıyafetlerini önceden hazırla','Suçluluk normal ama ayrılık bebeğe zarar vermez — aksine yeni deneyimler kazanır']},
+    {week:1,ico:'🏢',title:'İlk Haftalarda',items:['Geçiş döneminde esnek çalışma saati talep et','Sütü düzenli pompalamak için takvim oluştur','Bakıcıyı/kreşi ani aramaya alışmak: günlük kısa kontrollar azalt','Anksiyete normaldir — çoğu anne 2-4 hafta içinde adaptasyon sağlar']},
+    {week:4,ico:'🌟',title:'Uzun Vadeli Uyum',items:['Akşamları kaliteli zaman: ekransız 30-60 dk bebek ile','Bakıcıya güven — aşırı kontrol bakıcıyı yorar ve sizi de','Babalık iznini değerlendirin: baba katılımı uzun vadede bebeğe fayda sağlar','Mükemmeliyetçiliği bırakın: "yeterince iyi ebeveyn" yeter!']},
+  ];
+  const cards=steps.map(s=>`
+  <div style="background:#E8F5E9;border-radius:12px;padding:10px;margin-bottom:8px;border-left:3px solid #66BB6A">
+    <div style="font-weight:800;font-size:.78rem;color:#1B5E20;margin-bottom:5px">${s.ico} ${s.title}</div>
+    ${s.items.map(i=>`<div style="font-size:.66rem;color:#333;margin-bottom:3px">✓ ${i}</div>`).join('')}
+  </div>`).join('');
+  const h=`<div class="pop-ov" onclick="if(event.target===this)this.remove()">
+  <div class="pop-box">
+    <div class="pop-rainbow" style="background:linear-gradient(90deg,#E8F5E9,#C8E6C9,#E8F5E9)"></div>
+    <span class="pop-ico">🏢</span><div class="pop-title">İşe Dönüş Rehberi</div>
+    <div class="pop-sub">Planla, hazırlan, suçluluk duyma</div>
+    <div style="max-height:370px;overflow-y:auto;margin:10px 0">${cards}</div>
+    <div class="pop-tip"><div class="pop-tip-t">💡 Türkiye'de Yasal Haklar</div><p>Doğum sonrası 16 hafta (çoğul gebelikte 18 hafta) ücretli izin. Ücretsiz izin hakkı 6 aya kadar. Emzirme molası: günde 1.5 saat (6. aya kadar). İşveren emzirme odası sağlamakla yükümlü. Haklarınızı bilin!</p></div>
+    <button class="pop-btn" style="background:linear-gradient(135deg,#2E7D32,#388E3C)" onclick="this.closest('.pop-ov').remove()">🏢 Hazırım!</button>
+  </div></div>`;
+  document.body.insertAdjacentHTML('beforeend',h);
+}
+
+// ══════════════════════════════════════════════════════
+// ILLNESS MANAGEMENT GUIDE
+// ══════════════════════════════════════════════════════
+function showIllnessGuide(){
+  S.illnessRead=true;checkAchievements();saveGame();
+  const illnesses=[
+    {name:'Soğuk Algınlığı',ico:'🤧',urgency:'normal',signs:'Burun akıntısı, hafif öksürük, huzursuzluk',treat:'Serum fizyolojik + aspiratör, bol emzirme, buhar. İlaç HAYIR (2 yaş altı). 3 ay altında ateşle HEMEN doktor.',warn:'Nefes güçlüğü, dudak morluğu, yemek reddi → doktor'},
+    {name:'Kulak İltihabı (Otit)',ico:'👂',urgency:'dikkat',signs:'Kulak çekme, gece ağlaması artışı, ateş, yatarken ağlama',treat:'Doktora git — antibiyotik gerekebilir. Ağrı için parasetamol (doz hesapla). Emzirme basıncı azaltır.',warn:'Kulaktan akıntı, işitme azalması → acil doktor'},
+    {name:'Gastroenterit (Mide Gribi)',ico:'🤢',urgency:'dikkat',signs:'Kusma, ishal, ateş, halsizlik',treat:'Dehidratasyonu önle: sık sık az az emzir/ORS ver. 24 saat içinde geçmiyorsa doktor.',warn:'8 saat içinde ıslak bez yoksa, gözler çökmüşse, ağız kurumuşsa → ACİL'},
+    {name:'Döküntü / Alerjik Reaksiyon',ico:'🔴',urgency:'dikkat',signs:'Yeni gıda/ürün sonrası döküntü, kaşıntı, kızarıklık',treat:'Tetikleyeni kaldır. Soğuk kompres. Antihistamin için doktora sor.',warn:'Yüz/boyun şişmesi, nefes güçlüğü, hızlı yayılan döküntü → ACİL 112'},
+    {name:'Konjunktivit (Göz Nezlesi)',ico:'👁️',urgency:'normal',signs:'Gözde yapışkan akıntı, kızarıklık, şişlik',treat:'Islak steril gazlı bez ile içten dışa silme. Bulaşıcıdır — el hijyeni. Doktor için antibiyotik damla gerekebilir.',warn:'1 haftada geçmiyorsa veya şiddetlenirse → doktor'},
+    {name:'Ateş — Genel Kılavuz',ico:'🌡️',urgency:'acil',signs:'Vücut sıcaklığı 38°C+ (rektal/kulak)',treat:'3 ay altında 38°C → HEMEN doktor. Büyük bebek: bol sıvı, ılık ortam, uygun doz ateş düşürücü (pediatrist onayıyla).',warn:'Ateşle birlikte döküntü, sertlik, ışığa hassasiyet → ACİL'},
+  ];
+  const cards=illnesses.map(i=>{
+    const urgencyColor=i.urgency==='acil'?'#FFCDD2':'#FFF3E0';
+    const urgencyBorder=i.urgency==='acil'?'#E57373':'#FFB74D';
+    return `<div style="background:${urgencyColor};border-radius:12px;padding:10px;margin-bottom:8px;border-left:3px solid ${urgencyBorder}">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
+        <div style="font-weight:800;font-size:.78rem;color:#4E342E">${i.ico} ${i.name}</div>
+        <span style="font-size:.6rem;background:${urgencyBorder};color:#fff;border-radius:6px;padding:2px 6px;font-weight:700">${i.urgency.toUpperCase()}</span>
+      </div>
+      <div style="font-size:.63rem;color:#555;margin-bottom:3px"><b>Belirtiler:</b> ${i.signs}</div>
+      <div style="font-size:.63rem;color:#333;margin-bottom:3px"><b>Tedavi:</b> ${i.treat}</div>
+      <div style="font-size:.63rem;color:#B71C1C;font-weight:600">⚠️ ${i.warn}</div>
+    </div>`;
+  }).join('');
+  const h=`<div class="pop-ov" onclick="if(event.target===this)this.remove()">
+  <div class="pop-box">
+    <div class="pop-rainbow" style="background:linear-gradient(90deg,#FFCDD2,#FFCCBC,#FFF9C4)"></div>
+    <span class="pop-ico">🤧</span><div class="pop-title">Bebek Hastalık Rehberi</div>
+    <div class="pop-sub">Ne zaman bekle, ne zaman git — AAP kılavuzu</div>
+    <div style="max-height:370px;overflow-y:auto;margin:10px 0">${cards}</div>
+    <div class="pop-tip"><div class="pop-tip-t">📞 Doktoru Ne Zaman Ara?</div><p>3 ay altında herhangi bir ateş, 3 ay üstünde 39°C+ ateş, 24 saat içinde 6+ kusma, 8 saatte ıslak bez yok, bilinç değişikliği, nefes güçlüğü, mavimsi renk. Şüphe varsa aramak her zaman doğrudur.</p></div>
+    <button class="pop-btn" style="background:linear-gradient(135deg,#D32F2F,#E53935)" onclick="this.closest('.pop-ov').remove()">🤧 Hazırlıklıyım!</button>
+  </div></div>`;
+  document.body.insertAdjacentHTML('beforeend',h);
+}
+
+// ══════════════════════════════════════════════════════
+// CHILDCARE GUIDE
+// ══════════════════════════════════════════════════════
+function showChildcareGuide(){
+  S.childcareRead=true;checkAchievements();saveGame();
+  const options=[
+    {type:'Aile Bakımı (Büyükanne/büyükbaba)',ico:'👴',pros:['Güvenilir ve çocuğu seviyor','Ekonomik veya ücretsiz','Kültürel aktarım fırsatı','Esnek saatler'],cons:['Sınır koymak zor','Farklı yetiştirme anlayışları çatışabilir','Yaşlı bakıcıların sağlık sorunu olabilir','Bebek kendi kendine uyuyamayabilir (çok şımartıldığında)']},
+    {type:'Bireysel Bakıcı (Au Pair / Bakıcı)',ico:'👩‍🍼',pros:['Bire bir ilgi','Ev ortamında kalır','Esnek program','Abla/ağabey görevi üstlenebilir'],cons:['Pahalı (sigorta, yemek, sosyal haklar)','İş hukuku yükümlülükleri','Kısa süreli kalabilir','Yetkinlik kontrolü zordur']},
+    {type:'Kreş / Yuva',ico:'🏫',pros:['Sosyal beceri gelişimi','Profesyonel kadro','Devlet denetimi','Daha ekonomik (kamu kreşi)'],cons:['Yaş sınırı (genellikle 1 yaş+)','Daha fazla hastalık riski','Bireysel ilgi azalır','Uzun bekleme listeleri']},
+  ];
+  const criteria=[
+    '🔍 Yetkili kurumdan referans veya kimlik kontrolü',
+    '💉 Bakıcının aşı durumu (Tdap, Grip özellikle)',
+    '🤸 Bebek ilkyardım kursu sertifikası',
+    '📸 Şeffaf iletişim: gün içi fotoğraf/mesaj',
+    '🏠 Fiziksel ortam güvenliği (kreşte mutlaka yerinde görüşün)',
+    '💬 Değerlerin uyumu: ekran süresi, disiplin anlayışı',
+    '📄 Deneme dönemi ve sözleşme',
+  ];
+  const optCards=options.map(o=>`
+  <div style="background:#E8F5E9;border-radius:12px;padding:10px;margin-bottom:8px">
+    <div style="font-weight:800;font-size:.78rem;color:#1B5E20;margin-bottom:5px">${o.ico} ${o.type}</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:5px">
+      <div><div style="font-size:.62rem;color:#2E7D32;font-weight:700;margin-bottom:2px">✅ Avantajlar</div>${o.pros.map(p=>`<div style="font-size:.61rem;color:#444;margin-bottom:2px">+ ${p}</div>`).join('')}</div>
+      <div><div style="font-size:.62rem;color:#C62828;font-weight:700;margin-bottom:2px">⚠️ Dikkat</div>${o.cons.map(c=>`<div style="font-size:.61rem;color:#555;margin-bottom:2px">- ${c}</div>`).join('')}</div>
+    </div>
+  </div>`).join('');
+  const h=`<div class="pop-ov" onclick="if(event.target===this)this.remove()">
+  <div class="pop-box">
+    <div class="pop-rainbow" style="background:linear-gradient(90deg,#E8F5E9,#DCEDC8,#F9FBE7)"></div>
+    <span class="pop-ico">🏫</span><div class="pop-title">Kreş & Bakıcı Seçimi</div>
+    <div class="pop-sub">Güvenli bakım için doğru seçim</div>
+    <div style="max-height:360px;overflow-y:auto;margin:10px 0">
+      ${optCards}
+      <div style="font-weight:800;font-size:.75rem;color:#1B5E20;margin:8px 0 5px">📋 Değerlendirme Kriterleri</div>
+      ${criteria.map(c=>`<div style="font-size:.66rem;color:#333;margin-bottom:4px;background:#F1F8E9;border-radius:8px;padding:5px 8px">${c}</div>`).join('')}
+    </div>
+    <div class="pop-tip"><div class="pop-tip-t">💡 Türkiye'de Devlet Kreşleri</div><p>MEB, Aile ve Sosyal Hizmetler Bakanlığı, ÇÖZÜM-MER ve belediye kreşleri daha ekonomik seçeneklerdir. Kamu kreşleri için erken başvuru önemlidir — bekleme listeleri uzun olabilir.</p></div>
+    <button class="pop-btn" style="background:linear-gradient(135deg,#33691E,#558B2F)" onclick="this.closest('.pop-ov').remove()">🏫 Doğru Seçimi Yapacağım!</button>
   </div></div>`;
   document.body.insertAdjacentHTML('beforeend',h);
 }
