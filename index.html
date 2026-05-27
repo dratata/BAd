@@ -1361,6 +1361,8 @@ function saveGame(){
     birthStory:S.birthStory||null,
     firstWords:S.firstWords||[], teethDone:[...S.teethDone||new Set()], cryDecoderUsed:S.cryDecoderUsed||false, sensoryRead:S.sensoryRead||false,
     sleepLog:S.sleepLog||[], feedLog:S.feedLog||[], stressChecked:S.stressChecked||false, colorGamePlayed:S.colorGamePlayed||false,
+    musicPlayed:S.musicPlayed||0, tummyTimeTotal:S.tummyTimeTotal||0, breatheCount:S.breatheCount||0,
+    wellChildRead:S.wellChildRead||false, reflexRead:S.reflexRead||false,
     savedAt:Date.now(),
   };
   try { localStorage.setItem(SAVE_KEY, JSON.stringify(data)); } catch(e){}
@@ -1419,6 +1421,11 @@ function applySaveData(d){
   S.feedLog = d.feedLog||[];
   S.stressChecked = d.stressChecked||false;
   S.colorGamePlayed = d.colorGamePlayed||false;
+  S.musicPlayed = d.musicPlayed||0;
+  S.tummyTimeTotal = d.tummyTimeTotal||0;
+  S.breatheCount = d.breatheCount||0;
+  S.wellChildRead = d.wellChildRead||false;
+  S.reflexRead = d.reflexRead||false;
   S.started = true;
 }
 
@@ -1548,6 +1555,10 @@ const ACHIEVEMENTS = [
   {id:'feedlog10',  icon:'🍽️', name:'Beslenme Takipçisi',  desc:'10 öğün günlüğe işlendi',              check:s=>(s.feedLog&&s.feedLog.length>=10)},
   {id:'stress1',    icon:'🧘', name:'Farkındayım',         desc:'Ebeveyn stres ölçeri kullanıldı',      check:s=>(s.stressChecked||false)},
   {id:'colorgame',  icon:'🎨', name:'Renkli Dünya',        desc:'Renk & Şekil oyunu oynandı',           check:s=>(s.colorGamePlayed||false)},
+  {id:'music3',     icon:'🎵', name:'Ninni Ustası',        desc:'3 müzik/ninni seansı tamamlandı',       check:s=>(s.musicPlayed||0)>=3},
+  {id:'tummy10',    icon:'🤸', name:'Tummy Time Uzmanı',   desc:'10 karın üstü seansı tamamlandı',       check:s=>(s.tummyTimeTotal||0)>=10},
+  {id:'breathe3',   icon:'🧘', name:'Huzurlu Ebeveyn',     desc:'3 nefes egzersizi tamamlandı',          check:s=>(s.breatheCount||0)>=3},
+  {id:'reflex',     icon:'👶', name:'Refleks Uzmanı',      desc:'Yenidoğan refleks rehberi okundu',      check:s=>(s.reflexRead||false)},
 ];
 
 const TIPS = [
@@ -1691,6 +1702,11 @@ const S = {
   feedLog:[],
   stressChecked:false,
   colorGamePlayed:false,
+  musicPlayed:0,
+  tummyTimeTotal:0,
+  breatheCount:0,
+  wellChildRead:false,
+  reflexRead:false,
 };
 
 // ══════════════════════════════════════════════════════
@@ -3343,6 +3359,11 @@ function showAllGuides(){
     {ico:'🌍',name:'WHO Beslenme',fn:'showWHONutritionGuide()'},
     {ico:'🔍',name:'Gelişim Tarama',fn:'showDevScreeningGuide()'},
     {ico:'📵',name:'Dijital Sağlık',fn:'showDigitalHealthGuide()'},
+    {ico:'🎵',name:'Müzik Çalar',fn:'showMusicPlayer()'},
+    {ico:'🏥',name:'Pediatrik Kontrol',fn:'showWellChildVisit()'},
+    {ico:'🤸',name:'Karın Üstü Takip',fn:'showTummyTime()'},
+    {ico:'🧘',name:'Nefes Egzersizi',fn:'showParentBreathing()'},
+    {ico:'👶',name:'Doğumsal Refleksler',fn:'showReflexGuide()'},
   ];
   const chips=guides.map(g=>`<button class="guide-chip" onclick="${g.fn};this.closest('.pop-ov').remove()">${g.ico}<br>${g.name}</button>`).join('');
   const h=`<div class="pop-ov" onclick="if(event.target===this)this.remove()">
@@ -5156,6 +5177,250 @@ function showDigitalHealthGuide(){
     </div>
     <div class="pop-tip"><div class="pop-tip-t">💡 Pratik İpucu</div><p>Bebeğin yanında telefon kullanmak bile etki yaratır — "technoference" denen bu durum göz temasını ve duyarlılığı azaltır. Bebek uyanıkken telefonu başka odada bırakmayı deneyin.</p></div>
     <button class="pop-btn" style="background:linear-gradient(135deg,#0D47A1,#1976D2)" onclick="this.closest('.pop-ov').remove()">📱 Denge Önemli!</button>
+  </div></div>`;
+  document.body.insertAdjacentHTML('beforeend',h);
+}
+
+// ══════════════════════════════════════════════════════
+// MUSIC PLAYER
+// ══════════════════════════════════════════════════════
+let _mAudioCtx=null,_mSource=null;
+function _stopMusicAll(){if(_mSource){try{_mSource.stop();}catch(e){}_mSource=null;}document.querySelectorAll('.mtrack').forEach(b=>b.style.background='#f0f4ff');}
+function _playLullaby(idx){
+  _stopMusicAll();
+  if(!_mAudioCtx)_mAudioCtx=new(window.AudioContext||window.webkitAudioContext)();
+  const tracks=[
+    {notes:[262,294,330,349,392,349,330,294,262,0,262,294,330,349,392,440,392,0,330,294,262],dur:.32},
+    {notes:[261,261,392,392,440,440,392,0,349,349,330,330,294,294,261,0,392,392,349,349,330,330,294],dur:.4},
+    {notes:[330,294,262,294,330,330,330,0,294,294,294,0,330,392,392,0,330,294,262,294,330,330,262],dur:.42},
+    {type:'noise'},{type:'rain'},
+  ];
+  const t=tracks[idx];
+  const btn=document.querySelectorAll('.mtrack')[idx];
+  if(btn)btn.style.background='#C5CAE9';
+  if(t.type==='noise'||t.type==='rain'){
+    const bufSize=2*_mAudioCtx.sampleRate;
+    const buf=_mAudioCtx.createBuffer(1,bufSize,_mAudioCtx.sampleRate);
+    const data=buf.getChannelData(0);
+    for(let i=0;i<bufSize;i++)data[i]=(Math.random()*2-1);
+    const src=_mAudioCtx.createBufferSource();
+    src.buffer=buf;src.loop=true;
+    if(t.type==='rain'){
+      const filt=_mAudioCtx.createBiquadFilter();filt.type='bandpass';filt.frequency.value=600;filt.Q.value=.7;
+      const gain=_mAudioCtx.createGain();gain.gain.value=.12;
+      src.connect(filt);filt.connect(gain);gain.connect(_mAudioCtx.destination);
+    }else{
+      const gain=_mAudioCtx.createGain();gain.gain.value=.04;
+      src.connect(gain);gain.connect(_mAudioCtx.destination);
+    }
+    src.start();_mSource=src;
+  }else{
+    let time=_mAudioCtx.currentTime;
+    t.notes.forEach(freq=>{
+      if(freq>0){
+        const osc=_mAudioCtx.createOscillator();
+        const gain=_mAudioCtx.createGain();
+        osc.frequency.value=freq;osc.type='sine';
+        gain.gain.setValueAtTime(0,time);
+        gain.gain.linearRampToValueAtTime(.25,time+.05);
+        gain.gain.linearRampToValueAtTime(0,time+t.dur-.05);
+        osc.connect(gain);gain.connect(_mAudioCtx.destination);
+        osc.start(time);osc.stop(time+t.dur);
+      }
+      time+=t.dur;
+    });
+  }
+}
+function showMusicPlayer(){
+  S.musicPlayed=(S.musicPlayed||0)+1;
+  checkAchievements();saveGame();
+  const trks=[{n:'Dandini Dandini',i:'🎶'},{n:'Twinkle Twinkle',i:'⭐'},{n:'Uyku Ninnisi',i:'🌙'},{n:'Beyaz Gürültü',i:'🌊'},{n:'Yağmur Sesi',i:'🌧️'}];
+  const btns=trks.map((t,i)=>`<button class="mtrack" onclick="_playLullaby(${i})" style="background:#f0f4ff;border:2px solid #C5CAE9;border-radius:12px;padding:10px 16px;margin:5px;font-family:inherit;font-size:.82rem;cursor:pointer;transition:background .2s;font-weight:600">${t.i} ${t.n}</button>`).join('');
+  const h=`<div class="pop-ov" onclick="if(event.target===this){_stopMusicAll();this.remove()}">
+  <div class="pop-box">
+    <div class="pop-rainbow" style="background:linear-gradient(90deg,#E8EAF6,#C5CAE9,#EDE7F6)"></div>
+    <span class="pop-ico">🎵</span><div class="pop-title">Bebek Müziği</div>
+    <div class="pop-sub">Ninni & beyaz gürültü — bebeğini sakinleştir</div>
+    <div style="text-align:center;margin:12px 0">${btns}</div>
+    <div style="text-align:center;margin:6px 0"><button onclick="_stopMusicAll()" style="background:#E8EAF6;border:2px solid #C5CAE9;border-radius:10px;padding:8px 20px;font-family:inherit;font-size:.8rem;cursor:pointer;font-weight:600">⏹ Durdur</button></div>
+    <div class="pop-tip"><div class="pop-tip-t">🔬 Bilim Ne Diyor?</div><p>Ninni söylemek bebek-ebeveyn bağını güçlendirir ve bebeğin kortizol seviyesini düşürür. Beyaz gürültü rahim içi sesi taklit ederek 0-4 aylık bebekleri sakinleştirir. (AAP 2022)</p></div>
+    <button class="pop-btn" onclick="_stopMusicAll();this.closest('.pop-ov').remove()" style="background:linear-gradient(135deg,#5C6BC0,#7E57C2)">🎵 Harika Deneyim!</button>
+  </div></div>`;
+  document.body.insertAdjacentHTML('beforeend',h);
+}
+
+// ══════════════════════════════════════════════════════
+// PEDIATRIC WELL-CHILD VISIT GUIDE
+// ══════════════════════════════════════════════════════
+function showWellChildVisit(){
+  S.wellChildRead=true;checkAchievements();saveGame();
+  const visits=[
+    {age:'1. Hafta',icon:'👶',checks:['Sarılık kontrolü','Kilo takibi','Emzirme değerlendirmesi','Kalça ultrason'],vax:[],tip:'Doğum ağırlığının %7-10 kaybı normaldir; 2. haftada geri kazanılmalıdır.'},
+    {age:'1. Ay',icon:'🌱',checks:['Büyüme takibi','Göz muayenesi','Kalp-akciğer','Motor gelişim'],vax:['Hepatit B (2. doz)'],tip:'Sosyal gülümseme başlar. Tummy time günde 3-5×5 dakika.'},
+    {age:'2. Ay',icon:'😊',checks:['Boy-kilo-baş çevresi','Görme ve işitme','Gelişim taraması'],vax:['DTaP-IPV-Hib-HepB','PCV13','Rotavirüs'],tip:'Ağlama bu ayda doruk noktasında — kolik normaldir!'},
+    {age:'4. Ay',icon:'🤸',checks:['Baş tutma','Sosyal gelişim','Beslenme değerlendirmesi'],vax:['DTaP-IPV-Hib-HepB (2)','PCV13 (2)','Rotavirüs (2)'],tip:'Uyku gerileme olabilir. Katı gıdaya henüz erken!'},
+    {age:'6. Ay',icon:'🥣',checks:['Gelişim taraması','Diş kontrolü','Hemoglobin'],vax:['DTaP-IPV-Hib-HepB (3)','PCV13 (3)','Grip (ekim-kasım)'],tip:'6. ayda katı gıdaya başlanabilir. Tek malzeme, 3-5 gün aralıklı.'},
+    {age:'9. Ay',icon:'🧩',checks:['Motor gelişim (oturma/emekleme)','Ayrılık kaygısı','Sosyal-duygusal gelişim'],vax:[],tip:'"Mama/baba" sesleri başlar. Peek-a-boo oynayın!'},
+    {age:'12. Ay',icon:'🎂',checks:['1. yıl değerlendirmesi','Otizm taraması (M-CHAT-R)','Kan testi (Hb, kurşun)','Yürüme'],vax:['MMR','Su çiçeği','Hepatit A','PCV13 (4)'],tip:'İlk kelimeler beklenir. İnek sütüne geçilebilir.'},
+    {age:'15-18. Ay',icon:'🏃',checks:['Dil gelişimi','Sosyal-duygusal','Diş sağlığı'],vax:['DTaP (hatırlatıcı)','Hepatit A (2)'],tip:'Öfke krizleri normal — beyin ön lobu gelişiyor.'},
+    {age:'24. Ay',icon:'🌟',checks:['Dil & bilişsel gelişim','Oyun becerileri','Tuvalet hazırlığı','M-CHAT-R (2)'],vax:['PCV13 hatırlatıcı','Grip (yıllık)'],tip:'Min 50 kelime, 2 kelimeli cümle beklenir.'},
+  ];
+  const cards=visits.map(v=>{
+    const vaxHtml=v.vax.length?`<div style="margin-top:4px"><span style="font-size:.63rem;font-weight:800;color:#E53935">💉 </span><span style="font-size:.63rem;color:#555">${v.vax.join(' · ')}</span></div>`:'';
+    const checkHtml=v.checks.map(c=>`<div style="font-size:.64rem;color:#444;margin-bottom:1px">✓ ${c}</div>`).join('');
+    return `<div style="background:#E8F5E9;border-radius:12px;padding:10px;margin-bottom:7px;border-left:3px solid #66BB6A">
+      <div style="font-weight:800;font-size:.8rem;color:#1B5E20;margin-bottom:4px">${v.icon} ${v.age} Kontrolü</div>
+      ${checkHtml}${vaxHtml}
+      <div style="font-size:.62rem;color:#2E7D32;margin-top:4px;font-style:italic">💡 ${v.tip}</div>
+    </div>`;
+  }).join('');
+  const h=`<div class="pop-ov" onclick="if(event.target===this)this.remove()">
+  <div class="pop-box">
+    <div class="pop-rainbow" style="background:linear-gradient(90deg,#E8F5E9,#C8E6C9,#DCEDC8)"></div>
+    <span class="pop-ico">🏥</span><div class="pop-title">Pediatrik Kontrol Takvimi</div>
+    <div class="pop-sub">AAP 2024 · Türkiye EPI takvimi ile uyumlu</div>
+    <div style="max-height:370px;overflow-y:auto;margin:10px 0">${cards}</div>
+    <div class="pop-tip"><div class="pop-tip-t">📋 Kontrole Hazırlık</div><p>Her kontrole: aşı kartı, önceki ölçümler, yazılı sorular, bebek bezi + mama. Kontrolleri asla atlama — pek çok sorun erken saptandığında kolayca çözülür.</p></div>
+    <button class="pop-btn" style="background:linear-gradient(135deg,#2E7D32,#43A047)" onclick="this.closest('.pop-ov').remove()">✅ Takvimi Takip Edeceğim!</button>
+  </div></div>`;
+  document.body.insertAdjacentHTML('beforeend',h);
+}
+
+// ══════════════════════════════════════════════════════
+// TUMMY TIME TRACKER
+// ══════════════════════════════════════════════════════
+function showTummyTime(){
+  const h=`<div class="pop-ov" onclick="if(event.target===this){clearTimeout(window._tInt);this.remove()}">
+  <div class="pop-box">
+    <div class="pop-rainbow" style="background:linear-gradient(90deg,#FFF8E1,#FFECB3,#FFF3E0)"></div>
+    <span class="pop-ico">🤸</span><div class="pop-title">Karın Üstü Zaman</div>
+    <div class="pop-sub">Tummy Time — motor gelişimin temeli</div>
+    <div style="text-align:center;margin:16px 0">
+      <div style="font-size:3rem;font-weight:900;color:#F57F17;letter-spacing:2px" id="tClock">00:00</div>
+      <div style="font-size:.7rem;color:#888;margin:3px 0">Bu seans</div>
+    </div>
+    <div style="text-align:center;margin:10px 0">
+      <button id="tBtn" onclick="window._tToggle()" style="background:linear-gradient(135deg,#FFA000,#FF8F00);color:#fff;border:none;border-radius:14px;padding:12px 28px;font-size:.88rem;font-weight:800;font-family:inherit;cursor:pointer">▶ Başlat</button>
+    </div>
+    <div style="background:#FFF3E0;border-radius:10px;padding:8px;margin:8px 0;font-size:.7rem">
+      <b style="color:#E65100">Toplam seanslar: ${S.tummyTimeTotal||0}</b>
+      <div style="color:#795548;margin-top:3px">Hedef: Günde 20-30 dk · Min 2 dk seans sayılır</div>
+    </div>
+    <div class="pop-tip"><div class="pop-tip-t">💪 Neden Önemli?</div><p>Karın üstü zaman; boyun, omuz ve kol kaslarını güçlendirir, düz kafa sendromunu (plagiocephaly) önler ve emekleme için zemin hazırlar. AAP: uyku dışında her uyanık anda uygulanabilir.</p></div>
+    <button class="pop-btn" style="background:linear-gradient(135deg,#FF8F00,#F57F17)" onclick="clearTimeout(window._tInt);this.closest('.pop-ov').remove()">Kapat</button>
+  </div></div>`;
+  document.body.insertAdjacentHTML('beforeend',h);
+  let running=false,accumulated=0,startTime=null;
+  window._tToggle=function(){
+    const btn=document.getElementById('tBtn');
+    if(!running){
+      startTime=Date.now();running=true;
+      btn.textContent='⏸ Duraklat';btn.style.background='linear-gradient(135deg,#EF5350,#E53935)';
+      const tick=()=>{
+        if(!running)return;
+        const el=Math.floor((Date.now()-startTime+accumulated)/1000);
+        const cl=document.getElementById('tClock');
+        if(cl)cl.textContent=String(Math.floor(el/60)).padStart(2,'0')+':'+String(el%60).padStart(2,'0');
+        window._tInt=setTimeout(tick,500);
+      };tick();
+    }else{
+      accumulated+=Date.now()-startTime;running=false;
+      clearTimeout(window._tInt);
+      btn.textContent='▶ Devam Et';btn.style.background='linear-gradient(135deg,#FFA000,#FF8F00)';
+      if(accumulated>=120000){
+        S.tummyTimeTotal=(S.tummyTimeTotal||0)+1;
+        checkAchievements();saveGame();
+        showToast('🤸 Tummy time seansı kaydedildi! +'+(S.tummyTimeTotal)+'. seans','suc');
+        accumulated=0;startTime=null;
+      }
+    }
+  };
+}
+
+// ══════════════════════════════════════════════════════
+// PARENT BREATHING EXERCISE
+// ══════════════════════════════════════════════════════
+function showParentBreathing(){
+  const h=`<div class="pop-ov" onclick="if(event.target===this){clearTimeout(window._bInt);this.remove()}">
+  <div class="pop-box">
+    <div class="pop-rainbow" style="background:linear-gradient(90deg,#E3F2FD,#BBDEFB,#E1F5FE)"></div>
+    <span class="pop-ico">🧘</span><div class="pop-title">Nefes Egzersizi</div>
+    <div class="pop-sub">4-7-8 Tekniği — anında stres azaltma</div>
+    <div style="text-align:center;margin:18px 0 10px">
+      <div style="position:relative;width:130px;height:130px;margin:0 auto">
+        <div id="bCircle" style="width:90px;height:90px;background:radial-gradient(circle,#42A5F5,#1565C0);border-radius:50%;position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);transition:all .6s ease;box-shadow:0 0 30px rgba(66,165,245,.4)"></div>
+      </div>
+      <div id="bLabel" style="font-size:1.15rem;font-weight:800;color:#1565C0;margin-top:6px">Başlamak için Tıkla ▼</div>
+      <div id="bCycle" style="font-size:.72rem;color:#888;margin:3px 0">Döngü: 0 / 4</div>
+    </div>
+    <div style="text-align:center;margin:8px 0">
+      <button id="bStartBtn" onclick="window._startBreathe()" style="background:linear-gradient(135deg,#1976D2,#1565C0);color:#fff;border:none;border-radius:12px;padding:11px 26px;font-size:.86rem;font-weight:800;font-family:inherit;cursor:pointer">▶ Başlat</button>
+    </div>
+    <div class="pop-tip"><div class="pop-tip-t">🔬 Etkinliği Kanıtlandı</div><p>4-7-8 tekniği vagus sinirini aktive ederek kalp atış hızını düşürür ve kortizol seviyesini azaltır. Ebeveyn stresi bebeğin stres regülasyonunu da etkilediği için bu egzersiz ikiniz için değerlidir.</p></div>
+    <button class="pop-btn" onclick="clearTimeout(window._bInt);this.closest('.pop-ov').remove()" style="background:linear-gradient(135deg,#1976D2,#0D47A1)">Kapat</button>
+  </div></div>`;
+  document.body.insertAdjacentHTML('beforeend',h);
+  window._startBreathe=function(){
+    const startBtn=document.getElementById('bStartBtn');
+    if(startBtn)startBtn.style.display='none';
+    const phases=[{l:'Nefes Al ⬆',d:4000,scale:1.7},{l:'Tut ●',d:7000,scale:1.7},{l:'Ver ⬇',d:8000,scale:.55}];
+    let cycle=0,phaseIdx=0;
+    const run=()=>{
+      if(cycle>=4){
+        S.breatheCount=(S.breatheCount||0)+1;checkAchievements();saveGame();
+        const lb=document.getElementById('bLabel'),ci=document.getElementById('bCircle'),cy=document.getElementById('bCycle');
+        if(lb)lb.textContent='🌟 Tamamlandı!';
+        if(cy)cy.textContent='Harika iş! +GP';
+        if(ci)ci.style.cssText='width:90px;height:90px;background:radial-gradient(circle,#66BB6A,#2E7D32);border-radius:50%;position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);box-shadow:0 0 30px rgba(102,187,106,.5)';
+        showToast('🧘 Nefes egzersizi tamamlandı!','suc');return;
+      }
+      const p=phases[phaseIdx];
+      const lb=document.getElementById('bLabel'),ci=document.getElementById('bCircle'),cy=document.getElementById('bCycle');
+      if(lb)lb.textContent=p.l+' ('+p.d/1000+'s)';
+      if(cy)cy.textContent='Döngü: '+(cycle+1)+' / 4';
+      if(ci)ci.style.transform=`translate(-50%,-50%) scale(${p.scale})`;
+      window._bInt=setTimeout(()=>{
+        phaseIdx++;if(phaseIdx>=3){phaseIdx=0;cycle++;}run();
+      },p.d);
+    };run();
+  };
+}
+
+// ══════════════════════════════════════════════════════
+// NEWBORN REFLEX GUIDE
+// ══════════════════════════════════════════════════════
+function showReflexGuide(){
+  S.reflexRead=true;checkAchievements();saveGame();
+  const reflexes=[
+    {name:'Moro (Irkilme) Refleksi',ico:'😲',age:'0-4 ay',how:'Ani ses ya da baş düşürme',desc:'Bebek kollarını açıp kucaklar — "düşüyorum" refleksi. 4. aydan sonra kaybolmuyorsa nörolojik değerlendirme gerekebilir.',fun:'Evrimsel olarak bebeklerin anneye tutunma içgüdüsünün izleridir.'},
+    {name:'Kavrama (Palmar) Refleksi',ico:'🤝',age:'0-6 ay',how:'Avucuna parmak koy',desc:'Avucuna hafifçe dokunulunca güçlü kavrar. Ayak tabanı versiyonu "plantar" kavrama refleksidir.',fun:'Bu refleks öyle güçlüdür ki bebek tutunarak kaldırılabilir — ama denemeyin!'},
+    {name:'Arama (Rooting) Refleksi',ico:'🔍',age:'0-4 ay',how:'Yanağını ya da dudağını hafifçe dokun',desc:'Başını sese döndürür ve emmek için ağzını açar. Emzirmeyi kolaylaştıran doğuştan rehberdir.',fun:'Bu refleks sayesinde yenidoğan doğumdan dakikalar sonra annenin göğsünü bulabilir.'},
+    {name:'Emme Refleksi',ico:'🍼',age:'0-4 ay',how:'Parmak ya da meme ağzına konunca',desc:'Dokunmayla güçlü ritimik emme başlar. Prematüre bebeklerde zayıf olabilir.',fun:'Rahim içinde 14. haftadan itibaren başlar — bebekler orada da emme pratiği yapar!'},
+    {name:'Babinski Refleksi',ico:'🦶',age:'0-2 yaş',how:'Ayak tabanını topuktan parmağa doğru sür',desc:'Baş parmak yukarı açılır, diğerleri yelpaze gibi açılır. Yürümeyi öğrendikten sonra kaybolur.',fun:'Erişkinde Babinski pozitifliği nörolojik sorundur — bebeklerde tamamen normaldir!'},
+    {name:'Adım Atma Refleksi',ico:'🚶',age:'0-2 ay',how:'Bebeği dik tut, ayakları yüzeye değsin',desc:'Sanki yürüyormuş gibi adım atar. Bu refleks 2 ayda kaybolur, gerçek yürüme 9-12 ayda başlar.',fun:'Bu refleksi egzersizle sürdürmek gerçek yürüme yaşını değiştirmez.'},
+    {name:'Tonik Boyun Refleksi',ico:'🤺',age:'0-6 ay',how:'Başını bir yana çevir',desc:'Yüzün baktığı tarafın kolu uzar, ters taraf bükülür — "eskrimci pozu". Koordinasyona zemin hazırlar.',fun:'Derin kas-sinir koordinasyonu geliştirmekle ilgili önemli bir reflekstir.'},
+  ];
+  const cards=reflexes.map(r=>`
+  <div style="background:#E3F2FD;border-radius:12px;padding:10px;margin-bottom:7px;border-left:3px solid #42A5F5">
+    <div style="display:flex;gap:8px;align-items:flex-start;margin-bottom:4px">
+      <span style="font-size:1.3rem">${r.ico}</span>
+      <div>
+        <div style="font-weight:800;font-size:.76rem;color:#0D47A1">${r.name}</div>
+        <span style="font-size:.61rem;background:#BBDEFB;color:#1565C0;border-radius:6px;padding:1px 5px">📅 ${r.age}</span>
+        <span style="font-size:.61rem;background:#E8F5E9;color:#2E7D32;border-radius:6px;padding:1px 5px;margin-left:3px">👆 ${r.how}</span>
+      </div>
+    </div>
+    <div style="font-size:.66rem;color:#333;margin-bottom:3px">${r.desc}</div>
+    <div style="font-size:.62rem;color:#5C6BC0;font-style:italic">🧬 ${r.fun}</div>
+  </div>`).join('');
+  const h=`<div class="pop-ov" onclick="if(event.target===this)this.remove()">
+  <div class="pop-box">
+    <div class="pop-rainbow" style="background:linear-gradient(90deg,#E3F2FD,#BBDEFB,#E8EAF6)"></div>
+    <span class="pop-ico">👶</span><div class="pop-title">Yenidoğan Refleksleri</div>
+    <div class="pop-sub">Bebeğinizin doğuştan gelen süper güçleri</div>
+    <div style="max-height:370px;overflow-y:auto;margin:10px 0">${cards}</div>
+    <div class="pop-tip"><div class="pop-tip-t">⚠️ Ne Zaman Endişelenelim?</div><p>Bir refleks gereken yaşta kaybolmuyorsa veya asimetrik ise (bir yanda var diğerinde yok) pediatristinize bildirin. Refleks muayenesi 2. ay kontrolünde rutin olarak yapılır.</p></div>
+    <button class="pop-btn" style="background:linear-gradient(135deg,#1565C0,#1976D2)" onclick="this.closest('.pop-ov').remove()">👶 İnanılmaz Bir Bebek!</button>
   </div></div>`;
   document.body.insertAdjacentHTML('beforeend',h);
 }
