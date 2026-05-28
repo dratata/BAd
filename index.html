@@ -1435,6 +1435,7 @@ function saveGame(){
     musicDevRead:S.musicDevRead||false, epigeneticsRead:S.epigeneticsRead||false, multilingualRead:S.multilingualRead||false,
     burnoutRead:S.burnoutRead||false, growthCurvesRead:S.growthCurvesRead||false, temperamentRead:S.temperamentRead||false,
     mindfulnessRead:S.mindfulnessRead||false, weaningRead:S.weaningRead||false, neuroscienceRead:S.neuroscienceRead||false,
+    daycareRead:S.daycareRead||false, firstAidRead:S.firstAidRead||false, sleepHygieneRead:S.sleepHygieneRead||false,
     savedAt:Date.now(),
   };
   try { localStorage.setItem(SAVE_KEY, JSON.stringify(data)); } catch(e){}
@@ -1545,6 +1546,9 @@ function applySaveData(d){
   S.mindfulnessRead = d.mindfulnessRead||false;
   S.weaningRead = d.weaningRead||false;
   S.neuroscienceRead = d.neuroscienceRead||false;
+  S.daycareRead = d.daycareRead||false;
+  S.firstAidRead = d.firstAidRead||false;
+  S.sleepHygieneRead = d.sleepHygieneRead||false;
   S.started = true;
 }
 
@@ -1728,6 +1732,9 @@ const ACHIEVEMENTS = [
   {id:'mindful_parent', icon:'🌬️', name:'Bilinçli Ebeveyn',  desc:'Nefes ve meditasyon rehberi okundu',       check:s=>(s.mindfulnessRead||false)},
   {id:'weaning_pro',    icon:'🍼', name:'Mama Bırakma Uzmanı',desc:'Mama bırakma rehberi okundu',              check:s=>(s.weaningRead||false)},
   {id:'neuro_pro',      icon:'🧪', name:'Beyin Bilimcisi',   desc:'Nörobilim rehberi okundu',                 check:s=>(s.neuroscienceRead||false)},
+  {id:'daycare_pro',    icon:'🚌', name:'Kreş Uzmanı',       desc:'Kreş hazırlığı rehberi okundu',            check:s=>(s.daycareRead||false)},
+  {id:'firstaid_pro',   icon:'🦺', name:'İlk Yardım Hazır',  desc:'Bebek ilk yardımı rehberi okundu',         check:s=>(s.firstAidRead||false)},
+  {id:'sleep_hygiene',  icon:'😴', name:'Uyku Hijyeni Ustası',desc:'Uyku hijyeni rehberi okundu',             check:s=>(s.sleepHygieneRead||false)},
   {id:'dp20000',         icon:'🌠', name:'20.000 GP Süpernova',desc:'20.000 Gelişim Puanına ulaşıldı!',     check:s=>s.dp>=20000},
   {id:'guide_all',   icon:'🎓', name:'Rehber Koleksiyoncusu',desc:'60+ rehber okundu',                    check:s=>{
     const flags=['readLangPro','readTravel','readDiscipline','sensoryRead','cryDecoderUsed','reflexRead','wellChildRead','coupleRead','workReturnRead','illnessRead','childcareRead','supplementRead','cprRead','siblingRead','creativePlayRead','seasonalRead','blwRead','parentHealthRead','earlyAllergenRead','traditionalRead','preschoolRead','storytimeRead','outdoorPlayRead','newbornCareRead','fingerFoodRead','wonderWeeksRead','sleepTroubleRead','babyProofingRead','emotionalDevRead','nutritionRead','speechDevRead','vaccineScheduleRead','playDevRead'];
@@ -1946,6 +1953,9 @@ const S = {
   mindfulnessRead:false,
   weaningRead:false,
   neuroscienceRead:false,
+  daycareRead:false,
+  firstAidRead:false,
+  sleepHygieneRead:false,
 };
 
 // ══════════════════════════════════════════════════════
@@ -3657,6 +3667,9 @@ function showAllGuides(){
     {ico:'🌬️',name:'Nefes & Meditasyon',fn:'showMindfulnessGuide()'},
     {ico:'🍼',name:'Mama Bırakma',fn:'showWeaningGuide()'},
     {ico:'🧪',name:'Beyin Bilimi',fn:'showNeuroscienceGuide()'},
+    {ico:'🚌',name:'Kreş Hazırlığı',fn:'showDaycareGuide()'},
+    {ico:'🦺',name:'İlk Yardım',fn:'showFirstAidGuide()'},
+    {ico:'😴',name:'Uyku Hijyeni',fn:'showSleepHygieneGuide()'},
   ];
   const chips=guides.map(g=>`<button class="guide-chip" onclick="${g.fn};this.closest('.pop-ov').remove()">${g.ico}<br>${g.name}</button>`).join('');
   const h=`<div class="pop-ov" onclick="if(event.target===this)this.remove()">
@@ -5736,6 +5749,137 @@ function showEmotionalDevelopmentGuide(){
     </div>
     <div class="pop-tip"><div class="pop-tip-t">🔬 EQ > IQ</div><p>Daniel Goleman'ın araştırmaları gösterdi: yaşam başarısının %80'i duygusal zekaya bağlı, %20'si IQ'ya. Duygusal zeka 0-7 yaş arasında şekillenir. Şimdi attığınız her adım, onun tüm hayatını etkiler.</p></div>
     <button class="pop-btn" style="background:linear-gradient(135deg,#6A1B9A,#7B1FA2)" onclick="this.closest('.pop-ov').remove()">💕 Duyguları Birlikte Öğreneceğiz!</button>
+  </div></div>`;
+  document.body.insertAdjacentHTML('beforeend',h);
+}
+
+// ══════════════════════════════════════════════════════
+// DAYCARE GUIDE — KREŞ HAZIRLIĞI
+// ══════════════════════════════════════════════════════
+function showDaycareGuide(){
+  S.daycareRead=true;checkAchievements();saveGame();
+  const sections=[
+    {ico:'📅',title:'Ne Zaman Başlamalı?',color:'#E3F2FD',border:'#1E88E5',
+     items:['WHO ve pediatristler: mümkünse ilk 6 ay anne-bebek birlikteliğini önerir','6-12 ay: bağlanma süreci hâlâ devam ediyor — geçiş dönemi zor olabilir','12 ay+: dil ve sosyal gelişim için akran etkileşimi faydalı olmaya başlar','İdeal zamanlama: aile ihtiyaçlarına göre değişir — suçluluk duyma!']},
+    {ico:'🔍',title:'Kreş Seçimi Kriterleri',color:'#E8F5E9',border:'#43A047',
+     items:['Bebek başına düşen bakıcı oranı: 0-1 yaş için max 1:3','Bakıcı devir hızı düşük = istikrarlı bağlanma ortamı','Temizlik, güvenlik denetimi ve lisans belgesi kontrolü','Hastalık politikası: ateşli çocuk ev gönderilmeli','Beyin gelişim odaklı yaklaşım (oyun, dil, bağlanma)']},
+    {ico:'🤗',title:'Geçiş Süreci — Kolaylaştırma',color:'#FFF3E0',border:'#FF8F00',
+     items:['Başlamadan 2 hafta önce kısa "tanışma ziyaretleri"','İlk haftalarda ebeveyn kreşte birlikte vakit geçirir','Veda ritüeli geliştirin: kısa, tutarlı, "Dönüyorum!" sözünü tutun','Bebeğin sevdiği bir nesneyi (battaniye, oyuncak) bırakın','Veda krizleri normaldir — bakıcıya bırakın, kapıdan çıkın']},
+    {ico:'🛡️',title:'Hastalık ve Hijyen',color:'#FCE4EC',border:'#E91E63',
+     items:['Kreşteki çocuklar yılda 8-12 kez hastalanabilir — normal!','Her hastalık bağışıklık sistemi güçlendiriyor','Aşı takvimi güncel olmalı (kreş koşulu)','El yıkama alışkanlığı evde de öğretin','Kreş başlangıcı için iş yerinde esnek izin planı yapın']},
+  ];
+  const rows=sections.map(s=>`
+    <div style="border:2px solid ${s.border};border-radius:10px;padding:10px;margin-bottom:8px;background:${s.color}">
+      <div style="font-weight:800;font-size:.84rem;margin-bottom:5px">${s.ico} ${s.title}</div>
+      <ul style="margin:0 0 0 16px;font-size:.76rem;color:#333">${s.items.map(i=>`<li style="margin-bottom:2px">${i}</li>`).join('')}</ul>
+    </div>`).join('');
+  const h=`<div class="pop-ov" onclick="if(event.target===this)this.remove()">
+  <div class="pop-box" style="max-width:500px">
+    <div class="pop-rainbow"></div>
+    <span class="pop-ico">🚌</span>
+    <div class="pop-title">Kreş Hazırlık Rehberi</div>
+    <div class="pop-sub">Doğru kreşi bulmak ve geçişi kolaylaştırmak</div>
+    <div style="max-height:55vh;overflow-y:auto;padding:4px 2px">${rows}
+      <div style="background:#FFFDE7;border:2px solid #FFD54F;border-radius:10px;padding:10px;font-size:.78rem;margin-top:4px">
+        <b>💛 Anne/Baba Suçluluğu Hakkında:</b> Kreşe başlatmak bebeğinizi ihmal etmek değildir. Kaliteli kreş bağlanma güvenliğini destekler, sosyal gelişimi hızlandırır. Aile kararı — dış baskıya değil kendi değerlendirmenize göre alın.
+      </div>
+    </div>
+    <button class="pop-btn" style="margin-top:12px" onclick="this.closest('.pop-ov').remove()">Kreşe Hazırım!</button>
+  </div></div>`;
+  document.body.insertAdjacentHTML('beforeend',h);
+}
+
+// ══════════════════════════════════════════════════════
+// FIRST AID GUIDE — BEBEK İLK YARDIM
+// ══════════════════════════════════════════════════════
+function showFirstAidGuide(){
+  S.firstAidRead=true;checkAchievements();saveGame();
+  const emergencies=[
+    {ico:'😮‍💨',name:'Boğulma',urgent:true,color:'#FFEBEE',border:'#EF5350',
+     steps:['1. Sakin kal — paniklemek süreci zorlaştırır','2. Öksürüyorsa — müdahale etme, öksürtmeye devam ettir','3. Öksüremiyorsa: 5 sırt vurumu (omuzlar arası, aşağı eğik)','4. 5 göğüs baskısı (iki parmak, göğüs kemiği altı)','5. Dudaklar mavileşiyor veya bilinç kayıpsa → 112'],
+     note:'Küçük nesneler, üzüm, fındık, madeni para — her zaman uzakta tut'},
+    {ico:'🌡️',name:'Yüksek Ateş',urgent:true,color:'#FFF3E0',border:'#FF8F00',
+     steps:['3 ay altı: 38°C ateş → HEMEN 112 veya acile','3-6 ay: 38.5°C → doktora bildir','6 ay+: 39°C+ veya diğer belirtiler → doktora','Ateş düşürücü: parasetamol veya ibuprofen (6 ay+)','Bol sıvı ver, ince giydır','Soğuk kompres: koltuk altı veya alnı'],
+     note:'Ateş kendisi hastalık değil — altta yatan neden önemli'},
+    {ico:'🤕',name:'Düşme / Baş Travması',urgent:false,color:'#E3F2FD',border:'#1E88E5',
+     steps:['Oynuyor ve ağlıyorsa — çoğunlukla iyidir','Sakinleştir, 24 saat gözlemle','HEMEN 112: Bilinç kaybı, tekrarlayan kusma, anormal uyku, nöbet','Kafa derisinde kesik → doğrudan bası yap','Boyun hareketi sınırlıysa veya kol/bacak güçsüzlüğü → hareket ettirme'],
+     note:'Değişme masasında bebek asla yalnız bırakılmaz'},
+    {ico:'🔴',name:'Anafilaksi (Ciddi Alerji)',urgent:true,color:'#FCE4EC',border:'#E91E63',
+     steps:['Döküntü + nefes güçlüğü + yüz şişmesi → 112','Epipen varsa hemen kullan (uyluğa)','Düz yatır (nefes güçlüğündeyse oturarak)','112 gelene kadar yan','Tetikleyeni not et'],
+     note:'Hafif döküntü alerjisi ≠ anafilaksi — sadece ürtiker için pediatriste'},
+  ];
+  const rows=emergencies.map(e=>`
+    <div style="border:2px solid ${e.border};border-radius:10px;padding:10px;margin-bottom:8px;background:${e.color}">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:5px">
+        <div style="font-weight:800;font-size:.84rem">${e.ico} ${e.name}</div>
+        ${e.urgent?`<div style="font-size:.7rem;font-weight:700;padding:2px 8px;border-radius:20px;background:#EF5350;color:white">ACİL</div>`:''}
+      </div>
+      <ol style="margin:0 0 5px 16px;font-size:.76rem;color:#333">${e.steps.map(s=>`<li style="margin-bottom:2px">${s}</li>`).join('')}</ol>
+      <div style="font-size:.73rem;color:#555;font-style:italic;border-top:1px solid ${e.border};padding-top:4px">⚠️ ${e.note}</div>
+    </div>`).join('');
+  const h=`<div class="pop-ov" onclick="if(event.target===this)this.remove()">
+  <div class="pop-box" style="max-width:500px">
+    <div class="pop-rainbow"></div>
+    <span class="pop-ico">🦺</span>
+    <div class="pop-title">Bebek İlk Yardım Rehberi</div>
+    <div class="pop-sub">Acil durumlarda ne yapacağınızı önceden öğrenin</div>
+    <div style="background:#FFEBEE;border:2px solid #EF5350;border-radius:10px;padding:8px;margin-bottom:10px;font-size:.78rem;text-align:center">
+      <b>🚨 ACİL: 112 | ZEHİR HATTI: 114</b>
+    </div>
+    <div style="max-height:50vh;overflow-y:auto;padding:4px 2px">${rows}
+      <div style="background:#E8F5E9;border:2px solid #43A047;border-radius:10px;padding:10px;font-size:.78rem;margin-top:4px">
+        <b>💡 Hazırlık İpuçları:</b><br>
+        • Acil numaraları telefonunuza kaydet<br>
+        • Ev ilk yardım çantası: termometre, yara bandı, serum fizyolojik, ateş düşürücü<br>
+        • Türk Kızılay bebek ilk yardım kursuna katıl<br>
+        • Ebeveynler CPR bilmeli — 2 yılda bir güncelle
+      </div>
+    </div>
+    <button class="pop-btn" style="margin-top:12px" onclick="this.closest('.pop-ov').remove()">Hazırlıklıyım!</button>
+  </div></div>`;
+  document.body.insertAdjacentHTML('beforeend',h);
+}
+
+// ══════════════════════════════════════════════════════
+// SLEEP HYGIENE GUIDE
+// ══════════════════════════════════════════════════════
+function showSleepHygieneGuide(){
+  S.sleepHygieneRead=true;checkAchievements();saveGame();
+  const rules=[
+    {ico:'🌑',title:'Karanlık Oda',desc:'Melatonin salgısı için oda tamamen karanlık olmalı. Blackout perde kullanın. Gece kontrolleri için kırmızı ışık kullanın (mavi ışıktan kaçının).'},
+    {ico:'🌡️',title:'Serin Oda Sıcaklığı',desc:'İdeal uyku sıcaklığı 18-20°C. Aşırı sıcak oda SIDS riskini artırır. Bebek üşüdüyse tek kat ekstra.'},
+    {ico:'🔊',title:'Beyaz Gürültü',desc:'Rahim içi sesi taklit eder — sakinleştirici. 50-65 dB (sıradan konuşma seviyesi). Bebekten en az 2 metre uzakta tut.'},
+    {ico:'⏰',title:'Tutarlı Uyku Saati',desc:'Biyolojik saat (sirkadiyen ritim) rutinle çalışır. Her gece aynı saatte — tatil dahil. 7pm-8pm ideal yatış. Aşırı yorgunluk uyumayı zorlaştırır!'},
+    {ico:'📱',title:'Ekran Yok',desc:'Yatıştan 1 saat önce ekran yok. Mavi ışık melatonini baskılar. Ebeveynin telefonu da dahil!'},
+    {ico:'🛁',title:'Uyku Rutini',desc:'Banyo → Pijama → Ninni → Kitap → Işık söndür. Sıra tutarlı olsun. 20-30 dakika yeterli. Ritual uyku sinyali olarak beyin öğrenir.'},
+    {ico:'🚶',title:'Hareket',desc:'Gün içi aktif bebek gece daha iyi uyur. Tummy time, emekleme, yürüme enerjisi boşaltır. Uyku öncesi 1 saat sakin aktivite.'},
+  ];
+  const rows=rules.map(r=>`
+    <div style="display:flex;gap:10px;padding:9px;border-radius:8px;background:#E8EAF6;margin-bottom:6px">
+      <div style="font-size:1.5rem;flex-shrink:0">${r.ico}</div>
+      <div>
+        <div style="font-weight:700;font-size:.82rem;margin-bottom:2px">${r.title}</div>
+        <div style="font-size:.76rem;color:#444">${r.desc}</div>
+      </div>
+    </div>`).join('');
+  const h=`<div class="pop-ov" onclick="if(event.target===this)this.remove()">
+  <div class="pop-box" style="max-width:490px">
+    <div class="pop-rainbow"></div>
+    <span class="pop-ico">😴</span>
+    <div class="pop-title">Uyku Hijyeni Rehberi</div>
+    <div class="pop-sub">Bebeğinizin uyku ortamını ve rutinini optimize etme</div>
+    <div style="max-height:55vh;overflow-y:auto;padding:4px 2px">${rows}
+      <div style="background:#E8F5E9;border:2px solid #43A047;border-radius:10px;padding:10px;font-size:.78rem;margin-top:8px">
+        <b>💤 Güvenli Uyku (SIDS Önleme):</b><br>
+        ✅ Sırt üstü uyku<br>
+        ✅ Sert, düz minder<br>
+        ✅ Beşikte yabancı cisim yok (oyuncak, yastık, battaniye)<br>
+        ✅ Sigara dumanından uzak ortam<br>
+        ✅ Oda paylaşımı (aynı yatak değil) ilk 6 ay önerilir<br><br>
+        <b>📚 Kaynak:</b> AAP Safe Sleep Guidelines 2022
+      </div>
+    </div>
+    <button class="pop-btn" style="margin-top:12px" onclick="this.closest('.pop-ov').remove()">Uyku Düzenimi Kuruyorum!</button>
   </div></div>`;
   document.body.insertAdjacentHTML('beforeend',h);
 }
