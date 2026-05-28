@@ -1434,6 +1434,7 @@ function saveGame(){
     genderNeutralRead:S.genderNeutralRead||false, highNeedsRead:S.highNeedsRead||false,
     musicDevRead:S.musicDevRead||false, epigeneticsRead:S.epigeneticsRead||false, multilingualRead:S.multilingualRead||false,
     burnoutRead:S.burnoutRead||false, growthCurvesRead:S.growthCurvesRead||false, temperamentRead:S.temperamentRead||false,
+    mindfulnessRead:S.mindfulnessRead||false, weaningRead:S.weaningRead||false, neuroscienceRead:S.neuroscienceRead||false,
     savedAt:Date.now(),
   };
   try { localStorage.setItem(SAVE_KEY, JSON.stringify(data)); } catch(e){}
@@ -1541,6 +1542,9 @@ function applySaveData(d){
   S.burnoutRead = d.burnoutRead||false;
   S.growthCurvesRead = d.growthCurvesRead||false;
   S.temperamentRead = d.temperamentRead||false;
+  S.mindfulnessRead = d.mindfulnessRead||false;
+  S.weaningRead = d.weaningRead||false;
+  S.neuroscienceRead = d.neuroscienceRead||false;
   S.started = true;
 }
 
@@ -1721,6 +1725,9 @@ const ACHIEVEMENTS = [
   {id:'burnout_pro',    icon:'🔥', name:'Tükenmez Ebeveyn',   desc:'Ebeveyn tükenmişliği rehberi okundu',      check:s=>(s.burnoutRead||false)},
   {id:'growth_curves',  icon:'📏', name:'Büyüme Takipçisi',   desc:'Büyüme eğrileri rehberi okundu',           check:s=>(s.growthCurvesRead||false)},
   {id:'temperament',    icon:'🧸', name:'Mizaç Uzmanı',       desc:'Uyum tipi rehberi okundu',                 check:s=>(s.temperamentRead||false)},
+  {id:'mindful_parent', icon:'🌬️', name:'Bilinçli Ebeveyn',  desc:'Nefes ve meditasyon rehberi okundu',       check:s=>(s.mindfulnessRead||false)},
+  {id:'weaning_pro',    icon:'🍼', name:'Mama Bırakma Uzmanı',desc:'Mama bırakma rehberi okundu',              check:s=>(s.weaningRead||false)},
+  {id:'neuro_pro',      icon:'🧪', name:'Beyin Bilimcisi',   desc:'Nörobilim rehberi okundu',                 check:s=>(s.neuroscienceRead||false)},
   {id:'dp20000',         icon:'🌠', name:'20.000 GP Süpernova',desc:'20.000 Gelişim Puanına ulaşıldı!',     check:s=>s.dp>=20000},
   {id:'guide_all',   icon:'🎓', name:'Rehber Koleksiyoncusu',desc:'60+ rehber okundu',                    check:s=>{
     const flags=['readLangPro','readTravel','readDiscipline','sensoryRead','cryDecoderUsed','reflexRead','wellChildRead','coupleRead','workReturnRead','illnessRead','childcareRead','supplementRead','cprRead','siblingRead','creativePlayRead','seasonalRead','blwRead','parentHealthRead','earlyAllergenRead','traditionalRead','preschoolRead','storytimeRead','outdoorPlayRead','newbornCareRead','fingerFoodRead','wonderWeeksRead','sleepTroubleRead','babyProofingRead','emotionalDevRead','nutritionRead','speechDevRead','vaccineScheduleRead','playDevRead'];
@@ -1936,6 +1943,9 @@ const S = {
   burnoutRead:false,
   growthCurvesRead:false,
   temperamentRead:false,
+  mindfulnessRead:false,
+  weaningRead:false,
+  neuroscienceRead:false,
 };
 
 // ══════════════════════════════════════════════════════
@@ -3644,6 +3654,9 @@ function showAllGuides(){
     {ico:'🔥',name:'Ebeveyn Tükenmişliği',fn:'showBurnoutGuide()'},
     {ico:'📏',name:'Büyüme Eğrileri',fn:'showGrowthCurvesGuide()'},
     {ico:'🧸',name:'Uyum Tipi Rehberi',fn:'showTemperamentGuide()'},
+    {ico:'🌬️',name:'Nefes & Meditasyon',fn:'showMindfulnessGuide()'},
+    {ico:'🍼',name:'Mama Bırakma',fn:'showWeaningGuide()'},
+    {ico:'🧪',name:'Beyin Bilimi',fn:'showNeuroscienceGuide()'},
   ];
   const chips=guides.map(g=>`<button class="guide-chip" onclick="${g.fn};this.closest('.pop-ov').remove()">${g.ico}<br>${g.name}</button>`).join('');
   const h=`<div class="pop-ov" onclick="if(event.target===this)this.remove()">
@@ -5723,6 +5736,146 @@ function showEmotionalDevelopmentGuide(){
     </div>
     <div class="pop-tip"><div class="pop-tip-t">🔬 EQ > IQ</div><p>Daniel Goleman'ın araştırmaları gösterdi: yaşam başarısının %80'i duygusal zekaya bağlı, %20'si IQ'ya. Duygusal zeka 0-7 yaş arasında şekillenir. Şimdi attığınız her adım, onun tüm hayatını etkiler.</p></div>
     <button class="pop-btn" style="background:linear-gradient(135deg,#6A1B9A,#7B1FA2)" onclick="this.closest('.pop-ov').remove()">💕 Duyguları Birlikte Öğreneceğiz!</button>
+  </div></div>`;
+  document.body.insertAdjacentHTML('beforeend',h);
+}
+
+// ══════════════════════════════════════════════════════
+// MINDFULNESS GUIDE — NEFES & MEDİTASYON
+// ══════════════════════════════════════════════════════
+function showMindfulnessGuide(){
+  S.mindfulnessRead=true;checkAchievements();saveGame();
+  const exercises=[
+    {ico:'💨',name:'4-7-8 Nefes',time:'2 dakika',
+     steps:['4 saniye burundan içeri al','7 saniye tut','8 saniye ağızdan yavaşça ver','4 kez tekrarla'],
+     when:'Panik veya stres anında, gece uyku öncesi'},
+    {ico:'🌊',name:'Kutu Nefes (Box Breathing)',time:'3 dakika',
+     steps:['4 saniye al','4 saniye tut','4 saniye ver','4 saniye bekle'],
+     when:'Öfke krizleri sırasında, challenge anlarında'},
+    {ico:'🧘',name:'5-4-3-2-1 Grounding',time:'1 dakika',
+     steps:['5 şey GÖR','4 şey DOKUNABILIRSIN','3 şey DUYARSUN','2 şey KOKLAYABİLİRSİN','1 şey TADABİLİRSİN'],
+     when:'Anksiyete veya bunalma hissinde'},
+    {ico:'🤲',name:'Ebeveyn Minneti',time:'2 dakika',
+     steps:['Gözleri kapat','Bugün 3 küçük güzel şeyi düşün','Bebeğinle bir anı hatırla','Bu anı hisset'],
+     when:'Yorgun veya umutsuz hissedildiğinde'},
+  ];
+  const rows=exercises.map(e=>`
+    <div style="border:2px solid #B39DDB;border-radius:10px;padding:10px;margin-bottom:8px;background:#EDE7F6">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
+        <div style="font-weight:800;font-size:.84rem">${e.ico} ${e.name}</div>
+        <div style="font-size:.72rem;padding:2px 8px;border-radius:20px;background:#7E57C2;color:white">⏱ ${e.time}</div>
+      </div>
+      <ol style="margin:0 0 5px 16px;font-size:.76rem;color:#333">${e.steps.map(s=>`<li>${s}</li>`).join('')}</ol>
+      <div style="font-size:.73rem;color:#5E35B1;font-style:italic">🕐 Ne zaman: ${e.when}</div>
+    </div>`).join('');
+  const h=`<div class="pop-ov" onclick="if(event.target===this)this.remove()">
+  <div class="pop-box" style="max-width:490px">
+    <div class="pop-rainbow"></div>
+    <span class="pop-ico">🌬️</span>
+    <div class="pop-title">Ebeveyn için Nefes ve Meditasyon</div>
+    <div class="pop-sub">Her birkaç dakikanız vücudunuzu ve zihninizi sıfırlayabilir</div>
+    <div style="background:#EDE7F6;border:2px solid #7E57C2;border-radius:10px;padding:10px;margin-bottom:12px;font-size:.78rem">
+      <b>🧠 Neden İşe Yarıyor:</b> Yavaş nefes vagus sinirini aktive eder, kortizol düşürür, parasempatik sistemi ("rest & digest") devreye sokar. 2 dakika bile beyin kimyasını değiştirir.
+    </div>
+    <div style="max-height:42vh;overflow-y:auto">${rows}</div>
+    <button class="pop-btn" style="margin-top:12px" onclick="this.closest('.pop-ov').remove()">Nefes Aldım! 🌬️</button>
+  </div></div>`;
+  document.body.insertAdjacentHTML('beforeend',h);
+}
+
+// ══════════════════════════════════════════════════════
+// WEANING GUIDE — MAMA BIRAKMA
+// ══════════════════════════════════════════════════════
+function showWeaningGuide(){
+  S.weaningRead=true;checkAchievements();saveGame();
+  const methods=[
+    {name:'Bebek Yönlendirmeli (Baby-Led Weaning)',ico:'🍓',color:'#E8F5E9',border:'#43A047',
+     age:'6-12 ay',
+     pros:['Özerkliği destekler','Motor beceriyi geliştirir','Picky eating azalır','Aile sofrası daha kolay'],
+     cons:['Dağınık olur','Yeterli besin alımı izlenmeli','Boğulma riski (küçük parçalar)'],
+     tips:'6 ayda başla. Parmak şeklinde, yumuşak, tuz/şekersiz gıdalar. Her öğünde hayvansal kaynak (demir).'},
+    {name:'Geleneksel Püre Yöntemi',ico:'🥣',color:'#E3F2FD',border:'#1E88E5',
+     age:'4-6 ay+',
+     pros:['Kontrollü besin alımı','Alerjileri izlemek kolay','Pratik'],
+     cons:['Motor bağımsızlığa geç geçiş','Daha uzun hazırlık süreci'],
+     tips:'Tek malzemeli püre ile başla. 10-15 deneme sonra tat kabul edebilir.'},
+    {name:'Karma Yaklaşım',ico:'🍽️',color:'#FFF3E0',border:'#FF8F00',
+     age:'6+ ay',
+     pros:['Her ikisinin avantajını alır','Esneklik','Bebeğin sinyallerini izle'],
+     cons:['Daha fazla planlama gerekir'],
+     tips:'Sabah püresi, öğle parmak gıda. Bebeğin tepkisine göre uyarla.'},
+  ];
+  const rows=methods.map(m=>`
+    <div style="border:2px solid ${m.border};border-radius:10px;padding:10px;margin-bottom:8px;background:${m.color}">
+      <div style="font-weight:800;font-size:.84rem;margin-bottom:2px">${m.ico} ${m.name}</div>
+      <div style="font-size:.73rem;color:#666;margin-bottom:5px">Başlangıç: ${m.age}</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;font-size:.74rem;margin-bottom:5px">
+        <div><b>✅ Artılar:</b><br>${m.pros.map(p=>`• ${p}`).join('<br>')}</div>
+        <div><b>⚠️ Dikkat:</b><br>${m.cons.map(c=>`• ${c}`).join('<br>')}</div>
+      </div>
+      <div style="font-size:.74rem;color:#333;border-top:1px solid ${m.border};padding-top:5px">💡 ${m.tips}</div>
+    </div>`).join('');
+  const h=`<div class="pop-ov" onclick="if(event.target===this)this.remove()">
+  <div class="pop-box" style="max-width:510px">
+    <div class="pop-rainbow"></div>
+    <span class="pop-ico">🍼</span>
+    <div class="pop-title">Katı Gıdaya Geçiş (Weaning) Rehberi</div>
+    <div class="pop-sub">BLW, püre veya karma — hangi yol sizin için doğru?</div>
+    <div style="max-height:55vh;overflow-y:auto;padding:4px 2px">${rows}
+      <div style="background:#FFEBEE;border:2px solid #EF5350;border-radius:10px;padding:10px;font-size:.78rem;margin-top:4px">
+        <b>🚨 Boğulma Riski — Dikkat Edilmesi Gerekenler:</b><br>
+        Yuvarlak üzüm, sert havuç, bütün fıstık, salatalık yuvarlak dilimleri, sert et parçaları → mutlaka küçük kesin veya uzun pişirin.<br><br>
+        <b>🍯 Bal:</b> 1 yaş altında KESİNLİKLE verilmez — botulizm riski.<br>
+        <b>🧂 Tuz:</b> 1 yaş altında böbrek gelişimi için tuzdan kaçının.
+      </div>
+    </div>
+    <button class="pop-btn" style="margin-top:12px" onclick="this.closest('.pop-ov').remove()">Beslenmeye Hazırım!</button>
+  </div></div>`;
+  document.body.insertAdjacentHTML('beforeend',h);
+}
+
+// ══════════════════════════════════════════════════════
+// NEUROSCIENCE GUIDE — BEYİN BİLİMİ
+// ══════════════════════════════════════════════════════
+function showNeuroscienceGuide(){
+  S.neuroscienceRead=true;checkAchievements();saveGame();
+  const facts=[
+    {ico:'🧠',fact:'0-3 yaş arası beyin saniyede 1 milyon yeni nöronal bağlantı oluşturur.',
+     implication:'Bu dönemdeki deneyimler kalıcı beyin yapısını şekillendirir.'},
+    {ico:'💪',fact:'"Serve and Return" — ebeveynin tepkiselliği en güçlü beyin gelişimi aracıdır.',
+     implication:'Her gülümsemeye, sese ve jeste cevap vermek nöronal bağları güçlendirir.'},
+    {ico:'😰',fact:'Kronik stres (yüksek kortizol) beyin mimarisini bozar.',
+     implication:'Güvenli, öngörülebilir çevre stres sistemini düzenler.'},
+    {ico:'💤',fact:'Bebek uyku sırasında günün öğrendiklerini konsolide eder.',
+     implication:'Uyku = öğrenme. Uyku açığı beyin gelişimini yavaşlatır.'},
+    {ico:'🗣️',fact:'30 milyon kelime farkı — yoksullukta yetişen çocuklar 3 yaşına kadar 30 milyon daha az kelime duyar.',
+     implication:'Bebeğe konuşmak, şarkı söylemek ve kitap okumak dil korteksini inşa eder.'},
+    {ico:'🤗',fact:'Güvenli bağlanma amigdalayı (korku merkezi) düzenler.',
+     implication:'Tutarlı bakım, stres tepkisini modüle eden sinir devrelerini kurar.'},
+    {ico:'🎮',fact:'Serbest oyun prefrontal korteks gelişimini destekler.',
+     implication:'Yapılandırılmamış oyun yaratıcılık, yürütücü işlev ve öz-düzenlemeyi geliştirir.'},
+  ];
+  const rows=facts.map(f=>`
+    <div style="display:flex;gap:10px;padding:9px;border-radius:8px;background:#E8EAF6;margin-bottom:6px">
+      <div style="font-size:1.4rem;flex-shrink:0">${f.ico}</div>
+      <div>
+        <div style="font-size:.78rem;font-weight:700;margin-bottom:2px">${f.fact}</div>
+        <div style="font-size:.74rem;color:#3949AB">→ ${f.implication}</div>
+      </div>
+    </div>`).join('');
+  const h=`<div class="pop-ov" onclick="if(event.target===this)this.remove()">
+  <div class="pop-box" style="max-width:500px">
+    <div class="pop-rainbow"></div>
+    <span class="pop-ico">🧪</span>
+    <div class="pop-title">Bebek Beyin Bilimi</div>
+    <div class="pop-sub">Nörobilimin ebeveynliğe uygulaması — 7 kritik gerçek</div>
+    <div style="max-height:55vh;overflow-y:auto;padding:4px 2px">${rows}
+      <div style="background:#E8F5E9;border:2px solid #43A047;border-radius:10px;padding:10px;font-size:.78rem;margin-top:8px">
+        <b>🔬 Beyin Plastisitesi:</b> Beyin yaşam boyu değişebilir (nöroplastisite), ama ilk 3 yıl en kritik penceredir. Bu dönemdeki olumlu deneyimler, negatif olayların etkisini bile hafifletebilir.<br><br>
+        <b>📚 Kaynak:</b> Harvard Center on the Developing Child, "InBrief" serisi; Jack P. Shonkoff araştırmaları
+      </div>
+    </div>
+    <button class="pop-btn" style="margin-top:12px" onclick="this.closest('.pop-ov').remove()">Beyin Mimariyim!</button>
   </div></div>`;
   document.body.insertAdjacentHTML('beforeend',h);
 }
