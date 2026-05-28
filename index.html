@@ -1432,6 +1432,7 @@ function saveGame(){
     motivationRead:S.motivationRead||false,
     faqRead:S.faqRead||false, postpartumChecklistRead:S.postpartumChecklistRead||false,
     genderNeutralRead:S.genderNeutralRead||false, highNeedsRead:S.highNeedsRead||false,
+    musicDevRead:S.musicDevRead||false, epigeneticsRead:S.epigeneticsRead||false, multilingualRead:S.multilingualRead||false,
     savedAt:Date.now(),
   };
   try { localStorage.setItem(SAVE_KEY, JSON.stringify(data)); } catch(e){}
@@ -1533,6 +1534,9 @@ function applySaveData(d){
   S.postpartumChecklistRead = d.postpartumChecklistRead||false;
   S.genderNeutralRead = d.genderNeutralRead||false;
   S.highNeedsRead = d.highNeedsRead||false;
+  S.musicDevRead = d.musicDevRead||false;
+  S.epigeneticsRead = d.epigeneticsRead||false;
+  S.multilingualRead = d.multilingualRead||false;
   S.started = true;
 }
 
@@ -1706,6 +1710,10 @@ const ACHIEVEMENTS = [
   {id:'dp30000',        icon:'🌌', name:'30.000 GP Galaksisi',desc:'30.000 Gelişim Puanına ulaşıldı!',      check:s=>s.dp>=30000},
   {id:'genderneutral',  icon:'🌈', name:'Özgür Büyütme',      desc:'Cinsiyetten bağımsız ebeveynlik rehberi okundu', check:s=>(s.genderNeutralRead||false)},
   {id:'highneedsread',  icon:'💜', name:'Hassas Ebeveyn',      desc:'Yüksek ihtiyaçlı bebek rehberi okundu',  check:s=>(s.highNeedsRead||false)},
+  {id:'music_dev',      icon:'🎹', name:'Müzik Beyin',         desc:'Müzik ve gelişim rehberi okundu',          check:s=>(s.musicDevRead||false)},
+  {id:'epigenetics',    icon:'🧬', name:'Çevre Mimarı',        desc:'Epigenetik rehberi okundu',                check:s=>(s.epigeneticsRead||false)},
+  {id:'multilingual',   icon:'🌍', name:'Çok Dilli Ebeveyn',  desc:'Çok dilli büyütme rehberi okundu',         check:s=>(s.multilingualRead||false)},
+  {id:'dp50000',        icon:'🌟', name:'50.000 GP Efsanesi',  desc:'50.000 Gelişim Puanına ulaşıldı!',        check:s=>s.dp>=50000},
   {id:'dp20000',         icon:'🌠', name:'20.000 GP Süpernova',desc:'20.000 Gelişim Puanına ulaşıldı!',     check:s=>s.dp>=20000},
   {id:'guide_all',   icon:'🎓', name:'Rehber Koleksiyoncusu',desc:'60+ rehber okundu',                    check:s=>{
     const flags=['readLangPro','readTravel','readDiscipline','sensoryRead','cryDecoderUsed','reflexRead','wellChildRead','coupleRead','workReturnRead','illnessRead','childcareRead','supplementRead','cprRead','siblingRead','creativePlayRead','seasonalRead','blwRead','parentHealthRead','earlyAllergenRead','traditionalRead','preschoolRead','storytimeRead','outdoorPlayRead','newbornCareRead','fingerFoodRead','wonderWeeksRead','sleepTroubleRead','babyProofingRead','emotionalDevRead','nutritionRead','speechDevRead','vaccineScheduleRead','playDevRead'];
@@ -1915,6 +1923,9 @@ const S = {
   postpartumChecklistRead:false,
   genderNeutralRead:false,
   highNeedsRead:false,
+  musicDevRead:false,
+  epigeneticsRead:false,
+  multilingualRead:false,
 };
 
 // ══════════════════════════════════════════════════════
@@ -3617,6 +3628,9 @@ function showAllGuides(){
     {ico:'✅',name:'Doğum Sonrası Kontrol',fn:'showPostpartumChecklistGuide()'},
     {ico:'🌈',name:'Cinsiyetten Bağımsız',fn:'showGenderNeutralParentingGuide()'},
     {ico:'💜',name:'Yüksek İhtiyaçlı Bebek',fn:'showHighNeedsGuide()'},
+    {ico:'🎹',name:'Müzik ve Gelişim',fn:'showMusicDevelopmentGuide()'},
+    {ico:'🧬',name:'Epigenetik & Çevre',fn:'showEpigeneticsGuide()'},
+    {ico:'🌍',name:'Çok Dilli Büyütme',fn:'showMultilingualGuide()'},
   ];
   const chips=guides.map(g=>`<button class="guide-chip" onclick="${g.fn};this.closest('.pop-ov').remove()">${g.ico}<br>${g.name}</button>`).join('');
   const h=`<div class="pop-ov" onclick="if(event.target===this)this.remove()">
@@ -5696,6 +5710,130 @@ function showEmotionalDevelopmentGuide(){
     </div>
     <div class="pop-tip"><div class="pop-tip-t">🔬 EQ > IQ</div><p>Daniel Goleman'ın araştırmaları gösterdi: yaşam başarısının %80'i duygusal zekaya bağlı, %20'si IQ'ya. Duygusal zeka 0-7 yaş arasında şekillenir. Şimdi attığınız her adım, onun tüm hayatını etkiler.</p></div>
     <button class="pop-btn" style="background:linear-gradient(135deg,#6A1B9A,#7B1FA2)" onclick="this.closest('.pop-ov').remove()">💕 Duyguları Birlikte Öğreneceğiz!</button>
+  </div></div>`;
+  document.body.insertAdjacentHTML('beforeend',h);
+}
+
+// ══════════════════════════════════════════════════════
+// MUSIC DEVELOPMENT GUIDE
+// ══════════════════════════════════════════════════════
+function showMusicDevelopmentGuide(){
+  S.musicDevRead=true;checkAchievements();saveGame();
+  const benefits=[
+    {ico:'🧠',title:'Beyin Gelişimi',desc:'Müzik eğitimi, matematik ve dil becerilerini destekleyen nöronal bağlantıları güçlendirir. Harvard araştırmaları müzik dinleyen bebeklerin görsel-uzamsal IQ\'sunun %15-35 daha yüksek olduğunu gösterdi.'},
+    {ico:'❤️',title:'Duygusal Düzenleme',desc:'Ritim ve melodi bebeklerin duygularını düzenlemesine yardımcı olur. Ninni kalp atış hızını düşürür, kortizol seviyelerini azaltır.'},
+    {ico:'🗣️',title:'Dil Gelişimi',desc:'Müzik ritmi ve dil ritmi aynı beyin bölgelerini kullanır. Şarkı söyleyen ebeveynlerin çocukları daha erken konuşur.'},
+    {ico:'🤝',title:'Sosyal Bağlanma',desc:'Birlikte müzik yapmak (dans, ritim vurma) sosyal bağı güçlendirir. Senkronize hareket oksitosin salgılar.'},
+  ];
+  const ageActs=[
+    {age:'0-3 Ay',acts:['Ninni söylemek','Yavaş klasik müzik','Kendi sesinizle konuşma melodisi','Kalp atışına yönelik ritim']},
+    {age:'3-6 Ay',acts:['Dans ederek kucaklamak','Çıngırak ile ritim','Şarkıya göre sallanmak','Farklı müzik türleri tanıtmak']},
+    {age:'6-12 Ay',acts:['Basit davul/tef','El çırpma oyunları','Şarkılı kitaplar','Müziğe göre hareket oyunları']},
+    {age:'12-24 Ay',acts:['Marakas/kaşık vurma','Dans etme','Aynı şarkıyı tekrar tekrar','Müzisyenleri izlemek (video)']},
+  ];
+  const bHTML=benefits.map(b=>`<div style="padding:8px;border-radius:8px;background:#F3E5F5;border-left:4px solid #9C27B0;margin-bottom:6px"><div style="font-weight:700;font-size:.8rem">${b.ico} ${b.title}</div><div style="font-size:.75rem;color:#555;margin-top:2px">${b.desc}</div></div>`).join('');
+  const aHTML=ageActs.map(a=>`<div style="margin-bottom:8px"><div style="font-weight:700;font-size:.8rem;color:#6A1B9A">🎵 ${a.age}:</div><div style="font-size:.76rem;padding:4px 0 0 12px">${a.acts.map(x=>`• ${x}`).join('<br>')}</div></div>`).join('');
+  const h=`<div class="pop-ov" onclick="if(event.target===this)this.remove()">
+  <div class="pop-box" style="max-width:490px">
+    <div class="pop-rainbow"></div>
+    <span class="pop-ico">🎹</span>
+    <div class="pop-title">Müzik ve Beyin Gelişimi</div>
+    <div class="pop-sub">Neden en iyi oyuncak ses ve ritimdir</div>
+    <div style="max-height:55vh;overflow-y:auto;padding:4px 2px">
+      <div style="font-weight:700;font-size:.82rem;color:#6A1B9A;margin-bottom:6px">🎶 Müziğin Faydaları:</div>
+      ${bHTML}
+      <div style="font-weight:700;font-size:.82rem;color:#6A1B9A;margin:10px 0 6px">📅 Yaşa Göre Aktiviteler:</div>
+      ${aHTML}
+      <div style="background:#E8F5E9;border:2px solid #43A047;border-radius:10px;padding:10px;font-size:.78rem;margin-top:6px">
+        <b>🎵 İpucu:</b> "Mozart Etkisi" abartılmıştır. Pasif dinlemek değil, aktif müzik yapma (şarkı söylemek, ritim vurmak, dans etmek) gelişimi en çok destekler.<br><br>
+        <b>📚 Kaynak:</b> Nina Kraus "Of Sound Mind", Harvard Müzik Eğitimi araştırmaları
+      </div>
+    </div>
+    <button class="pop-btn" style="margin-top:12px" onclick="this.closest('.pop-ov').remove()">Müzik Başlıyor! 🎵</button>
+  </div></div>`;
+  document.body.insertAdjacentHTML('beforeend',h);
+}
+
+// ══════════════════════════════════════════════════════
+// EPIGENETICS GUIDE
+// ══════════════════════════════════════════════════════
+function showEpigeneticsGuide(){
+  S.epigeneticsRead=true;checkAchievements();saveGame();
+  const factors=[
+    {ico:'🤗',name:'Sevgi ve Güven',impact:'YÜKSEK',color:'#E8F5E9',border:'#43A047',
+     desc:'Tutarlı sevgi ve tepkisellik, stres geni (CRF1) ekspresyonunu azaltır. Güvenli bağlanma, beynin korku tepkisini modüle eder.'},
+    {ico:'🥗',name:'Beslenme',impact:'YÜKSEK',color:'#FFF3E0',border:'#FF8F00',
+     desc:'Folik asit, omega-3, B12 ve demir bebek beyin gelişimini DNA düzeyinde etkiler. Anne beslenmesi gebelikte ve emzirmede kritik.'},
+    {ico:'💤',name:'Uyku',impact:'YÜKSEK',color:'#E3F2FD',border:'#1E88E5',
+     desc:'Uyku sırasında büyüme hormonu salgılanır, beyin günün bilgilerini "sıkıştırır". Uyku açığı gen ekspresyonunu bozar.'},
+    {ico:'😰',name:'Kronik Stres',impact:'NEGATİF',color:'#FCE4EC',border:'#E91E63',
+     desc:'Sürekli stres (yüksek kortizol) hipokampüs ve prefrontal korteks gelişimini olumsuz etkiler. Travma izleri epigenetik olarak nesiller arası aktarılabilir.'},
+    {ico:'🌳',name:'Doğa ve Çevre',impact:'ORTA',color:'#F3E5F5',border:'#AB47BC',
+     desc:'Yeşil alanlara maruz kalma, kimyasal toksinlerden uzak ortam ve temiz hava beyin gelişimini destekler.'},
+  ];
+  const rows=factors.map(f=>`
+    <div style="border:2px solid ${f.border};border-radius:10px;padding:10px;margin-bottom:8px;background:${f.color}">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
+        <div style="font-weight:800;font-size:.82rem">${f.ico} ${f.name}</div>
+        <div style="font-size:.7rem;font-weight:700;padding:2px 8px;border-radius:20px;background:${f.border};color:white">${f.impact}</div>
+      </div>
+      <div style="font-size:.77rem;color:#333">${f.desc}</div>
+    </div>`).join('');
+  const h=`<div class="pop-ov" onclick="if(event.target===this)this.remove()">
+  <div class="pop-box" style="max-width:490px">
+    <div class="pop-rainbow"></div>
+    <span class="pop-ico">🧬</span>
+    <div class="pop-title">Epigenetik ve Çevre</div>
+    <div class="pop-sub">Gen + Çevre = Çocuğunuzun Geleceği</div>
+    <div style="font-size:.78rem;background:#E8EAF6;border-radius:10px;padding:10px;margin-bottom:12px">
+      <b>🔬 Epigenetik nedir?</b> Genler değişmez — ama gen "ekspresyonu" (hangi genlerin açık/kapalı olduğu) çevre tarafından şekillendirilir. Ebeveynlik kalitesi bebeğin beyin gelişimini gen düzeyinde etkiler.
+    </div>
+    <div style="max-height:45vh;overflow-y:auto;padding:4px 2px">${rows}
+      <div style="background:#FFFDE7;border:2px solid #FFD54F;border-radius:10px;padding:10px;font-size:.78rem;margin-top:4px">
+        <b>💡 Ana Mesaj:</b> "Doğa mı, çevre mi?" sorusu yanlış. Doğru soru: "Hangi çevre hangi genleri aktive eder?" Sevgi, güven, beslenme ve uyku — hepsi gen ekspresyonunu şekillendirir.<br><br>
+        <b>📚 Kaynak:</b> Bruce Lipton "Biology of Belief", National Scientific Council on the Developing Child
+      </div>
+    </div>
+    <button class="pop-btn" style="margin-top:12px" onclick="this.closest('.pop-ov').remove()">Çevreyi Şekillendireceğim!</button>
+  </div></div>`;
+  document.body.insertAdjacentHTML('beforeend',h);
+}
+
+// ══════════════════════════════════════════════════════
+// MULTILINGUAL GUIDE
+// ══════════════════════════════════════════════════════
+function showMultilingualGuide(){
+  S.multilingualRead=true;checkAchievements();saveGame();
+  const myths=[
+    {myth:'Çift dil dil geciktirir',truth:'YANLIŞ. Araştırmalar çift dilli bebeklerin tek dillilerle aynı toplam kelime sayısına sahip olduğunu gösteriyor. Her dilde farklı olabilir ama toplam eşit.'},
+    {myth:'Karışık dil kullanmak kafayı karıştırır',truth:'YANLIŞ. Dil karıştırma (code-switching) zayıflık değil, bilişsel esnekliktir. Bu doğal ve normaldir.'},
+    {myth:'Önce bir dil, sonra ikinci',truth:'YANLIŞ. En iyi zaman ERKEN — her iki dile aynı anda doğumdan itibaren maruz kalma idealdir.'},
+  ];
+  const strategies=[
+    {ico:'🗣️',name:'One Person One Language (OPOL)',desc:'Her ebeveyn kendi ana dilini konuşur. En yaygın ve etkili yöntem.'},
+    {ico:'🏠',name:'Ev dili / Okul dili',desc:'Evde bir dil, okul/toplum dilinde diğeri. Azınlık dilini evde korumak önemli.'},
+    {ico:'📚',name:'Her dilde kitap',desc:'Her iki dilde kitap, müzik ve medya sağlayın. Dil zenginliği maruziyetle gelişir.'},
+    {ico:'🌍',name:'Kültürü de öğretin',desc:'Dil sadece kelime değil — kültür, değerler ve kimlik. Her iki kültürü kutlayın.'},
+  ];
+  const mythHTML=myths.map(m=>`<div style="border-radius:8px;border:2px solid #EF5350;background:#FFEBEE;padding:8px;margin-bottom:6px"><div style="font-weight:700;font-size:.78rem;color:#C62828">❌ Efsane: "${m.myth}"</div><div style="font-size:.76rem;color:#388E3C;margin-top:4px">✅ Gerçek: ${m.truth}</div></div>`).join('');
+  const stratHTML=strategies.map(s=>`<div style="padding:7px;border-radius:8px;background:#E3F2FD;margin-bottom:5px"><div style="font-weight:700;font-size:.8rem">${s.ico} ${s.name}</div><div style="font-size:.75rem;color:#444;margin-top:2px">${s.desc}</div></div>`).join('');
+  const h=`<div class="pop-ov" onclick="if(event.target===this)this.remove()">
+  <div class="pop-box" style="max-width:490px">
+    <div class="pop-rainbow"></div>
+    <span class="pop-ico">🌍</span>
+    <div class="pop-title">Çok Dilli Büyütme Rehberi</div>
+    <div class="pop-sub">İki dil = İki dünya — beyin için süper güç</div>
+    <div style="max-height:55vh;overflow-y:auto;padding:4px 2px">
+      <div style="font-weight:700;font-size:.82rem;margin-bottom:6px">🚫 Yaygın Efsaneler:</div>
+      ${mythHTML}
+      <div style="font-weight:700;font-size:.82rem;margin:10px 0 6px">💡 Başarılı Stratejiler:</div>
+      ${stratHTML}
+      <div style="background:#E8F5E9;border:2px solid #43A047;border-radius:10px;padding:10px;font-size:.78rem;margin-top:6px">
+        <b>🧠 Bilimsel Gerçek:</b> Çift dilli beyinler tek dillilere kıyasla bilişsel esneklik, dikkat kontrolü ve çoklu görev becerisinde daha iyi performans gösterir. "Executive function" yeterlikleri daha yüksektir.<br><br>
+        <b>📚 Kaynak:</b> Ellen Bialystok araştırmaları, François Grosjean "Bilingualism"
+      </div>
+    </div>
+    <button class="pop-btn" style="margin-top:12px" onclick="this.closest('.pop-ov').remove()">İki Dil İki Dünya!</button>
   </div></div>`;
   document.body.insertAdjacentHTML('beforeend',h);
 }
