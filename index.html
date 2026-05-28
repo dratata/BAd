@@ -1441,6 +1441,7 @@ function saveGame(){
     daycareRead:S.daycareRead||false, firstAidRead:S.firstAidRead||false, sleepHygieneRead:S.sleepHygieneRead||false,
     attachmentTheoryRead:S.attachmentTheoryRead||false, groomingRead:S.groomingRead||false,
     sustainableRead:S.sustainableRead||false, toddlerBrainRead:S.toddlerBrainRead||false,
+    exerciseRead:S.exerciseRead||false, matrscenceRead:S.matrscenceRead||false, homeEnvRead:S.homeEnvRead||false,
     savedAt:Date.now(),
   };
   try { localStorage.setItem(SAVE_KEY, JSON.stringify(data)); } catch(e){}
@@ -1558,6 +1559,9 @@ function applySaveData(d){
   S.groomingRead = d.groomingRead||false;
   S.sustainableRead = d.sustainableRead||false;
   S.toddlerBrainRead = d.toddlerBrainRead||false;
+  S.exerciseRead = d.exerciseRead||false;
+  S.matrscenceRead = d.matrscenceRead||false;
+  S.homeEnvRead = d.homeEnvRead||false;
   S.started = true;
 }
 
@@ -1748,6 +1752,9 @@ const ACHIEVEMENTS = [
   {id:'grooming_pro',   icon:'🧴', name:'Bakım Uzmanı',       desc:'Bebek bakım rutini rehberi okundu',         check:s=>(s.groomingRead||false)},
   {id:'sustain_pro',    icon:'🌍', name:'Sürdürülebilir Ebeveyn',desc:'Sürdürülebilir ebeveynlik rehberi okundu',check:s=>(s.sustainableRead||false)},
   {id:'toddler_brain',  icon:'💡', name:'Toddler Beyin Uzmanı',desc:'Toddler beyin rehberi okundu',             check:s=>(s.toddlerBrainRead||false)},
+  {id:'exercise_pro',   icon:'🏋️', name:'Fit Ebeveyn',         desc:'Egzersiz rehberi okundu',                  check:s=>(s.exerciseRead||false)},
+  {id:'matrescence',    icon:'🌺', name:'Anne Kimliği',         desc:'Annelik kimliği rehberi okundu',           check:s=>(s.matrscenceRead||false)},
+  {id:'home_env',       icon:'🏡', name:'Ev Ortamı Uzmanı',    desc:'Ev ortamı düzenleme rehberi okundu',       check:s=>(s.homeEnvRead||false)},
   {id:'challenge50',    icon:'🌟', name:'50 Kriz Ustası',     desc:'50 zorlu anı çözdün!',                   check:s=>(s.challengesSolved||0)>=50},
   {id:'full_2years',    icon:'🎊', name:'2 Yıl Tamamlandı!',  desc:'Bebeğin 24. aya ulaştı!',                check:s=>(s.ageMonths||0)>=24},
   {id:'ebeveyn_legend', icon:'👑', name:'Efsane Ebeveyn',     desc:'18.000+ GP toplandı!',                   check:s=>s.dp>=18000},
@@ -1976,6 +1983,9 @@ const S = {
   groomingRead:false,
   sustainableRead:false,
   toddlerBrainRead:false,
+  exerciseRead:false,
+  matrscenceRead:false,
+  homeEnvRead:false,
 };
 
 // ══════════════════════════════════════════════════════
@@ -3694,6 +3704,9 @@ function showAllGuides(){
     {ico:'🧴',name:'Bebek Bakım Rutini',fn:'showGroomingGuide()'},
     {ico:'🌍',name:'Sürdürülebilir Ebeveynlik',fn:'showSustainableParentingGuide()'},
     {ico:'💡',name:'Toddler Mantığı',fn:'showToddlerBrainGuide()'},
+    {ico:'🏋️',name:'Egzersiz & Bebek',fn:'showExerciseGuide()'},
+    {ico:'🌺',name:'Annelik Kimliği',fn:'showMaternalIdentityGuide()'},
+    {ico:'🏡',name:'Ev Ortamı Düzenleme',fn:'showHomeEnvironmentGuide()'},
   ];
   const chips=guides.map(g=>`<button class="guide-chip" onclick="${g.fn};this.closest('.pop-ov').remove()">${g.ico}<br>${g.name}</button>`).join('');
   const h=`<div class="pop-ov" onclick="if(event.target===this)this.remove()">
@@ -5773,6 +5786,129 @@ function showEmotionalDevelopmentGuide(){
     </div>
     <div class="pop-tip"><div class="pop-tip-t">🔬 EQ > IQ</div><p>Daniel Goleman'ın araştırmaları gösterdi: yaşam başarısının %80'i duygusal zekaya bağlı, %20'si IQ'ya. Duygusal zeka 0-7 yaş arasında şekillenir. Şimdi attığınız her adım, onun tüm hayatını etkiler.</p></div>
     <button class="pop-btn" style="background:linear-gradient(135deg,#6A1B9A,#7B1FA2)" onclick="this.closest('.pop-ov').remove()">💕 Duyguları Birlikte Öğreneceğiz!</button>
+  </div></div>`;
+  document.body.insertAdjacentHTML('beforeend',h);
+}
+
+// ══════════════════════════════════════════════════════
+// EXERCISE GUIDE — EGZERSİZ VE BEBEK
+// ══════════════════════════════════════════════════════
+function showExerciseGuide(){
+  S.exerciseRead=true;checkAchievements();saveGame();
+  const forMom=[
+    {ico:'🚶',name:'Yürüyüş (Hemen Başlanabilir)',when:'Doğumdan hemen sonra — hatta hastanede başlanabilir',how:'Günde 10-15 dk. Bebekle yürüyüş arabası ile ideal.'},
+    {ico:'🧘',name:'Pelvik Taban Egzersizleri',when:'Doğumdan 24 saat sonra (komplikasyon yoksa)',how:'Kegel: sık, kısa kasma. Günde 10 set. Ömür boyu sürdür.'},
+    {ico:'💪',name:'Güçlendirme (6-8 Hafta)',when:'Doğum sonrası 6-8 hafta kontrolünden sonra',how:'Karın ve sırt kasları: özellikle "diastasis recti" kontrolü ile başla.'},
+    {ico:'🏃',name:'Yoğun Egzersiz (8-12 Hafta)',when:'Fizyoterapist/jinekolog onayıyla',how:'Yüzme, bisiklet, hafif koşu. Emzirirken bol su iç.'},
+  ];
+  const withBaby=[
+    {ico:'👶',name:'Bebek Yoga',desc:'Bebek karnında veya göğsünde, yavaş hareketler. Bağlanma + anne esnekliği.'},
+    {ico:'🏋️',name:'Bebek Ağırlık Antrenmanı',desc:'Bebeği kaldırıp indirmek, uzatmak — günlük fonksiyonel egzersiz!'},
+    {ico:'💃',name:'Bebeğiyle Dans',desc:'Her müzik, her dans — hem kardio hem bağlanma. Ev içi bile yeterli.'},
+    {ico:'🤸',name:'Yüzüstü Oyun (Tummy Time)',desc:'Bebek için motor gelişim, anne için sırt kasları zaman.'},
+  ];
+  const momHTML=forMom.map(m=>`<div style="padding:8px;border-radius:8px;background:#E8F5E9;margin-bottom:5px"><div style="font-weight:700;font-size:.8rem">${m.ico} ${m.name}</div><div style="font-size:.74rem;color:#1B5E20;margin-top:2px">🕐 ${m.when}</div><div style="font-size:.74rem;color:#555">${m.how}</div></div>`).join('');
+  const babyHTML=withBaby.map(b=>`<div style="display:flex;gap:8px;padding:7px;border-radius:8px;background:#E3F2FD;margin-bottom:5px"><div style="font-size:1.3rem;flex-shrink:0">${b.ico}</div><div><div style="font-weight:700;font-size:.8rem">${b.name}</div><div style="font-size:.74rem;color:#555;margin-top:2px">${b.desc}</div></div></div>`).join('');
+  const h=`<div class="pop-ov" onclick="if(event.target===this)this.remove()">
+  <div class="pop-box" style="max-width:490px">
+    <div class="pop-rainbow"></div>
+    <span class="pop-ico">🏋️</span>
+    <div class="pop-title">Egzersiz ve Yeni Ebeveynlik</div>
+    <div class="pop-sub">Doğum sonrası güvenli hareket ve bebekle aktif olmak</div>
+    <div style="max-height:55vh;overflow-y:auto;padding:4px 2px">
+      <div style="font-weight:700;font-size:.82rem;color:#1B5E20;margin-bottom:6px">💪 Anne İçin Egzersiz Aşamaları:</div>
+      ${momHTML}
+      <div style="font-weight:700;font-size:.82rem;color:#1565C0;margin:10px 0 6px">👶 Bebekle Beraber Aktiviteler:</div>
+      ${babyHTML}
+      <div style="background:#FFF3E0;border:2px solid #FF8F00;border-radius:10px;padding:10px;font-size:.78rem;margin-top:8px">
+        <b>⚠️ Dikkat:</b> Doğum sonrası egzersiz kademeli olmalı. Emzirme sırasında yoğun egzersiz süt bileşimini geçici olarak etkileyebilir — egzersizden önce emzirin. Ağrı, kanama veya idrar kaçırma varsa fiziyoterapist görüşü alın.
+      </div>
+    </div>
+    <button class="pop-btn" style="margin-top:12px" onclick="this.closest('.pop-ov').remove()">Harekete Geçiyorum! 💪</button>
+  </div></div>`;
+  document.body.insertAdjacentHTML('beforeend',h);
+}
+
+// ══════════════════════════════════════════════════════
+// MATERNAL IDENTITY GUIDE — ANNELİK KİMLİĞİ
+// ══════════════════════════════════════════════════════
+function showMaternalIdentityGuide(){
+  S.matrscenceRead=true;checkAchievements();saveGame();
+  const h=`<div class="pop-ov" onclick="if(event.target===this)this.remove()">
+  <div class="pop-box" style="max-width:490px">
+    <div class="pop-rainbow"></div>
+    <span class="pop-ico">🌺</span>
+    <div class="pop-title">Annelik Kimliği — Matrescence</div>
+    <div class="pop-sub">"Matrescence": anne olmak kişiyi dönüştürür — bu normal ve güçlüdür</div>
+    <div style="max-height:55vh;overflow-y:auto;padding:4px 2px">
+      <div style="background:#FCE4EC;border:2px solid #E91E63;border-radius:10px;padding:12px;margin-bottom:10px">
+        <div style="font-weight:800;font-size:.85rem;margin-bottom:6px">🌸 Matrescence Nedir?</div>
+        <div style="font-size:.78rem;line-height:1.6">Doğum antropologu Dana Raphael'in geliştirdiği kavram: "Matrescence" anne olmakla yaşanan kimlik dönüşümüdür — tıpkı ergenlik gibi beyin, vücut ve kimlik yeniden şekillenir. Bu süreç zorlu, belirsiz ama derin biçimde anlamlıdır.</div>
+      </div>
+      <div style="font-weight:700;font-size:.82rem;margin-bottom:6px">💭 Normal Hissler:</div>
+      ${['Hem bebeği çok sevmek hem bazen özgürlük istemek','Önceki kimliği kaybetmek gibi hissetmek','Birden önce kim olduğunu sormak','Yoğun sevgi + yoğun yorgunluk = çelişki değil','Aynalar karşısında kendini tanımamak'].map(f=>`<div style="padding:6px;background:#FFF0F5;border-radius:7px;margin-bottom:4px;font-size:.77rem">💗 ${f}</div>`).join('')}
+      <div style="font-weight:700;font-size:.82rem;margin:10px 0 6px">🌱 Kimlik Köprüleri:</div>
+      ${['Eski ilgi alanlarından biri için haftada 30 dakika','"Ben"im ve "Anne"yim — ikisi birlikte var olabilir','Partnerle eskiden ne sevdiğinizi konuşun','Annelik öncesi arkadaşlarla bağlantıda kal','Başka annelerle dürüst konuş — sadece mutlu paylaşımlar değil'].map(k=>`<div style="padding:6px;background:#E8F5E9;border-radius:7px;margin-bottom:4px;font-size:.77rem">✅ ${k}</div>`).join('')}
+      <div style="background:#E8EAF6;border:2px solid #5C6BC0;border-radius:10px;padding:10px;font-size:.78rem;margin-top:8px">
+        <b>💜 Önemli:</b> Annelik kimliğinin yeniden inşası 1-2 yıl sürebilir. Bu dönemde PPD belirtilerini izleyin. Profesyonel destek almak — terapi veya annelik grupları — bu süreci önemli ölçüde kolaylaştırır.<br><br>
+        <b>📚 Kaynak:</b> Alexandra Sacks MD "Matrescence", Aurelie Athan Columbia araştırmaları
+      </div>
+    </div>
+    <button class="pop-btn" style="margin-top:12px" onclick="this.closest('.pop-ov').remove()">Ben Hem Anneyim Hem Benim! 🌺</button>
+  </div></div>`;
+  document.body.insertAdjacentHTML('beforeend',h);
+}
+
+// ══════════════════════════════════════════════════════
+// HOME ENVIRONMENT GUIDE
+// ══════════════════════════════════════════════════════
+function showHomeEnvironmentGuide(){
+  S.homeEnvRead=true;checkAchievements();saveGame();
+  const areas=[
+    {ico:'💡',name:'Işık Ortamı',color:'#FFF9C4',border:'#F9A825',items:[
+      'Günün ilk saatlerinde doğal ışık — sirkadiyen ritim için önemli',
+      'Uyku alanı: blackout perde veya karanlık perde',
+      'Gece ışığı: kırmızı/turuncu — melatonini bozmaz',
+      'Mavi ışık (ekran) uyku öncesi 1 saat yasakla',
+    ]},
+    {ico:'🔊',name:'Ses Ortamı',color:'#E3F2FD',border:'#1E88E5',items:[
+      'Beyaz gürültü: uyku kalitesini artırır, dışarıdan sesi maskeler',
+      'Konuşma sesi: bebek için en iyi dil uyarımı (TV değil)',
+      'Müzik: günün farklı zamanlarında farklı tempo (sabah canlandırıcı, akşam sakin)',
+      'Sessizlik de değerlidir — aşırı uyarımdan kaçın',
+    ]},
+    {ico:'🌡️',name:'Sıcaklık',color:'#E8F5E9',border:'#43A047',items:[
+      'Uyku odası: 18-20°C ideal',
+      'Oturma alanı: 20-22°C',
+      'Nem: %40-60 arası — kuru hava mukozayı kurutur',
+      'Hava temizleyici: şehirde yaşayanlara önerilir (HEPA filtre)',
+    ]},
+    {ico:'🧹',name:'Temizlik ve Hijyen',color:'#FCE4EC',border:'#E91E63',items:[
+      'Bebek odası: haftalık kapsamlı temizlik',
+      'Oyuncak temizliği: plastik oyuncaklar haftada bir silinebilir',
+      'Halı/kilim: toz akarları için düzenli vakumlama',
+      'Kimyasal temizleyicilerden kaçın — bebek ortamında doğal alternatif',
+    ]},
+    {ico:'🌿',name:'Bitkiler ve Hava Kalitesi',color:'#F3E5F5',border:'#AB47BC',items:[
+      'Ev bitkileri hava kalitesini artırabilir (şüpheli kanıt)',
+      'Zehirli bitkilerden uzak tut: Dieffenbachia, Philodendron',
+      'Sigara dumanı SIDS riskini artırır — evde kesinlikle sigara içilmemeli',
+      'Uçucu yağ difüzörü: bebek odasında önerilmez (havayolu hassasiyeti)',
+    ]},
+  ];
+  const rows=areas.map(a=>`
+    <div style="border:2px solid ${a.border};border-radius:10px;padding:10px;margin-bottom:8px;background:${a.color}">
+      <div style="font-weight:800;font-size:.84rem;margin-bottom:5px">${a.ico} ${a.name}</div>
+      <ul style="margin:0 0 0 16px;font-size:.75rem;color:#333">${a.items.map(i=>`<li style="margin-bottom:2px">${i}</li>`).join('')}</ul>
+    </div>`).join('');
+  const h=`<div class="pop-ov" onclick="if(event.target===this)this.remove()">
+  <div class="pop-box" style="max-width:490px">
+    <div class="pop-rainbow"></div>
+    <span class="pop-ico">🏡</span>
+    <div class="pop-title">Ev Ortamı Düzenleme Rehberi</div>
+    <div class="pop-sub">Işık, ses, sıcaklık, temizlik — optimal bebek ortamı</div>
+    <div style="max-height:55vh;overflow-y:auto;padding:4px 2px">${rows}</div>
+    <button class="pop-btn" style="margin-top:12px" onclick="this.closest('.pop-ov').remove()">Ortamımı Optimize Ettim!</button>
   </div></div>`;
   document.body.insertAdjacentHTML('beforeend',h);
 }
