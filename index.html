@@ -611,6 +611,7 @@ body{font-family:'Nunito',sans-serif;background:linear-gradient(135deg,#FFF5F8,#
       <button onclick="showTeethMap()" style="background:rgba(33,150,243,.35);color:#fff;border:none;padding:5px 11px;border-radius:20px;font-size:.72rem;font-weight:700;cursor:pointer;font-family:'Nunito',sans-serif" title="Dişlenme Haritası">🦷 Dişler</button>
       <button onclick="showSleepLog()" style="background:rgba(63,81,181,.35);color:#fff;border:none;padding:5px 11px;border-radius:20px;font-size:.72rem;font-weight:700;cursor:pointer;font-family:'Nunito',sans-serif" title="Uyku Günlüğü">😴 Uyku</button>
       <button onclick="showFeedLog()" style="background:rgba(56,142,60,.35);color:#fff;border:none;padding:5px 11px;border-radius:20px;font-size:.72rem;font-weight:700;cursor:pointer;font-family:'Nunito',sans-serif" title="Beslenme Günlüğü">🍽️ Öğün</button>
+      <button onclick="showStatsPanel()" style="background:rgba(255,167,38,.35);color:#fff;border:none;padding:5px 11px;border-radius:20px;font-size:.72rem;font-weight:700;cursor:pointer;font-family:'Nunito',sans-serif" title="İstatistikler">📈 İstatistik</button>
       <span id="seasonBadge" title="Mevsim" style="font-size:1.1rem;cursor:default">🌸</span>
     </div>
   </header>
@@ -1345,6 +1346,8 @@ const CHALLENGES = [
   {id:'vitamind',icon:'☀️',name:'D Vitamini Zamanı!',desc:'Günlük D vitamini vermeyi unutma!',urgent:false,action:'D Vitamini Ver',resolve:{health:12,dp:10},penaltyMsg:'D vitamini atlandı — kemik gelişimi etkilenir!',info:'Türkiye Pediatri Derneği: 0-1 yaş tüm bebeklere günde 400 IU D vitamini. Emzirilen bebekler anne sütünden yeterli alamaz. Anne sütü ile beslenen bebekler özellikle risk altındadır.',tip:'D vitamini damlaları sabah beslemeden sonra verin, böylece rutin haline gelir. Güneşten D vitamini almak için bebek günde 30 dk dışarı çıkabilir ama güneş yağı sürün (6ay+)!'},
   {id:'bayram',icon:'🎊',name:'Bayram Ziyareti!',desc:'Çok sayıda misafir geldi, bebek bunaldı!',urgent:false,action:'Bebeği Sakin Ortama Al',resolve:{happy:20,energy:10,dp:18},penaltyMsg:'Bebek aşırı uyarıldı ve uzun süre ağladı!',info:'Bebekler için kalabalık ortam aşırı uyarı (overstimulation) yaratabilir. Bayramlarda, düğünlerde veya aile buluşmalarında bebek bunalabilir. Belirtiler: aşırı ağlama, gözleri kaçırma, yüzünü saklama.',tip:'Bebek bunaldıysa sakin, loş bir odaya götürün. Kalabalık ortamlarda emzirme ve uyku saatlerini koruyun. Çok öpülmesini, kucaktan kucağa geçmesini sınırlayın — mikrop bulaşma riski!'},
   {id:'ilkadim',icon:'👣',minAge:9,name:'İlk Adım Anı!',desc:'Bebek ayağa kalktı ve ilk adımını atmaya hazırlanıyor!',urgent:false,action:'Ellerini Bırak & Teşvik Et',resolve:{happy:30,health:5,dp:35},penaltyMsg:'Desteksiz kalınca cesareti kırıldı!',info:'İlk adımlar 9-15. aylar arasında atılır. Ortalaması 12. aydır. Geç yürüme (18 aya kadar) çoğunlukla normaldir. Bazı bebekler emekler atlar, doğrudan yürür.',tip:'İlk adım için: bebek yürümek istediğinde ellerini bırakın, kısa mesafe tutun. Düştüğünde paniklemeden gülümseyin — bebeğiniz sizin tepkinizi kopyalar. Ayakkabı değil, çorap veya çıplak ayak daha iyi motor geri bildirim sağlar.'},
+  {id:'wondercrisis',icon:'🧠',name:'Wonder Weeks Krizi!',desc:'Bebek birden çok huysuz ve uykusuz — gelişim atlaması başladı!',urgent:false,action:'Sabret & Fazla Sarıl',resolve:{happy:22,energy:8,dp:20},penaltyMsg:'Gelişim atlaması zor geçti!',info:'Wonder Weeks (Harika Haftalar) beynin hızlı geliştiği dönemlerdir. 10 büyük "sıçrama" vardır: 5., 8., 12., 19., 26., 37., 46., 55., 64. ve 75. haftalarda. Bu dönemde 3C (Crying, Clingy, Cranky) kuralı geçerli.',tip:'Gelişim atlaması sırasında: rutini koru, fazla sarıl, beklentileri düşür. Atlama bittikten sonra bebeğiniz yeni bir beceri kazanmış olacak — bu süreç birkaç hafta sürebilir!'},
+  {id:'fingerfoodmess',icon:'🍓',minAge:8,name:'Parmak Yiyecek Kaos!',desc:'Bebek kendi kendine yemek istedi — her yer dolu!',urgent:false,action:'Rahat Ol & İzin Ver',resolve:{happy:18,hunger:15,dp:22},penaltyMsg:'Bebek hayal kırıklığına uğradı!',info:'8-9. ayda "pincer grasp" (ince tutma) gelişir ve parmak yiyecekler için hazır olur. Dağınıklık öğrenmenin parçasıdır — motor beceri, özerklik ve iştah düzenlemesi bu süreçle gelişir.',tip:'Öz beslemeyi teşvik etmek için: mama sandalyesi altına plastik örtü serin, parmak boyutu yiyecekler hazırlayın, müdahale etmeyin — acele olmadıkça. "Dağınık = öğreniyor" mantığıyla bakın!'},
   {id:'alerjisuphe',icon:'🔴',minAge:5,name:'Besin Alerjisi Şüphesi!',desc:'Yeni tanıtılan gıda sonrası döküntü çıktı!',urgent:true,action:'Gıdayı Kes & Gözlemle',resolve:{health:18,happy:8,dp:16},penaltyMsg:'Alerji tepkisi kötüleşti!',info:'Katı gıdaya geçiş sırasında alerji riski en yüksek dönemdir. Yumurta, fıstık, buğday, süt, soya, balık en yaygın alerjenlerdir. Her yeni gıdayı 3-5 gün arayla tek tek tanıtın.',tip:'Alerji şüphesinde hemen gıdayı kesin ve not alın. Hafif döküntü: doktora bildirin. Nefes güçlüğü veya yüz şişmesi → HEMEN 112! Ailesinde alerji varsa erken test yaptırmayı değerlendirin.'},
 ];
 
@@ -1394,6 +1397,9 @@ function saveGame(){
     traditionalRead:S.traditionalRead||false, preschoolRead:S.preschoolRead||false,
     storytimeRead:S.storytimeRead||false, outdoorPlayRead:S.outdoorPlayRead||false,
     newbornCareRead:S.newbornCareRead||false,
+    fingerFoodRead:S.fingerFoodRead||false, wonderWeeksRead:S.wonderWeeksRead||false,
+    sleepTroubleRead:S.sleepTroubleRead||false, babyProofingRead:S.babyProofingRead||false,
+    emotionalDevRead:S.emotionalDevRead||false, statsViewed:S.statsViewed||false,
     savedAt:Date.now(),
   };
   try { localStorage.setItem(SAVE_KEY, JSON.stringify(data)); } catch(e){}
@@ -1477,6 +1483,12 @@ function applySaveData(d){
   S.storytimeRead = d.storytimeRead||false;
   S.outdoorPlayRead = d.outdoorPlayRead||false;
   S.newbornCareRead = d.newbornCareRead||false;
+  S.fingerFoodRead = d.fingerFoodRead||false;
+  S.wonderWeeksRead = d.wonderWeeksRead||false;
+  S.sleepTroubleRead = d.sleepTroubleRead||false;
+  S.babyProofingRead = d.babyProofingRead||false;
+  S.emotionalDevRead = d.emotionalDevRead||false;
+  S.statsViewed = d.statsViewed||false;
   S.started = true;
 }
 
@@ -1630,6 +1642,14 @@ const ACHIEVEMENTS = [
   {id:'storyteller2',icon:'📖', name:'Masal Ustası',         desc:'Masal anlatımı rehberi okundu',        check:s=>(s.storytimeRead||false)},
   {id:'outdoor',     icon:'🌳', name:'Doğa Çocuğu',         desc:'Dış mekan oyun rehberi okundu',        check:s=>(s.outdoorPlayRead||false)},
   {id:'newborn_pro', icon:'👶', name:'Yenidoğan Uzmanı',    desc:'Yenidoğan bakım rehberi okundu',       check:s=>(s.newbornCareRead||false)},
+  {id:'fingerfood',  icon:'🍓', name:'Parmak Yiyecek Ustası',desc:'Parmak yiyecek rehberi okundu (8ay+)',  check:s=>(s.fingerFoodRead||false)},
+  {id:'wonderweeks', icon:'🧠', name:'Gelişim Atlama Uzmanı',desc:'Wonder Weeks rehberi okundu',           check:s=>(s.wonderWeeksRead||false)},
+  {id:'emotionaldev',icon:'💕', name:'Duygu Koçu',          desc:'Duygusal gelişim rehberi okundu',       check:s=>(s.emotionalDevRead||false)},
+  {id:'dp10000',     icon:'💎', name:'10.000 GP Efsanesi',   desc:'10.000 Gelişim Puanına ulaşıldı!',     check:s=>s.dp>=10000},
+  {id:'guide_all',   icon:'🎓', name:'Rehber Koleksiyoncusu',desc:'60+ rehber okundu',                    check:s=>{
+    const flags=['readLangPro','readTravel','readDiscipline','sensoryRead','cryDecoderUsed','reflexRead','wellChildRead','coupleRead','workReturnRead','illnessRead','childcareRead','supplementRead','cprRead','siblingRead','creativePlayRead','seasonalRead','blwRead','parentHealthRead','earlyAllergenRead','traditionalRead','preschoolRead','storytimeRead','outdoorPlayRead','newbornCareRead','fingerFoodRead','wonderWeeksRead','sleepTroubleRead','babyProofingRead','emotionalDevRead'];
+    return flags.filter(f=>s[f]).length>=20;
+  }},
 ];
 
 const TIPS = [
@@ -1807,6 +1827,12 @@ const S = {
   storytimeRead:false,
   outdoorPlayRead:false,
   newbornCareRead:false,
+  fingerFoodRead:false,
+  wonderWeeksRead:false,
+  sleepTroubleRead:false,
+  babyProofingRead:false,
+  emotionalDevRead:false,
+  statsViewed:false,
 };
 
 // ══════════════════════════════════════════════════════
@@ -3492,6 +3518,11 @@ function showAllGuides(){
     {ico:'📖',name:'Masal Anlatımı',fn:'showStorytimeGuide()'},
     {ico:'🌳',name:'Dış Mekan Oyunu',fn:'showOutdoorPlayGuide()'},
     {ico:'🍼',name:'Yenidoğan İlk Haftalar',fn:'showNewbornCareGuide()'},
+    {ico:'🍓',name:'Parmak Yiyecekler',fn:'showFingerFoodGuide()'},
+    {ico:'🧠',name:'Wonder Weeks',fn:'showWonderWeeksGuide()'},
+    {ico:'🔧',name:'Uyku Sorunları Çözüm',fn:'showSleepTroubleshootGuide()'},
+    {ico:'🏠',name:'Ev Bebek-Güvenliği',fn:'showBabyProofingGuide()'},
+    {ico:'💕',name:'Duygusal Gelişim',fn:'showEmotionalDevelopmentGuide()'},
   ];
   const chips=guides.map(g=>`<button class="guide-chip" onclick="${g.fn};this.closest('.pop-ov').remove()">${g.ico}<br>${g.name}</button>`).join('');
   const h=`<div class="pop-ov" onclick="if(event.target===this)this.remove()">
@@ -5305,6 +5336,272 @@ function showDigitalHealthGuide(){
     </div>
     <div class="pop-tip"><div class="pop-tip-t">💡 Pratik İpucu</div><p>Bebeğin yanında telefon kullanmak bile etki yaratır — "technoference" denen bu durum göz temasını ve duyarlılığı azaltır. Bebek uyanıkken telefonu başka odada bırakmayı deneyin.</p></div>
     <button class="pop-btn" style="background:linear-gradient(135deg,#0D47A1,#1976D2)" onclick="this.closest('.pop-ov').remove()">📱 Denge Önemli!</button>
+  </div></div>`;
+  document.body.insertAdjacentHTML('beforeend',h);
+}
+
+// ══════════════════════════════════════════════════════
+// STATS PANEL
+// ══════════════════════════════════════════════════════
+function showStatsPanel(){
+  S.statsViewed=true;checkAchievements();saveGame();
+  const rank=[...PARENT_RANKS].reverse().find(r=>S.dp>=r.min)||PARENT_RANKS[0];
+  const readFlags=['readLangPro','readTravel','readDiscipline','sensoryRead','reflexRead','wellChildRead','coupleRead','workReturnRead','illnessRead','childcareRead','supplementRead','cprRead','siblingRead','creativePlayRead','seasonalRead','blwRead','parentHealthRead','earlyAllergenRead','traditionalRead','preschoolRead','storytimeRead','outdoorPlayRead','newbornCareRead','fingerFoodRead','wonderWeeksRead','sleepTroubleRead','babyProofingRead','emotionalDevRead','milestoneTimelineRead'];
+  const guidesRead=readFlags.filter(f=>S[f]).length;
+  const daysPlayed=Math.floor(S.dayTime||1);
+  const stats=[
+    {ico:'⭐',label:'Toplam Gelişim Puanı',val:Math.floor(S.dp).toLocaleString('tr')+' GP'},
+    {ico:rank.ico,label:'Ebeveyn Rütbesi',val:rank.title},
+    {ico:'📅',label:'Oynanan Gün',val:daysPlayed+' gün'},
+    {ico:'👶',label:'Bebeğin Yaşı',val:S.ageMonths+'. ay'},
+    {ico:'🍼',label:'Toplam Beslenme',val:(S.totalFeeds||0)+' öğün'},
+    {ico:'🤱',label:'Anne Sütü',val:(S.milkFeeds||0)+' kez'},
+    {ico:'⚔️',label:'Zorluk Çözümlendi',val:(S.challengesSolved||0)+' kriz'},
+    {ico:'🏆',label:'Başarı Kazanıldı',val:(S.unlockedAch?S.unlockedAch.size:0)+' / '+ACHIEVEMENTS.length},
+    {ico:'📚',label:'Rehber Okundu',val:guidesRead+' / '+readFlags.length},
+    {ico:'💉',label:'Aşı Yapıldı',val:(S.doneVax?S.doneVax.size:0)+' / 21'},
+    {ico:'🌟',label:'Gelişim Basamağı',val:(S.unlocked?S.unlocked.size:0)+' / 20'},
+    {ico:'📖',label:'Günlük Anı',val:(S.diary?S.diary.size:0)+' anı'},
+    {ico:'🔥',label:'En Uzun Seri',val:(S.maxStreak||0)+' gün'},
+    {ico:'⚡',label:'En İyi Combo',val:(S.maxCombo||0)+'x'},
+    {ico:'🤸',label:'Tummy Time Seansı',val:(S.tummyTimeTotal||0)+' seans'},
+    {ico:'☀️',label:'D Vitamini Serisi',val:(S.vitDStreak||0)+' gün'},
+    {ico:'👨',label:'Baba Desteği',val:Math.round(S.dadScore||0)+'%'},
+    {ico:'💜',label:'Anne Enerjisi',val:Math.round(S.momWellbeing||0)+'%'},
+  ];
+  const statCards=stats.map(s=>`
+  <div style="display:flex;justify-content:space-between;align-items:center;padding:7px 10px;background:#f8f9ff;border-radius:10px;margin-bottom:5px">
+    <span style="font-size:.75rem;color:#555">${s.ico} ${s.label}</span>
+    <span style="font-size:.78rem;font-weight:800;color:#3D52D5">${s.val}</span>
+  </div>`).join('');
+  const h=`<div class="pop-ov" onclick="if(event.target===this)this.remove()">
+  <div class="pop-box">
+    <div class="pop-rainbow" style="background:linear-gradient(90deg,#E8EAF6,#C5CAE9,#EDE7F6)"></div>
+    <span class="pop-ico">📈</span><div class="pop-title">Oyun İstatistikleri</div>
+    <div class="pop-sub">${rank.ico} ${rank.title} · ${S.babyName} ile ${daysPlayed}. gündesiniz</div>
+    <div style="max-height:380px;overflow-y:auto;margin:10px 0">${statCards}</div>
+    <button class="pop-btn" style="background:linear-gradient(135deg,#3D52D5,#5C6BC0)" onclick="this.closest('.pop-ov').remove()">📈 Harika Gidiyoruz!</button>
+  </div></div>`;
+  document.body.insertAdjacentHTML('beforeend',h);
+}
+
+// ══════════════════════════════════════════════════════
+// FINGER FOOD GUIDE
+// ══════════════════════════════════════════════════════
+function showFingerFoodGuide(){
+  S.fingerFoodRead=true;checkAchievements();saveGame();
+  const stages=[
+    {age:'6-7 Ay',ico:'🥣',title:'Başlangıç: Püre Aşaması',color:'#E8F5E9',border:'#66BB6A',
+     tips:['Tek malzeme püreler: havuç, kabak, elma, armut, bezelye','Doku: pürüzsüz, su gibi akışkan → kıvamlı kaşık','Kaşıktan reddediyorsa: parmağınıza sürün, önce tatmasına izin verin','Yeni gıda: 3-5 gün aralıklı, tek tek tanıtın (alerji takibi için)']},
+    {age:'8-9 Ay',ico:'✋',title:'Pincer Grasp: Parmak Yiyecek',color:'#FFF3E0',border:'#FFCC80',
+     tips:['Bebek baş+işaret parmağı ile tutmayı öğreniyor (pincer grasp)','Boyut: küçük küp veya 2-3 cm ince parmak şekli','Güvenli ilkler: pişmiş brokoli, yumuşak muz, avokado küpü, haşlanmış bezelye','Yuvarlak nesneleri dörde böl: üzüm, kiraz domates, tüm zeytin YASAK']},
+    {age:'10-12 Ay',ico:'🍴',title:'Kaşık Tutma & Karma Beslenme',color:'#E3F2FD',border:'#90CAF9',
+     tips:['Kendi kaşığını tutmak istiyor — bırakın (dağınık olsun!)','Küçük parçalı yumuşak etler: tavuk, balık, kıyma','Makarna, pirinç, ekmek — küçük parça, iyi pişmiş','Aile yemeğinden: tuzsuz, şekersiz, katkısız adaptasyonlar']},
+    {age:'12+ Ay',ico:'🌮',title:'Aile Sofrasına Katılım',color:'#FCE4EC',border:'#F48FB1',
+     tips:['Aile yemeğinin tuzsuz/şekersiz versiyonunu ye','Farklı dokular, renkler, şekiller: çeşitlilik seçici yiyici riskini azaltır','Reddedilen gıdayı bırakma — 10-15 maruziyet gerekebilir','Yemek masasına oturma süresi: 20-30 dk, sonra bitsin — baskı yapma']},
+  ];
+  const danger=[
+    '🚫 Bütün yuvarlak yiyecekler: üzüm, kiraz domates, zeytin (dörde kes)',
+    '🚫 Sert çiğ sebzeler: havuç, elma (yumuşat veya ince rendele)',
+    '🚫 Kuruyemiş: bütün fındık, fıstık (1 yaş altı — boğulma)',
+    '🚫 Bal (1 yaş altı — botulizm riski)',
+    '🚫 Tuz ve şeker (böbrek yükü, damak alışkanlığı)',
+    '🚫 İşlenmiş gıda: hazır çorba, cips, bisküvi (katkı maddesi)',
+  ];
+  const cards=stages.map(s=>`
+  <div style="background:${s.color};border-radius:12px;padding:10px;margin-bottom:7px;border-left:3px solid ${s.border}">
+    <div style="font-weight:800;font-size:.78rem;color:#1A237E;margin-bottom:4px">${s.ico} ${s.age} — ${s.title}</div>
+    ${s.tips.map(t=>`<div style="font-size:.65rem;color:#333;margin-bottom:2px">▸ ${t}</div>`).join('')}
+  </div>`).join('');
+  const h=`<div class="pop-ov" onclick="if(event.target===this)this.remove()">
+  <div class="pop-box">
+    <div class="pop-rainbow" style="background:linear-gradient(90deg,#E8F5E9,#FFF3E0,#FCE4EC)"></div>
+    <span class="pop-ico">🍓</span><div class="pop-title">Parmak Yiyecek Rehberi</div>
+    <div class="pop-sub">6-12 ay · Öz besleme & doku gelişimi</div>
+    <div style="max-height:360px;overflow-y:auto;margin:10px 0">
+      ${cards}
+      <div style="background:#FFEBEE;border-radius:10px;padding:8px;margin-top:8px">
+        <div style="font-weight:800;font-size:.72rem;color:#C62828;margin-bottom:4px">🚨 Boğulma Riski — Bunları Verme</div>
+        ${danger.map(d=>`<div style="font-size:.63rem;color:#555;margin-bottom:2px">${d}</div>`).join('')}
+      </div>
+    </div>
+    <div class="pop-tip"><div class="pop-tip-t">💡 Öz Beslemenin Faydaları</div><p>Öz besleme; ince motor becerileri, el-göz koordinasyonunu ve iştah özregülasyonunu geliştirir. "Dolu hissettim" sinyalini tanıyan çocuklar ilerleyen yaşlarda obezite riskine karşı daha koruyucudur (ESPGHAN 2022).</p></div>
+    <button class="pop-btn" style="background:linear-gradient(135deg,#E53935,#EF5350)" onclick="this.closest('.pop-ov').remove()">🍓 Dağınık ama Güzel!</button>
+  </div></div>`;
+  document.body.insertAdjacentHTML('beforeend',h);
+}
+
+// ══════════════════════════════════════════════════════
+// WONDER WEEKS GUIDE
+// ══════════════════════════════════════════════════════
+function showWonderWeeksGuide(){
+  S.wonderWeeksRead=true;checkAchievements();saveGame();
+  const leaps=[
+    {week:'~5. Hafta',ico:'🌀',name:'Duyular',desc:'Bebek dış dünyayı daha net algılamaya başlar. Daha dikkatli, bazen endişeli görünür.'},
+    {week:'~8. Hafta',ico:'💫',name:'Örüntüler',desc:'Tekrarlayan hareketleri fark eder (el, bacak). Gülümseme başlar!'},
+    {week:'~12. Hafta',ico:'🔄',name:'Geçişler',desc:'Pürüzsüz hareketler: emme → bırakma, ağlama → gülme. Ses taklidi artar.'},
+    {week:'~19. Hafta',ico:'📦',name:'Olaylar',desc:'Bir eylemin başlangıcı-bitişi kavramı. İlk nedensellik: "ağlarsam geliyor!"'},
+    {week:'~26. Hafta',ico:'📏',name:'İlişkiler',desc:'Nesneler arası ilişkiyi kavrar. Ayrılık kaygısı başlar. Derinlik algısı gelişir.'},
+    {week:'~37. Hafta',ico:'🗂️',name:'Kategoriler',desc:'Gruplandırma: hayvanlar, yiyecekler. "Köpek" = tüm köpekler! Kelime anlama artar.'},
+    {week:'~46. Hafta',ico:'🔢',name:'Sıralar',desc:'Sıra kavramı: önce-sonra. Basit problem çözme. İlk gerçek kelimeler!'},
+    {week:'~55. Hafta',ico:'🔗',name:'Programlar',desc:'Yemek, uyku rutini anlıyor. "Şimdi ne yapılacak?" kavramı. 18+ ay belirtileri.'},
+    {week:'~64. Hafta',ico:'⚖️',name:'İlkeler',desc:'Basit kuralları anlıyor. "Benim!" kavramı güçlü. Öfke krizleri yoğunlaşır.'},
+    {week:'~75. Hafta',ico:'🌐',name:'Sistemler',desc:'Sebep-sonuç, değerler. Empati başlangıcı. Rol yapma oyunu!'},
+  ];
+  const signs=[
+    '😢 3C kuralı: Crying (ağlama) · Clingy (yapışma) · Cranky (huysuzluk)',
+    '😴 Uyku düzeni bozulur — gece ve gündüz',
+    '🍼 Emzirme sıklığı artabilir (comfort nursing)',
+    '🙅 Tanıdık aktivitelerden keyif alamaz',
+    '⏱️ Her leap 1-6 hafta sürer; sonunda büyük kazanım!',
+  ];
+  const cards=leaps.map((l,i)=>`
+  <div style="display:flex;gap:10px;margin-bottom:8px;align-items:flex-start">
+    <div style="min-width:36px;text-align:center">
+      <div style="font-size:1.2rem">${l.ico}</div>
+      <div style="font-size:.55rem;font-weight:800;color:#5C6BC0;line-height:1.2">${l.week}</div>
+    </div>
+    <div style="flex:1;background:#EDE7F6;border-radius:10px;padding:8px;border-left:3px solid #7E57C2">
+      <div style="font-weight:800;font-size:.72rem;color:#4527A0">Sıçrama ${i+1}: ${l.name}</div>
+      <div style="font-size:.64rem;color:#333;margin-top:2px">${l.desc}</div>
+    </div>
+  </div>`).join('');
+  const h=`<div class="pop-ov" onclick="if(event.target===this)this.remove()">
+  <div class="pop-box">
+    <div class="pop-rainbow" style="background:linear-gradient(90deg,#EDE7F6,#D1C4E9,#EDE7F6)"></div>
+    <span class="pop-ico">🧠</span><div class="pop-title">Wonder Weeks — Zihinsel Sıçramalar</div>
+    <div class="pop-sub">Van de Rijt & Plooij · 10 büyük beyin gelişim dönemi</div>
+    <div style="max-height:360px;overflow-y:auto;margin:10px 0">
+      <div style="background:#E8EAF6;border-radius:10px;padding:8px;margin-bottom:10px">
+        <div style="font-weight:800;font-size:.73rem;color:#283593;margin-bottom:4px">📡 Bir Sıçramanın Belirtileri</div>
+        ${signs.map(s=>`<div style="font-size:.64rem;color:#333;margin-bottom:2px">${s}</div>`).join('')}
+      </div>
+      ${cards}
+    </div>
+    <div class="pop-tip"><div class="pop-tip-t">🌟 Sıçramadan Sonra Ne Olur?</div><p>Her kriz döneminin ardından bebeğiniz yeni bir yetenek kazanır. Huysuz geçen haftaların sonu hep bir "vay be!" anıyla gelir. Sabır + sarılmak + rutin = en iyi destek.</p></div>
+    <button class="pop-btn" style="background:linear-gradient(135deg,#4527A0,#5E35B1)" onclick="this.closest('.pop-ov').remove()">🧠 Sıçramalara Hazırım!</button>
+  </div></div>`;
+  document.body.insertAdjacentHTML('beforeend',h);
+}
+
+// ══════════════════════════════════════════════════════
+// SLEEP TROUBLESHOOT GUIDE
+// ══════════════════════════════════════════════════════
+function showSleepTroubleshootGuide(){
+  S.sleepTroubleRead=true;checkAchievements();saveGame();
+  const problems=[
+    {q:'Gece çok sık uyanıyor',ico:'🌙',color:'#E8EAF6',border:'#9FA8DA',
+     causes:['Açlık (büyüme sıçraması)','Wonder Weeks / gelişim atlaması','Diş çıkarma (4-24 ay)','Oda sıcaklığı (ideal: 18-20°C)','Ayrılık kaygısı (8-18 ay)'],
+     fixes:['Gündüz yemek miktarını artır','Uyku ortamını kontrol et (sıcaklık, ışık, ses)','Soothing rutini: banyo → emzirme → ninni → yatak','Self-soothing fırsatı: tamamen uyumadan yatağa bırak']},
+    {q:'Gündüz uykuya geçemiyor',ico:'☀️',color:'#FFF3E0',border:'#FFCC80',
+     causes:['Uyanık kaldığı süre çok uzun (aşırı yorgunluk)','Uyarım çok fazla (kalabalık, ekran, oyun)','Uyku sinyali yok (rutin yok)'],
+     fixes:['Uyanık pencereyi kısalt (yaşa göre)','Uyku rutini başlat: loş ışık, ninni, sarılma','Uykuyu, uyku yerinde başlat — hareket ettirme']},
+    {q:'Gece uyutulamıyor (erteleme)',ico:'🌝',color:'#FCE4EC',border:'#F48FB1',
+     causes:['Gündüz uykusu çok geç veya uzun','Yatış saati çok geç (aşırı yorgunluk döngüsü)','Mavi ışık (ekran) melatonin baskılıyor'],
+     fixes:['Yatış saatini 18:30-20:00 arasına çek','Son uyku saatini 15:00-15:30\'a kısıtla','Yatmadan 1 saat önce ekranı kapat','Karanlık yapay ışığı azalt']},
+    {q:'Sabah çok erken uyanıyor (5-6\'da)',ico:'🌅',color:'#E8F5E9',border:'#A5D6A7',
+     causes:['Oda çok aydınlık (sabah güneşi)','Yatış saati çok geç (paradoks: yorgun bebek erken uyanır)','Biyolojik saat (bazı bebekler genetik erken uyanıcı)'],
+     fixes:['Karartma perdesi (blackout curtain) — en etkili çözüm','Yatış saatini 30 dk öne al','Gürültü maskeleyici (beyaz gürültü) kullan']},
+  ];
+  const cards=problems.map(p=>`
+  <div style="background:${p.color};border-radius:12px;padding:10px;margin-bottom:8px;border-left:3px solid ${p.border}">
+    <div style="font-weight:800;font-size:.78rem;color:#1A237E;margin-bottom:5px">${p.ico} ${p.q}</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px">
+      <div>
+        <div style="font-size:.62rem;font-weight:800;color:#E53935;margin-bottom:3px">Olası Nedenler</div>
+        ${p.causes.map(c=>`<div style="font-size:.62rem;color:#555;margin-bottom:2px">• ${c}</div>`).join('')}
+      </div>
+      <div>
+        <div style="font-size:.62rem;font-weight:800;color:#2E7D32;margin-bottom:3px">Çözüm Önerileri</div>
+        ${p.fixes.map(f=>`<div style="font-size:.62rem;color:#333;margin-bottom:2px">✓ ${f}</div>`).join('')}
+      </div>
+    </div>
+  </div>`).join('');
+  const h=`<div class="pop-ov" onclick="if(event.target===this)this.remove()">
+  <div class="pop-box">
+    <div class="pop-rainbow" style="background:linear-gradient(90deg,#E8EAF6,#EDE7F6,#E8EAF6)"></div>
+    <span class="pop-ico">🔧</span><div class="pop-title">Uyku Sorunları Çözüm Rehberi</div>
+    <div class="pop-sub">4 yaygın sorun · Neden & Çözüm</div>
+    <div style="max-height:370px;overflow-y:auto;margin:10px 0">${cards}</div>
+    <div class="pop-tip"><div class="pop-tip-t">⏱️ Değişim Ne Kadar Sürer?</div><p>Uyku alışkanlığı değişikliği genellikle 1-2 hafta sürer. Tutarlılık anahtardır — bir gece deneyip pes etmeyin. 2 haftada sonuç görülmüyorsa çocuk uyku uzmanına veya pediatriste başvurun.</p></div>
+    <button class="pop-btn" style="background:linear-gradient(135deg,#283593,#3949AB)" onclick="this.closest('.pop-ov').remove()">🔧 Çözüyorum!</button>
+  </div></div>`;
+  document.body.insertAdjacentHTML('beforeend',h);
+}
+
+// ══════════════════════════════════════════════════════
+// BABY PROOFING GUIDE
+// ══════════════════════════════════════════════════════
+function showBabyProofingGuide(){
+  S.babyProofingRead=true;checkAchievements();saveGame();
+  const rooms=[
+    {room:'Oturma Odası',ico:'🛋️',color:'#E8F5E9',border:'#66BB6A',items:['Ağır mobilyaları (kitaplık, TV ünitesi) duvara sabitle — L demiri ile','TV masasına köşe koruyucu, TV\'yi konsola sabitle','Zemin minderle kapla — özellikle sehpa köşeleri','Fişlere kapak tak — tüm prizler','Bitkileri bebeğin ulaşamayacağı yere kaldır (zehirli olabilir)','Kablo düzenleyicisi — elektrik kabloları gizle']},
+    {room:'Mutfak',ico:'🍳',color:'#FFF3E0',border:'#FFCC80',items:['Alt dolaplara kilit tak — özellikle temizlik ürünleri dolabı','Ocak kadranlarına kapak', 'Bulaşık makinesini daima kapalı tut','Çekmecelere kilit — bıçaklar, makas','Çöp kutusu kilitli veya kapalı dolap içinde','Şişe açacakları, kibritleri kaldır']},
+    {room:'Banyo',ico:'🛁',color:'#E3F2FD',border:'#90CAF9',items:['Tuvalet kapağı kilidi — 2 cm su boğulma riski!','İlaçları kilitle — en yaygın zehirlenme kaynağı','Elektrikli aletleri (saç kurutma) uzakta tut','Banyo kapısını kapalı tut — içeriden kilitlenemesin','Banyo paspası kaymaz olsun (emici altlık)','Sıcak su ısıtıcısını 49°C altına ayarla']},
+    {room:'Yatak Odası',ico:'🛏️',color:'#FCE4EC',border:'#F48FB1',items:['Bebek karyolasında şık aksesuar yok — sade, sert yatak','Battaniye, yastık, yumuşak oyuncak: SIDS riski — bebeğin yatağında olmasın','Gardırop ve komodine kilit','Pencere koruyucu veya kilit — en az 4 inç açılabilsin','Monitör kablosu bebek yatağından uzakta']},
+    {room:'Merdiven & Kapılar',ico:'🚪',color:'#E8EAF6',border:'#9FA8DA',items:['Merdiven üstü ve altına güvenlik kapısı (vida ile — basınçlı değil!)','Kapı durdurucu — parmak sıkışması riski','Cam kapılara güvenlik filmi yapıştır','Kapı menteşe koruyucu takabilirsin']},
+  ];
+  const cards=rooms.map(r=>`
+  <div style="background:${r.color};border-radius:12px;padding:10px;margin-bottom:8px;border-left:3px solid ${r.border}">
+    <div style="font-weight:800;font-size:.78rem;color:#1A237E;margin-bottom:5px">${r.ico} ${r.room}</div>
+    ${r.items.map(i=>`<div style="font-size:.64rem;color:#333;margin-bottom:2px">🔒 ${i}</div>`).join('')}
+  </div>`).join('');
+  const h=`<div class="pop-ov" onclick="if(event.target===this)this.remove()">
+  <div class="pop-box">
+    <div class="pop-rainbow" style="background:linear-gradient(90deg,#E8F5E9,#E3F2FD,#E8EAF6)"></div>
+    <span class="pop-ico">🏠</span><div class="pop-title">Oda Oda Ev Güvenliği</div>
+    <div class="pop-sub">6-8. aydan itibaren · Emekleme döneminde kritik</div>
+    <div style="max-height:380px;overflow-y:auto;margin:10px 0">${cards}</div>
+    <div class="pop-tip"><div class="pop-tip-t">📋 Baby-Proofing Turu</div><p>En etkili yöntem: yere diz çök ve bebeğin gözünden gör. Elinizin erişebildiği her şey tehlike! Her 3 ayda bir bebeğin gelişimine göre tur tekrarlayın — emekleyen farklı, yürüyen farklı risk taşır.</p></div>
+    <button class="pop-btn" style="background:linear-gradient(135deg,#1B5E20,#2E7D32)" onclick="this.closest('.pop-ov').remove()">🏠 Güvenli Yuva!</button>
+  </div></div>`;
+  document.body.insertAdjacentHTML('beforeend',h);
+}
+
+// ══════════════════════════════════════════════════════
+// EMOTIONAL DEVELOPMENT GUIDE
+// ══════════════════════════════════════════════════════
+function showEmotionalDevelopmentGuide(){
+  S.emotionalDevRead=true;checkAchievements();saveGame();
+  const stages=[
+    {age:'0-3 Ay',ico:'😊',color:'#FFF9C4',border:'#F9A825',
+     milestones:['Sosyal gülümseme (4-6. hafta) — en önemli duygusal işaret','Memnuniyet ve rahatsızlık ifadesi','Anne/baba sesiyle sakinleşme — duygusal düzenleme başlıyor','Göz teması ile bağlanma — ilk "sohbet"']},
+    {age:'4-6 Ay',ico:'😄',color:'#E8F5E9',border:'#66BB6A',
+     milestones:['Kahkaha! Sosyal etkileşimden zevk alıyor','Oyunlarda beklenti: "şimdi ne olacak?" heyecanı','Hayal kırıklığını ifade ediyor — yüzüyle, sesle','Ayna etkileşimi: kendini taklit etmeyi seviyor']},
+    {age:'7-9 Ay',ico:'😢',color:'#E3F2FD',border:'#90CAF9',
+     milestones:['Ayrılık kaygısı başlar — bu sağlıklı bağlanmanın kanıtı!','Yabancı kaygısı: "sen kim?", kendini ebeveyne sığındırma','Empati ipuçları: başkası ağlayınca o da ağlayabilir','Referans alma: ne hissetmeli? → sizi izliyor (social referencing)']},
+    {age:'10-18 Ay',ico:'😤',color:'#FCE4EC',border:'#F48FB1',
+     milestones:['"Ben" bilinci: aynada kendini tanır (15-18. ay)','İlk gerçek öfke krizleri — prefrontal korteks henüz gelişiyor','Paylaşma zorluğu: "benim!" 18 ayda zirve, normal!','Basit empati: düşen birine oyuncak uzatabilir']},
+  ];
+  const strategies=[
+    {ico:'🎭',tip:'Duyguları Adlandır','desc':'"Üzgün görünüyorsun" demek bebeğin kelime dağarcığını ve öz-farkındalığını geliştirir.'},
+    {ico:'🤗',tip:'Önce Ko-regülasyon','desc':'Bebek duygusunu düzenleyemez — senin sakinliğin onunkini düzenler. Önce sen sakin ol.'},
+    {ico:'✅',tip:'Duyguyu Onayla','desc':'"Kızgın olman normal" — duygu geçerlidir, eylem sınırlı olabilir. "Ama vurmazsın."'},
+    {ico:'📖',tip:'Duygu Kitapları','desc':'Yüz ifadelerini gösteren kitaplar duygu tanımayı hızlandırır (6. aydan itibaren).'},
+    {ico:'🎭',tip:'Taklit Oyunu','desc':'18+ ayda "bebek ağlıyor, sarinleştir" oyunu empati ve rol alma becerisi geliştirir.'},
+  ];
+  const stageCards=stages.map(s=>`
+  <div style="background:${s.color};border-radius:12px;padding:10px;margin-bottom:7px;border-left:3px solid ${s.border}">
+    <div style="font-weight:800;font-size:.78rem;color:#1A237E;margin-bottom:4px">${s.ico} ${s.age}</div>
+    ${s.milestones.map(m=>`<div style="font-size:.65rem;color:#333;margin-bottom:2px">▸ ${m}</div>`).join('')}
+  </div>`).join('');
+  const stratCards=strategies.map(s=>`
+  <div style="display:flex;gap:8px;background:#F3E5F5;border-radius:10px;padding:8px;margin-bottom:5px">
+    <span style="font-size:1.1rem">${s.ico}</span>
+    <div><div style="font-weight:700;font-size:.7rem;color:#4A148C">${s.tip}</div><div style="font-size:.63rem;color:#444">${s.desc}</div></div>
+  </div>`).join('');
+  const h=`<div class="pop-ov" onclick="if(event.target===this)this.remove()">
+  <div class="pop-box">
+    <div class="pop-rainbow" style="background:linear-gradient(90deg,#FFF9C4,#FCE4EC,#F3E5F5)"></div>
+    <span class="pop-ico">💕</span><div class="pop-title">Duygusal Gelişim Rehberi</div>
+    <div class="pop-sub">0-18 ay · Duygusal zeka ve bağlanma</div>
+    <div style="max-height:360px;overflow-y:auto;margin:10px 0">
+      ${stageCards}
+      <div style="font-weight:800;font-size:.73rem;color:#4A148C;margin:8px 0 5px">🛠️ Ebeveyn Stratejileri</div>
+      ${stratCards}
+    </div>
+    <div class="pop-tip"><div class="pop-tip-t">🔬 EQ > IQ</div><p>Daniel Goleman'ın araştırmaları gösterdi: yaşam başarısının %80'i duygusal zekaya bağlı, %20'si IQ'ya. Duygusal zeka 0-7 yaş arasında şekillenir. Şimdi attığınız her adım, onun tüm hayatını etkiler.</p></div>
+    <button class="pop-btn" style="background:linear-gradient(135deg,#6A1B9A,#7B1FA2)" onclick="this.closest('.pop-ov').remove()">💕 Duyguları Birlikte Öğreneceğiz!</button>
   </div></div>`;
   document.body.insertAdjacentHTML('beforeend',h);
 }
