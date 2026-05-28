@@ -1439,6 +1439,8 @@ function saveGame(){
     burnoutRead:S.burnoutRead||false, growthCurvesRead:S.growthCurvesRead||false, temperamentRead:S.temperamentRead||false,
     mindfulnessRead:S.mindfulnessRead||false, weaningRead:S.weaningRead||false, neuroscienceRead:S.neuroscienceRead||false,
     daycareRead:S.daycareRead||false, firstAidRead:S.firstAidRead||false, sleepHygieneRead:S.sleepHygieneRead||false,
+    attachmentTheoryRead:S.attachmentTheoryRead||false, groomingRead:S.groomingRead||false,
+    sustainableRead:S.sustainableRead||false, toddlerBrainRead:S.toddlerBrainRead||false,
     savedAt:Date.now(),
   };
   try { localStorage.setItem(SAVE_KEY, JSON.stringify(data)); } catch(e){}
@@ -1552,6 +1554,10 @@ function applySaveData(d){
   S.daycareRead = d.daycareRead||false;
   S.firstAidRead = d.firstAidRead||false;
   S.sleepHygieneRead = d.sleepHygieneRead||false;
+  S.attachmentTheoryRead = d.attachmentTheoryRead||false;
+  S.groomingRead = d.groomingRead||false;
+  S.sustainableRead = d.sustainableRead||false;
+  S.toddlerBrainRead = d.toddlerBrainRead||false;
   S.started = true;
 }
 
@@ -1738,6 +1744,10 @@ const ACHIEVEMENTS = [
   {id:'daycare_pro',    icon:'🚌', name:'Kreş Uzmanı',       desc:'Kreş hazırlığı rehberi okundu',            check:s=>(s.daycareRead||false)},
   {id:'firstaid_pro',   icon:'🦺', name:'İlk Yardım Hazır',  desc:'Bebek ilk yardımı rehberi okundu',         check:s=>(s.firstAidRead||false)},
   {id:'sleep_hygiene',  icon:'😴', name:'Uyku Hijyeni Ustası',desc:'Uyku hijyeni rehberi okundu',             check:s=>(s.sleepHygieneRead||false)},
+  {id:'attachment_pro', icon:'🔗', name:'Bağlanma Kuramcısı', desc:'Bağlanma teorisi rehberi okundu',           check:s=>(s.attachmentTheoryRead||false)},
+  {id:'grooming_pro',   icon:'🧴', name:'Bakım Uzmanı',       desc:'Bebek bakım rutini rehberi okundu',         check:s=>(s.groomingRead||false)},
+  {id:'sustain_pro',    icon:'🌍', name:'Sürdürülebilir Ebeveyn',desc:'Sürdürülebilir ebeveynlik rehberi okundu',check:s=>(s.sustainableRead||false)},
+  {id:'toddler_brain',  icon:'💡', name:'Toddler Beyin Uzmanı',desc:'Toddler beyin rehberi okundu',             check:s=>(s.toddlerBrainRead||false)},
   {id:'challenge50',    icon:'🌟', name:'50 Kriz Ustası',     desc:'50 zorlu anı çözdün!',                   check:s=>(s.challengesSolved||0)>=50},
   {id:'full_2years',    icon:'🎊', name:'2 Yıl Tamamlandı!',  desc:'Bebeğin 24. aya ulaştı!',                check:s=>(s.ageMonths||0)>=24},
   {id:'ebeveyn_legend', icon:'👑', name:'Efsane Ebeveyn',     desc:'18.000+ GP toplandı!',                   check:s=>s.dp>=18000},
@@ -1962,6 +1972,10 @@ const S = {
   daycareRead:false,
   firstAidRead:false,
   sleepHygieneRead:false,
+  attachmentTheoryRead:false,
+  groomingRead:false,
+  sustainableRead:false,
+  toddlerBrainRead:false,
 };
 
 // ══════════════════════════════════════════════════════
@@ -3676,6 +3690,10 @@ function showAllGuides(){
     {ico:'🚌',name:'Kreş Hazırlığı',fn:'showDaycareGuide()'},
     {ico:'🦺',name:'İlk Yardım',fn:'showFirstAidGuide()'},
     {ico:'😴',name:'Uyku Hijyeni',fn:'showSleepHygieneGuide()'},
+    {ico:'🔗',name:'Bağlanma Teorisi',fn:'showAttachmentTheoryGuide()'},
+    {ico:'🧴',name:'Bebek Bakım Rutini',fn:'showGroomingGuide()'},
+    {ico:'🌍',name:'Sürdürülebilir Ebeveynlik',fn:'showSustainableParentingGuide()'},
+    {ico:'💡',name:'Toddler Mantığı',fn:'showToddlerBrainGuide()'},
   ];
   const chips=guides.map(g=>`<button class="guide-chip" onclick="${g.fn};this.closest('.pop-ov').remove()">${g.ico}<br>${g.name}</button>`).join('');
   const h=`<div class="pop-ov" onclick="if(event.target===this)this.remove()">
@@ -5755,6 +5773,215 @@ function showEmotionalDevelopmentGuide(){
     </div>
     <div class="pop-tip"><div class="pop-tip-t">🔬 EQ > IQ</div><p>Daniel Goleman'ın araştırmaları gösterdi: yaşam başarısının %80'i duygusal zekaya bağlı, %20'si IQ'ya. Duygusal zeka 0-7 yaş arasında şekillenir. Şimdi attığınız her adım, onun tüm hayatını etkiler.</p></div>
     <button class="pop-btn" style="background:linear-gradient(135deg,#6A1B9A,#7B1FA2)" onclick="this.closest('.pop-ov').remove()">💕 Duyguları Birlikte Öğreneceğiz!</button>
+  </div></div>`;
+  document.body.insertAdjacentHTML('beforeend',h);
+}
+
+// ══════════════════════════════════════════════════════
+// ATTACHMENT THEORY GUIDE
+// ══════════════════════════════════════════════════════
+function showAttachmentTheoryGuide(){
+  S.attachmentTheoryRead=true;checkAchievements();saveGame();
+  const types=[
+    {name:'Güvenli Bağlanma',ico:'🔒',pct:'%60-65',color:'#E8F5E9',border:'#43A047',
+     signs:['Ebeveyn ayrılırken üzülür ama sakinleşir','Ebeveyn döndüğünde sevinçle karşılar','Keşif için güvenli üs kullanır'],
+     howTo:'Tutarlı + duyarlı bakım. Ağlama tepkisi hızlı ve uygun. Duygular onaylanır.'},
+    {name:'Kaygılı-Bağımlı',ico:'😰',pct:'%20',color:'#FFF3E0',border:'#FF8F00',
+     signs:['Aşırı bağlanma, kaygı yüksek','Ebeveyn döndüğünde hem sevinir hem kızar','Keşfetmekte zorlanır'],
+     howTo:'Tutarsız bakım geçmişi. Zaman zaman duyarlı, zaman zaman erişilemez.'},
+    {name:'Kaçıngan-Bağlanma',ico:'😶',pct:'%15',color:'#E3F2FD',border:'#1E88E5',
+     signs:['Ayrılıkta az tepki verir','Ebeveyn döndüğünde ilgisiz görünür','Çok bağımsız, duygusal uzak'],
+     howTo:'Sürekli reddedilme deneyimi. Duyguları bastırmayı öğrenir.'},
+    {name:'Düzensiz-Bağlanma',ico:'😵',pct:'%5-10',color:'#FCE4EC',border:'#E91E63',
+     signs:['Tutarsız ve kaotik tepkiler','Hem yaklaşır hem kaçar','Korkulu ve şaşkın davranış'],
+     howTo:'Travma veya istismar geçmişi. Ebeveyn hem güven kaynağı hem korku kaynağı.'},
+  ];
+  const rows=types.map(t=>`
+    <div style="border:2px solid ${t.border};border-radius:10px;padding:10px;margin-bottom:8px;background:${t.color}">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
+        <div style="font-weight:800;font-size:.84rem">${t.ico} ${t.name}</div>
+        <div style="font-size:.7rem;padding:2px 8px;border-radius:20px;background:${t.border};color:white">${t.pct}</div>
+      </div>
+      <div style="font-size:.75rem;margin-bottom:4px"><b>Belirtiler:</b> ${t.signs.join(' • ')}</div>
+      <div style="font-size:.74rem;color:#555;border-top:1px solid ${t.border};padding-top:4px"><b>Köken:</b> ${t.howTo}</div>
+    </div>`).join('');
+  const h=`<div class="pop-ov" onclick="if(event.target===this)this.remove()">
+  <div class="pop-box" style="max-width:500px">
+    <div class="pop-rainbow"></div>
+    <span class="pop-ico">🔗</span>
+    <div class="pop-title">Bağlanma Teorisi Rehberi</div>
+    <div class="pop-sub">Ainsworth bağlanma stilleri — güvenli bağlanmayı nasıl kurarsınız?</div>
+    <div style="background:#E8EAF6;border:2px solid #5C6BC0;border-radius:10px;padding:10px;margin-bottom:12px;font-size:.78rem">
+      <b>🔬 Bağlanma Teorisi (Bowlby, Ainsworth):</b> Bebek, bakımverenle kurduğu ilk ilişkide bir "bağlanma stili" geliştirir. Bu stil gelecekteki tüm ilişkiler için şablon oluşturur. İyi haber: güvenli bağlanma aktif olarak desteklenebilir.
+    </div>
+    <div style="max-height:45vh;overflow-y:auto">${rows}
+      <div style="background:#E8F5E9;border:2px solid #43A047;border-radius:10px;padding:10px;font-size:.78rem;margin-top:4px">
+        <b>💚 Güvenli Bağlanma İçin:</b><br>
+        ✅ Ağlamaya hızlı ve tutarlı tepki<br>
+        ✅ Duygu ve ihtiyaçları doğrulama<br>
+        ✅ "Güvenli üs" — korkusuzca keşfetmeye destek<br>
+        ✅ Kopukluklardan sonra onarım (herkes hata yapar — önemli olan onarım)<br><br>
+        <b>📚 Kaynak:</b> John Bowlby, Mary Ainsworth "Strange Situation" çalışması
+      </div>
+    </div>
+    <button class="pop-btn" style="margin-top:12px" onclick="this.closest('.pop-ov').remove()">Güvenli Bağlanma Kuracağım!</button>
+  </div></div>`;
+  document.body.insertAdjacentHTML('beforeend',h);
+}
+
+// ══════════════════════════════════════════════════════
+// GROOMING GUIDE — BEBEK BAKIM RUTİNİ
+// ══════════════════════════════════════════════════════
+function showGroomingGuide(){
+  S.groomingRead=true;checkAchievements();saveGame();
+  const areas=[
+    {ico:'🛁',name:'Banyo',color:'#E3F2FD',border:'#1E88E5',tips:[
+      'Yenidoğan: haftada 2-3 kez lavabo/sünger banyosu yeterli (göbek düşene kadar)',
+      'Göbek düştükten sonra küvete geçilebilir',
+      'Su sıcaklığı: dirsek testi (36-37°C)',
+      'Banyo süresi: 5-10 dakika yeterli — uzun banyo cildi kurutur',
+      'Banyo sonrası: parfümsüz bebek losyonu (hâlâ ıslakken)',
+      'Asla yalnız bırakma — 1 cm su bile tehlikeli',
+    ]},
+    {ico:'✂️',name:'Tırnak Kesimi',color:'#E8F5E9',border:'#43A047',tips:[
+      'Bebek tırnakları çok hızlı uzar — haftada 1-2 kez gerekebilir',
+      'En iyi zaman: bebek uyurken',
+      'Bebek makası veya törpü kullan — yetişkin makası keskin olabilir',
+      'Parmak uçlarını aşağı bastırarak kes',
+      'Ayak tırnakları: düz kes — batık tırnak önlenir',
+    ]},
+    {ico:'👁️',name:'Göz ve Burun Temizliği',color:'#FFF3E0',border:'#FF8F00',tips:[
+      'Göz akıntısı: ıslak pamukla iç köşeden dış köşeye sil',
+      'Her göz için ayrı pamuk parçası kullan',
+      'Tıkalı burun: serum fizyolojik damlatın, aspiratörle çekin',
+      'Kulak temizliği: sadece dışarıdan — çubuk SOK YOK',
+    ]},
+    {ico:'🦷',name:'Ağız ve Diş Bakımı',color:'#F3E5F5',border:'#AB47BC',tips:[
+      'İlk dişten önce: ıslak bezle diş etlerini silin',
+      'İlk diş çıkınca: yüksük boyutlu diş fırçası + pirinç tanesi kadar diş macunu (6-18 ay)',
+      '18 ay+: bezelye büyüklüğü flörür içeren macun',
+      'Gece sütünden sonra ağız silin — şeker kalıntısı çürütür',
+    ]},
+    {ico:'🧴',name:'Cilt Bakımı',color:'#FCE4EC',border:'#E91E63',tips:[
+      'Bebek cildi hassas — parfümsüz, hipoalerjenik ürünler',
+      'Kuru cilt: banyo sonrası baz yağ veya nemlendirici',
+      'Pişik: her bez değişiminde pişik kremleri (çinko içerikli)',
+      'Egzama şüphesi: steroid içermeyen nemlendirici + pediatrist',
+    ]},
+  ];
+  const rows=areas.map(a=>`
+    <div style="border:2px solid ${a.border};border-radius:10px;padding:10px;margin-bottom:8px;background:${a.color}">
+      <div style="font-weight:800;font-size:.84rem;margin-bottom:5px">${a.ico} ${a.name}</div>
+      <ul style="margin:0 0 0 16px;font-size:.75rem;color:#333">${a.tips.map(t=>`<li style="margin-bottom:2px">${t}</li>`).join('')}</ul>
+    </div>`).join('');
+  const h=`<div class="pop-ov" onclick="if(event.target===this)this.remove()">
+  <div class="pop-box" style="max-width:500px">
+    <div class="pop-rainbow"></div>
+    <span class="pop-ico">🧴</span>
+    <div class="pop-title">Bebek Bakım Rutini</div>
+    <div class="pop-sub">Banyo, tırnak, cilt, diş ve göz bakımı — pratik rehber</div>
+    <div style="max-height:55vh;overflow-y:auto;padding:4px 2px">${rows}</div>
+    <button class="pop-btn" style="margin-top:12px" onclick="this.closest('.pop-ov').remove()">Bakım Rutinime Aldım!</button>
+  </div></div>`;
+  document.body.insertAdjacentHTML('beforeend',h);
+}
+
+// ══════════════════════════════════════════════════════
+// SUSTAINABLE PARENTING GUIDE
+// ══════════════════════════════════════════════════════
+function showSustainableParentingGuide(){
+  S.sustainableRead=true;checkAchievements();saveGame();
+  const areas=[
+    {ico:'🌿',name:'Çevre Dostu Bebek Ürünleri',color:'#E8F5E9',border:'#43A047',items:[
+      'Bez bebek bezi: yeniden kullanılabilir, yıkanabilir — ömür boyu maliyet daha düşük',
+      'Organik pamuklu giysiler: kimyasal içermeyen, hassas cilt için ideal',
+      'Ahşap oyuncaklar: plastik alternatiflere göre daha dayanıklı ve güvenli',
+      'İkinci el bebek eşyaları: kalite kontrolü yapılmış, çevreye katkı',
+    ]},
+    {ico:'🥗',name:'Sürdürülebilir Beslenme',color:'#FFF3E0',border:'#FF8F00',items:[
+      'Kendi püresini hazırlamak: hazır mamadan daha ucuz, kontrollü',
+      'Mevsimsel sebze ve meyve tercih et',
+      'Yiyecek israfını azalt: bebek yemeyince diğer aile üyeleri bitirsin',
+      'BPA-free veya cam kaplar tercih et',
+    ]},
+    {ico:'💚',name:'Sürdürülebilir Ebeveyn Sağlığı',color:'#F3E5F5',border:'#AB47BC',items:[
+      '"Mükemmel" olmak yerine "yeterince iyi" hedefle',
+      'Sosyal medyayı karşılaştırma için kullanma',
+      'Kendi ihtiyaçlarını karşılamak, bebek için de iyi',
+      'Ebeveynlik topluluklarıyla destek al — izolasyondan kaçın',
+    ]},
+    {ico:'🕰️',name:'Uzun Vadeli Perspektif',color:'#E3F2FD',border:'#1E88E5',items:[
+      'Bebek büyür — bu dönem geçici',
+      'Her kriz bir fırsattır — büyüme acısıdır',
+      'Çocuğun her gelişim adımını kayıp gibi değil, kazanım gibi gör',
+      'Sürdürülebilir tempo: tükenmeden devam etmek için hız ayarla',
+    ]},
+  ];
+  const rows=areas.map(a=>`
+    <div style="border:2px solid ${a.border};border-radius:10px;padding:10px;margin-bottom:8px;background:${a.color}">
+      <div style="font-weight:800;font-size:.84rem;margin-bottom:5px">${a.ico} ${a.name}</div>
+      <ul style="margin:0 0 0 16px;font-size:.75rem;color:#333">${a.items.map(i=>`<li style="margin-bottom:2px">${i}</li>`).join('')}</ul>
+    </div>`).join('');
+  const h=`<div class="pop-ov" onclick="if(event.target===this)this.remove()">
+  <div class="pop-box" style="max-width:490px">
+    <div class="pop-rainbow"></div>
+    <span class="pop-ico">🌍</span>
+    <div class="pop-title">Sürdürülebilir Ebeveynlik</div>
+    <div class="pop-sub">Hem gezegen hem aile için uzun vadeli düşünmek</div>
+    <div style="max-height:55vh;overflow-y:auto;padding:4px 2px">${rows}
+      <div style="background:#FFFDE7;border:2px solid #FFD54F;border-radius:10px;padding:10px;font-size:.78rem;margin-top:4px">
+        <b>🌱 Hatırlat:</b> Sürdürülebilirlik sadece çevre değil — kendinizi de sürdürülebilir tutmak. Tükenmez bir ebeveyn, tükenmiş bir mükemmelden çok daha değerlidir.
+      </div>
+    </div>
+    <button class="pop-btn" style="margin-top:12px" onclick="this.closest('.pop-ov').remove()">Sürdürülebilir Ebeveynlik!</button>
+  </div></div>`;
+  document.body.insertAdjacentHTML('beforeend',h);
+}
+
+// ══════════════════════════════════════════════════════
+// TODDLER BRAIN GUIDE
+// ══════════════════════════════════════════════════════
+function showToddlerBrainGuide(){
+  S.toddlerBrainRead=true;checkAchievements();saveGame();
+  const facts=[
+    {ico:'🧠',fact:'Prefrontal korteks 25 yaşına kadar gelişmeye devam eder.',
+     why:'Toddlerlar duygularını kontrol edemez — bu irade değil, nöroloji. Öz-kontrol henüz mevcut değil.'},
+    {ico:'🌋',fact:'"Terrible Twos" aslında beyin gelişiminin yansıması.',
+     why:'Bağımsızlık isteği + dil yetersizliği + dürtü kontrolü eksikliği = öfke krizi. Bu sağlıklı gelişim.'},
+    {ico:'⏰',fact:'Toddler beyninin zaman algısı farklıdır.',
+     why:'"5 dakika sonra" anlamlı değil. "Şimdi" ve "şimdi değil" anlayabilirler. Sayı geri sayımı yardımcı olur.'},
+    {ico:'🔄',fact:'Toddlerlar neden-sonuç ilişkisini öğreniyor.',
+     why:'"Hayır" demek sınırları test etmektir — kötü niyet değil. Bu bilişsel gelişimin parçası.'},
+    {ico:'💬',fact:'Dil patlaması 18-24 ayda olur.',
+     why:'Bu dönemde hafızaya her gün 7-10 yeni kelime girer. Konuşmak ve kitap okumak bu süreci destekler.'},
+    {ico:'🎭',fact:'Hayali oyun 18 ay+\'da belirginleşir.',
+     why:'Sembolik düşünme — gerçek olmayan şeyleri temsil etme. Hayal gücünün temelidir.'},
+  ];
+  const strategies=[
+    {ico:'🤝',name:'Sınır + Seçenek',example:'"Arabaya binmeyeceksin" yerine "Kendin mi bineceksin yoksa ben mi yardım edeceğim?"'},
+    {ico:'🎯',name:'Önceden Uyarma',example:'"5 dakika sonra park bitti" — sayı geri sayımı veya telefon zamanlayıcı'},
+    {ico:'💙',name:'Duyguyu İsimlendir',example:'"Çok sinirlendin, değil mi? Çok istediğinde olmuyor bu." — sakinleştirmeden önce'},
+    {ico:'⚡',name:'Enerji Boşalt',example:'Koşmak, atlamak, top tepmek — öfke öncesi yorgunluk krizleri azaltır'},
+  ];
+  const factHTML=facts.map(f=>`<div style="display:flex;gap:8px;padding:8px;border-radius:8px;background:#FFF8E1;margin-bottom:5px"><div style="font-size:1.3rem;flex-shrink:0">${f.ico}</div><div><div style="font-weight:700;font-size:.78rem">${f.fact}</div><div style="font-size:.74rem;color:#666;margin-top:2px">${f.why}</div></div></div>`).join('');
+  const stratHTML=strategies.map(s=>`<div style="padding:7px;border-radius:8px;background:#E8F5E9;margin-bottom:5px"><div style="font-weight:700;font-size:.8rem">${s.ico} ${s.name}</div><div style="font-size:.75rem;color:#444;margin-top:2px;font-style:italic">"${s.example}"</div></div>`).join('');
+  const h=`<div class="pop-ov" onclick="if(event.target===this)this.remove()">
+  <div class="pop-box" style="max-width:490px">
+    <div class="pop-rainbow"></div>
+    <span class="pop-ico">💡</span>
+    <div class="pop-title">Toddler Beyin Rehberi</div>
+    <div class="pop-sub">12-24 ay arası davranışların nörolojik açıklaması</div>
+    <div style="max-height:55vh;overflow-y:auto;padding:4px 2px">
+      <div style="font-weight:700;font-size:.82rem;color:#E65100;margin-bottom:6px">🔬 Bunu Bil — Toddler Beyin Gerçekleri:</div>
+      ${factHTML}
+      <div style="font-weight:700;font-size:.82rem;color:#1B5E20;margin:10px 0 6px">🛠️ İşe Yarayan Stratejiler:</div>
+      ${stratHTML}
+      <div style="background:#E8EAF6;border:2px solid #5C6BC0;border-radius:10px;padding:10px;font-size:.78rem;margin-top:6px">
+        <b>💜 Hatırlat:</b> "Kötü çocuk" diye bir şey yoktur — sadece büyüyen bir beyin ve yetersiz kalmış bir düzenleme kapasitesi var. Ebeveynin sakinliği, toddlerin öfkesini söndüren en güçlü araçtır.<br><br>
+        <b>📚 Kaynak:</b> Daniel J. Siegel "The Whole-Brain Child", Janet Lansbury "No Bad Kids"
+      </div>
+    </div>
+    <button class="pop-btn" style="margin-top:12px" onclick="this.closest('.pop-ov').remove()">Toddler Beynini Anlıyorum!</button>
   </div></div>`;
   document.body.insertAdjacentHTML('beforeend',h);
 }
