@@ -1231,6 +1231,14 @@ const DAILY_TASKS = [
   {ico:'🧱',text:'Renkli bloklar veya oyuncaklar',reward:40,act:'bloklar'},
   {ico:'🎭',text:'Tekerleme söyle',reward:35,act:'tekerleme'},
   {ico:'🩺',text:'Bugün bir doktor kontrolü yap',reward:60,act:null},
+  {ico:'🌿',text:'Bebek ile 15 dk dışarı çık — taze hava!',reward:38,act:null},
+  {ico:'🪞',text:'Bebeği ayna karşısında tutup yüz ifadeleri yap',reward:32,act:null},
+  {ico:'🫧',text:'Sabun köpüğü ile oyun zamanı',reward:35,act:null},
+  {ico:'📝',text:'Bebeğin bu haftaki gelişimini not al',reward:28,act:null},
+  {ico:'💤',text:'Bebek uyurken sen de uyu — uyku sağlığı şart!',reward:40,act:'mom-dinlen'},
+  {ico:'🎁',text:'Babadan anneye sürpriz iyilik yap',reward:50,act:'dad-anne'},
+  {ico:'🌙',text:'Bu gece uyku rutinini erken başlat',reward:35,act:null},
+  {ico:'🥗',text:'Anne sağlıklı bir öğün ye — emzirme için enerji!',reward:38,act:null},
 ];
 
 const LULLABIES = [
@@ -1409,6 +1417,7 @@ function saveGame(){
     emotionalDevRead:S.emotionalDevRead||false, statsViewed:S.statsViewed||false,
     nutritionRead:S.nutritionRead||false, speechDevRead:S.speechDevRead||false,
     vaccineScheduleRead:S.vaccineScheduleRead||false, playDevRead:S.playDevRead||false,
+    journalViewed:S.journalViewed||false,
     savedAt:Date.now(),
   };
   try { localStorage.setItem(SAVE_KEY, JSON.stringify(data)); } catch(e){}
@@ -1502,6 +1511,7 @@ function applySaveData(d){
   S.speechDevRead = d.speechDevRead||false;
   S.vaccineScheduleRead = d.vaccineScheduleRead||false;
   S.playDevRead = d.playDevRead||false;
+  S.journalViewed = d.journalViewed||false;
   S.started = true;
 }
 
@@ -1664,6 +1674,8 @@ const ACHIEVEMENTS = [
   {id:'vaccine_pro',  icon:'💉', name:'Aşı Şampiyonu',       desc:'Aşı takvimi rehberi okundu',            check:s=>(s.vaccineScheduleRead||false)},
   {id:'play_pro',     icon:'🎮', name:'Oyun Uzmanı',         desc:'Oyun gelişimi rehberi okundu',          check:s=>(s.playDevRead||false)},
   {id:'challenge_master',icon:'🏅',name:'Meydan Okuma Ustası',desc:'40+ challenge tamamlandı',             check:s=>(s.challengesSolved||0)>=40},
+  {id:'journal_pro',     icon:'📓', name:'Günlük Yazarı',     desc:'Ebeveyn günlüğü görüntülendi',          check:s=>(s.journalViewed||false)},
+  {id:'dp20000',         icon:'🌠', name:'20.000 GP Süpernova',desc:'20.000 Gelişim Puanına ulaşıldı!',     check:s=>s.dp>=20000},
   {id:'guide_all',   icon:'🎓', name:'Rehber Koleksiyoncusu',desc:'60+ rehber okundu',                    check:s=>{
     const flags=['readLangPro','readTravel','readDiscipline','sensoryRead','cryDecoderUsed','reflexRead','wellChildRead','coupleRead','workReturnRead','illnessRead','childcareRead','supplementRead','cprRead','siblingRead','creativePlayRead','seasonalRead','blwRead','parentHealthRead','earlyAllergenRead','traditionalRead','preschoolRead','storytimeRead','outdoorPlayRead','newbornCareRead','fingerFoodRead','wonderWeeksRead','sleepTroubleRead','babyProofingRead','emotionalDevRead','nutritionRead','speechDevRead','vaccineScheduleRead','playDevRead'];
     return flags.filter(f=>s[f]).length>=20;
@@ -1855,6 +1867,7 @@ const S = {
   speechDevRead:false,
   vaccineScheduleRead:false,
   playDevRead:false,
+  journalViewed:false,
 };
 
 // ══════════════════════════════════════════════════════
@@ -3549,6 +3562,7 @@ function showAllGuides(){
     {ico:'🗣️',name:'Konuşma Gelişimi',fn:'showSpeechDevelopmentGuide()'},
     {ico:'💉',name:'Aşı Takvimi',fn:'showVaccineScheduleGuide()'},
     {ico:'🎮',name:'Oyun Türleri',fn:'showPlayDevelopmentGuide()'},
+    {ico:'📓',name:'Ebeveyn Günlüğü',fn:'showParentJournal()'},
   ];
   const chips=guides.map(g=>`<button class="guide-chip" onclick="${g.fn};this.closest('.pop-ov').remove()">${g.ico}<br>${g.name}</button>`).join('');
   const h=`<div class="pop-ov" onclick="if(event.target===this)this.remove()">
@@ -5628,6 +5642,57 @@ function showEmotionalDevelopmentGuide(){
     </div>
     <div class="pop-tip"><div class="pop-tip-t">🔬 EQ > IQ</div><p>Daniel Goleman'ın araştırmaları gösterdi: yaşam başarısının %80'i duygusal zekaya bağlı, %20'si IQ'ya. Duygusal zeka 0-7 yaş arasında şekillenir. Şimdi attığınız her adım, onun tüm hayatını etkiler.</p></div>
     <button class="pop-btn" style="background:linear-gradient(135deg,#6A1B9A,#7B1FA2)" onclick="this.closest('.pop-ov').remove()">💕 Duyguları Birlikte Öğreneceğiz!</button>
+  </div></div>`;
+  document.body.insertAdjacentHTML('beforeend',h);
+}
+
+// ══════════════════════════════════════════════════════
+// PARENT JOURNAL — AFFİRMATİONS & SELF-CARE
+// ══════════════════════════════════════════════════════
+function showParentJournal(){
+  S.journalViewed=true;checkAchievements();saveGame();
+  const affirmations=[
+    {ico:'💖',text:'Sen mükemmel bir ebeveyn değilsin — ama bebeğin için en iyisin. Bu yeter.'},
+    {ico:'🌟',text:'Uyku açığıyla, endişeyle, yorgunlukla devam etmek — bu cesaret.'},
+    {ico:'🤗',text:'Bebeğini her ağladığında kaldırıyorsun. Bu onu şımartmıyor — güvende hissettiriyor.'},
+    {ico:'💪',text:'Ebeveynlik öğrenilebilir bir beceri. Henüz hata yapıyorsan, demek ki öğreniyorsun.'},
+    {ico:'🌈',text:'Bugün zor bir gün geçirdin mi? Yine de devam ettin. Bu başarı sayılır.'},
+    {ico:'❤️',text:'Bebeğin için endişe duyuyorsun — çünkü onu çok seviyorsun. Bu sevgi kötü ebeveyn olmaya bırakmaz.'},
+    {ico:'🌙',text:'Gece 3\'te kalktın, sakinleştirdin, geri yattırdın. Kimse bunu görmedi — ama bebek hissetti.'},
+    {ico:'🎯',text:'Mükemmel ebeveyn yoktur. "Yeterince iyi" ebeveyn bebek için en iyisidir. (D.W. Winnicott)'},
+  ];
+  const selfCare=[
+    {ico:'🛁',title:'5 Dakika Sıcak Duş',tip:'Bebek güvende uyurken bile sadece 5 dakika duş alamıyorsa — bu bir işaret.'},
+    {ico:'☕',title:'Kahveni ılık iç',tip:'Kahven soğurken bebek ağladı mı? Mikrodalgaya koy. Küçük şeyler önemli.'},
+    {ico:'🚶',title:'10 Dakika Yürüyüş',tip:'Günde 10 dakika dışarı çıkmak ruh halini dramatik şekilde iyileştirir.'},
+    {ico:'🗣️',title:'Birisiyle Konuş',tip:'Partnerinle, annenle, arkadaşınla. Yalnız hissediyorsan — sesini duyurmak hakkın.'},
+    {ico:'📖',title:'Bir Şey Oku',tip:'Bebek bakımı dışında, sadece senin için. 5 sayfa bile olsa.'},
+    {ico:'💤',title:'Bebek Uyurken Sen de Uyu',tip:'Ev işi bekleyebilir. Uyku açığı hafıza, ruh hali ve milk supply\'ı etkiler.'},
+    {ico:'🤝',title:'Yardım İste',tip:'"Kendim yaparım" demek erdem değil. Yardım istemek güçtür.'},
+  ];
+  const aff=affirmations[Math.floor(Math.random()*affirmations.length)];
+  const selfRows=selfCare.map(s=>`
+    <div style="display:flex;gap:10px;align-items:flex-start;padding:8px;border-radius:8px;background:#FFF9F9;margin-bottom:6px">
+      <div style="font-size:1.4rem;flex-shrink:0">${s.ico}</div>
+      <div><div style="font-weight:700;font-size:.82rem">${s.title}</div><div style="font-size:.76rem;color:#666;margin-top:2px">${s.tip}</div></div>
+    </div>`).join('');
+  const h=`<div class="pop-ov" onclick="if(event.target===this)this.remove()">
+  <div class="pop-box" style="max-width:490px">
+    <div class="pop-rainbow"></div>
+    <span class="pop-ico">📓</span>
+    <div class="pop-title">Ebeveyn Günlüğü</div>
+    <div class="pop-sub">Kendine bir dakika ver — bunu hak ediyorsun</div>
+    <div style="background:linear-gradient(135deg,#FCE4EC,#F3E5F5);border-radius:12px;padding:14px;margin-bottom:14px;text-align:center">
+      <div style="font-size:2rem;margin-bottom:6px">${aff.ico}</div>
+      <div style="font-size:.88rem;font-weight:600;color:#4A148C;line-height:1.5;font-style:italic">"${aff.text}"</div>
+      <div style="font-size:.72rem;color:#7B1FA2;margin-top:6px">💡 Her açılışta yeni bir affirmation</div>
+    </div>
+    <div style="font-weight:800;font-size:.85rem;color:#C2185B;margin-bottom:8px">🌸 Günlük Öz-Bakım Hatırlatıcılar</div>
+    <div style="max-height:42vh;overflow-y:auto">${selfRows}</div>
+    <div style="background:#E8F5E9;border-radius:10px;padding:10px;font-size:.78rem;margin-top:10px;color:#1B5E20">
+      <b>💚 Unutma:</b> Doğum sonrası depresyon 5 anneden 1'inde görülür. Üzüntü, boşluk hissi veya bağlanamama 2 haftadan fazla sürüyorsa — bir uzmana git. Bu cesaret, zayıflık değil.
+    </div>
+    <button class="pop-btn" style="margin-top:12px" onclick="this.closest('.pop-ov').remove()">Günlüğü Kapattım 💖</button>
   </div></div>`;
   document.body.insertAdjacentHTML('beforeend',h);
 }
