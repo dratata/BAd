@@ -1097,6 +1097,9 @@ const POS_EVENTS_MID = [ // 6-12 months
   {msg:(n,d)=>`🧸 ${n} favorit oyuncağını sımsıkı kucakladı!`, dp:15, sfx:['🧸','💛'],fx:{happy:12}},
   {msg:(n,d)=>`📚 ${n} kitap sayfalarını çevirmeye çalıştı!`, dp:18, sfx:['📚','🌟'],fx:{smart:4}},
   {msg:(n,d)=>`👆 ${n} istediğini parmağıyla işaret etti — iletişim sıçraması!`, dp:24, sfx:['👆','🧠'],fx:{smart:5,happy:8}},
+  {msg:(n,d)=>`🐱 ${n} kedi görünce sevinçle uzandı — hayvan sevgisi başlıyor!`, dp:16, sfx:['🐱','💛'],fx:{happy:10}},
+  {msg:(n,d)=>`🧊 ${n} soğuk yüzeye dokundu ve şaşırdı — duyusal keşif!`, dp:14, sfx:['🧊','✨'],fx:{smart:3}},
+  {msg:(n,d)=>`🎶 ${n} ritme uygun sallanmaya başladı — müzisyen miyiz?`, dp:18, sfx:['🎶','💃'],fx:{happy:10,smart:2}},
 ];
 const POS_EVENTS_LATE = [ // 12-24 months
   {msg:(n,d)=>`💬 ${n} ilk anlamlı kelimesini söyledi!`, dp:35, sfx:['💬','🌟','🎉'],fx:{happy:15,smart:5}},
@@ -1418,6 +1421,7 @@ function saveGame(){
     nutritionRead:S.nutritionRead||false, speechDevRead:S.speechDevRead||false,
     vaccineScheduleRead:S.vaccineScheduleRead||false, playDevRead:S.playDevRead||false,
     journalViewed:S.journalViewed||false,
+    brainGamesRead:S.brainGamesRead||false, devAlarmsRead:S.devAlarmsRead||false,
     savedAt:Date.now(),
   };
   try { localStorage.setItem(SAVE_KEY, JSON.stringify(data)); } catch(e){}
@@ -1512,6 +1516,8 @@ function applySaveData(d){
   S.vaccineScheduleRead = d.vaccineScheduleRead||false;
   S.playDevRead = d.playDevRead||false;
   S.journalViewed = d.journalViewed||false;
+  S.brainGamesRead = d.brainGamesRead||false;
+  S.devAlarmsRead = d.devAlarmsRead||false;
   S.started = true;
 }
 
@@ -1675,6 +1681,8 @@ const ACHIEVEMENTS = [
   {id:'play_pro',     icon:'🎮', name:'Oyun Uzmanı',         desc:'Oyun gelişimi rehberi okundu',          check:s=>(s.playDevRead||false)},
   {id:'challenge_master',icon:'🏅',name:'Meydan Okuma Ustası',desc:'40+ challenge tamamlandı',             check:s=>(s.challengesSolved||0)>=40},
   {id:'journal_pro',     icon:'📓', name:'Günlük Yazarı',     desc:'Ebeveyn günlüğü görüntülendi',          check:s=>(s.journalViewed||false)},
+  {id:'brain_games',    icon:'🧩', name:'Zeka Oyunları Ustası',desc:'Beyin oyunları rehberi okundu',          check:s=>(s.brainGamesRead||false)},
+  {id:'dev_alarm_pro',  icon:'🩺', name:'Gelişim Bekçisi',   desc:'Gelişim alarmları rehberi okundu',        check:s=>(s.devAlarmsRead||false)},
   {id:'dp20000',         icon:'🌠', name:'20.000 GP Süpernova',desc:'20.000 Gelişim Puanına ulaşıldı!',     check:s=>s.dp>=20000},
   {id:'guide_all',   icon:'🎓', name:'Rehber Koleksiyoncusu',desc:'60+ rehber okundu',                    check:s=>{
     const flags=['readLangPro','readTravel','readDiscipline','sensoryRead','cryDecoderUsed','reflexRead','wellChildRead','coupleRead','workReturnRead','illnessRead','childcareRead','supplementRead','cprRead','siblingRead','creativePlayRead','seasonalRead','blwRead','parentHealthRead','earlyAllergenRead','traditionalRead','preschoolRead','storytimeRead','outdoorPlayRead','newbornCareRead','fingerFoodRead','wonderWeeksRead','sleepTroubleRead','babyProofingRead','emotionalDevRead','nutritionRead','speechDevRead','vaccineScheduleRead','playDevRead'];
@@ -1708,6 +1716,15 @@ const TIPS = [
   'İlk 1000 gün (hamilelik + 2 yaş) beynin %80\'i gelişir — bu dönemi iyi değerlendirin! 🧠',
   'Hafıza oyunları (peekaboo) 8. aydan itibaren "nesne sürekliliği" kavramını öğretir! 🙈',
   '18. ay öfke krizleri beyin gelişiminin bir parçasıdır — ceza değil, sakinlik işe yarar! 😤',
+  'Bebeğe "neden" diye sormak yerine duyguyu isimlendir: "Üzüldün mü?" — duygusal zeka böyle gelişir! 🧠',
+  'Ekran süresi 18 ay altında sıfır önerilir (AAP) — video çağrıları ve aniden geçen şeyler hariç! 📵',
+  'Bebek güneş kremsiz 30+ dakika güneşe çıkmamalı — SPF 30+ sürün (6 ay+)! ☀️',
+  'Emzirme sırasında göz teması kurmak oksitosin salgısını artırır, bağlanmayı güçlendirir! 👁️',
+  'Yemek zamanında TV kapatın — dikkat dağınıklığı olmadan yemek yiyen bebek, daha iyi beslenme alışkanlıkları edinir! 🍽️',
+  'D vitamini eksikliği Türkiye\'de çok yaygın — bebek ve annenin her ikisi de takviye almalı! ☀️',
+  'Her gelişim gecikmesini karşılaştırmak yerine pediatristinizle paylaşın — erken müdahale çok etkili! 🩺',
+  'Bebek masajında lavanta yağı ekleyebilirsiniz — uyku kalitesini artırır (önce alerji testi yapın)! 💜',
+  'Güvenli bebek bezi değişimi: her zaman bir eliniz bebekte olsun, hiç ayrılmayın! ⚠️',
 ];
 
 const BABY_STAGES = [
@@ -1868,6 +1885,8 @@ const S = {
   vaccineScheduleRead:false,
   playDevRead:false,
   journalViewed:false,
+  brainGamesRead:false,
+  devAlarmsRead:false,
 };
 
 // ══════════════════════════════════════════════════════
@@ -3563,6 +3582,8 @@ function showAllGuides(){
     {ico:'💉',name:'Aşı Takvimi',fn:'showVaccineScheduleGuide()'},
     {ico:'🎮',name:'Oyun Türleri',fn:'showPlayDevelopmentGuide()'},
     {ico:'📓',name:'Ebeveyn Günlüğü',fn:'showParentJournal()'},
+    {ico:'🧩',name:'Beyin Oyunları',fn:'showBrainGamesGuide()'},
+    {ico:'🩺',name:'Gelişim Alarmları',fn:'showDevelopmentAlarmsGuide()'},
   ];
   const chips=guides.map(g=>`<button class="guide-chip" onclick="${g.fn};this.closest('.pop-ov').remove()">${g.ico}<br>${g.name}</button>`).join('');
   const h=`<div class="pop-ov" onclick="if(event.target===this)this.remove()">
@@ -5642,6 +5663,141 @@ function showEmotionalDevelopmentGuide(){
     </div>
     <div class="pop-tip"><div class="pop-tip-t">🔬 EQ > IQ</div><p>Daniel Goleman'ın araştırmaları gösterdi: yaşam başarısının %80'i duygusal zekaya bağlı, %20'si IQ'ya. Duygusal zeka 0-7 yaş arasında şekillenir. Şimdi attığınız her adım, onun tüm hayatını etkiler.</p></div>
     <button class="pop-btn" style="background:linear-gradient(135deg,#6A1B9A,#7B1FA2)" onclick="this.closest('.pop-ov').remove()">💕 Duyguları Birlikte Öğreneceğiz!</button>
+  </div></div>`;
+  document.body.insertAdjacentHTML('beforeend',h);
+}
+
+// ══════════════════════════════════════════════════════
+// BRAIN GAMES GUIDE — AYA GÖRE ZİHİN OYUNLARI
+// ══════════════════════════════════════════════════════
+function showBrainGamesGuide(){
+  S.brainGamesRead=true;checkAchievements();saveGame();
+  const games=[
+    {age:'0-3 Ay',ico:'👁️',color:'#E8F5E9',border:'#66BB6A',
+     games:[
+       {name:'Yüz Takip',how:'20-25 cm uzaktan yüzünüzü yavaşça sağa sola hareket ettirin.',why:'Göz kasları ve odaklanma gelişir'},
+       {name:'Dil Taklit',how:'Bebeğe bakarak yavaşça dil çıkarın. Taklit edip etmediğini izleyin.',why:'İlk sosyal öğrenme ve taklit'},
+       {name:'Ses Oyunu',how:'Farklı sesler çıkarın (tık tık, sss, bbb). Tepkisini izleyin.',why:'İşitsel ayrım ve dil temeli'},
+     ]},
+    {age:'3-6 Ay',ico:'✋',color:'#E3F2FD',border:'#42A5F5',
+     games:[
+       {name:'Peekaboo (Gözleri Kapat)',how:'Yüzünüzü ellerinizle kapatın, açın: "Beeee!" — bekleyin ve tekrar yapın.',why:'Nesne sürekliliği başlangıcı'},
+       {name:'Renkli Kontrastlar',how:'Siyah-beyaz veya zıt renkli kartları 25 cm mesafede gösterin.',why:'Görsel korteks gelişimi'},
+       {name:'Nesneleri Uzatma',how:'Görüş alanına renkli oyuncak koyun, tutması için bekleyin.',why:'Göz-el koordinasyonu'},
+     ]},
+    {age:'6-9 Ay',ico:'🙈',color:'#FFF3E0',border:'#FFA726',
+     games:[
+       {name:'Saklambaç Oyunu',how:'Oyuncağı bez altına saklayın. Bebeğin aramasını bekleyin.',why:'Nesne sürekliliği — hafıza gelişimi'},
+       {name:'Kova Doldurma',how:'Büyük kova ve büyük toplar. Topu kovaya atmayı gösterin.',why:'Neden-sonuç ilişkisi, ince motor'},
+       {name:'Yüz Tanıma',how:'Aile fotoğraflarını gösterirken isimleri söyleyin.',why:'Bellek ve sosyal gelişim'},
+     ]},
+    {age:'9-12 Ay',ico:'🤌',color:'#FCE4EC',border:'#EC407A',
+     games:[
+       {name:'Parmak Yiyecek Seçimi',how:'2 farklı yiyeceği masaya koy, seçmesini bekleyin.',why:'Karar verme ve özerklik'},
+       {name:'Kule Yık',how:'3-4 blok kule yapın, yıkmasına izin verin, tekrar yapın.',why:'Neden-sonuç, güç-etki ilişkisi'},
+       {name:'Jest Taklit',how:'El sallama, alkış, "hayır" hareketi — taklit etmesini bekleyin.',why:'Sosyal öğrenme ve iletişim'},
+     ]},
+    {age:'12-24 Ay',ico:'🧱',color:'#F3E5F5',border:'#AB47BC',
+     games:[
+       {name:'Hayali Oyun',how:'Oyuncak telefon alın: "Alo, kim arıyor?" — ve telefonu verin.',why:'Sembolik düşünme ve dil'},
+       {name:'Sıralama',how:'Farklı büyüklükte 3 nesne sırala, bozup sıralamasını iste.',why:'Mantık ve sıralama kavramı'},
+       {name:'Renk Eşleştirme',how:'Aynı renk 2 nesne göster: "Aynı!" deyin. Farklısında: "Farklı!"',why:'Kategori ve sınıflandırma'},
+     ]},
+  ];
+  const rows=games.map(g=>`
+    <div style="border:2px solid ${g.border};border-radius:10px;padding:10px;margin-bottom:8px;background:${g.color}">
+      <div style="font-weight:800;font-size:.88rem;margin-bottom:6px">${g.ico} ${g.age}</div>
+      ${g.games.map(gm=>`<div style="margin-bottom:7px;border-left:3px solid ${g.border};padding-left:8px">
+        <div style="font-weight:700;font-size:.8rem">${gm.name}</div>
+        <div style="font-size:.76rem;color:#444;margin-top:2px">📋 ${gm.how}</div>
+        <div style="font-size:.73rem;color:#666;margin-top:2px">🧠 ${gm.why}</div>
+      </div>`).join('')}
+    </div>`).join('');
+  const h=`<div class="pop-ov" onclick="if(event.target===this)this.remove()">
+  <div class="pop-box" style="max-width:510px">
+    <div class="pop-rainbow"></div>
+    <span class="pop-ico">🧩</span>
+    <div class="pop-title">Beyin Oyunları Rehberi</div>
+    <div class="pop-sub">0-24 ay zihinsel gelişimi destekleyen eğlenceli aktiviteler</div>
+    <div style="max-height:55vh;overflow-y:auto;padding:4px 2px">${rows}
+      <div style="background:#FFFDE7;border:2px solid #FFD54F;border-radius:10px;padding:10px;font-size:.78rem;margin-top:4px">
+        <b>💡 Altın Kural:</b> Her oyunun amacı eğlence olmalı — sonuç değil süreç önemli. Bebek sıkıldıysa bırakın, zorlamayın. Kısa, sık seanslar uzun tek seansa yeğdir.<br><br>
+        <b>📚 Kaynak:</b> Harvard Child Development Lab, Zero to Three, AAP oyun önerileri
+      </div>
+    </div>
+    <button class="pop-btn" style="margin-top:12px" onclick="this.closest('.pop-ov').remove()">Oyunlara Başla!</button>
+  </div></div>`;
+  document.body.insertAdjacentHTML('beforeend',h);
+}
+
+// ══════════════════════════════════════════════════════
+// DEVELOPMENT ALARMS GUIDE — GELİŞİM ALARM İŞARETLERİ
+// ══════════════════════════════════════════════════════
+function showDevelopmentAlarmsGuide(){
+  S.devAlarmsRead=true;checkAchievements();saveGame();
+  const alarms=[
+    {age:'2. Ay',ico:'👶',color:'#FFEBEE',border:'#EF5350',items:[
+      'Parlak ışığa tepki vermiyorsa',
+      'Gülümseme yoksa (sosyal gülümseme)',
+      'Sese hiç dömmüyorsa',
+      'Ellerini sürekli yumruk yapıyorsa',
+    ]},
+    {age:'4. Ay',ico:'✋',color:'#FFF3E0',border:'#FF7043',items:[
+      'Başını tutamıyorsa',
+      'Sese tepki vermiyorsa',
+      'Nesneleri takip etmiyorsa',
+      'Sosyal gülümseme yoksa',
+    ]},
+    {age:'6. Ay',ico:'🪑',color:'#FFF9C4',border:'#F9A825',items:[
+      'Destekle bile oturamıyorsa',
+      'Sesler çıkarmıyorsa',
+      'Nesnelere uzanmıyorsa',
+      'Yabancılara hiç tepki vermiyorsa',
+    ]},
+    {age:'9. Ay',ico:'🐢',color:'#E8F5E9',border:'#43A047',items:[
+      'İsmiyle çağırıldığında dönmüyorsa',
+      'Heceleme yoksa (baba, mama)',
+      'El sallamıyor, işaret etmiyorsa',
+      'Nesneleri ağza götürmüyorsa',
+    ]},
+    {age:'12. Ay',ico:'💬',color:'#E3F2FD',border:'#1E88E5',items:[
+      'Hiç anlamlı kelime yoksa',
+      'İşaret etmiyor, el sallamıyorsa',
+      'Göz teması kurmaktan kaçınıyorsa',
+      'İsmine tepki vermiyorsa',
+    ]},
+    {age:'18. Ay',ico:'🗣️',color:'#F3E5F5',border:'#7B1FA2',items:[
+      '6\'dan az kelime biliyorsa',
+      'Yürüyemiyorsa',
+      'Başkalarını taklit etmiyorsa',
+      'Oyuncakların işlevini bilmiyorsa',
+    ]},
+    {age:'24. Ay',ico:'🗨️',color:'#E8EAF6',border:'#3949AB',items:[
+      '50 kelimeden az biliyorsa',
+      'İki kelimeli cümle kuramıyorsa',
+      'Daha önce kazanılan beceriyi kaybettiyse',
+      'Gözlerin tutma güçlüğü varsa',
+    ]},
+  ];
+  const rows=alarms.map(a=>`
+    <div style="border:2px solid ${a.border};border-radius:10px;padding:10px;margin-bottom:8px;background:${a.color}">
+      <div style="font-weight:800;font-size:.85rem;margin-bottom:4px">${a.ico} ${a.age} — Hemen Pediatriste Başvur:</div>
+      <ul style="margin:0 0 0 16px;font-size:.77rem;color:#333">${a.items.map(i=>`<li style="margin-bottom:2px">${i}</li>`).join('')}</ul>
+    </div>`).join('');
+  const h=`<div class="pop-ov" onclick="if(event.target===this)this.remove()">
+  <div class="pop-box" style="max-width:500px">
+    <div class="pop-rainbow"></div>
+    <span class="pop-ico">🩺</span>
+    <div class="pop-title">Gelişim Alarm İşaretleri</div>
+    <div class="pop-sub">Her çocuk farklı gelişir — ama bu işaretler var ise erken değerlendirme önemli</div>
+    <div style="max-height:55vh;overflow-y:auto;padding:4px 2px">${rows}
+      <div style="background:#E8F5E9;border:2px solid #43A047;border-radius:10px;padding:10px;font-size:.78rem;margin-top:4px">
+        <b>💚 Önemli:</b> Bu liste "kesin tanı" değildir. Tek bir işaret her zaman sorun işareti olmayabilir. Endişeniz varsa — pediatristinizle konuşun. <b>Erken müdahale en etkili müdahaledir.</b><br><br>
+        Bu listedeki durumlar bağlamında çocuğun <b>kayıp etmesi</b> (önceden yapabildiği bir şeyi artık yapamaması) her zaman acil değerlendirme gerektirir.<br><br>
+        <b>📚 Kaynak:</b> AAP Developmental Surveillance kılavuzu, DSM-5 developmental milestones
+      </div>
+    </div>
+    <button class="pop-btn" style="margin-top:12px" onclick="this.closest('.pop-ov').remove()">Bilgilendim, Dikkatli Olacağım</button>
   </div></div>`;
   document.body.insertAdjacentHTML('beforeend',h);
 }
