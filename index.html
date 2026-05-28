@@ -1433,6 +1433,7 @@ function saveGame(){
     faqRead:S.faqRead||false, postpartumChecklistRead:S.postpartumChecklistRead||false,
     genderNeutralRead:S.genderNeutralRead||false, highNeedsRead:S.highNeedsRead||false,
     musicDevRead:S.musicDevRead||false, epigeneticsRead:S.epigeneticsRead||false, multilingualRead:S.multilingualRead||false,
+    burnoutRead:S.burnoutRead||false, growthCurvesRead:S.growthCurvesRead||false, temperamentRead:S.temperamentRead||false,
     savedAt:Date.now(),
   };
   try { localStorage.setItem(SAVE_KEY, JSON.stringify(data)); } catch(e){}
@@ -1537,6 +1538,9 @@ function applySaveData(d){
   S.musicDevRead = d.musicDevRead||false;
   S.epigeneticsRead = d.epigeneticsRead||false;
   S.multilingualRead = d.multilingualRead||false;
+  S.burnoutRead = d.burnoutRead||false;
+  S.growthCurvesRead = d.growthCurvesRead||false;
+  S.temperamentRead = d.temperamentRead||false;
   S.started = true;
 }
 
@@ -1714,6 +1718,9 @@ const ACHIEVEMENTS = [
   {id:'epigenetics',    icon:'🧬', name:'Çevre Mimarı',        desc:'Epigenetik rehberi okundu',                check:s=>(s.epigeneticsRead||false)},
   {id:'multilingual',   icon:'🌍', name:'Çok Dilli Ebeveyn',  desc:'Çok dilli büyütme rehberi okundu',         check:s=>(s.multilingualRead||false)},
   {id:'dp50000',        icon:'🌟', name:'50.000 GP Efsanesi',  desc:'50.000 Gelişim Puanına ulaşıldı!',        check:s=>s.dp>=50000},
+  {id:'burnout_pro',    icon:'🔥', name:'Tükenmez Ebeveyn',   desc:'Ebeveyn tükenmişliği rehberi okundu',      check:s=>(s.burnoutRead||false)},
+  {id:'growth_curves',  icon:'📏', name:'Büyüme Takipçisi',   desc:'Büyüme eğrileri rehberi okundu',           check:s=>(s.growthCurvesRead||false)},
+  {id:'temperament',    icon:'🧸', name:'Mizaç Uzmanı',       desc:'Uyum tipi rehberi okundu',                 check:s=>(s.temperamentRead||false)},
   {id:'dp20000',         icon:'🌠', name:'20.000 GP Süpernova',desc:'20.000 Gelişim Puanına ulaşıldı!',     check:s=>s.dp>=20000},
   {id:'guide_all',   icon:'🎓', name:'Rehber Koleksiyoncusu',desc:'60+ rehber okundu',                    check:s=>{
     const flags=['readLangPro','readTravel','readDiscipline','sensoryRead','cryDecoderUsed','reflexRead','wellChildRead','coupleRead','workReturnRead','illnessRead','childcareRead','supplementRead','cprRead','siblingRead','creativePlayRead','seasonalRead','blwRead','parentHealthRead','earlyAllergenRead','traditionalRead','preschoolRead','storytimeRead','outdoorPlayRead','newbornCareRead','fingerFoodRead','wonderWeeksRead','sleepTroubleRead','babyProofingRead','emotionalDevRead','nutritionRead','speechDevRead','vaccineScheduleRead','playDevRead'];
@@ -1926,6 +1933,9 @@ const S = {
   musicDevRead:false,
   epigeneticsRead:false,
   multilingualRead:false,
+  burnoutRead:false,
+  growthCurvesRead:false,
+  temperamentRead:false,
 };
 
 // ══════════════════════════════════════════════════════
@@ -3631,6 +3641,9 @@ function showAllGuides(){
     {ico:'🎹',name:'Müzik ve Gelişim',fn:'showMusicDevelopmentGuide()'},
     {ico:'🧬',name:'Epigenetik & Çevre',fn:'showEpigeneticsGuide()'},
     {ico:'🌍',name:'Çok Dilli Büyütme',fn:'showMultilingualGuide()'},
+    {ico:'🔥',name:'Ebeveyn Tükenmişliği',fn:'showBurnoutGuide()'},
+    {ico:'📏',name:'Büyüme Eğrileri',fn:'showGrowthCurvesGuide()'},
+    {ico:'🧸',name:'Uyum Tipi Rehberi',fn:'showTemperamentGuide()'},
   ];
   const chips=guides.map(g=>`<button class="guide-chip" onclick="${g.fn};this.closest('.pop-ov').remove()">${g.ico}<br>${g.name}</button>`).join('');
   const h=`<div class="pop-ov" onclick="if(event.target===this)this.remove()">
@@ -5710,6 +5723,152 @@ function showEmotionalDevelopmentGuide(){
     </div>
     <div class="pop-tip"><div class="pop-tip-t">🔬 EQ > IQ</div><p>Daniel Goleman'ın araştırmaları gösterdi: yaşam başarısının %80'i duygusal zekaya bağlı, %20'si IQ'ya. Duygusal zeka 0-7 yaş arasında şekillenir. Şimdi attığınız her adım, onun tüm hayatını etkiler.</p></div>
     <button class="pop-btn" style="background:linear-gradient(135deg,#6A1B9A,#7B1FA2)" onclick="this.closest('.pop-ov').remove()">💕 Duyguları Birlikte Öğreneceğiz!</button>
+  </div></div>`;
+  document.body.insertAdjacentHTML('beforeend',h);
+}
+
+// ══════════════════════════════════════════════════════
+// BURNOUT GUIDE — EBEVEYN TÜKENMİŞLİĞİ
+// ══════════════════════════════════════════════════════
+function showBurnoutGuide(){
+  S.burnoutRead=true;checkAchievements();saveGame();
+  const signs=[
+    '😴 Sürekli yorgunluk — uyku sonrası bile geçmiyor',
+    '😶 Bebeğe karşı duygusal uzaklaşma veya uyuşukluk',
+    '😤 Küçük şeylere orantısız tepki verme',
+    '💭 "Yetmiyorum" veya "Başaramıyorum" düşüncesi',
+    '🚪 Kaçmak veya her şeyi bırakmak isteme',
+    '🤢 Fiziksel belirtiler: baş ağrısı, mide sorunları, bağışıklık düşüklüğü',
+  ];
+  const recovery=[
+    {ico:'🛑',title:'Dur ve Kabul Et',tip:'Tükenmişliği inkar etmek durumu kötüleştirir. "Ben tükeniyorum" demek güçtür.'},
+    {ico:'🤝',title:'Yardım İste',tip:'Partner, aile, arkadaş — birisinden somut yardım iste: "3 saat bebek bakımını alabilir misin?"'},
+    {ico:'💤',title:'Uyku Önceliği',tip:'Her şeyi yapamassın uyku açığıyla. Bir gece bile tam uyku dramatik iyileşme yaratır.'},
+    {ico:'🏃',title:'Fiziksel Hareket',tip:'20 dakika yürüyüş dopamin ve serotonin artırır. Bebekle birlikte de yapılabilir.'},
+    {ico:'🗣️',title:'Profesyonel Destek',tip:'Ebeveyn tükenmişliği için terapi veya destek grupları mevcuttur. Utanılacak bir şey değil.'},
+    {ico:'🌱',title:'Küçük Sevinçler',tip:'Günde 3 küçük iyi şey bul. Bu pozitif yeniden çerçeveleme beyin kimyasını değiştirir.'},
+  ];
+  const signHTML=signs.map(s=>`<div style="font-size:.78rem;padding:5px 0;border-bottom:1px solid #FFCDD2">${s}</div>`).join('');
+  const recHTML=recovery.map(r=>`<div style="padding:8px;border-radius:8px;background:#E8F5E9;margin-bottom:5px"><div style="font-weight:700;font-size:.8rem">${r.ico} ${r.title}</div><div style="font-size:.75rem;color:#555;margin-top:2px">${r.tip}</div></div>`).join('');
+  const h=`<div class="pop-ov" onclick="if(event.target===this)this.remove()">
+  <div class="pop-box" style="max-width:490px">
+    <div class="pop-rainbow"></div>
+    <span class="pop-ico">🔥</span>
+    <div class="pop-title">Ebeveyn Tükenmişliği Rehberi</div>
+    <div class="pop-sub">Tanımak, kabul etmek ve toparlamak</div>
+    <div style="background:#FFEBEE;border:2px solid #EF5350;border-radius:10px;padding:10px;margin-bottom:12px;font-size:.78rem">
+      <b>⚠️ Tükenmişlik İşaretleri — Tanıyor musun?</b>
+      ${signHTML}
+    </div>
+    <div style="font-weight:700;font-size:.82rem;color:#1B5E20;margin-bottom:6px">💚 Toparlanma Yolları:</div>
+    <div style="max-height:38vh;overflow-y:auto">${recHTML}</div>
+    <div style="background:#FFF3E0;border:2px solid #FF8F00;border-radius:10px;padding:10px;font-size:.78rem;margin-top:10px">
+      <b>💛 Bunu Bil:</b> Ebeveyn tükenmişliği 5 ebeveynden 1'inde yaşanır. Anne tükenmişliği PPD'den farklıdır — ancak her ikisi de tedavi gerektirir. Kendini suçlamak çözüm değil, yardım istemek güçtür!
+    </div>
+    <button class="pop-btn" style="margin-top:12px" onclick="this.closest('.pop-ov').remove()">Kendime İyi Bakacağım! 💪</button>
+  </div></div>`;
+  document.body.insertAdjacentHTML('beforeend',h);
+}
+
+// ══════════════════════════════════════════════════════
+// GROWTH CURVES GUIDE
+// ══════════════════════════════════════════════════════
+function showGrowthCurvesGuide(){
+  S.growthCurvesRead=true;checkAchievements();saveGame();
+  const data=[
+    {ay:0,kizKg:'2.7-4.0',kizCm:'47-52',erkekKg:'2.9-4.3',erkekCm:'48-53'},
+    {ay:1,kizKg:'3.2-5.0',kizCm:'51-57',erkekKg:'3.4-5.3',erkekCm:'52-58'},
+    {ay:2,kizKg:'4.0-6.3',kizCm:'54-61',erkekKg:'4.3-6.8',erkekCm:'55-63'},
+    {ay:3,kizKg:'4.6-7.3',kizCm:'57-64',erkekKg:'5.0-7.8',erkekCm:'59-66'},
+    {ay:6,kizKg:'5.7-9.1',kizCm:'61-70',erkekKg:'6.0-9.5',erkekCm:'63-72'},
+    {ay:9,kizKg:'6.5-10.5',kizCm:'65-75',erkekKg:'7.0-11.0',erkekCm:'67-77'},
+    {ay:12,kizKg:'7.0-11.5',kizCm:'68-78',erkekKg:'7.5-12.0',erkekCm:'71-81'},
+    {ay:18,kizKg:'8.1-13.7',kizCm:'74-85',erkekKg:'8.8-14.3',erkekCm:'77-88'},
+    {ay:24,kizKg:'9.0-15.8',kizCm:'79-92',erkekKg:'9.7-16.3',erkekCm:'81-94'},
+  ];
+  const tableRows=data.map(d=>`
+    <tr style="font-size:.75rem;border-bottom:1px solid #E0E0E0">
+      <td style="padding:5px;font-weight:700">${d.ay}. Ay</td>
+      <td style="padding:5px;color:#E91E63">${d.kizKg} kg</td>
+      <td style="padding:5px;color:#E91E63">${d.kizCm} cm</td>
+      <td style="padding:5px;color:#1E88E5">${d.erkekKg} kg</td>
+      <td style="padding:5px;color:#1E88E5">${d.erkekCm} cm</td>
+    </tr>`).join('');
+  const h=`<div class="pop-ov" onclick="if(event.target===this)this.remove()">
+  <div class="pop-box" style="max-width:500px">
+    <div class="pop-rainbow"></div>
+    <span class="pop-ico">📏</span>
+    <div class="pop-title">Bebek Büyüme Eğrileri</div>
+    <div class="pop-sub">WHO referans değerleri — 3. ile 97. persentil arası normal kabul edilir</div>
+    <div style="max-height:55vh;overflow-y:auto;padding:4px 2px">
+      <table style="width:100%;border-collapse:collapse;font-size:.75rem">
+        <thead style="background:#F5F5F5">
+          <tr>
+            <th style="padding:6px;text-align:left">Ay</th>
+            <th style="padding:6px;color:#E91E63">Kız Kg</th>
+            <th style="padding:6px;color:#E91E63">Kız Cm</th>
+            <th style="padding:6px;color:#1E88E5">Erkek Kg</th>
+            <th style="padding:6px;color:#1E88E5">Erkek Cm</th>
+          </tr>
+        </thead>
+        <tbody>${tableRows}</tbody>
+      </table>
+      <div style="background:#FFF3E0;border:2px solid #FF8F00;border-radius:10px;padding:10px;font-size:.78rem;margin-top:10px">
+        <b>⚠️ Önemli Notlar:</b><br>
+        • Tek ölçüm değil, büyüme TRENDI önemlidir<br>
+        • Persentil sıçraması (2+ kanal değişimi) pediatriste bildirilmeli<br>
+        • Prematüre bebekler için düzeltilmiş yaş kullanın<br>
+        • Ebeveyn boyları bebeğin büyümesini etkiler (genetik)<br>
+        • Bu tablo ortalama değerleri gösterir — pediyatristinizin kılavuzunu takip edin<br><br>
+        <b>📚 Kaynak:</b> WHO Child Growth Standards 2006
+      </div>
+    </div>
+    <button class="pop-btn" style="margin-top:12px" onclick="this.closest('.pop-ov').remove()">Anladım!</button>
+  </div></div>`;
+  document.body.insertAdjacentHTML('beforeend',h);
+}
+
+// ══════════════════════════════════════════════════════
+// TEMPERAMENT GUIDE — UYUM TİPİ
+// ══════════════════════════════════════════════════════
+function showTemperamentGuide(){
+  S.temperamentRead=true;checkAchievements();saveGame();
+  const types=[
+    {name:'Kolay Bebek',ico:'😊',pct:'%40',color:'#E8F5E9',border:'#43A047',
+     traits:'Düzenli, uyumlu, olumlu ruh hali, yeni şeylere açık',
+     tips:['Rutini korumak kolaydır — yararlanın','Uyumluluğa güvenmeyin: ihtiyaçlar hâlâ var','Sınırları tutun, "kolay" olması sınırsız demek değil']},
+    {name:'Zor Bebek',ico:'😤',pct:'%10',color:'#FCE4EC',border:'#E91E63',
+     traits:'Düzensiz, yoğun tepkiler, değişime dirençli, negatif eğilimli',
+     tips:['Rutin büyük önem taşır — saatin öngörülebilir olması sakinleştirir','Yoğun tepkileri kişisel almayın','Ebeveyn de fazla enerji kullanır — destek alın']},
+    {name:'Isınan Bebek',ico:'🌡️',pct:'%15',color:'#FFF3E0',border:'#FF8F00',
+     traits:'İlk başta çekingen, zamanla adapte olur, yavaş ısınır',
+     tips:['Yeni şeyleri tanıtmaya zaman verin','Zorlamayın — kendi hızında ısınır','Yabancı kaygısı daha yoğun olabilir — sabır']},
+    {name:'Karma Tipte',ico:'🌈',pct:'%35',color:'#E3F2FD',border:'#1E88E5',
+     traits:'Farklı bağlamlarda farklı tepkiler, net bir kategori yok',
+     tips:['Her durumu ayrı değerlendirin','Zaman içinde paternler ortaya çıkar','En yaygın tip — normali bu']},
+  ];
+  const rows=types.map(t=>`
+    <div style="border:2px solid ${t.border};border-radius:10px;padding:10px;margin-bottom:8px;background:${t.color}">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
+        <div style="font-weight:800;font-size:.84rem">${t.ico} ${t.name}</div>
+        <div style="font-size:.7rem;font-weight:700;padding:2px 8px;border-radius:20px;background:${t.border};color:white">Bebeklerin ${t.pct}</div>
+      </div>
+      <div style="font-size:.76rem;color:#555;margin-bottom:5px;font-style:italic">${t.traits}</div>
+      <ul style="margin:0 0 0 16px;font-size:.75rem;color:#333">${t.tips.map(x=>`<li style="margin-bottom:2px">${x}</li>`).join('')}</ul>
+    </div>`).join('');
+  const h=`<div class="pop-ov" onclick="if(event.target===this)this.remove()">
+  <div class="pop-box" style="max-width:490px">
+    <div class="pop-rainbow"></div>
+    <span class="pop-ico">🧸</span>
+    <div class="pop-title">Bebek Mizaç ve Uyum Tipi Rehberi</div>
+    <div class="pop-sub">Thomas-Chess mizaç araştırması — bebeğini tanı, ona göre yaklaş</div>
+    <div style="max-height:55vh;overflow-y:auto;padding:4px 2px">${rows}
+      <div style="background:#FFFDE7;border:2px solid #FFD54F;border-radius:10px;padding:10px;font-size:.78rem;margin-top:4px">
+        <b>💡 Ana Mesaj:</b> Bebeğin mizacı ebeveynliğin kalitesini yansıtmaz. "Zor bebek" kötü ebeveynlik değil, nörolojik bir farklılıktır. "Uyum" — ebeveynin yaklaşımını bebeğin mizacına uydurmak — en etkili stratejidir.<br><br>
+        <b>📚 Kaynak:</b> Thomas & Chess "Temperament and Development", Stella Chess araştırmaları
+      </div>
+    </div>
+    <button class="pop-btn" style="margin-top:12px" onclick="this.closest('.pop-ov').remove()">Bebeğimi Tanıyorum!</button>
   </div></div>`;
   document.body.insertAdjacentHTML('beforeend',h);
 }
