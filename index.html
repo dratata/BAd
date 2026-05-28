@@ -1448,6 +1448,11 @@ function saveGame(){
     attachmentTheoryRead:S.attachmentTheoryRead||false, groomingRead:S.groomingRead||false,
     sustainableRead:S.sustainableRead||false, toddlerBrainRead:S.toddlerBrainRead||false,
     exerciseRead:S.exerciseRead||false, matrscenceRead:S.matrscenceRead||false, homeEnvRead:S.homeEnvRead||false,
+    babyBudgetRead:S.babyBudgetRead||false, nightCareRead:S.nightCareRead||false,
+    geneticsRead:S.geneticsRead||false, holidayRead:S.holidayRead||false,
+    screenTimeRead:S.screenTimeRead||false, petsRead:S.petsRead||false,
+    socialEmotRead:S.socialEmotRead||false, colorShapeRead:S.colorShapeRead||false,
+    activePlayRead:S.activePlayRead||false,
     savedAt:Date.now(),
   };
   try { localStorage.setItem(SAVE_KEY, JSON.stringify(data)); } catch(e){}
@@ -1568,6 +1573,15 @@ function applySaveData(d){
   S.exerciseRead = d.exerciseRead||false;
   S.matrscenceRead = d.matrscenceRead||false;
   S.homeEnvRead = d.homeEnvRead||false;
+  S.babyBudgetRead = d.babyBudgetRead||false;
+  S.nightCareRead = d.nightCareRead||false;
+  S.geneticsRead = d.geneticsRead||false;
+  S.holidayRead = d.holidayRead||false;
+  S.screenTimeRead = d.screenTimeRead||false;
+  S.petsRead = d.petsRead||false;
+  S.socialEmotRead = d.socialEmotRead||false;
+  S.colorShapeRead = d.colorShapeRead||false;
+  S.activePlayRead = d.activePlayRead||false;
   S.started = true;
 }
 
@@ -1765,6 +1779,11 @@ const ACHIEVEMENTS = [
   {id:'night_care_pro', icon:'🌙', name:'Gece Bakım Ustası',   desc:'Gece bakım stratejisi rehberi okundu',     check:s=>(s.nightCareRead||false)},
   {id:'genetics_pro',   icon:'🧬', name:'Genetik Farkında',    desc:'Genetik ve kalıtım rehberi okundu',        check:s=>(s.geneticsRead||false)},
   {id:'holiday_pro',    icon:'🎪', name:'Festival Ebeveyn',    desc:'Tatil ve festival rehberi okundu',          check:s=>(s.holidayRead||false)},
+  {id:'screen_wise',    icon:'📱', name:'Ekran Bilgesi',       desc:'Ekran süresi yönetimi rehberi okundu',      check:s=>(s.screenTimeRead||false)},
+  {id:'pet_parent',     icon:'🐾', name:'Tüylü Dost Ebeveyni', desc:'Evcil hayvan ve bebek rehberi okundu',     check:s=>(s.petsRead||false)},
+  {id:'social_emot',    icon:'🧠', name:'Duygu Koçu',          desc:'Sosyal-duygusal gelişim rehberi okundu',   check:s=>(s.socialEmotRead||false)},
+  {id:'color_shape',    icon:'🌈', name:'Renk Ustası',         desc:'Renk ve şekil öğrenme rehberi okundu',    check:s=>(s.colorShapeRead||false)},
+  {id:'active_play',    icon:'🏃', name:'Hareket Kahramanı',   desc:'Aktif oyun ve motor gelişim rehberi okundu', check:s=>(s.activePlayRead||false)},
   {id:'challenge50',    icon:'🌟', name:'50 Kriz Ustası',     desc:'50 zorlu anı çözdün!',                   check:s=>(s.challengesSolved||0)>=50},
   {id:'full_2years',    icon:'🎊', name:'2 Yıl Tamamlandı!',  desc:'Bebeğin 24. aya ulaştı!',                check:s=>(s.ageMonths||0)>=24},
   {id:'ebeveyn_legend', icon:'👑', name:'Efsane Ebeveyn',     desc:'18.000+ GP toplandı!',                   check:s=>s.dp>=18000},
@@ -1996,6 +2015,15 @@ const S = {
   exerciseRead:false,
   matrscenceRead:false,
   homeEnvRead:false,
+  babyBudgetRead:false,
+  nightCareRead:false,
+  geneticsRead:false,
+  holidayRead:false,
+  screenTimeRead:false,
+  petsRead:false,
+  socialEmotRead:false,
+  colorShapeRead:false,
+  activePlayRead:false,
 };
 
 // ══════════════════════════════════════════════════════
@@ -3721,6 +3749,11 @@ function showAllGuides(){
     {ico:'🌙',name:'Gece Bakım Stratejisi',fn:'showNightCareGuide()'},
     {ico:'🧬',name:'Genetik & Kalıtım',fn:'showGeneticsGuide()'},
     {ico:'🎪',name:'Festival & Tatil Rehberi',fn:'showHolidayGuide()'},
+    {ico:'📱',name:'Ekran Süresi Yönetimi',fn:'showScreenTimeGuide()'},
+    {ico:'🐾',name:'Evcil Hayvan & Bebek',fn:'showPetsAndBabyGuide()'},
+    {ico:'🧠',name:'Sosyal-Duygusal Gelişim',fn:'showSocialEmotionalGuide()'},
+    {ico:'🌈',name:'Renk & Şekil Öğrenme',fn:'showColorShapeGuide()'},
+    {ico:'🏃',name:'Aktif Oyun & Motor Gelişim',fn:'showActivePlayGuide()'},
   ];
   const chips=guides.map(g=>`<button class="guide-chip" onclick="${g.fn};this.closest('.pop-ov').remove()">${g.ico}<br>${g.name}</button>`).join('');
   const h=`<div class="pop-ov" onclick="if(event.target===this)this.remove()">
@@ -6157,6 +6190,269 @@ function showHolidayGuide(){
     <div class="pop-sub">Bayram, yılbaşı, yaz tatili ve 1. doğum günü rehberi</div>
     <div style="max-height:55vh;overflow-y:auto;padding:4px 2px">${rows}</div>
     <button class="pop-btn" style="margin-top:12px" onclick="this.closest('.pop-ov').remove()">Tatile Hazırım!</button>
+  </div></div>`;
+  document.body.insertAdjacentHTML('beforeend',h);
+}
+
+// ══════════════════════════════════════════════════════
+// SCREEN TIME GUIDE
+// ══════════════════════════════════════════════════════
+function showScreenTimeGuide(){
+  S.screenTimeRead=true;checkAchievements();saveGame();
+  const rules=[
+    {age:'0-18 Ay',ico:'🚫',color:'#FCE4EC',border:'#E91E63',recs:[
+      'Video görüşmeleri hariç ekran önerilmez (WHO & AAP kılavuzu)',
+      'Arka plan TV bile dil gelişimini olumsuz etkiler',
+      'Ekran yerine: konuşma, şarkı, okuma, yüz ifadeleri',
+      'Ebeveyn ekranı bebekle aynı anda kullanılmamalı',
+    ]},
+    {age:'18-24 Ay',ico:'⚠️',color:'#FFF9C4',border:'#F9A825',recs:[
+      'Ebeveynle birlikte, kaliteli içerik izlenebilir',
+      'Çocuk için tasarlanmış içerikler seçin (PBS Kids, TRT Çocuk)',
+      'İzleneni açıklayın: "Bak, o kedi oyun oynuyor!"',
+      'Günde 30 dakikayı aşmayın',
+    ]},
+    {age:'2-5 Yaş',ico:'⏱️',color:'#E8F5E9',border:'#43A047',recs:[
+      'Günde en fazla 1 saat kaliteli ekran süresi',
+      'İçeriği ebeveynle birlikte izleme idealdir',
+      'Yemek, uyku saati, araba yolculuğunda ekran kısıtlayın',
+      'Pasif izleme yerine etkileşimli içerikler (sorular sor)',
+    ]},
+    {age:'Genel İpuçları',ico:'💡',color:'#E3F2FD',border:'#1E88E5',recs:[
+      'Ekrandan en az 1 saat önce kapat — melatonin korunması',
+      'Yatak odası ekransız zone olmalı',
+      'Ebeveyn modeli: bebeğe bakarken telefon bırak',
+      'Ekran kısıtlaması değil, bilinçli seçim — kalite fark yaratır',
+      'Aile sözleşmesi: herkes için kurallar (ebeveyn dahil!)',
+    ]},
+  ];
+  const rows=rules.map(r=>`
+    <div style="border:2px solid ${r.border};border-radius:10px;padding:10px;margin-bottom:8px;background:${r.color}">
+      <div style="font-weight:800;font-size:.84rem;margin-bottom:5px">${r.ico} ${r.age}</div>
+      <ul style="margin:0 0 0 16px;font-size:.75rem;color:#333">${r.recs.map(i=>`<li style="margin-bottom:2px">${i}</li>`).join('')}</ul>
+    </div>`).join('');
+  const h=`<div class="pop-ov" onclick="if(event.target===this)this.remove()">
+  <div class="pop-box" style="max-width:490px">
+    <div class="pop-rainbow"></div>
+    <span class="pop-ico">📱</span>
+    <div class="pop-title">Ekran Süresi Yönetimi</div>
+    <div class="pop-sub">WHO & AAP kılavuzlarına göre yaşa göre ekran süresi rehberi</div>
+    <div style="max-height:55vh;overflow-y:auto;padding:4px 2px">${rows}</div>
+    <button class="pop-btn" style="margin-top:12px" onclick="this.closest('.pop-ov').remove()">Ekranı Yönettim!</button>
+  </div></div>`;
+  document.body.insertAdjacentHTML('beforeend',h);
+}
+
+// ══════════════════════════════════════════════════════
+// PETS AND BABY GUIDE
+// ══════════════════════════════════════════════════════
+function showPetsAndBabyGuide(){
+  S.petsRead=true;checkAchievements();saveGame();
+  const sections=[
+    {ico:'🐶',name:'Köpek ile Bebek',color:'#E8F5E9',border:'#43A047',items:[
+      'Bebek gelmeden önce: köpeği bebek kokusuyla tanıştırın (bez, kıyafet)',
+      'İlk tanışma: köpek tasmalı, sakin ortamda, sizi görsün',
+      'Asla gözetimsiz bırakmayın — en uysal köpek bile sürpriz yapabilir',
+      'Köpek besleme/oyun zamanı bozulursa stres artar — rutini koru',
+      'Tırnak kesmek, düzenli banyo: hijyen için önemli',
+    ]},
+    {ico:'🐱',name:'Kedi ile Bebek',color:'#FCE4EC',border:'#E91E63',items:[
+      'Bebek beşiğine kedi girmesini önleyin (örtü veya kapı kafesi)',
+      'Toksoplazmoz: hamilelikte kum tepsisi değiştirme riski — başkası değiştirsin',
+      'Kedi tırmalaması: bebek elleri için risk — tırnakları kesin',
+      'Kedi alerjisi: ilk 1 yaşta temas bağışıklık geliştirilebilir (tartışmalı)',
+      'Kedi tüyleri: astım öyküsü varsa alerji testi önerilir',
+    ]},
+    {ico:'🛡️',name:'Güvenlik Önlemleri',color:'#E3F2FD',border:'#1E88E5',items:[
+      'Evcil hayvan yiyeceği ve kasesi bebeğin ulaşamayacağı yerde',
+      'Evcil hayvan oyuncakları: küçük parçalar boğulma riski',
+      'Kum tepsisi, dışkı: bebek erişimini kesinlikle engelleyin',
+      'Evcil hayvanın aşıları ve antiparazit tedavisi güncel olmalı',
+      'Bebek sürünmeye başlayınca evcil hayvan alanı yeniden düzenleyin',
+    ]},
+    {ico:'🌟',name:'Olumlu Yönler',color:'#FFF9C4',border:'#F9A825',items:[
+      'Evcil hayvanla büyüyen çocuklar alerjiye karşı daha dirençli olabilir',
+      'Sorumluluk ve empati gelişimi için evcil hayvan eşsiz öğretmen',
+      'Bebek ve evcil hayvan birlikte büyüdükçe güçlü bağ kurabilir',
+      'Köpekler bebeğin ağlamasına tepki vererek ebeveyne uyarı verebilir',
+      'Evcil hayvan stresi azaltır: ebeveyn ruh sağlığı için de faydalı',
+    ]},
+  ];
+  const rows=sections.map(s=>`
+    <div style="border:2px solid ${s.border};border-radius:10px;padding:10px;margin-bottom:8px;background:${s.color}">
+      <div style="font-weight:800;font-size:.84rem;margin-bottom:5px">${s.ico} ${s.name}</div>
+      <ul style="margin:0 0 0 16px;font-size:.75rem;color:#333">${s.items.map(i=>`<li style="margin-bottom:2px">${i}</li>`).join('')}</ul>
+    </div>`).join('');
+  const h=`<div class="pop-ov" onclick="if(event.target===this)this.remove()">
+  <div class="pop-box" style="max-width:490px">
+    <div class="pop-rainbow"></div>
+    <span class="pop-ico">🐾</span>
+    <div class="pop-title">Evcil Hayvan & Bebek Rehberi</div>
+    <div class="pop-sub">Tüylü dostlar ve bebekler — güvenli, sevgi dolu bir arada yaşam</div>
+    <div style="max-height:55vh;overflow-y:auto;padding:4px 2px">${rows}</div>
+    <button class="pop-btn" style="margin-top:12px" onclick="this.closest('.pop-ov').remove()">Tüylü Dostumla Hazırız!</button>
+  </div></div>`;
+  document.body.insertAdjacentHTML('beforeend',h);
+}
+
+// ══════════════════════════════════════════════════════
+// SOCIAL-EMOTIONAL DEVELOPMENT GUIDE
+// ══════════════════════════════════════════════════════
+function showSocialEmotionalGuide(){
+  S.socialEmotRead=true;checkAchievements();saveGame();
+  const stages=[
+    {age:'0-3 Ay',ico:'😊',color:'#FFF9C4',border:'#F9A825',skills:[
+      'Sosyal gülümseme (6. haftada başlar) — karşılıklı etkileşimin temeli',
+      'Bakım veren yüzüne tercihli ilgi — bağlanmanın başlangıcı',
+      'Ağlama: tek iletişim aracı — her ağlamaya yanıt bağlanmayı güçlendirir',
+      'Ses tanıma: annenin sesine dönme (doğumdan itibaren)',
+    ]},
+    {age:'3-6 Ay',ico:'😄',color:'#E8F5E9',border:'#43A047',skills:[
+      'Sesli gülme ve kıkırdama — sosyal oyunun başlangıcı',
+      'Yabancı tanıma başlar — güvenli figür ayrımı',
+      'Neden-sonuç keşfi: ağlayınca biri geliyor!',
+      'Duygusal yansıma: ebeveynin ifadesini taklit etme',
+    ]},
+    {age:'6-12 Ay',ico:'😨',color:'#E3F2FD',border:'#1E88E5',skills:[
+      'Yabancı kaygısı (7-8. ay) — sağlıklı bağlanma işareti',
+      'Ayrılık kaygısı — ebeveyn gittiğinde ağlama normaldir',
+      'Ortak dikkat: birlikte aynı şeye bakmak (9+ ay)',
+      'Sosyal referanslama: tehlikeli mi? diye ebeveyne bakma',
+    ]},
+    {age:'12-24 Ay',ico:'😤',color:'#FCE4EC',border:'#E91E63',skills:[
+      'Öz tanıma: aynada kendini tanıma (18+ ay)',
+      'Empati tohumları: başkası ağlayınca teselli etme isteği',
+      'Duygusal patlama (tantrum): prefrontal korteks henüz olgunlaşmamış',
+      'Hayır deme: özerklik gelişiminin sağlıklı işareti',
+      'Paralel oyun: yan yana, birlikte değil — normal sosyal gelişim',
+    ]},
+    {age:'Ebeveyn Destekleri',ico:'💜',color:'#F3E5F5',border:'#AB47BC',skills:[
+      'Duygu isimlendirme: "Üzüldün çünkü oyuncağın düştü"',
+      'Duyguları onaylayın, davranışı sınırlayın',
+      'Tutarlı rutin: güvenlik hissi duygusal düzenlemeyi kolaylaştırır',
+      'Kendinizin duygusal düzenlenmesi: bebek sizi düzenler, siz onu',
+    ]},
+  ];
+  const rows=stages.map(s=>`
+    <div style="border:2px solid ${s.border};border-radius:10px;padding:10px;margin-bottom:8px;background:${s.color}">
+      <div style="font-weight:800;font-size:.84rem;margin-bottom:5px">${s.ico} ${s.age}</div>
+      <ul style="margin:0 0 0 16px;font-size:.75rem;color:#333">${s.skills.map(i=>`<li style="margin-bottom:2px">${i}</li>`).join('')}</ul>
+    </div>`).join('');
+  const h=`<div class="pop-ov" onclick="if(event.target===this)this.remove()">
+  <div class="pop-box" style="max-width:490px">
+    <div class="pop-rainbow"></div>
+    <span class="pop-ico">🧠</span>
+    <div class="pop-title">Sosyal-Duygusal Gelişim</div>
+    <div class="pop-sub">Gülümsemeden empatiye — bebeğin duygusal dünyası</div>
+    <div style="max-height:55vh;overflow-y:auto;padding:4px 2px">${rows}</div>
+    <button class="pop-btn" style="margin-top:12px" onclick="this.closest('.pop-ov').remove()">Duygu Koçuyum!</button>
+  </div></div>`;
+  document.body.insertAdjacentHTML('beforeend',h);
+}
+
+// ══════════════════════════════════════════════════════
+// COLOR & SHAPE LEARNING GUIDE
+// ══════════════════════════════════════════════════════
+function showColorShapeGuide(){
+  S.colorShapeRead=true;checkAchievements();saveGame();
+  const activities=[
+    {ico:'🔴',name:'Renkler (6-18 Ay)',color:'#FCE4EC',border:'#E91E63',items:[
+      '6. ayda parlak kontrast renkler ilgiyi çeker (kırmızı-siyah-beyaz)',
+      'Renk isimlerini her gün kullanın: "Kırmızı çilek, sarı muz!"',
+      '12 ayda renk tercihleri oluşmaya başlar',
+      'Renkli kitaplar, bloklar, oyun hamuru en iyi araçlardır',
+      'Renk öğrenimi 2-3 yaşta pekişir — 1 yaşta bilmemesi normal',
+    ]},
+    {ico:'🔷',name:'Şekiller (9-24 Ay)',color:'#E3F2FD',border:'#1E88E5',items:[
+      '9-12 ay: şekil ayrımı başlar (daire vs. kare)',
+      'Şekil kutuları (shape sorter) 12+ ay için idealdir',
+      'Günlük hayatta şekil isimlendirin: "Kapı dikdörtgen, tabak yuvarlak"',
+      '18 ay: basit şekilleri eşleştirme',
+      '24 ay: daire, kare, üçgeni adlandırabilme',
+    ]},
+    {ico:'🎨',name:'Öğretme Aktiviteleri',color:'#E8F5E9',border:'#43A047',items:[
+      'Renk avı: "Evde sarı olan 5 şey bul!"',
+      'Renk günü: o renk kıyafet, o renk meyve',
+      'Şekil pasta: hamurdan şekil kesme',
+      'Doğada şekil bul: yapraklar, taşlar, çiçekler',
+      'Boyama: parmak boyası ile serbest renk keşfi',
+    ]},
+    {ico:'📚',name:'Kitap Önerileri',color:'#FFF9C4',border:'#F9A825',items:[
+      '"Mouse Paint" — renk karışımı konsepti',
+      '"Chicka Chicka Boom Boom" — renk, harf eğlencesi',
+      'TRT Çocuk renk şarkıları — tekrar ile öğrenme',
+      'Maket karton kitaplar: dayanıklı, renkli illüstrasyonlar',
+      'Ebeveyn yapımı renk kitabı: dergi görselleri keserek',
+    ]},
+  ];
+  const rows=activities.map(a=>`
+    <div style="border:2px solid ${a.border};border-radius:10px;padding:10px;margin-bottom:8px;background:${a.color}">
+      <div style="font-weight:800;font-size:.84rem;margin-bottom:5px">${a.ico} ${a.name}</div>
+      <ul style="margin:0 0 0 16px;font-size:.75rem;color:#333">${a.items.map(i=>`<li style="margin-bottom:2px">${i}</li>`).join('')}</ul>
+    </div>`).join('');
+  const h=`<div class="pop-ov" onclick="if(event.target===this)this.remove()">
+  <div class="pop-box" style="max-width:490px">
+    <div class="pop-rainbow"></div>
+    <span class="pop-ico">🌈</span>
+    <div class="pop-title">Renk & Şekil Öğrenme Rehberi</div>
+    <div class="pop-sub">Gökkuşağı dünyayı keşfeden küçük gözler için</div>
+    <div style="max-height:55vh;overflow-y:auto;padding:4px 2px">${rows}</div>
+    <button class="pop-btn" style="margin-top:12px" onclick="this.closest('.pop-ov').remove()">Renkleri Keşfettik!</button>
+  </div></div>`;
+  document.body.insertAdjacentHTML('beforeend',h);
+}
+
+// ══════════════════════════════════════════════════════
+// ACTIVE PLAY & MOTOR DEVELOPMENT GUIDE
+// ══════════════════════════════════════════════════════
+function showActivePlayGuide(){
+  S.activePlayRead=true;checkAchievements();saveGame();
+  const phases=[
+    {age:'0-3 Ay: Kaba Motor',ico:'💪',color:'#E8F5E9',border:'#43A047',items:[
+      'Tummy Time: günde 3-5 kez, 3-5 dakika — boyun ve sırt kasları',
+      'Yüzüstü pozisyonda baş kaldırma (1. aydan itibaren)',
+      'Kollar ve bacaklar serbestçe hareket edebilmeli',
+      'Sallanma, taşınma: vestibüler sistem gelişimi',
+    ]},
+    {age:'3-6 Ay: Ulaşma & Tutma',ico:'🤲',color:'#E3F2FD',border:'#1E88E5',items:[
+      'Oyuncağa uzanma ve kavrama (3. ayda başlar)',
+      'Destekli oturma denemesi',
+      'Yuvarlanma (4-6 ay arası)',
+      'Ayaklarını keşfetme — eller ve ayaklar ağza gider',
+    ]},
+    {age:'6-9 Ay: Oturma & Emekleme',ico:'🧸',color:'#FFF9C4',border:'#F9A825',items:[
+      'Desteksiz oturma (6-8 ay)',
+      'Emekleme hazırlığı: dört ayak üstünde sallanma',
+      'Nesneleri elden ele geçirme',
+      'Pinset tutuş başlangıcı (8-9 ay)',
+    ]},
+    {age:'9-12 Ay: Yürüme Hazırlığı',ico:'🚶',color:'#FCE4EC',border:'#E91E63',items:[
+      'Tutunarak ayağa kalkma',
+      'Mobilyaları tutarak yürüme (cruising)',
+      'Destekle birkaç adım atma',
+      'Top yakalama ve atma denemeleri',
+    ]},
+    {age:'12-24 Ay: Aktif Keşif',ico:'🏃',color:'#F3E5F5',border:'#AB47BC',items:[
+      'Bağımsız yürüme ve koşma',
+      'Merdiven çıkma (tırmanarak, sonra ayakta)',
+      'Top tepme (18+ ay)',
+      'Dans etme ve ritme uyum',
+      'İnce motor: kaşık tutma, kapaklı kapları açma-kapama',
+    ]},
+  ];
+  const rows=phases.map(p=>`
+    <div style="border:2px solid ${p.border};border-radius:10px;padding:10px;margin-bottom:8px;background:${p.color}">
+      <div style="font-weight:800;font-size:.84rem;margin-bottom:5px">${p.ico} ${p.age}</div>
+      <ul style="margin:0 0 0 16px;font-size:.75rem;color:#333">${p.items.map(i=>`<li style="margin-bottom:2px">${i}</li>`).join('')}</ul>
+    </div>`).join('');
+  const h=`<div class="pop-ov" onclick="if(event.target===this)this.remove()">
+  <div class="pop-box" style="max-width:490px">
+    <div class="pop-rainbow"></div>
+    <span class="pop-ico">🏃</span>
+    <div class="pop-title">Aktif Oyun & Motor Gelişim</div>
+    <div class="pop-sub">Kaba ve ince motor beceriler — hareketle büyüme rehberi</div>
+    <div style="max-height:55vh;overflow-y:auto;padding:4px 2px">${rows}</div>
+    <button class="pop-btn" style="margin-top:12px" onclick="this.closest('.pop-ov').remove()">Hareket Ettik!</button>
   </div></div>`;
   document.body.insertAdjacentHTML('beforeend',h);
 }
