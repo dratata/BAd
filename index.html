@@ -1459,6 +1459,9 @@ function saveGame(){
     swimRead:S.swimRead||false, coldCareRead:S.coldCareRead||false,
     digestionRead:S.digestionRead||false, sensesDevRead:S.sensesDevRead||false,
     memoryKeepRead:S.memoryKeepRead||false,
+    autismRead:S.autismRead||false, tantrumRead:S.tantrumRead||false,
+    pickyEatRead:S.pickyEatRead||false, thumbPacifierRead:S.thumbPacifierRead||false,
+    nightFearsRead:S.nightFearsRead||false,
     savedAt:Date.now(),
   };
   try { localStorage.setItem(SAVE_KEY, JSON.stringify(data)); } catch(e){}
@@ -1598,6 +1601,11 @@ function applySaveData(d){
   S.digestionRead = d.digestionRead||false;
   S.sensesDevRead = d.sensesDevRead||false;
   S.memoryKeepRead = d.memoryKeepRead||false;
+  S.autismRead = d.autismRead||false;
+  S.tantrumRead = d.tantrumRead||false;
+  S.pickyEatRead = d.pickyEatRead||false;
+  S.thumbPacifierRead = d.thumbPacifierRead||false;
+  S.nightFearsRead = d.nightFearsRead||false;
   S.started = true;
 }
 
@@ -1810,6 +1818,11 @@ const ACHIEVEMENTS = [
   {id:'digestion_pro',  icon:'💩', name:'Sindirim Dostu',       desc:'Sindirim ve kabızlık rehberi okundu',       check:s=>(s.digestionRead||false)},
   {id:'senses_pro',     icon:'👁️', name:'Duyu Gözlemcisi',      desc:'Görme ve işitme gelişimi rehberi okundu',   check:s=>(s.sensesDevRead||false)},
   {id:'memory_pro',     icon:'📷', name:'Anı Bekçisi',          desc:'Anı saklama rehberi okundu',                check:s=>(s.memoryKeepRead||false)},
+  {id:'autism_aware',   icon:'🧩', name:'Erken Farkındalık',    desc:'Otizm ve erken belirtiler rehberi okundu',  check:s=>(s.autismRead||false)},
+  {id:'tantrum_pro',    icon:'😤', name:'Sakinlik Ustası',      desc:'Öfke nöbetleri rehberi okundu',             check:s=>(s.tantrumRead||false)},
+  {id:'picky_pro',      icon:'🍽️', name:'Yemek Diplomatı',      desc:'Seçici yeme rehberi okundu',                check:s=>(s.pickyEatRead||false)},
+  {id:'thumb_pro',      icon:'🤏', name:'Alışkanlık Koçu',      desc:'Parmak emme ve emzik rehberi okundu',       check:s=>(s.thumbPacifierRead||false)},
+  {id:'nightfear_pro',  icon:'🌙', name:'Gece Bekçisi',         desc:'Gece korkuları rehberi okundu',             check:s=>(s.nightFearsRead||false)},
   {id:'challenge50',    icon:'🌟', name:'50 Kriz Ustası',     desc:'50 zorlu anı çözdün!',                   check:s=>(s.challengesSolved||0)>=50},
   {id:'full_2years',    icon:'🎊', name:'2 Yıl Tamamlandı!',  desc:'Bebeğin 24. aya ulaştı!',                check:s=>(s.ageMonths||0)>=24},
   {id:'ebeveyn_legend', icon:'👑', name:'Efsane Ebeveyn',     desc:'18.000+ GP toplandı!',                   check:s=>s.dp>=18000},
@@ -2060,6 +2073,11 @@ const S = {
   digestionRead:false,
   sensesDevRead:false,
   memoryKeepRead:false,
+  autismRead:false,
+  tantrumRead:false,
+  pickyEatRead:false,
+  thumbPacifierRead:false,
+  nightFearsRead:false,
 };
 
 // ══════════════════════════════════════════════════════
@@ -3800,6 +3818,11 @@ function showAllGuides(){
     {ico:'💩',name:'Sindirim & Kabızlık',fn:'showDigestionGuide()'},
     {ico:'👁️',name:'Görme & İşitme Gelişimi',fn:'showSensesDevGuide()'},
     {ico:'📷',name:'Anı Saklama & Hafıza Kutusu',fn:'showMemoryKeepingGuide()'},
+    {ico:'🧩',name:'Otizm & Erken Belirtiler',fn:'showAutismAwarenessGuide()'},
+    {ico:'😤',name:'Öfke Nöbetleri Yönetimi',fn:'showTantrumGuide()'},
+    {ico:'🍽️',name:'Seçici Yeme & İştahsızlık',fn:'showPickyEatingGuide()'},
+    {ico:'🤏',name:'Parmak Emme & Emzik Bırakma',fn:'showThumbPacifierGuide()'},
+    {ico:'🌙',name:'Gece Korkuları & Kabuslar',fn:'showNightFearsGuide()'},
   ];
   const chips=guides.map(g=>`<button class="guide-chip" onclick="${g.fn};this.closest('.pop-ov').remove()">${g.ico}<br>${g.name}</button>`).join('');
   const h=`<div class="pop-ov" onclick="if(event.target===this)this.remove()">
@@ -7089,6 +7112,302 @@ function showMemoryKeepingGuide(){
     <div class="pop-sub">Hızla geçen bebeklik anılarını ölümsüzleştirme rehberi</div>
     <div style="max-height:55vh;overflow-y:auto;padding:4px 2px">${rows}</div>
     <button class="pop-btn" style="margin-top:12px" onclick="this.closest('.pop-ov').remove()">Anıları Sakladım!</button>
+  </div></div>`;
+  document.body.insertAdjacentHTML('beforeend',h);
+}
+
+// ══════════════════════════════════════════════════════
+// AUTISM AWARENESS & EARLY SIGNS GUIDE
+// ══════════════════════════════════════════════════════
+function showAutismAwarenessGuide(){
+  S.autismRead=true;checkAchievements();saveGame();
+  const sections=[
+    {ico:'ℹ️',name:'Önce Bilinmesi Gerekenler',color:'#E3F2FD',border:'#1E88E5',items:[
+      'Bu rehber tanı koymaz — yalnızca farkındalık içindir',
+      'Her bebek kendi hızında gelişir, tek bir işaret endişe sebebi değil',
+      'Erken fark etme ve erken müdahale gelişimi olumlu etkiler',
+      'Şüphede tereddüt etmeyin: pediatriste/gelişim uzmanına danışın',
+      'Otizm bir hastalık değil, farklı bir gelişim ve algı biçimidir',
+    ]},
+    {ico:'👀',name:'Sosyal İletişim İşaretleri',color:'#FFF9C4',border:'#F9A825',items:[
+      'Göz teması kurmama veya çok az kurma (6+ ay)',
+      'İsmine tutarlı tepki vermeme (9-12 ay)',
+      'Sosyal gülümseme eksikliği (6 ay sonrası)',
+      'Ortak dikkat yokluğu: parmakla gösterip bakmama (12+ ay)',
+      'Yüz ifadelerini taklit etmeme, jest kullanmama',
+    ]},
+    {ico:'🔁',name:'Davranışsal İşaretler',color:'#FCE4EC',border:'#E91E63',items:[
+      'Tekrarlayan hareketler: el çırpma, sallanma (sürekli)',
+      'Nesneleri sıralama, döndürme takıntısı',
+      'Rutin değişikliğine aşırı tepki',
+      'Belirli ses, doku veya ışığa olağan dışı hassasiyet/ilgisizlik',
+      'Oyuncakla amaçlı oyun yerine parçalarına odaklanma',
+    ]},
+    {ico:'🗣️',name:'Dil & Gerileme',color:'#E8F5E9',border:'#43A047',items:[
+      'Agulama/babıldamanın olmaması (12 ay)',
+      '16 ayda tek kelime, 24 ayda iki kelimelik öbek olmaması',
+      'Kazanılmış becerilerin (kelime, göz teması) kaybı = ÖNEMLİ uyarı',
+      'Echolalia: duyduğunu anlamsız tekrarlama',
+      'İşaret etme, el sallama gibi iletişim jestlerinin gelişmemesi',
+    ]},
+    {ico:'💚',name:'Ne Yapmalı?',color:'#F3E5F5',border:'#AB47BC',items:[
+      'M-CHAT gibi tarama testleri 18-24. ayda pediatristçe uygulanır',
+      'Endişe varsa beklemeyin — "büyüyünce geçer" demeyin',
+      'Erken müdahale (özel eğitim, terapi) en etkili dönem 0-3 yaş',
+      'Bebeğinizle çok konuşun, oyun oynayın, göz teması teşvik edin',
+      'Tanı bir etiket değil, doğru desteğe açılan kapıdır',
+    ]},
+  ];
+  const rows=sections.map(s=>`
+    <div style="border:2px solid ${s.border};border-radius:10px;padding:10px;margin-bottom:8px;background:${s.color}">
+      <div style="font-weight:800;font-size:.84rem;margin-bottom:5px">${s.ico} ${s.name}</div>
+      <ul style="margin:0 0 0 16px;font-size:.75rem;color:#333">${s.items.map(i=>`<li style="margin-bottom:2px">${i}</li>`).join('')}</ul>
+    </div>`).join('');
+  const h=`<div class="pop-ov" onclick="if(event.target===this)this.remove()">
+  <div class="pop-box" style="max-width:490px">
+    <div class="pop-rainbow"></div>
+    <span class="pop-ico">🧩</span>
+    <div class="pop-title">Otizm & Erken Belirtiler</div>
+    <div class="pop-sub">Farkındalık rehberi — erken fark etme, erken destek</div>
+    <div style="max-height:55vh;overflow-y:auto;padding:4px 2px">${rows}</div>
+    <div style="font-size:.68rem;color:#888;margin-top:8px;text-align:center;font-style:italic">⚕️ Bu içerik tıbbi tanı yerine geçmez. Endişe halinde uzmana başvurun.</div>
+    <button class="pop-btn" style="margin-top:10px" onclick="this.closest('.pop-ov').remove()">Farkındayım!</button>
+  </div></div>`;
+  document.body.insertAdjacentHTML('beforeend',h);
+}
+
+// ══════════════════════════════════════════════════════
+// TANTRUM MANAGEMENT GUIDE
+// ══════════════════════════════════════════════════════
+function showTantrumGuide(){
+  S.tantrumRead=true;checkAchievements();saveGame();
+  const sections=[
+    {ico:'🧠',name:'Öfke Nöbeti Neden Olur?',color:'#E3F2FD',border:'#1E88E5',items:[
+      'Beyin gelişimi: prefrontal korteks (öz-kontrol) henüz olgunlaşmamış',
+      'Dil yetersizliği: hissini ifade edemeyince patlama gelir',
+      'Yorgunluk, açlık, aşırı uyarım en büyük tetikleyiciler',
+      '1-3 yaş arası tamamen normal bir gelişim aşaması',
+      'Tantrum manipülasyon değil — gerçek bir duygusal taşma',
+    ]},
+    {ico:'🛡️',name:'Kriz Anında Yapılması',color:'#E8F5E9',border:'#43A047',items:[
+      'Sakin kalın: siz ne kadar sakinseniz çocuk o kadar çabuk yatışır',
+      'Güvenliği sağlayın: kendine/başkasına zarar vermesini önleyin',
+      'Duyguyu onaylayın: "Çok kızgınsın, anlıyorum"',
+      'Tartışmayın, mantık yürütmeyin — kriz anında beyin dinlemez',
+      'Yanında kalın: terk etmek korkuyu artırır, sessizce eşlik edin',
+    ]},
+    {ico:'⛔',name:'Yapılmaması Gerekenler',color:'#FFEBEE',border:'#E53935',items:[
+      'Bağırmak, fiziksel ceza: korku yaratır, davranışı kötüleştirir',
+      'İstediğini vererek susturma: tantrumu pekiştirir',
+      'Alay etme, küçümseme: "koca bebek" gibi sözler',
+      'Kendi öfkenizle karşılık verme: yangına benzin',
+      'Utandırma/kalabalıkta azarlama: özgüveni zedeler',
+    ]},
+    {ico:'🌱',name:'Önleme Stratejileri',color:'#FFF9C4',border:'#F9A825',items:[
+      'Aç ve yorgunken zorlu durumlardan kaçının (market, ziyaret)',
+      'Geçişleri önceden haber verin: "5 dakika sonra çıkıyoruz"',
+      'Seçenek sunun: "Mavi mi kırmızı bardak?" kontrol hissi verir',
+      'Rutini koruyun: öngörülebilirlik güvenlik sağlar',
+      'Olumlu davranışı fark edip övün',
+    ]},
+    {ico:'💗',name:'Kriz Sonrası',color:'#F3E5F5',border:'#AB47BC',items:[
+      'Sakinleşince sarılın: "Bittti, yanındayım" güven verir',
+      'Duyguyu isimlendirin: "Oyuncak gidince çok üzüldün"',
+      'Kısa konuşun: uzun ahlak dersi vermeyin',
+      'Kendinizi de affedin: her ebeveyn zorlanır, mükemmellik gerekmez',
+      'Sık, şiddetli, 4 yaş sonrası süren nöbetler için uzmana danışın',
+    ]},
+  ];
+  const rows=sections.map(s=>`
+    <div style="border:2px solid ${s.border};border-radius:10px;padding:10px;margin-bottom:8px;background:${s.color}">
+      <div style="font-weight:800;font-size:.84rem;margin-bottom:5px">${s.ico} ${s.name}</div>
+      <ul style="margin:0 0 0 16px;font-size:.75rem;color:#333">${s.items.map(i=>`<li style="margin-bottom:2px">${i}</li>`).join('')}</ul>
+    </div>`).join('');
+  const h=`<div class="pop-ov" onclick="if(event.target===this)this.remove()">
+  <div class="pop-box" style="max-width:490px">
+    <div class="pop-rainbow"></div>
+    <span class="pop-ico">😤</span>
+    <div class="pop-title">Öfke Nöbetleri Yönetimi</div>
+    <div class="pop-sub">Tantrum krizlerini sakinlikle yönetmenin yol haritası</div>
+    <div style="max-height:55vh;overflow-y:auto;padding:4px 2px">${rows}</div>
+    <button class="pop-btn" style="margin-top:12px" onclick="this.closest('.pop-ov').remove()">Sakin Kaldım!</button>
+  </div></div>`;
+  document.body.insertAdjacentHTML('beforeend',h);
+}
+
+// ══════════════════════════════════════════════════════
+// PICKY EATING GUIDE
+// ══════════════════════════════════════════════════════
+function showPickyEatingGuide(){
+  S.pickyEatRead=true;checkAchievements();saveGame();
+  const sections=[
+    {ico:'🧒',name:'Neden Seçici Yer?',color:'#E3F2FD',border:'#1E88E5',items:[
+      'Neofobi (yeni yiyecek korkusu) 1-3 yaşta doğal bir aşamadır',
+      'Bağımsızlık ilanı: "hayır" demek kontrol hissi verir',
+      'Tat tomurcukları gelişiyor: bazı tatlar geçici olarak yoğun gelir',
+      'Büyüme yavaşlar: 1 yaştan sonra iştah doğal olarak azalır',
+      'Çoğu seçici yeme dönemi geçicidir — sabır anahtardır',
+    ]},
+    {ico:'✅',name:'İşe Yarayan Yaklaşımlar',color:'#E8F5E9',border:'#43A047',items:[
+      'Tekrar tekrar sunun: bir yiyecek 10-15 kez denenmeli olabilir',
+      'Baskı yapmayın: zorlama yemek reddini güçlendirir',
+      'Örnek olun: çocuk sizin yediğinizi yemeye daha meyilli',
+      'Birlikte yemek yapın: hazırlamaya katılan çocuk daha çok dener',
+      'Bölünmüş tabak: az miktar, tanıdık + yeni yiyecek bir arada',
+    ]},
+    {ico:'⛔',name:'Kaçınılması Gerekenler',color:'#FFEBEE',border:'#E53935',items:[
+      'Yemek savaşı: sofrayı çatışma alanına çevirmeyin',
+      'Rüşvet/tatlı pazarlığı: "bitirirsen dondurma" sağlıksız ilişki kurar',
+      'Zorla yedirme: yemekle ilgili olumsuz anı yaratır',
+      'Atıştırmalık serbestliği: öğün öncesi abur cubur iştahı kapatır',
+      'Ekran karşısında yedirme: doygunluk hissini bozar',
+    ]},
+    {ico:'🍓',name:'Pratik Taktikler',color:'#FFF9C4',border:'#F9A825',items:[
+      'Renkli ve eğlenceli sunum: yüz şekli, sebze kalıpları',
+      'Dipping sos: yoğurt/humus daldırma yemeyi eğlenceli kılar',
+      'Smoothie: sevmediği sebze/meyveleri içeceğe gizleyin',
+      'Düzenli öğün saatleri: aç gelen çocuk daha çok dener',
+      'Su veya süt: öğün arası şekerli içecek yerine',
+    ]},
+    {ico:'🚨',name:'Ne Zaman Endişelenmeli?',color:'#F3E5F5',border:'#AB47BC',items:[
+      'Kilo kaybı veya büyüme eğrisinde düşüş',
+      'Çok dar besin grubu (4-5 yiyecekle sınırlı) ve gittikçe daralan',
+      'Yutma güçlüğü, öğürme, belirli dokulara aşırı tepki',
+      'Halsizlik, solukluk (demir eksikliği belirtisi)',
+      'Endişe varsa pediatrist veya beslenme uzmanına danışın',
+    ]},
+  ];
+  const rows=sections.map(s=>`
+    <div style="border:2px solid ${s.border};border-radius:10px;padding:10px;margin-bottom:8px;background:${s.color}">
+      <div style="font-weight:800;font-size:.84rem;margin-bottom:5px">${s.ico} ${s.name}</div>
+      <ul style="margin:0 0 0 16px;font-size:.75rem;color:#333">${s.items.map(i=>`<li style="margin-bottom:2px">${i}</li>`).join('')}</ul>
+    </div>`).join('');
+  const h=`<div class="pop-ov" onclick="if(event.target===this)this.remove()">
+  <div class="pop-box" style="max-width:490px">
+    <div class="pop-rainbow"></div>
+    <span class="pop-ico">🍽️</span>
+    <div class="pop-title">Seçici Yeme & İştahsızlık</div>
+    <div class="pop-sub">Yemek savaşı olmadan sağlıklı beslenme alışkanlığı</div>
+    <div style="max-height:55vh;overflow-y:auto;padding:4px 2px">${rows}</div>
+    <button class="pop-btn" style="margin-top:12px" onclick="this.closest('.pop-ov').remove()">Sabırla Deneyeceğim!</button>
+  </div></div>`;
+  document.body.insertAdjacentHTML('beforeend',h);
+}
+
+// ══════════════════════════════════════════════════════
+// THUMB SUCKING & PACIFIER WEANING GUIDE
+// ══════════════════════════════════════════════════════
+function showThumbPacifierGuide(){
+  S.thumbPacifierRead=true;checkAchievements();saveGame();
+  const sections=[
+    {ico:'👶',name:'Neden Emer?',color:'#E3F2FD',border:'#1E88E5',items:[
+      'Emme refleksi doğuştandır — rahatlama ve kendini yatıştırma yolu',
+      'Anne karnında bile parmak emme görülür, tamamen doğaldır',
+      'Stres, yorgunluk, sıkılma anlarında öz-sakinleşme aracı',
+      'Bebeklik döneminde endişe gerektirmez',
+      'Emzik ve parmak emme bebeği rahatlatır, uykuya yardımcı olur',
+    ]},
+    {ico:'⚖️',name:'Emzik vs. Parmak',color:'#FFF9C4',border:'#F9A825',items:[
+      'Emzik avantajı: SIDS riskini azaltabilir (uyku için önerilir)',
+      'Emzik avantajı: bırakması parmaktan daha kolay (atılabilir)',
+      'Parmak her zaman ulaşılabilir — kontrolü daha zordur',
+      'Her ikisi de uzun sürerse diş/damak gelişimini etkileyebilir',
+      'Emzik kullanımı emzirme oturana kadar (3-4 hafta) ertelenebilir',
+    ]},
+    {ico:'📅',name:'Ne Zaman Bırakılmalı?',color:'#E8F5E9',border:'#43A047',items:[
+      'Emzik: ideal olarak 1 yaş civarı azaltma, 2-3 yaşa kadar bırakma',
+      'Parmak emme: çoğu çocuk 2-4 yaşta kendiliğinden bırakır',
+      'Kalıcı dişler çıkmadan (5-6 yaş) bırakmak diş sorunlarını önler',
+      'Acele etmeyin ama 4 yaş sonrası devam ederse müdahale edin',
+      'Stresli dönemde (kardeş doğumu, kreş) bırakmayı ertelemeyin',
+    ]},
+    {ico:'🌟',name:'Nazik Bırakma Yöntemleri',color:'#FCE4EC',border:'#E91E63',items:[
+      'Kademeli azaltma: önce sadece uyku saatiyle sınırlayın',
+      'Pozitif pekiştirme: ödül çizelgesi, övgü (ceza değil)',
+      '"Emzik perisi" hikayesi: emzikleri hediye olarak "verme" ritüeli',
+      'Alternatif rahatlatıcı: sevilen oyuncak, battaniye',
+      'Tetikleyicileri azaltın: sıkılma/stres anında dikkat dağıtın',
+    ]},
+    {ico:'⛔',name:'Yapılmaması Gerekenler',color:'#F3E5F5',border:'#AB47BC',items:[
+      'Parmağa acı/biber sürme: travmatik ve etkisiz',
+      'Utandırma, azarlama: kaygıyı artırır, emmeyi pekiştirir',
+      'Zorla/aniden çekip alma: güvenlik hissini sarsar',
+      'Birden çok stresli değişikliği aynı anda yapma',
+      'Aşırı baskı: gerginlik emme ihtiyacını artırır',
+    ]},
+  ];
+  const rows=sections.map(s=>`
+    <div style="border:2px solid ${s.border};border-radius:10px;padding:10px;margin-bottom:8px;background:${s.color}">
+      <div style="font-weight:800;font-size:.84rem;margin-bottom:5px">${s.ico} ${s.name}</div>
+      <ul style="margin:0 0 0 16px;font-size:.75rem;color:#333">${s.items.map(i=>`<li style="margin-bottom:2px">${i}</li>`).join('')}</ul>
+    </div>`).join('');
+  const h=`<div class="pop-ov" onclick="if(event.target===this)this.remove()">
+  <div class="pop-box" style="max-width:490px">
+    <div class="pop-rainbow"></div>
+    <span class="pop-ico">🤏</span>
+    <div class="pop-title">Parmak Emme & Emzik Bırakma</div>
+    <div class="pop-sub">Doğru zamanlama ve nazik bırakma yöntemleri</div>
+    <div style="max-height:55vh;overflow-y:auto;padding:4px 2px">${rows}</div>
+    <button class="pop-btn" style="margin-top:12px" onclick="this.closest('.pop-ov').remove()">Nazikçe Yöneteceğim!</button>
+  </div></div>`;
+  document.body.insertAdjacentHTML('beforeend',h);
+}
+
+// ══════════════════════════════════════════════════════
+// NIGHT FEARS & NIGHTMARES GUIDE
+// ══════════════════════════════════════════════════════
+function showNightFearsGuide(){
+  S.nightFearsRead=true;checkAchievements();saveGame();
+  const sections=[
+    {ico:'🌙',name:'Kabus vs. Gece Terörü',color:'#E3F2FD',border:'#1E88E5',items:[
+      'Kabus: gecenin ikinci yarısında, çocuk uyanır ve hatırlar',
+      'Gece terörü: gecenin ilk yarısında, çocuk uyanmaz, hatırlamaz',
+      'Gece terörü sırasında çocuk çığlık atar ama derin uykudadır',
+      'Kabuslar 2-3 yaştan itibaren hayal gücüyle birlikte artar',
+      'İkisi de gelişimsel olarak normaldir, genelde geçicidir',
+    ]},
+    {ico:'😱',name:'Kabus Sonrası Ne Yapmalı?',color:'#E8F5E9',border:'#43A047',items:[
+      'Hemen yanına gidin, sakin ve güven verici olun',
+      'Gerçek olmadığını nazikçe açıklayın, korkuyu küçümsemeyin',
+      'Sevilen oyuncak/battaniye ile güvenlik hissi verin',
+      'Odada kısa süre kalın ama yeni bir uyku ortamı yaratmayın',
+      'Sabah konuşun: korkuyu gündüz işlemek kabusları azaltır',
+    ]},
+    {ico:'🛌',name:'Gece Terörü Sırasında',color:'#FFF9C4',border:'#F9A825',items:[
+      'UYANDIRMAYIN: uyandırmak durumu kötüleştirir, kafa karıştırır',
+      'Güvenliğini sağlayın: düşme/çarpma olmasın diye gözleyin',
+      'Sakin bekleyin: birkaç dakika sürer ve kendiliğinden geçer',
+      'Sabah konuşmayın: çocuk hatırlamaz, anlatmak gereksiz kaygı yaratır',
+      'Düzenli yaşanıyorsa uyku saatini öne çekmeyi deneyin',
+    ]},
+    {ico:'🌟',name:'Önleme Stratejileri',color:'#FCE4EC',border:'#E91E63',items:[
+      'Sakinleştirici uyku rutini: banyo, kitap, ninni',
+      'Yatmadan önce korkutucu içerik/ekran yasak',
+      'Gece lambası: karanlık korkusunu azaltır',
+      'Yeterli uyku: yorgunluk gece terörünü tetikler',
+      '"Canavar spreyi" (su) gibi yaratıcı güçlendirici ritüeller',
+    ]},
+    {ico:'💗',name:'Karanlık & Ayrılık Korkusu',color:'#F3E5F5',border:'#AB47BC',items:[
+      'Karanlık korkusu hayal gücü geliştikçe normaldir (2-4 yaş)',
+      'Korkusunu ciddiye alın, "korkacak bir şey yok" demeyin',
+      'Odayı birlikte kontrol edin: "Bak, dolapta bir şey yok"',
+      'Tutarlı yatma rutini güven ve öngörülebilirlik sağlar',
+      'Şiddetli, sürekli korkular ve gündüze taşan kaygı için uzmana danışın',
+    ]},
+  ];
+  const rows=sections.map(s=>`
+    <div style="border:2px solid ${s.border};border-radius:10px;padding:10px;margin-bottom:8px;background:${s.color}">
+      <div style="font-weight:800;font-size:.84rem;margin-bottom:5px">${s.ico} ${s.name}</div>
+      <ul style="margin:0 0 0 16px;font-size:.75rem;color:#333">${s.items.map(i=>`<li style="margin-bottom:2px">${i}</li>`).join('')}</ul>
+    </div>`).join('');
+  const h=`<div class="pop-ov" onclick="if(event.target===this)this.remove()">
+  <div class="pop-box" style="max-width:490px">
+    <div class="pop-rainbow"></div>
+    <span class="pop-ico">🌙</span>
+    <div class="pop-title">Gece Korkuları & Kabuslar</div>
+    <div class="pop-sub">Kabus, gece terörü ve karanlık korkusunu anlama rehberi</div>
+    <div style="max-height:55vh;overflow-y:auto;padding:4px 2px">${rows}</div>
+    <button class="pop-btn" style="margin-top:12px" onclick="this.closest('.pop-ov').remove()">Geceyi Güvenli Kıldım!</button>
   </div></div>`;
   document.body.insertAdjacentHTML('beforeend',h);
 }
