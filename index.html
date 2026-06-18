@@ -1456,6 +1456,9 @@ function saveGame(){
     twinsRead:S.twinsRead||false, prematureRead:S.prematureRead||false,
     emergencyRead:S.emergencyRead||false, grandparentsRead:S.grandparentsRead||false,
     weatherDressRead:S.weatherDressRead||false,
+    swimRead:S.swimRead||false, coldCareRead:S.coldCareRead||false,
+    digestionRead:S.digestionRead||false, sensesDevRead:S.sensesDevRead||false,
+    memoryKeepRead:S.memoryKeepRead||false,
     savedAt:Date.now(),
   };
   try { localStorage.setItem(SAVE_KEY, JSON.stringify(data)); } catch(e){}
@@ -1590,6 +1593,11 @@ function applySaveData(d){
   S.emergencyRead = d.emergencyRead||false;
   S.grandparentsRead = d.grandparentsRead||false;
   S.weatherDressRead = d.weatherDressRead||false;
+  S.swimRead = d.swimRead||false;
+  S.coldCareRead = d.coldCareRead||false;
+  S.digestionRead = d.digestionRead||false;
+  S.sensesDevRead = d.sensesDevRead||false;
+  S.memoryKeepRead = d.memoryKeepRead||false;
   S.started = true;
 }
 
@@ -1797,6 +1805,11 @@ const ACHIEVEMENTS = [
   {id:'emergency_pro',  icon:'🆘', name:'Hazırlıklı Ebeveyn',   desc:'Deprem ve acil durum rehberi okundu',       check:s=>(s.emergencyRead||false)},
   {id:'grandparents',   icon:'👵', name:'Aile Köprüsü',         desc:'Büyükanne-büyükbaba rehberi okundu',        check:s=>(s.grandparentsRead||false)},
   {id:'weather_dress',  icon:'🧥', name:'Mevsim Terzisi',       desc:'Havaya göre giydirme rehberi okundu',       check:s=>(s.weatherDressRead||false)},
+  {id:'swim_pro',       icon:'🏊', name:'Su Perisi',            desc:'Bebek yüzme rehberi okundu',                check:s=>(s.swimRead||false)},
+  {id:'cold_care',      icon:'🤧', name:'Nezle Bakıcısı',       desc:'Nezle ve burun bakımı rehberi okundu',      check:s=>(s.coldCareRead||false)},
+  {id:'digestion_pro',  icon:'💩', name:'Sindirim Dostu',       desc:'Sindirim ve kabızlık rehberi okundu',       check:s=>(s.digestionRead||false)},
+  {id:'senses_pro',     icon:'👁️', name:'Duyu Gözlemcisi',      desc:'Görme ve işitme gelişimi rehberi okundu',   check:s=>(s.sensesDevRead||false)},
+  {id:'memory_pro',     icon:'📷', name:'Anı Bekçisi',          desc:'Anı saklama rehberi okundu',                check:s=>(s.memoryKeepRead||false)},
   {id:'challenge50',    icon:'🌟', name:'50 Kriz Ustası',     desc:'50 zorlu anı çözdün!',                   check:s=>(s.challengesSolved||0)>=50},
   {id:'full_2years',    icon:'🎊', name:'2 Yıl Tamamlandı!',  desc:'Bebeğin 24. aya ulaştı!',                check:s=>(s.ageMonths||0)>=24},
   {id:'ebeveyn_legend', icon:'👑', name:'Efsane Ebeveyn',     desc:'18.000+ GP toplandı!',                   check:s=>s.dp>=18000},
@@ -2042,6 +2055,11 @@ const S = {
   emergencyRead:false,
   grandparentsRead:false,
   weatherDressRead:false,
+  swimRead:false,
+  coldCareRead:false,
+  digestionRead:false,
+  sensesDevRead:false,
+  memoryKeepRead:false,
 };
 
 // ══════════════════════════════════════════════════════
@@ -3777,6 +3795,11 @@ function showAllGuides(){
     {ico:'🆘',name:'Deprem & Acil Durum',fn:'showEmergencyPrepGuide()'},
     {ico:'👵',name:'Büyükanne-Büyükbaba Köprüsü',fn:'showGrandparentsGuide()'},
     {ico:'🧥',name:'Havaya Göre Giydirme',fn:'showWeatherDressGuide()'},
+    {ico:'🏊',name:'Bebek Yüzme & Suya Alışma',fn:'showBabySwimGuide()'},
+    {ico:'🤧',name:'Nezle & Burun Bakımı',fn:'showColdCareGuide()'},
+    {ico:'💩',name:'Sindirim & Kabızlık',fn:'showDigestionGuide()'},
+    {ico:'👁️',name:'Görme & İşitme Gelişimi',fn:'showSensesDevGuide()'},
+    {ico:'📷',name:'Anı Saklama & Hafıza Kutusu',fn:'showMemoryKeepingGuide()'},
   ];
   const chips=guides.map(g=>`<button class="guide-chip" onclick="${g.fn};this.closest('.pop-ov').remove()">${g.ico}<br>${g.name}</button>`).join('');
   const h=`<div class="pop-ov" onclick="if(event.target===this)this.remove()">
@@ -6771,6 +6794,301 @@ function showWeatherDressGuide(){
     <div class="pop-sub">Mevsim mevsim doğru katmanlar ve sıcaklık kontrolü</div>
     <div style="max-height:55vh;overflow-y:auto;padding:4px 2px">${rows}</div>
     <button class="pop-btn" style="margin-top:12px" onclick="this.closest('.pop-ov').remove()">Doğru Giydirdim!</button>
+  </div></div>`;
+  document.body.insertAdjacentHTML('beforeend',h);
+}
+
+// ══════════════════════════════════════════════════════
+// BABY SWIMMING GUIDE
+// ══════════════════════════════════════════════════════
+function showBabySwimGuide(){
+  S.swimRead=true;checkAchievements();saveGame();
+  const sections=[
+    {ico:'📅',name:'Ne Zaman Başlanır?',color:'#E3F2FD',border:'#1E88E5',items:[
+      'Göbek bağı tamamen iyileşmeden havuza girmeyin (genelde 1+ ay)',
+      'Bebek yüzme dersleri için ideal başlangıç: 6 ay civarı',
+      'AAP: resmi yüzme dersleri 1 yaşından itibaren önerilir',
+      'Aşıların başlamış olması yüzme havuzu için daha güvenli',
+      'Acele yok — su sevgisi her yaşta kazanılabilir',
+    ]},
+    {ico:'🌡️',name:'Su ve Ortam',color:'#E8F5E9',border:'#43A047',items:[
+      'Su sıcaklığı: bebekler için 32-34°C ideal (çabuk üşürler)',
+      'Maksimum süre: 10-30 dakika, bebeğin tepkisine göre',
+      'Klor hassasiyeti: çıkınca duş alın, cildi nemlendirin',
+      'Üşüme belirtileri: titreme, morarmış dudak — hemen çıkarın',
+      'Kalabalık/gürültülü havuzlar bebeği bunaltabilir',
+    ]},
+    {ico:'🤱',name:'Güvenlik Kuralları',color:'#FFEBEE',border:'#E53935',items:[
+      'ASLA gözünüzü ayırmayın — saniyeler içinde boğulma olabilir',
+      'Kolluk/simit yüzme öğretmez, yanlış güven verir — refakat şart',
+      'Bebeği daima kol mesafesinde tutun ("touch supervision")',
+      'Su yutması tehlikeli: "kuru boğulma" riski için tepki gözleyin',
+      'Yüzme dersi boğulma riskini azaltır ama garanti vermez',
+    ]},
+    {ico:'🎈',name:'Suya Alıştırma Oyunları',color:'#FFF9C4',border:'#F9A825',items:[
+      'Banyoda su sevgisi: nazikçe su dökme, oyuncaklarla oyun',
+      'Göğsünüze yaslayıp suda hafifçe gezdirin — güven verir',
+      'Su şarkıları söyleyin: ritim rahatlama sağlar',
+      'Yüze su serpme öncesi "hazır, başla" sinyali öğretin',
+      'Asla zorlamayın: korku gelişirse geri adım atıp yavaşlayın',
+    ]},
+    {ico:'💪',name:'Faydaları',color:'#F3E5F5',border:'#AB47BC',items:[
+      'Su bebeğin tüm kaslarını çalıştırır, motor gelişimi destekler',
+      'Ten teması ve birlikte aktivite bağı güçlendirir',
+      'Denge ve koordinasyon gelişimine katkı',
+      'İyi bir su deneyimi yaşam boyu su güvenliği temeli atar',
+      'Aktivite sonrası bebekler genelde daha iyi uyur',
+    ]},
+  ];
+  const rows=sections.map(s=>`
+    <div style="border:2px solid ${s.border};border-radius:10px;padding:10px;margin-bottom:8px;background:${s.color}">
+      <div style="font-weight:800;font-size:.84rem;margin-bottom:5px">${s.ico} ${s.name}</div>
+      <ul style="margin:0 0 0 16px;font-size:.75rem;color:#333">${s.items.map(i=>`<li style="margin-bottom:2px">${i}</li>`).join('')}</ul>
+    </div>`).join('');
+  const h=`<div class="pop-ov" onclick="if(event.target===this)this.remove()">
+  <div class="pop-box" style="max-width:490px">
+    <div class="pop-rainbow"></div>
+    <span class="pop-ico">🏊</span>
+    <div class="pop-title">Bebek Yüzme & Suya Alışma</div>
+    <div class="pop-sub">Güvenli su deneyimi, alıştırma oyunları ve gelişim faydaları</div>
+    <div style="max-height:55vh;overflow-y:auto;padding:4px 2px">${rows}</div>
+    <button class="pop-btn" style="margin-top:12px" onclick="this.closest('.pop-ov').remove()">Suya Hazırız!</button>
+  </div></div>`;
+  document.body.insertAdjacentHTML('beforeend',h);
+}
+
+// ══════════════════════════════════════════════════════
+// COLD & CONGESTION CARE GUIDE
+// ══════════════════════════════════════════════════════
+function showColdCareGuide(){
+  S.coldCareRead=true;checkAchievements();saveGame();
+  const sections=[
+    {ico:'💧',name:'Burun Tıkanıklığı Bakımı',color:'#E3F2FD',border:'#1E88E5',items:[
+      'Serum fizyolojik (tuzlu su) damla: burun salgısını yumuşatır',
+      'Burun aspiratörü/pompası: beslenme ve uyku öncesi nazikçe kullanın',
+      'Aşırı aspirasyon mukozayı tahriş eder — günde birkaç kez yeterli',
+      'Bebekler burundan nefes alır: tıkanıklık beslenmeyi zorlaştırır',
+      'Damla sonrası birkaç saniye bekleyip aspire edin',
+    ]},
+    {ico:'🌫️',name:'Ortam Düzenlemesi',color:'#E8F5E9',border:'#43A047',items:[
+      'Nemlendirici (humidifier): kuru hava tıkanıklığı artırır',
+      'Buharlı banyo: sıcak duş açıp buharlı odada birkaç dakika',
+      'Başı hafif yüksekte uyutma (yatak altına değil — yatağa yastık koymayın)',
+      'Oda sıcaklığı 18-20°C, aşırı sıcak havadan kaçının',
+      'Sigara dumanı kesinlikle yasak — semptomları kötüleştirir',
+    ]},
+    {ico:'🍼',name:'Beslenme ve Sıvı',color:'#FFF9C4',border:'#F9A825',items:[
+      'Anne sütü/sık beslenme: hem sıvı hem antikor sağlar',
+      '6 ay altı: sadece anne sütü/mama — su vermeyin',
+      '6 ay üstü: ek sıvı (su) verilebilir',
+      'Beslenme azalırsa sık ama kısa beslemeler deneyin',
+      'Tıkanıklık nedeniyle yeme zorlanırsa önce burnu temizleyin',
+    ]},
+    {ico:'🚨',name:'Doktora Ne Zaman?',color:'#FFEBEE',border:'#E53935',items:[
+      '3 aydan küçükse ve ateşi varsa (38°C+): HEMEN doktora',
+      'Hızlı/zor nefes alma, kaburga çekilmesi, morarma: acil',
+      'Beslenmeyi reddetme, ıslak bez azalması (susuzluk)',
+      'Öksürük şiddetlenmesi, hırıltı, 3 günden uzun ateş',
+      'Aşırı uyku hali, uyandırmada güçlük: acil değerlendirme',
+    ]},
+    {ico:'⛔',name:'Yapılmaması Gerekenler',color:'#F3E5F5',border:'#AB47BC',items:[
+      'Reçetesiz öksürük/nezle ilacı: 2 yaş altına verilmez',
+      'Bal: 1 yaş altına asla (botulizm riski)',
+      'Antibiyotik virüse etki etmez — doktor önermeden kullanmayın',
+      'Aspirin kesinlikle yasak (Reye sendromu riski)',
+      'Yatağa yastık/yükselti koymayın — SIDS riski',
+    ]},
+  ];
+  const rows=sections.map(s=>`
+    <div style="border:2px solid ${s.border};border-radius:10px;padding:10px;margin-bottom:8px;background:${s.color}">
+      <div style="font-weight:800;font-size:.84rem;margin-bottom:5px">${s.ico} ${s.name}</div>
+      <ul style="margin:0 0 0 16px;font-size:.75rem;color:#333">${s.items.map(i=>`<li style="margin-bottom:2px">${i}</li>`).join('')}</ul>
+    </div>`).join('');
+  const h=`<div class="pop-ov" onclick="if(event.target===this)this.remove()">
+  <div class="pop-box" style="max-width:490px">
+    <div class="pop-rainbow"></div>
+    <span class="pop-ico">🤧</span>
+    <div class="pop-title">Nezle & Burun Bakımı</div>
+    <div class="pop-sub">Tıkanıklık bakımı, ortam düzeni ve doktora başvuru işaretleri</div>
+    <div style="max-height:55vh;overflow-y:auto;padding:4px 2px">${rows}</div>
+    <button class="pop-btn" style="margin-top:12px" onclick="this.closest('.pop-ov').remove()">Nezleyi Yönettim!</button>
+  </div></div>`;
+  document.body.insertAdjacentHTML('beforeend',h);
+}
+
+// ══════════════════════════════════════════════════════
+// DIGESTION & CONSTIPATION GUIDE
+// ══════════════════════════════════════════════════════
+function showDigestionGuide(){
+  S.digestionRead=true;checkAchievements();saveGame();
+  const sections=[
+    {ico:'💨',name:'Gaz ve Sancı',color:'#FFF9C4',border:'#F9A825',items:[
+      'Bisiklet hareketi: bacakları nazikçe karna doğru çevirin',
+      'Karın masajı: saat yönünde, hafif baskıyla göbek çevresi',
+      'Beslenme sonrası gazını çıkarın: omuzda dik tutup sırt okşama',
+      'Tummy time gaz çıkmasına yardımcı olur',
+      'Emzirme tekniği: doğru kavrama hava yutmayı azaltır',
+    ]},
+    {ico:'🍼',name:'Kabızlık (Anne Sütü/Mama)',color:'#E3F2FD',border:'#1E88E5',items:[
+      'Anne sütüyle beslenen bebek günlerce kakasını yapmayabilir — normal',
+      'Mama ile beslenende daha sık kabızlık görülür',
+      'Sert, topak kaka ve ağrılı tuvalet = gerçek kabızlık işareti',
+      'Bacak egzersizi ve ılık banyo bağırsak hareketini uyarır',
+      'Mama oranını doğru hazırlayın: fazla toz kabızlık yapar',
+    ]},
+    {ico:'🥦',name:'Kabızlık (6+ Ay, Katı Gıda)',color:'#E8F5E9',border:'#43A047',items:[
+      'Lif kaynakları: armut, erik, kayısı püresi yumuşatır',
+      '"P" meyveleri: prune (kuru erik), pear (armut), peach (şeftali)',
+      'Yeterli su: katı gıdaya geçişte su sunmaya başlayın',
+      'Pirinç maması fazlası kabızlık yapabilir — çeşitlendirin',
+      'Muz ve elma bazı bebeklerde kabızlığı artırabilir',
+    ]},
+    {ico:'🤮',name:'Kusma ve Geri Çıkarma',color:'#FCE4EC',border:'#E91E63',items:[
+      'Geri çıkarma (reflü): az miktar süt çıkarma normaldir',
+      'Fışkırır tarzda kusma, kilo alamama: doktora danışın',
+      'Beslenme sonrası 20-30 dk dik tutma reflüyü azaltır',
+      'Yeşil/safralı kusma veya kanlı kusma: acil değerlendirme',
+      'Az ve sık besleme reflülü bebeklerde yardımcı olur',
+    ]},
+    {ico:'🚨',name:'Doktora Başvuru',color:'#FFEBEE',border:'#E53935',items:[
+      'İshal + ateş + susuzluk belirtileri (kuru bez, çökük bıngıldak)',
+      'Kakada kan, çok sert şişkin karın, şiddetli ağlama',
+      'Sürekli kusma ve sıvı tutamama',
+      '24 saatten uzun beslenme reddi',
+      'Kilo kaybı veya kilo alamama: mutlaka değerlendirilmeli',
+    ]},
+  ];
+  const rows=sections.map(s=>`
+    <div style="border:2px solid ${s.border};border-radius:10px;padding:10px;margin-bottom:8px;background:${s.color}">
+      <div style="font-weight:800;font-size:.84rem;margin-bottom:5px">${s.ico} ${s.name}</div>
+      <ul style="margin:0 0 0 16px;font-size:.75rem;color:#333">${s.items.map(i=>`<li style="margin-bottom:2px">${i}</li>`).join('')}</ul>
+    </div>`).join('');
+  const h=`<div class="pop-ov" onclick="if(event.target===this)this.remove()">
+  <div class="pop-box" style="max-width:490px">
+    <div class="pop-rainbow"></div>
+    <span class="pop-ico">💩</span>
+    <div class="pop-title">Sindirim & Kabızlık Rehberi</div>
+    <div class="pop-sub">Gaz, kabızlık, reflü — bebek sindirim sistemini anlama</div>
+    <div style="max-height:55vh;overflow-y:auto;padding:4px 2px">${rows}</div>
+    <button class="pop-btn" style="margin-top:12px" onclick="this.closest('.pop-ov').remove()">Sindirimi Anladım!</button>
+  </div></div>`;
+  document.body.insertAdjacentHTML('beforeend',h);
+}
+
+// ══════════════════════════════════════════════════════
+// VISION & HEARING DEVELOPMENT GUIDE
+// ══════════════════════════════════════════════════════
+function showSensesDevGuide(){
+  S.sensesDevRead=true;checkAchievements();saveGame();
+  const sections=[
+    {ico:'👁️',name:'Görme Gelişimi (0-12 Ay)',color:'#E3F2FD',border:'#1E88E5',items:[
+      '0-1 ay: 20-30 cm netlik, yüksek kontrast (siyah-beyaz) tercih',
+      '2-3 ay: yüzleri takip eder, renkleri ayırt etmeye başlar',
+      '4-6 ay: derinlik algısı, uzanıp tutma koordinasyonu',
+      '6-12 ay: keskin görüş, küçük nesneleri fark etme',
+      'Göz teması ve renkli hareketli objeler görmeyi destekler',
+    ]},
+    {ico:'👂',name:'İşitme Gelişimi',color:'#E8F5E9',border:'#43A047',items:[
+      'Doğumda işitme gelişmiştir — anne sesini tanır',
+      'Yenidoğan işitme taraması (otoakustik emisyon) ilk günlerde yapılır',
+      '0-3 ay: ani sese irkilme, tanıdık sese sakinleşme',
+      '3-6 ay: ses kaynağına dönme, kendi sesiyle oynama',
+      '6-12 ay: ismine tepki, basit kelimeleri anlama',
+    ]},
+    {ico:'⚠️',name:'Görme Uyarı İşaretleri',color:'#FFF9C4',border:'#F9A825',items:[
+      '3 aydan sonra göz teması kurmama',
+      'Gözlerde sürekli kayma/şaşılık (3 aydan sonra)',
+      'Hareketli nesneyi gözle takip etmeme',
+      'Beyaz/bulanık göz bebeği (acil — retinoblastom olabilir)',
+      'Aşırı sulanma, ışığa aşırı hassasiyet',
+    ]},
+    {ico:'🔇',name:'İşitme Uyarı İşaretleri',color:'#FCE4EC',border:'#E91E63',items:[
+      'Yüksek seslere tepkisizlik (irkilme yok)',
+      '3-4 ayda tanıdık sese dönmeme',
+      '6 ayda agulama/sesli oyun yapmama',
+      '12 ayda ismine tepki vermeme, basit komutları anlamama',
+      'Sık kulak enfeksiyonu işitmeyi etkileyebilir — takip edin',
+    ]},
+    {ico:'🎯',name:'Duyuları Destekleme',color:'#F3E5F5',border:'#AB47BC',items:[
+      'Görme: kontrast kartları, mobiller, ayna oyunları',
+      'İşitme: şarkı söyleme, konuşma, farklı sesli oyuncaklar',
+      'Yüz yüze konuşma: hem görme hem işitme hem dil gelişimi',
+      'Sessizlik anları da değerli — aşırı uyarımdan kaçının',
+      'Düzenli pediatrik kontrollerde görme-işitme değerlendirilir',
+    ]},
+  ];
+  const rows=sections.map(s=>`
+    <div style="border:2px solid ${s.border};border-radius:10px;padding:10px;margin-bottom:8px;background:${s.color}">
+      <div style="font-weight:800;font-size:.84rem;margin-bottom:5px">${s.ico} ${s.name}</div>
+      <ul style="margin:0 0 0 16px;font-size:.75rem;color:#333">${s.items.map(i=>`<li style="margin-bottom:2px">${i}</li>`).join('')}</ul>
+    </div>`).join('');
+  const h=`<div class="pop-ov" onclick="if(event.target===this)this.remove()">
+  <div class="pop-box" style="max-width:490px">
+    <div class="pop-rainbow"></div>
+    <span class="pop-ico">👁️</span>
+    <div class="pop-title">Görme & İşitme Gelişimi</div>
+    <div class="pop-sub">Duyusal gelişim basamakları ve uyarı işaretleri</div>
+    <div style="max-height:55vh;overflow-y:auto;padding:4px 2px">${rows}</div>
+    <button class="pop-btn" style="margin-top:12px" onclick="this.closest('.pop-ov').remove()">Duyuları Takip Ediyorum!</button>
+  </div></div>`;
+  document.body.insertAdjacentHTML('beforeend',h);
+}
+
+// ══════════════════════════════════════════════════════
+// MEMORY KEEPING GUIDE
+// ══════════════════════════════════════════════════════
+function showMemoryKeepingGuide(){
+  S.memoryKeepRead=true;checkAchievements();saveGame();
+  const sections=[
+    {ico:'📸',name:'Fotoğraf & Video',color:'#E3F2FD',border:'#1E88E5',items:[
+      'Aylık fotoğraf: aynı yerde/objeyle büyüme karşılaştırması',
+      'Sıradan anları da çekin: en değerli anılar planlanmamış olanlardır',
+      'Kısa videolar: ilk gülüş, agulamalar, ilk adımlar — sesi de kaydedin',
+      'Ebeveynler de karede olsun — sürekli çeken hep kayıp olur',
+      'Yedekleme: bulut + fiziksel disk, anılarınızı kaybetmeyin',
+    ]},
+    {ico:'📖',name:'Bebek Günlüğü & Albüm',color:'#FCE4EC',border:'#E91E63',items:[
+      'İlk yıl kayıt defteri: kilo, boy, ilk kelime, ilk diş tarihleri',
+      'Mektup yazın: bebeğinize gelecekte okuması için notlar',
+      'Fiziksel fotoğraf albümü: ekrandan farklı, dokunulabilir anı',
+      'Hafıza kutusu: hastane bilekliği, ilk patik, saç buklesi',
+      'El ve ayak izi: boya veya kil kalıbıyla ölümsüzleştirin',
+    ]},
+    {ico:'🎉',name:'Kilometre Taşları',color:'#FFF9C4',border:'#F9A825',items:[
+      'İlkler listesi: ilk gülüş, ilk yuvarlanma, ilk diş, ilk adım',
+      'Aylık dönüm kartları: "Bugün 3 aylık oldum!" fotoğraf objeleri',
+      'Özel günler: ilk doğum günü, ilk bayram, ilk tatil',
+      'Büyüme çizelgesi: kapı kenarına boy işaretleri (büyüyünce)',
+      'Sesli anı: bebeğin seslerini telefona kaydedin',
+    ]},
+    {ico:'💌',name:'Yaratıcı Fikirler',color:'#E8F5E9',border:'#43A047',items:[
+      'Zaman kapsülü: 18. yaşında açılmak üzere kutu hazırlayın',
+      'Yıllık mektup geleneği: her doğum gününde bir mektup',
+      'Sanat arşivi: ilk karalamalar, el işleri (tarih atın)',
+      'Aile ağacı/şecere: köklerini anlatan bir defter',
+      'Dijital zaman tüneli: özel bir e-posta adresine anı gönderme',
+    ]},
+    {ico:'💝',name:'Neden Önemli?',color:'#F3E5F5',border:'#AB47BC',items:[
+      'Bebeklik çok hızlı geçer — anılar zamanı dondurur',
+      'Çocuğunuz büyüdüğünde kendi hikayesini görmek kimlik kazandırır',
+      'Anı biriktirmek ebeveyni "şu ana" daha bilinçli kılar',
+      'Zor günlerde geriye bakmak güç ve perspektif verir',
+      'Mükemmel olması gerekmez — niyet ve sevgi yeterli',
+    ]},
+  ];
+  const rows=sections.map(s=>`
+    <div style="border:2px solid ${s.border};border-radius:10px;padding:10px;margin-bottom:8px;background:${s.color}">
+      <div style="font-weight:800;font-size:.84rem;margin-bottom:5px">${s.ico} ${s.name}</div>
+      <ul style="margin:0 0 0 16px;font-size:.75rem;color:#333">${s.items.map(i=>`<li style="margin-bottom:2px">${i}</li>`).join('')}</ul>
+    </div>`).join('');
+  const h=`<div class="pop-ov" onclick="if(event.target===this)this.remove()">
+  <div class="pop-box" style="max-width:490px">
+    <div class="pop-rainbow"></div>
+    <span class="pop-ico">📷</span>
+    <div class="pop-title">Anı Saklama & Hafıza Kutusu</div>
+    <div class="pop-sub">Hızla geçen bebeklik anılarını ölümsüzleştirme rehberi</div>
+    <div style="max-height:55vh;overflow-y:auto;padding:4px 2px">${rows}</div>
+    <button class="pop-btn" style="margin-top:12px" onclick="this.closest('.pop-ov').remove()">Anıları Sakladım!</button>
   </div></div>`;
   document.body.insertAdjacentHTML('beforeend',h);
 }
