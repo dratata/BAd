@@ -1453,6 +1453,9 @@ function saveGame(){
     screenTimeRead:S.screenTimeRead||false, petsRead:S.petsRead||false,
     socialEmotRead:S.socialEmotRead||false, colorShapeRead:S.colorShapeRead||false,
     activePlayRead:S.activePlayRead||false,
+    twinsRead:S.twinsRead||false, prematureRead:S.prematureRead||false,
+    emergencyRead:S.emergencyRead||false, grandparentsRead:S.grandparentsRead||false,
+    weatherDressRead:S.weatherDressRead||false,
     savedAt:Date.now(),
   };
   try { localStorage.setItem(SAVE_KEY, JSON.stringify(data)); } catch(e){}
@@ -1582,6 +1585,11 @@ function applySaveData(d){
   S.socialEmotRead = d.socialEmotRead||false;
   S.colorShapeRead = d.colorShapeRead||false;
   S.activePlayRead = d.activePlayRead||false;
+  S.twinsRead = d.twinsRead||false;
+  S.prematureRead = d.prematureRead||false;
+  S.emergencyRead = d.emergencyRead||false;
+  S.grandparentsRead = d.grandparentsRead||false;
+  S.weatherDressRead = d.weatherDressRead||false;
   S.started = true;
 }
 
@@ -1784,6 +1792,11 @@ const ACHIEVEMENTS = [
   {id:'social_emot',    icon:'🧠', name:'Duygu Koçu',          desc:'Sosyal-duygusal gelişim rehberi okundu',   check:s=>(s.socialEmotRead||false)},
   {id:'color_shape',    icon:'🌈', name:'Renk Ustası',         desc:'Renk ve şekil öğrenme rehberi okundu',    check:s=>(s.colorShapeRead||false)},
   {id:'active_play',    icon:'🏃', name:'Hareket Kahramanı',   desc:'Aktif oyun ve motor gelişim rehberi okundu', check:s=>(s.activePlayRead||false)},
+  {id:'twins_pro',      icon:'👯', name:'İkiz Ustası',          desc:'İkiz ve çoğul bebek rehberi okundu',        check:s=>(s.twinsRead||false)},
+  {id:'premature_pro',  icon:'🐣', name:'Minik Savaşçı Dostu',  desc:'Prematüre bebek bakım rehberi okundu',      check:s=>(s.prematureRead||false)},
+  {id:'emergency_pro',  icon:'🆘', name:'Hazırlıklı Ebeveyn',   desc:'Deprem ve acil durum rehberi okundu',       check:s=>(s.emergencyRead||false)},
+  {id:'grandparents',   icon:'👵', name:'Aile Köprüsü',         desc:'Büyükanne-büyükbaba rehberi okundu',        check:s=>(s.grandparentsRead||false)},
+  {id:'weather_dress',  icon:'🧥', name:'Mevsim Terzisi',       desc:'Havaya göre giydirme rehberi okundu',       check:s=>(s.weatherDressRead||false)},
   {id:'challenge50',    icon:'🌟', name:'50 Kriz Ustası',     desc:'50 zorlu anı çözdün!',                   check:s=>(s.challengesSolved||0)>=50},
   {id:'full_2years',    icon:'🎊', name:'2 Yıl Tamamlandı!',  desc:'Bebeğin 24. aya ulaştı!',                check:s=>(s.ageMonths||0)>=24},
   {id:'ebeveyn_legend', icon:'👑', name:'Efsane Ebeveyn',     desc:'18.000+ GP toplandı!',                   check:s=>s.dp>=18000},
@@ -2024,6 +2037,11 @@ const S = {
   socialEmotRead:false,
   colorShapeRead:false,
   activePlayRead:false,
+  twinsRead:false,
+  prematureRead:false,
+  emergencyRead:false,
+  grandparentsRead:false,
+  weatherDressRead:false,
 };
 
 // ══════════════════════════════════════════════════════
@@ -3754,6 +3772,11 @@ function showAllGuides(){
     {ico:'🧠',name:'Sosyal-Duygusal Gelişim',fn:'showSocialEmotionalGuide()'},
     {ico:'🌈',name:'Renk & Şekil Öğrenme',fn:'showColorShapeGuide()'},
     {ico:'🏃',name:'Aktif Oyun & Motor Gelişim',fn:'showActivePlayGuide()'},
+    {ico:'👯',name:'İkiz & Çoğul Bebek',fn:'showTwinsGuide()'},
+    {ico:'🐣',name:'Prematüre Bebek Bakımı',fn:'showPrematureGuide()'},
+    {ico:'🆘',name:'Deprem & Acil Durum',fn:'showEmergencyPrepGuide()'},
+    {ico:'👵',name:'Büyükanne-Büyükbaba Köprüsü',fn:'showGrandparentsGuide()'},
+    {ico:'🧥',name:'Havaya Göre Giydirme',fn:'showWeatherDressGuide()'},
   ];
   const chips=guides.map(g=>`<button class="guide-chip" onclick="${g.fn};this.closest('.pop-ov').remove()">${g.ico}<br>${g.name}</button>`).join('');
   const h=`<div class="pop-ov" onclick="if(event.target===this)this.remove()">
@@ -6453,6 +6476,301 @@ function showActivePlayGuide(){
     <div class="pop-sub">Kaba ve ince motor beceriler — hareketle büyüme rehberi</div>
     <div style="max-height:55vh;overflow-y:auto;padding:4px 2px">${rows}</div>
     <button class="pop-btn" style="margin-top:12px" onclick="this.closest('.pop-ov').remove()">Hareket Ettik!</button>
+  </div></div>`;
+  document.body.insertAdjacentHTML('beforeend',h);
+}
+
+// ══════════════════════════════════════════════════════
+// TWINS & MULTIPLES GUIDE
+// ══════════════════════════════════════════════════════
+function showTwinsGuide(){
+  S.twinsRead=true;checkAchievements();saveGame();
+  const sections=[
+    {ico:'🍼',name:'Beslenme Stratejisi',color:'#FCE4EC',border:'#E91E63',items:[
+      'Eş zamanlı emzirme: özel ikiz emzirme yastığı zamandan kazandırır',
+      'Tandem emzirme öğrenmesi 2-3 hafta sürebilir — sabırlı olun',
+      'Karma besleme: biri emerken diğerine biberon, sonra değiştir',
+      'Beslenme günlüğü: hangisi ne zaman emdi/içti — karışmasını önler',
+      'Süt yetmezse panik yok: çoğul gebelikte karma besleme normaldir',
+    ]},
+    {ico:'😴',name:'Senkronize Uyku',color:'#E8EAF6',border:'#3949AB',items:[
+      'İkizleri aynı saatte uyutun — biriniz uyandığında diğerini de uyandırın',
+      'Aynı odada uyumaları birbirlerini rahatsız etmez, aksine sakinleştirir',
+      'Biri ağlarken diğeri uyumaya devam edebilir — şaşırtıcı uyum',
+      'Ortak rutin: aynı banyo, aynı ninni, aynı yatış saati',
+      'Ayrı yataklar AAP önerisi, ama yan yana olabilir',
+    ]},
+    {ico:'🤝',name:'İki Bebeği İdare Etmek',color:'#E3F2FD',border:'#1E88E5',items:[
+      'Sıra sistemi: bu sefer önce A, sonraki sefer önce B sakinleşsin',
+      'İki bebeği aynı anda taşımak: çift kanguru veya çift bebek arabası',
+      'Yardım kabul edin: ikizlerde destek lüks değil, gereklilik',
+      'Her bebekle birebir an yaratın: kısa da olsa ayrı bağ kurun',
+      'Karşılaştırmaktan kaçının: her ikiz kendi temposunda gelişir',
+    ]},
+    {ico:'💝',name:'Bireysel Kimlik',color:'#E8F5E9',border:'#43A047',items:[
+      'Farklı renk kıyafet: hem ayırt etme hem bireysellik için',
+      'İsimleriyle ayrı ayrı hitap edin, "ikizler" yerine adlarıyla',
+      'Aynı giydirme zorunluluğu yok — her birinin tercihi gelişsin',
+      'Ayrı fotoğraf albümleri/anılar: her biri özel hissetsin',
+      'Tek yumurta ikizlerinde bile mizaç farklı olabilir',
+    ]},
+    {ico:'🧠',name:'Ebeveyn Öz-Bakımı',color:'#FFF9C4',border:'#F9A825',items:[
+      'İkiz ebeveynliği yorgunluğu gerçek — kendinize karşı nazik olun',
+      'İkiz ebeveyn destek grupları: paha biçilmez deneyim paylaşımı',
+      'Mükemmel olmaya çalışmayın: "yeterince iyi" ikizlerle altın standart',
+      'Eşler arası görev paylaşımı net olmalı: kim hangi bebek/görev',
+      'Kısa molalar bile yenileyicidir — sırayla dinlenin',
+    ]},
+  ];
+  const rows=sections.map(s=>`
+    <div style="border:2px solid ${s.border};border-radius:10px;padding:10px;margin-bottom:8px;background:${s.color}">
+      <div style="font-weight:800;font-size:.84rem;margin-bottom:5px">${s.ico} ${s.name}</div>
+      <ul style="margin:0 0 0 16px;font-size:.75rem;color:#333">${s.items.map(i=>`<li style="margin-bottom:2px">${i}</li>`).join('')}</ul>
+    </div>`).join('');
+  const h=`<div class="pop-ov" onclick="if(event.target===this)this.remove()">
+  <div class="pop-box" style="max-width:490px">
+    <div class="pop-rainbow"></div>
+    <span class="pop-ico">👯</span>
+    <div class="pop-title">İkiz & Çoğul Bebek Rehberi</div>
+    <div class="pop-sub">İki kat sevgi, iki kat strateji — çoğul ebeveynlik</div>
+    <div style="max-height:55vh;overflow-y:auto;padding:4px 2px">${rows}</div>
+    <button class="pop-btn" style="margin-top:12px" onclick="this.closest('.pop-ov').remove()">İkizleri Yönettim!</button>
+  </div></div>`;
+  document.body.insertAdjacentHTML('beforeend',h);
+}
+
+// ══════════════════════════════════════════════════════
+// PREMATURE BABY GUIDE
+// ══════════════════════════════════════════════════════
+function showPrematureGuide(){
+  S.prematureRead=true;checkAchievements();saveGame();
+  const sections=[
+    {ico:'📅',name:'Düzeltilmiş Yaş',color:'#E3F2FD',border:'#1E88E5',items:[
+      'Düzeltilmiş yaş = takvim yaşı − erken doğan hafta sayısı',
+      'Örn: 2 ay erken doğan 4 aylık bebeğin düzeltilmiş yaşı 2 ay',
+      'Gelişim basamaklarını düzeltilmiş yaşa göre değerlendirin',
+      'Bu fark genellikle 2 yaşına kadar dikkate alınır',
+      'Geriden gelmek normal — kendi temposuna güvenin',
+    ]},
+    {ico:'🦘',name:'Kanguru Bakımı',color:'#FCE4EC',border:'#E91E63',items:[
+      'Ten tene temas: prematüre bebek için mucize etkili',
+      'Vücut ısısını düzenler, kalp atışını ve solunumu stabilize eder',
+      'Anne sütü üretimini artırır, bağlanmayı güçlendirir',
+      'Baba da kanguru bakımı yapabilir — eşit derecede faydalı',
+      'Günde mümkün olduğunca uzun süre — YYBÜ\'de bile teşvik edilir',
+    ]},
+    {ico:'🍼',name:'Beslenme Özeni',color:'#E8F5E9',border:'#43A047',items:[
+      'Anne sütü prematüre için en koruyucu besin (NEK riskini azaltır)',
+      'Emme refleksi 34. haftada olgunlaşır — öncesinde sonda gerekebilir',
+      'Sık ve az beslenme: küçük mide kapasitesi',
+      'Kilo takibi kritik: doktor önerdiği aralıklarla tartın',
+      'Demir ve vitamin takviyesi genellikle gereklidir',
+    ]},
+    {ico:'🛡️',name:'Enfeksiyon Koruması',color:'#FFF9C4',border:'#F9A825',items:[
+      'Bağışıklık sistemi zayıf: el hijyeni hayati önem taşır',
+      'İlk aylarda kalabalıktan ve hasta kişilerden uzak tutun',
+      'RSV koruması: kış aylarında özel önlem (doktora danışın)',
+      'Aşılar takvim yaşına göre yapılır (düzeltilmiş değil)',
+      'Ateş veya beslenme reddi: hemen doktora başvurun',
+    ]},
+    {ico:'💙',name:'Ebeveyn Duyguları',color:'#F3E5F5',border:'#AB47BC',items:[
+      'YYBÜ deneyimi travmatik olabilir — duygularınız geçerli',
+      'Suçluluk hissi yaygın ama erken doğum sizin hatanız değil',
+      'YYBÜ ekibiyle açık iletişim: her soruyu sorma hakkınız var',
+      'Prematüre ebeveyn destek grupları büyük güç verir',
+      'Minik savaşçınız her gün güçleniyor — umut her zaman var',
+    ]},
+  ];
+  const rows=sections.map(s=>`
+    <div style="border:2px solid ${s.border};border-radius:10px;padding:10px;margin-bottom:8px;background:${s.color}">
+      <div style="font-weight:800;font-size:.84rem;margin-bottom:5px">${s.ico} ${s.name}</div>
+      <ul style="margin:0 0 0 16px;font-size:.75rem;color:#333">${s.items.map(i=>`<li style="margin-bottom:2px">${i}</li>`).join('')}</ul>
+    </div>`).join('');
+  const h=`<div class="pop-ov" onclick="if(event.target===this)this.remove()">
+  <div class="pop-box" style="max-width:490px">
+    <div class="pop-rainbow"></div>
+    <span class="pop-ico">🐣</span>
+    <div class="pop-title">Prematüre Bebek Bakımı</div>
+    <div class="pop-sub">Minik savaşçılar için düzeltilmiş yaş, kanguru bakımı ve özen</div>
+    <div style="max-height:55vh;overflow-y:auto;padding:4px 2px">${rows}</div>
+    <button class="pop-btn" style="margin-top:12px" onclick="this.closest('.pop-ov').remove()">Minik Savaşçıma Hazırım!</button>
+  </div></div>`;
+  document.body.insertAdjacentHTML('beforeend',h);
+}
+
+// ══════════════════════════════════════════════════════
+// EMERGENCY PREPAREDNESS GUIDE
+// ══════════════════════════════════════════════════════
+function showEmergencyPrepGuide(){
+  S.emergencyRead=true;checkAchievements();saveGame();
+  const sections=[
+    {ico:'🎒',name:'Bebek Acil Durum Çantası',color:'#FFEBEE',border:'#E53935',items:[
+      'En az 3 günlük bez, ıslak mendil, kıyafet (mevsime uygun)',
+      'Mama/biberon, kapalı su, uzun ömürlü mama (anne sütü yoksa)',
+      'İlk yardım malzemesi: ateş düşürücü, termometre, yara bandı',
+      'Battaniye, yedek emzik, küçük oyuncak (sakinleştirici)',
+      'Bebeğin kimlik/sağlık bilgileri kopyası, su geçirmez poşette',
+    ]},
+    {ico:'🏠',name:'Deprem Anında Güvenlik',color:'#FFF9C4',border:'#F9A825',items:[
+      'Beşik/yatağı pencereden, ağır mobilya ve raflardan uzağa yerleştirin',
+      'Dolap, kitaplık, TV gibi devrilebilecek eşyaları duvara sabitleyin',
+      'Sarsıntı sırasında bebeği kucağınıza alıp "çök-kapan-tutun"',
+      'Bebeği vücudunuzla koruyun, başını avucunuzla destekleyin',
+      'Sarsıntı bitene kadar güvenli noktada (sağlam masa altı) kalın',
+    ]},
+    {ico:'🚪',name:'Tahliye Planı',color:'#E3F2FD',border:'#1E88E5',items:[
+      'Bebek taşıma: kanguru/sırt taşıyıcı elleri serbest bırakır',
+      'Çıkış yollarını önceden belirleyin, çantayı kapı yakınında tutun',
+      'Aile buluşma noktası ve dışarıdan irtibat kişisi belirleyin',
+      'Apartmansa: asansör değil merdiven — tatbikat yapın',
+      'Komşularla dayanışma: tek başınaysanız önceden anlaşın',
+    ]},
+    {ico:'📱',name:'İletişim & Bilgi',color:'#E8F5E9',border:'#43A047',items:[
+      'Acil numaralar: 112 (sağlık/AFAD), pediatristin numarası',
+      'Powerbank ve yedek şarj kablosu çantada hazır',
+      'Bebeğin kan grubu, alerjileri, aşı durumu yazılı bulunsun',
+      'Yakın aile fertlerine ulaşım için alternatif iletişim planı',
+      'AFAD ve afet uygulamalarını telefona kurun',
+    ]},
+    {ico:'❤️',name:'Sonrası: Bebeğin Psikolojisi',color:'#F3E5F5',border:'#AB47BC',items:[
+      'Bebekler ebeveyn stresini hisseder — sakin kalmaya çalışın',
+      'Rutini mümkün olduğunca koruyun: uyku, beslenme düzeni',
+      'Fazla sarılma ve ten teması güvenlik hissi verir',
+      'Uyku bozulması/huzursuzluk normal — sabırlı ve yanında olun',
+      'Kendi stresinizi yönetin: bebek için en iyi koruma sakin ebeveyndir',
+    ]},
+  ];
+  const rows=sections.map(s=>`
+    <div style="border:2px solid ${s.border};border-radius:10px;padding:10px;margin-bottom:8px;background:${s.color}">
+      <div style="font-weight:800;font-size:.84rem;margin-bottom:5px">${s.ico} ${s.name}</div>
+      <ul style="margin:0 0 0 16px;font-size:.75rem;color:#333">${s.items.map(i=>`<li style="margin-bottom:2px">${i}</li>`).join('')}</ul>
+    </div>`).join('');
+  const h=`<div class="pop-ov" onclick="if(event.target===this)this.remove()">
+  <div class="pop-box" style="max-width:490px">
+    <div class="pop-rainbow"></div>
+    <span class="pop-ico">🆘</span>
+    <div class="pop-title">Deprem & Acil Durum Hazırlığı</div>
+    <div class="pop-sub">Bebekli aileler için afet çantası, güvenlik ve tahliye planı</div>
+    <div style="max-height:55vh;overflow-y:auto;padding:4px 2px">${rows}</div>
+    <button class="pop-btn" style="margin-top:12px" onclick="this.closest('.pop-ov').remove()">Hazırlığımı Yaptım!</button>
+  </div></div>`;
+  document.body.insertAdjacentHTML('beforeend',h);
+}
+
+// ══════════════════════════════════════════════════════
+// GRANDPARENTS GUIDE
+// ══════════════════════════════════════════════════════
+function showGrandparentsGuide(){
+  S.grandparentsRead=true;checkAchievements();saveGame();
+  const sections=[
+    {ico:'🤝',name:'Sağlıklı Sınırlar',color:'#E3F2FD',border:'#1E88E5',items:[
+      'Bakım kararları ebeveyne aittir — büyükler destekleyici roldedir',
+      '"Bizim zamanımızda böyle yapardık" karşısında nazik ama net olun',
+      'Sınırları çift olarak birlikte koyun: kendi ailenizle siz konuşun',
+      'Ziyaret saatleri ve uyku rutinine saygı isteyin',
+      'Çatışmada bebek değil ilişki odak: sevgiyle çözüm arayın',
+    ]},
+    {ico:'📚',name:'Güncel Bilgiyi Paylaşma',color:'#FFF9C4',border:'#F9A825',items:[
+      'Güvenli uyku (sırtüstü) artık standart — eskiden yüzüstü önerilirdi',
+      'Bal 1 yaş altına yasak (botulizm riski) — yeni bilgi',
+      'Sallama bebek sendromu: asla sert sallamayın',
+      'Araba koltuğu kullanımı artık zorunlu ve hayati',
+      'Bilgiyi suçlayıcı değil "yeni araştırmalar" diliyle aktarın',
+    ]},
+    {ico:'💛',name:'Değerli Katkıları',color:'#E8F5E9',border:'#43A047',items:[
+      'Büyükanne-büyükbaba sevgisi bebek için ekstra güvenli bağ',
+      'Deneyim ve sakinlik: yeni ebeveyne paha biçilmez destek',
+      'Kültürel miras, hikayeler, gelenekler aktarımı',
+      'Güvenilir bakım: ebeveyne nefes alma fırsatı',
+      'Kuşaklar arası bağ çocuğun kimlik ve aidiyet hissini besler',
+    ]},
+    {ico:'🛡️',name:'Güvenlik Hatırlatmaları',color:'#FCE4EC',border:'#E91E63',items:[
+      'Büyüklerin evini de bebek-güvenli hale getirin (ilaçlar, prizler)',
+      'İlaç saklama: büyüklerin ilaçları bebeğin ulaşamayacağı yerde',
+      'Hijyen: öpmeden önce el yıkama, hastayken temas kısıtlama',
+      'Aşırı şeker/yiyecek verme konusunda nazik sınır',
+      'Acil durumda ne yapacaklarını ve numaraları bilmeliler',
+    ]},
+    {ico:'💬',name:'İletişim İpuçları',color:'#F3E5F5',border:'#AB47BC',items:[
+      'Takdir edin: yardımları için teşekkür güçlü bir köprü',
+      'Görev verin: kendilerini değerli hissettiren özel roller',
+      'Uzaktaysalar: video görüşmesi ile bebekle bağ kurmalarını sağlayın',
+      'Fikir ayrılığında "biz şöyle karar verdik" birlikteliği vurgulayın',
+      'Bebek büyüdükçe büyüklerle ayrı zaman değerli bir hediye',
+    ]},
+  ];
+  const rows=sections.map(s=>`
+    <div style="border:2px solid ${s.border};border-radius:10px;padding:10px;margin-bottom:8px;background:${s.color}">
+      <div style="font-weight:800;font-size:.84rem;margin-bottom:5px">${s.ico} ${s.name}</div>
+      <ul style="margin:0 0 0 16px;font-size:.75rem;color:#333">${s.items.map(i=>`<li style="margin-bottom:2px">${i}</li>`).join('')}</ul>
+    </div>`).join('');
+  const h=`<div class="pop-ov" onclick="if(event.target===this)this.remove()">
+  <div class="pop-box" style="max-width:490px">
+    <div class="pop-rainbow"></div>
+    <span class="pop-ico">👵</span>
+    <div class="pop-title">Büyükanne-Büyükbaba Köprüsü</div>
+    <div class="pop-sub">Kuşaklar arası sevgi, sağlıklı sınırlar ve güncel bilgi</div>
+    <div style="max-height:55vh;overflow-y:auto;padding:4px 2px">${rows}</div>
+    <button class="pop-btn" style="margin-top:12px" onclick="this.closest('.pop-ov').remove()">Köprüyü Kurdum!</button>
+  </div></div>`;
+  document.body.insertAdjacentHTML('beforeend',h);
+}
+
+// ══════════════════════════════════════════════════════
+// WEATHER DRESSING GUIDE
+// ══════════════════════════════════════════════════════
+function showWeatherDressGuide(){
+  S.weatherDressRead=true;checkAchievements();saveGame();
+  const seasons=[
+    {ico:'❄️',name:'Kış (0-10°C)',color:'#E3F2FD',border:'#1E88E5',items:[
+      'Kat kat giydirme kuralı: ince katmanlar tek kalın kattan iyidir',
+      'Temel kural: bebeğe yetişkinden bir kat fazla giydirin',
+      'Mont/tulum, şapka (ısının %30\'u baştan kaçar), eldiven, çorap',
+      'ÖNEMLİ: Araba koltuğunda kalın mont yasak — kemer gevşek kalır',
+      'İçeri girince katları çıkarın: aşırı ısınma da risklidir',
+    ]},
+    {ico:'🌸',name:'İlkbahar/Sonbahar (10-20°C)',color:'#E8F5E9',border:'#43A047',items:[
+      'Değişken hava: kolayca çıkarılabilen katmanlar ideal',
+      'İnce body + uzun kollu + hafif hırka kombinasyonu',
+      'Yanınızda yedek kat bulundurun (sabah serin, öğlen ılık)',
+      'İnce şapka rüzgarlı havada faydalı',
+      'Ayakları sıcak tutun: çorap veya patik',
+    ]},
+    {ico:'☀️',name:'Yaz (20-30°C)',color:'#FFF9C4',border:'#F9A825',items:[
+      'Hafif, nefes alan pamuklu kumaşlar (sentetikten kaçın)',
+      'Açık renkler güneşi yansıtır, koyu renkler ısı emer',
+      'Geniş kenarlı şapka: yüz ve enseyi korur',
+      '6 ay altı doğrudan güneşten kaçının — gölgede tutun',
+      'Aşırı terleme/kızarıklık: bir kat azaltın, su verin (6+ ay)',
+    ]},
+    {ico:'🌡️',name:'Aşırı Sıcak (30°C+)',color:'#FFEBEE',border:'#E53935',items:[
+      'Tek kat ince body veya sadece bez yeterli olabilir',
+      'Sıcak çarpması belirtileri: kızarıklık, huzursuzluk, hızlı nefes',
+      'En sıcak saatlerde (11:00-16:00) dışarı çıkmayın',
+      'Serin oda, bol sıvı (emziren anne de bol su içsin)',
+      'Arabada asla yalnız bırakmayın — dakikalar içinde ölümcül ısı',
+    ]},
+    {ico:'🔍',name:'Sıcaklık Kontrolü',color:'#F3E5F5',border:'#AB47BC',items:[
+      'En doğru gösterge: ense/sırt — sıcak ve terli mi, serin mi?',
+      'El ve ayaklar genelde serin olur, bu üşüdüğü anlamına gelmez',
+      'Aşırı ısınma SIDS riskini artırır — fazla giydirmekten kaçının',
+      'Uyku tulumu (sleep sack) TOG değeri oda sıcaklığına göre seçilir',
+      'Terleme, kızarık yanaklar, nemli saç = çok sıcak işareti',
+    ]},
+  ];
+  const rows=seasons.map(s=>`
+    <div style="border:2px solid ${s.border};border-radius:10px;padding:10px;margin-bottom:8px;background:${s.color}">
+      <div style="font-weight:800;font-size:.84rem;margin-bottom:5px">${s.ico} ${s.name}</div>
+      <ul style="margin:0 0 0 16px;font-size:.75rem;color:#333">${s.items.map(i=>`<li style="margin-bottom:2px">${i}</li>`).join('')}</ul>
+    </div>`).join('');
+  const h=`<div class="pop-ov" onclick="if(event.target===this)this.remove()">
+  <div class="pop-box" style="max-width:490px">
+    <div class="pop-rainbow"></div>
+    <span class="pop-ico">🧥</span>
+    <div class="pop-title">Havaya Göre Giydirme Rehberi</div>
+    <div class="pop-sub">Mevsim mevsim doğru katmanlar ve sıcaklık kontrolü</div>
+    <div style="max-height:55vh;overflow-y:auto;padding:4px 2px">${rows}</div>
+    <button class="pop-btn" style="margin-top:12px" onclick="this.closest('.pop-ov').remove()">Doğru Giydirdim!</button>
   </div></div>`;
   document.body.insertAdjacentHTML('beforeend',h);
 }
