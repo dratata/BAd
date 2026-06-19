@@ -1471,6 +1471,9 @@ function saveGame(){
     jaundiceRead:S.jaundiceRead||false, babywearingRead:S.babywearingRead||false,
     diaperRashRead:S.diaperRashRead||false, feverGuideRead:S.feverGuideRead||false,
     separationAnxietyRead:S.separationAnxietyRead||false,
+    umbilicalCareRead:S.umbilicalCareRead||false, carSeatRead:S.carSeatRead||false,
+    eyeEarCareRead:S.eyeEarCareRead||false, bfProblemsRead:S.bfProblemsRead||false,
+    cradleCapRead:S.cradleCapRead||false,
     savedAt:Date.now(),
   };
   try { localStorage.setItem(SAVE_KEY, JSON.stringify(data)); } catch(e){}
@@ -1630,6 +1633,11 @@ function applySaveData(d){
   S.diaperRashRead = d.diaperRashRead||false;
   S.feverGuideRead = d.feverGuideRead||false;
   S.separationAnxietyRead = d.separationAnxietyRead||false;
+  S.umbilicalCareRead = d.umbilicalCareRead||false;
+  S.carSeatRead = d.carSeatRead||false;
+  S.eyeEarCareRead = d.eyeEarCareRead||false;
+  S.bfProblemsRead = d.bfProblemsRead||false;
+  S.cradleCapRead = d.cradleCapRead||false;
   S.started = true;
 }
 
@@ -1862,6 +1870,11 @@ const ACHIEVEMENTS = [
   {id:'diaper_rash_pro',icon:'🩹', name:'Cilt Koruyucu',        desc:'Pişik & cilt bakımı rehberi okundu',       check:s=>(s.diaperRashRead||false)},
   {id:'fever_pro',      icon:'🌡️', name:'Ateş Takipçisi',       desc:'Ateş yönetimi rehberi okundu',             check:s=>(s.feverGuideRead||false)},
   {id:'separation_pro', icon:'😰', name:'Güven Köprüsü',        desc:'Ayrılık anksiyetesi rehberi okundu',       check:s=>(s.separationAnxietyRead||false)},
+  {id:'umbilical_pro',  icon:'🧷', name:'Göbek Bakıcısı',       desc:'Göbek bakımı rehberi okundu',              check:s=>(s.umbilicalCareRead||false)},
+  {id:'carseat_pro',    icon:'🚗', name:'Yolda Güvenlik',       desc:'Oto koltuğu güvenliği rehberi okundu',     check:s=>(s.carSeatRead||false)},
+  {id:'eyeear_pro',     icon:'👁️', name:'Duyu Bekçisi',         desc:'Göz & kulak bakımı rehberi okundu',        check:s=>(s.eyeEarCareRead||false)},
+  {id:'bf_problems_pro',icon:'🤱', name:'Emzirme Çözücüsü',     desc:'Emzirme sorunları rehberi okundu',         check:s=>(s.bfProblemsRead||false)},
+  {id:'cradlecap_pro',  icon:'👶', name:'Pürüzsüz Kafa',        desc:'Beşik başlığı bakımı rehberi okundu',      check:s=>(s.cradleCapRead||false)},
   {id:'challenge50',    icon:'🌟', name:'50 Kriz Ustası',     desc:'50 zorlu anı çözdün!',                   check:s=>(s.challengesSolved||0)>=50},
   {id:'full_2years',    icon:'🎊', name:'2 Yıl Tamamlandı!',  desc:'Bebeğin 24. aya ulaştı!',                check:s=>(s.ageMonths||0)>=24},
   {id:'ebeveyn_legend', icon:'👑', name:'Efsane Ebeveyn',     desc:'18.000+ GP toplandı!',                   check:s=>s.dp>=18000},
@@ -2132,6 +2145,11 @@ const S = {
   diaperRashRead:false,
   feverGuideRead:false,
   separationAnxietyRead:false,
+  umbilicalCareRead:false,
+  carSeatRead:false,
+  eyeEarCareRead:false,
+  bfProblemsRead:false,
+  cradleCapRead:false,
 };
 
 // ══════════════════════════════════════════════════════
@@ -3892,6 +3910,11 @@ function showAllGuides(){
     {ico:'🩹',name:'Pişik & Cilt Bakımı',fn:'showDiaperRashGuide()'},
     {ico:'🌡️',name:'Ateş Yönetimi Rehberi',fn:'showFeverGuide()'},
     {ico:'😰',name:'Ayrılık Anksiyetesi',fn:'showSeparationAnxietyGuide()'},
+    {ico:'🧷',name:'Göbek Bakımı (Yenidoğan)',fn:'showUmbilicalCareGuide()'},
+    {ico:'🚗',name:'Oto Koltuğu Güvenliği',fn:'showCarSeatGuide()'},
+    {ico:'👁️',name:'Göz & Kulak Bakımı',fn:'showEyeEarCareGuide()'},
+    {ico:'🤱',name:'Emzirme Sorunları',fn:'showBreastfeedingProblemsGuide()'},
+    {ico:'👶',name:'Beşik Başlığı Bakımı',fn:'showCradleCapGuide()'},
   ];
   const chips=guides.map(g=>`<button class="guide-chip" onclick="${g.fn};this.closest('.pop-ov').remove()">${g.ico}<br>${g.name}</button>`).join('');
   const h=`<div class="pop-ov" onclick="if(event.target===this)this.remove()">
@@ -8318,6 +8341,231 @@ function showSeparationAnxietyGuide(){
     <div class="pop-sub">Güven köprüsü kurma ve ayrılık anlarını kolaylaştırma</div>
     <div style="max-height:55vh;overflow-y:auto;padding:4px 2px">${rows}</div>
     <button class="pop-btn" style="margin-top:12px" onclick="this.closest('.pop-ov').remove()">Güven Köprüsü Kuruldu!</button>
+  </div></div>`;
+  document.body.insertAdjacentHTML('beforeend',h);
+}
+
+// ══════════════════════════════════════════════════════
+// UMBILICAL CORD CARE GUIDE
+// ══════════════════════════════════════════════════════
+function showUmbilicalCareGuide(){
+  S.umbilicalCareRead=true;checkAchievements();saveGame();
+  const sections=[
+    {ico:'🧷',name:'Günlük Bakım',color:'#E3F2FD',border:'#1E88E5',items:[
+      'Göbek kordonu kalıntısı kuru ve temiz tutulmalı, alkol gerekmez',
+      'Bez bağlarken kordonu örtmeyin — havayla teması iyileşmeyi hızlandırır',
+      'Sünger banyosu yeterlidir, kordon düşene kadar küvet banyosundan kaçının',
+      'Kordon genellikle 1-2 hafta içinde kendiliğinden düşer',
+    ]},
+    {ico:'⚠️',name:'Dikkat Edilmesi Gerekenler',color:'#FFEBEE',border:'#E53935',items:[
+      'Kötü koku, sarı/yeşil akıntı, çevresinde kızarıklık enfeksiyon işareti olabilir',
+      'Dokunulduğunda bebek ağrı belirtisi gösteriyorsa doktora başvurun',
+      'Kordon çevresinde şişlik veya ateşle birlikte kızarıklık acil işarettir',
+      'Kordonu kendiniz çekip çıkarmaya çalışmayın, kendi düşmesini bekleyin',
+    ]},
+    {ico:'🩹',name:'Düştükten Sonra',color:'#E8F5E9',border:'#43A047',items:[
+      'Düşme sonrası hafif kanama normaldir, temiz bezle nazikçe silinebilir',
+      'Göbek çukuru tamamen iyileşene kadar (birkaç gün) temiz tutulmalı',
+      'Göbek fıtığı (dışa çıkıklık) bebeklerde sık görülür, genelde kendiliğinden düzelir',
+      'Kalıcı akıntı veya iyileşmeme durumunda pediatriste danışın',
+    ]},
+  ];
+  const rows=sections.map(s=>`
+    <div style="border:2px solid ${s.border};border-radius:10px;padding:10px;margin-bottom:8px;background:${s.color}">
+      <div style="font-weight:800;font-size:.84rem;margin-bottom:5px">${s.ico} ${s.name}</div>
+      <ul style="margin:0 0 0 16px;font-size:.75rem;color:#333">${s.items.map(i=>`<li style="margin-bottom:2px">${i}</li>`).join('')}</ul>
+    </div>`).join('');
+  const h=`<div class="pop-ov" onclick="if(event.target===this)this.remove()">
+  <div class="pop-box" style="max-width:490px">
+    <div class="pop-rainbow"></div>
+    <span class="pop-ico">🧷</span>
+    <div class="pop-title">Göbek Bakımı (Yenidoğan)</div>
+    <div class="pop-sub">Kordon iyileşme süreci ve dikkat edilecekler</div>
+    <div style="max-height:55vh;overflow-y:auto;padding:4px 2px">${rows}</div>
+    <div style="font-size:.68rem;color:#777;margin-top:8px;text-align:center">⚕️ Bu içerik tıbbi tavsiye yerine geçmez. Şüphede pediatriste başvurun.</div>
+    <button class="pop-btn" style="margin-top:12px" onclick="this.closest('.pop-ov').remove()">Temiz & Kuru!</button>
+  </div></div>`;
+  document.body.insertAdjacentHTML('beforeend',h);
+}
+
+// ══════════════════════════════════════════════════════
+// CAR SEAT SAFETY GUIDE
+// ══════════════════════════════════════════════════════
+function showCarSeatGuide(){
+  S.carSeatRead=true;checkAchievements();saveGame();
+  const sections=[
+    {ico:'🚗',name:'Doğru Koltuk Seçimi',color:'#E3F2FD',border:'#1E88E5',items:[
+      'Yenidoğanlar için arkaya bakan (rear-facing) oto koltuğu zorunludur',
+      'En az 2 yaşına kadar (mümkünse daha uzun) arkaya bakan koltukta tutulmalı',
+      'Koltuk, bebeğin kilo ve boyuna uygun, onaylı (ECE R129/i-Size) olmalı',
+      'İkinci el koltuk kullanılacaksa kaza geçmişi olmadığından emin olun',
+    ]},
+    {ico:'🔒',name:'Doğru Kurulum',color:'#E8F5E9',border:'#43A047',items:[
+      'Koltuk araç koltuğuna sıkıca sabitlenmeli, 2.5 cm\'den fazla hareket etmemeli',
+      'Kemer/kayışlar bebeğin omuz hizasında, gevşekliği iki parmaktan az olmalı',
+      'Göğüs tokası köprücük kemiği hizasında (koltuk altı değil) olmalı',
+      'Asla ön koltuğa, hava yastığı bulunan yere oto koltuğu yerleştirmeyin',
+    ]},
+    {ico:'⚠️',name:'Sık Yapılan Hatalar',color:'#FFEBEE',border:'#E53935',items:[
+      'Kalın montla bağlamak — kemer gevşek kalır, kaza anında risk oluşturur',
+      'Koltuğu çok erken öne çevirmek (yaş/kilo sınırına ulaşmadan)',
+      'Bebek uyurken seyahat koltuğunda kafanın öne sarkması — destek yastığı kullanın',
+      'Asla bebeği koltuğa bağlamadan veya araçta tek başına bırakmayın',
+    ]},
+    {ico:'☀️',name:'Yolculuk İpuçları',color:'#FFF9C4',border:'#F9A825',items:[
+      'Uzun yolculuklarda her 2 saatte bir dinlenme molası verin',
+      'Aşırı sıcakta aracı asla bebekle yalnız bırakmayın, sıcak çarpması riski yüksektir',
+      'Güneş koruyucu perde kullanarak doğrudan güneş ışığını azaltın',
+      'Koltuk kılavuzunu mutlaka okuyun, modelinize özel kurulum farklılık gösterebilir',
+    ]},
+  ];
+  const rows=sections.map(s=>`
+    <div style="border:2px solid ${s.border};border-radius:10px;padding:10px;margin-bottom:8px;background:${s.color}">
+      <div style="font-weight:800;font-size:.84rem;margin-bottom:5px">${s.ico} ${s.name}</div>
+      <ul style="margin:0 0 0 16px;font-size:.75rem;color:#333">${s.items.map(i=>`<li style="margin-bottom:2px">${i}</li>`).join('')}</ul>
+    </div>`).join('');
+  const h=`<div class="pop-ov" onclick="if(event.target===this)this.remove()">
+  <div class="pop-box" style="max-width:490px">
+    <div class="pop-rainbow"></div>
+    <span class="pop-ico">🚗</span>
+    <div class="pop-title">Oto Koltuğu Güvenliği</div>
+    <div class="pop-sub">Doğru seçim, kurulum ve yolculuk güvenliği</div>
+    <div style="max-height:55vh;overflow-y:auto;padding:4px 2px">${rows}</div>
+    <button class="pop-btn" style="margin-top:12px" onclick="this.closest('.pop-ov').remove()">Güvenle Yola Çıkıyoruz!</button>
+  </div></div>`;
+  document.body.insertAdjacentHTML('beforeend',h);
+}
+
+// ══════════════════════════════════════════════════════
+// EYE & EAR CARE GUIDE
+// ══════════════════════════════════════════════════════
+function showEyeEarCareGuide(){
+  S.eyeEarCareRead=true;checkAchievements();saveGame();
+  const sections=[
+    {ico:'👁️',name:'Göz Bakımı',color:'#E3F2FD',border:'#1E88E5',items:[
+      'Gözleri her gün temiz, ıslak pamukla iç köşeden dış köşeye doğru silin',
+      'Her göz için ayrı pamuk parçası kullanın, çapraz bulaşmayı önleyin',
+      'Sarı/yeşil akıntı, kızarıklık konjonktivit (göz iltihabı) işareti olabilir',
+      'Gözyaşı kanalı tıkanıklığı yaygındır, çoğu zaman kendiliğinden açılır',
+    ]},
+    {ico:'👂',name:'Kulak Bakımı',color:'#E8F5E9',border:'#43A047',items:[
+      'Kulak içine asla kulak çubuğu (pamuklu çubuk) sokmayın',
+      'Dış kulağı sadece nemli bir bezle nazikçe silin, kulak kendi kendini temizler',
+      'Banyo sonrası kulak içine su girdiyse başını yana çevirerek doğal akmasını sağlayın',
+      'Kulak ağrısı, çekiştirme, ateş kulak enfeksiyonu belirtisi olabilir',
+    ]},
+    {ico:'🚨',name:'Doktora Başvurma Zamanı',color:'#FFEBEE',border:'#E53935',items:[
+      'Göz akıntısı 2-3 günden uzun sürüyor veya kötüleşiyorsa',
+      'Kulağını sürekli çekiştirme, ağlama, huzursuzluk ve ateş birlikteyse',
+      'Gözde kızarıklık şişlikle birlikteyse veya ışığa hassasiyet varsa',
+      'Bebeğin seslere tepki vermediğini fark ederseniz işitme taraması isteyin',
+    ]},
+  ];
+  const rows=sections.map(s=>`
+    <div style="border:2px solid ${s.border};border-radius:10px;padding:10px;margin-bottom:8px;background:${s.color}">
+      <div style="font-weight:800;font-size:.84rem;margin-bottom:5px">${s.ico} ${s.name}</div>
+      <ul style="margin:0 0 0 16px;font-size:.75rem;color:#333">${s.items.map(i=>`<li style="margin-bottom:2px">${i}</li>`).join('')}</ul>
+    </div>`).join('');
+  const h=`<div class="pop-ov" onclick="if(event.target===this)this.remove()">
+  <div class="pop-box" style="max-width:490px">
+    <div class="pop-rainbow"></div>
+    <span class="pop-ico">👁️</span>
+    <div class="pop-title">Göz & Kulak Bakımı</div>
+    <div class="pop-sub">Günlük temizlik ve enfeksiyon belirtileri</div>
+    <div style="max-height:55vh;overflow-y:auto;padding:4px 2px">${rows}</div>
+    <div style="font-size:.68rem;color:#777;margin-top:8px;text-align:center">⚕️ Bu içerik tıbbi tavsiye yerine geçmez. Şüphede pediatriste başvurun.</div>
+    <button class="pop-btn" style="margin-top:12px" onclick="this.closest('.pop-ov').remove()">Anladım!</button>
+  </div></div>`;
+  document.body.insertAdjacentHTML('beforeend',h);
+}
+
+// ══════════════════════════════════════════════════════
+// BREASTFEEDING PROBLEMS GUIDE
+// ══════════════════════════════════════════════════════
+function showBreastfeedingProblemsGuide(){
+  S.bfProblemsRead=true;checkAchievements();saveGame();
+  const sections=[
+    {ico:'🩹',name:'Meme Başı Çatlağı/Ağrısı',color:'#FFEBEE',border:'#E53935',items:[
+      'Çoğunlukla yanlış pozisyon/tutuştan kaynaklanır — bebeğin ağzı areolayı kavramalı',
+      'Emzirme sonrası anne sütü sürmek doğal iyileştirici olabilir',
+      'Lanolin bazlı kremler çatlamayı yumuşatabilir',
+      'Ağrı devam ederse laktasyon danışmanından destek alın',
+    ]},
+    {ico:'🔵',name:'Tıkanıklık (Mastit Öncesi)',color:'#E3F2FD',border:'#1E88E5',items:[
+      'Memede sertlik, hassas bölge hissedilirse tıkanmış kanal olabilir',
+      'Sık emzirme, masaj ve sıcak kompres tıkanıklığı açmaya yardımcı olur',
+      'Emzirme öncesi hafif masaj, emzirme sırasında sıkışan bölgeye doğru basınç uygulayın',
+      'Tedavi edilmezse mastite (meme iltihabı) dönüşebilir',
+    ]},
+    {ico:'🌡️',name:'Mastit Belirtileri',color:'#FFF3E0',border:'#FF8F00',items:[
+      'Memede kızarıklık, sıcaklık artışı, ateş ve grip benzeri belirtiler',
+      'Emzirmeye devam etmek genellikle güvenlidir ve iyileşmeyi hızlandırır',
+      'Belirtiler 24 saatte düzelmezse veya ateş yüksekse doktora başvurun',
+      'Bazı durumlarda antibiyotik gerekebilir, doktor kararı şarttır',
+    ]},
+    {ico:'🥛',name:'Az Süt / Çok Süt Sorunları',color:'#E8F5E9',border:'#43A047',items:[
+      'Az süt algısı çoğu zaman gerçek değildir — bebeğin kilo alımı en iyi göstergedir',
+      'Sık emzirme/pompalama talebi artırarak süt üretimini destekler',
+      'Çok hızlı/güçlü süt akışı bebekte boğulma/gaz sorunlarına yol açabilir',
+      'Süt fazlalığında "blok besleme" tekniği danışmanla değerlendirilebilir',
+    ]},
+  ];
+  const rows=sections.map(s=>`
+    <div style="border:2px solid ${s.border};border-radius:10px;padding:10px;margin-bottom:8px;background:${s.color}">
+      <div style="font-weight:800;font-size:.84rem;margin-bottom:5px">${s.ico} ${s.name}</div>
+      <ul style="margin:0 0 0 16px;font-size:.75rem;color:#333">${s.items.map(i=>`<li style="margin-bottom:2px">${i}</li>`).join('')}</ul>
+    </div>`).join('');
+  const h=`<div class="pop-ov" onclick="if(event.target===this)this.remove()">
+  <div class="pop-box" style="max-width:490px">
+    <div class="pop-rainbow"></div>
+    <span class="pop-ico">🤱</span>
+    <div class="pop-title">Emzirme Sorunları</div>
+    <div class="pop-sub">Çatlak, tıkanıklık, mastit ve süt miktarı sorunları</div>
+    <div style="max-height:55vh;overflow-y:auto;padding:4px 2px">${rows}</div>
+    <div style="font-size:.68rem;color:#777;margin-top:8px;text-align:center">⚕️ Bu içerik tıbbi tavsiye yerine geçmez. Şüphede laktasyon danışmanı/doktora başvurun.</div>
+    <button class="pop-btn" style="margin-top:12px" onclick="this.closest('.pop-ov').remove()">Çözüldü!</button>
+  </div></div>`;
+  document.body.insertAdjacentHTML('beforeend',h);
+}
+
+// ══════════════════════════════════════════════════════
+// CRADLE CAP GUIDE
+// ══════════════════════════════════════════════════════
+function showCradleCapGuide(){
+  S.cradleCapRead=true;checkAchievements();saveGame();
+  const sections=[
+    {ico:'👶',name:'Beşik Başlığı Nedir?',color:'#FFF9C4',border:'#F9A825',items:[
+      'Bebeklerin kafa derisinde görülen yağlı, sarı/kahverengi pul/kabuk birikimi',
+      'Seboreik dermatit türüdür, bulaşıcı değildir ve genelde zararsızdır',
+      'Çoğunlukla ilk aylarda görülür, birkaç ay içinde kendiliğinden geçer',
+      'Kaşıntıya neden olmaz, bebeği rahatsız etmez',
+    ]},
+    {ico:'🧴',name:'Evde Bakım',color:'#E8F5E9',border:'#43A047',items:[
+      'Banyo öncesi kafa derisine bebek yağı/vazelin sürüp 10-15 dk bekletin',
+      'Yumuşak kıllı bir fırçayla nazikçe pulları gevşetin',
+      'Bebek şampuanıyla yıkayıp durulayın, kabukları zorla kazımayın',
+      'Düzenli hafif fırçalama birikimi azaltmaya yardımcı olur',
+    ]},
+    {ico:'⚠️',name:'Ne Zaman Doktora?',color:'#FFEBEE',border:'#E53935',items:[
+      'Kızarıklık, şişlik veya akıntı varsa enfeksiyon olabilir',
+      'Beşik başlığı yüze, kulaklara veya vücuda yayılıyorsa',
+      'Ev bakımına rağmen birkaç ay içinde düzelme yoksa pediatriste danışın',
+      'Bebek kaşıntıdan huzursuzlanıyorsa farklı bir cilt sorunu olabilir',
+    ]},
+  ];
+  const rows=sections.map(s=>`
+    <div style="border:2px solid ${s.border};border-radius:10px;padding:10px;margin-bottom:8px;background:${s.color}">
+      <div style="font-weight:800;font-size:.84rem;margin-bottom:5px">${s.ico} ${s.name}</div>
+      <ul style="margin:0 0 0 16px;font-size:.75rem;color:#333">${s.items.map(i=>`<li style="margin-bottom:2px">${i}</li>`).join('')}</ul>
+    </div>`).join('');
+  const h=`<div class="pop-ov" onclick="if(event.target===this)this.remove()">
+  <div class="pop-box" style="max-width:490px">
+    <div class="pop-rainbow"></div>
+    <span class="pop-ico">👶</span>
+    <div class="pop-title">Beşik Başlığı Bakımı</div>
+    <div class="pop-sub">Nazik temizlik ve doğal iyileşme süreci</div>
+    <div style="max-height:55vh;overflow-y:auto;padding:4px 2px">${rows}</div>
+    <button class="pop-btn" style="margin-top:12px" onclick="this.closest('.pop-ov').remove()">Pürüzsüzleşti!</button>
   </div></div>`;
   document.body.insertAdjacentHTML('beforeend',h);
 }
