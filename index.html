@@ -1468,6 +1468,9 @@ function saveGame(){
     milkStorageRead:S.milkStorageRead||false, ppdRead:S.ppdRead||false,
     nurseryRead:S.nurseryRead||false, singleParentRead:S.singleParentRead||false,
     adoptionRead:S.adoptionRead||false,
+    jaundiceRead:S.jaundiceRead||false, babywearingRead:S.babywearingRead||false,
+    diaperRashRead:S.diaperRashRead||false, feverGuideRead:S.feverGuideRead||false,
+    separationAnxietyRead:S.separationAnxietyRead||false,
     savedAt:Date.now(),
   };
   try { localStorage.setItem(SAVE_KEY, JSON.stringify(data)); } catch(e){}
@@ -1622,6 +1625,11 @@ function applySaveData(d){
   S.nurseryRead = d.nurseryRead||false;
   S.singleParentRead = d.singleParentRead||false;
   S.adoptionRead = d.adoptionRead||false;
+  S.jaundiceRead = d.jaundiceRead||false;
+  S.babywearingRead = d.babywearingRead||false;
+  S.diaperRashRead = d.diaperRashRead||false;
+  S.feverGuideRead = d.feverGuideRead||false;
+  S.separationAnxietyRead = d.separationAnxietyRead||false;
   S.started = true;
 }
 
@@ -1849,6 +1857,11 @@ const ACHIEVEMENTS = [
   {id:'nursery_pro',    icon:'🏠', name:'Oda Tasarımcısı',      desc:'Bebek odası tasarımı rehberi okundu',      check:s=>(s.nurseryRead||false)},
   {id:'single_parent',  icon:'👨‍👩‍👧', name:'Güçlü Ebeveyn',        desc:'Tek ebeveynlik rehberi okundu',            check:s=>(s.singleParentRead||false)},
   {id:'adoption_pro',   icon:'💕', name:'Kalp Bağı',            desc:'Evlat edinme rehberi okundu',              check:s=>(s.adoptionRead||false)},
+  {id:'jaundice_aware', icon:'💛', name:'Sarılık Bilinci',      desc:'Yenidoğan sarılığı rehberi okundu',        check:s=>(s.jaundiceRead||false)},
+  {id:'babywearing_pro',icon:'🧣', name:'Kanguru Anne/Baba',    desc:'Bebek taşıma rehberi okundu',              check:s=>(s.babywearingRead||false)},
+  {id:'diaper_rash_pro',icon:'🩹', name:'Cilt Koruyucu',        desc:'Pişik & cilt bakımı rehberi okundu',       check:s=>(s.diaperRashRead||false)},
+  {id:'fever_pro',      icon:'🌡️', name:'Ateş Takipçisi',       desc:'Ateş yönetimi rehberi okundu',             check:s=>(s.feverGuideRead||false)},
+  {id:'separation_pro', icon:'😰', name:'Güven Köprüsü',        desc:'Ayrılık anksiyetesi rehberi okundu',       check:s=>(s.separationAnxietyRead||false)},
   {id:'challenge50',    icon:'🌟', name:'50 Kriz Ustası',     desc:'50 zorlu anı çözdün!',                   check:s=>(s.challengesSolved||0)>=50},
   {id:'full_2years',    icon:'🎊', name:'2 Yıl Tamamlandı!',  desc:'Bebeğin 24. aya ulaştı!',                check:s=>(s.ageMonths||0)>=24},
   {id:'ebeveyn_legend', icon:'👑', name:'Efsane Ebeveyn',     desc:'18.000+ GP toplandı!',                   check:s=>s.dp>=18000},
@@ -2114,6 +2127,11 @@ const S = {
   nurseryRead:false,
   singleParentRead:false,
   adoptionRead:false,
+  jaundiceRead:false,
+  babywearingRead:false,
+  diaperRashRead:false,
+  feverGuideRead:false,
+  separationAnxietyRead:false,
 };
 
 // ══════════════════════════════════════════════════════
@@ -3869,6 +3887,11 @@ function showAllGuides(){
     {ico:'🏠',name:'Bebek Odası Tasarımı',fn:'showNurseryDesignGuide()'},
     {ico:'👨‍👩‍👧',name:'Tek Ebeveynlik Rehberi',fn:'showSingleParentGuide()'},
     {ico:'💕',name:'Evlat Edinme Rehberi',fn:'showAdoptionGuide()'},
+    {ico:'💛',name:'Yenidoğan Sarılığı',fn:'showJaundiceGuide()'},
+    {ico:'🧣',name:'Bebek Taşıma & Kanguru Yöntemi',fn:'showBabywearingGuide()'},
+    {ico:'🩹',name:'Pişik & Cilt Bakımı',fn:'showDiaperRashGuide()'},
+    {ico:'🌡️',name:'Ateş Yönetimi Rehberi',fn:'showFeverGuide()'},
+    {ico:'😰',name:'Ayrılık Anksiyetesi',fn:'showSeparationAnxietyGuide()'},
   ];
   const chips=guides.map(g=>`<button class="guide-chip" onclick="${g.fn};this.closest('.pop-ov').remove()">${g.ico}<br>${g.name}</button>`).join('');
   const h=`<div class="pop-ov" onclick="if(event.target===this)this.remove()">
@@ -8049,6 +8072,252 @@ function showAdoptionGuide(){
     <div class="pop-sub">Bağ kurma, kimlik ve sevgiyle örülen aile yolculuğu</div>
     <div style="max-height:55vh;overflow-y:auto;padding:4px 2px">${rows}</div>
     <button class="pop-btn" style="margin-top:12px" onclick="this.closest('.pop-ov').remove()">Kalp Bağımı Kurdum!</button>
+  </div></div>`;
+  document.body.insertAdjacentHTML('beforeend',h);
+}
+
+// ══════════════════════════════════════════════════════
+// JAUNDICE (YENİDOĞAN SARILIĞI) GUIDE
+// ══════════════════════════════════════════════════════
+function showJaundiceGuide(){
+  S.jaundiceRead=true;checkAchievements();saveGame();
+  const sections=[
+    {ico:'💛',name:'Sarılık Nedir?',color:'#FFFDE7',border:'#FBC02D',items:[
+      'Yenidoğanların %60\'ında görülen, ciltte/gözde sararmaya yol açan bilirubin birikimi',
+      'Genellikle 2-4. günde başlar, 1-2 haftada kendiliğinden geçer',
+      'Karaciğer henüz olgunlaşmadığı için bilirubini yeterince işleyemez',
+      'Anne sütü sarılığı ve fizyolojik sarılık çoğunlukla zararsızdır',
+    ]},
+    {ico:'🔍',name:'Nasıl Fark Edilir?',color:'#E3F2FD',border:'#1E88E5',items:[
+      'Doğal ışıkta bebeğin cildine parmakla bastırıp rengi kontrol edin',
+      'Önce yüz, sonra gövde, en son kollar/bacaklarda sararma yayılır',
+      'Göz akında sararma önemli bir işarettir',
+      'Şüphede her zaman pediatriste danışın — evde bilirubin ölçülemez',
+    ]},
+    {ico:'🚨',name:'Acil Belirtiler',color:'#FFEBEE',border:'#E53935',items:[
+      'Sararma kollara/bacaklara/ayak tabanına kadar yayıldıysa hemen doktora',
+      'Bebek emmiyor, çok uykulu, uyandırılamıyor ise acile başvurun',
+      'Yüksek sesli ağlama, kas gerginliği veya tersine gevşeklik acil işarettir',
+      'İlk 24 saatte ortaya çıkan sarılık her zaman acil değerlendirme gerektirir',
+    ]},
+    {ico:'🩺',name:'Tedavi & Takip',color:'#E8F5E9',border:'#43A047',items:[
+      'Fototerapi (mavi ışık) en yaygın tedavi yöntemidir',
+      'Sık emzirme/beslenme bilirubinin atılmasına yardımcı olur (8-12 kez/gün)',
+      'Doktor talimatıyla düzenli bilirubin takip kontrollerine gidin',
+      'Güneşe çıkarmak tıbbi tedavinin yerini tutmaz, doktor onayı şart',
+    ]},
+  ];
+  const rows=sections.map(s=>`
+    <div style="border:2px solid ${s.border};border-radius:10px;padding:10px;margin-bottom:8px;background:${s.color}">
+      <div style="font-weight:800;font-size:.84rem;margin-bottom:5px">${s.ico} ${s.name}</div>
+      <ul style="margin:0 0 0 16px;font-size:.75rem;color:#333">${s.items.map(i=>`<li style="margin-bottom:2px">${i}</li>`).join('')}</ul>
+    </div>`).join('');
+  const h=`<div class="pop-ov" onclick="if(event.target===this)this.remove()">
+  <div class="pop-box" style="max-width:490px">
+    <div class="pop-rainbow"></div>
+    <span class="pop-ico">💛</span>
+    <div class="pop-title">Yenidoğan Sarılığı</div>
+    <div class="pop-sub">Ne zaman normal, ne zaman acil — sarılık rehberi</div>
+    <div style="max-height:55vh;overflow-y:auto;padding:4px 2px">${rows}</div>
+    <div style="font-size:.68rem;color:#777;margin-top:8px;text-align:center">⚕️ Bu içerik tıbbi tavsiye yerine geçmez. Şüphede pediatriste başvurun.</div>
+    <button class="pop-btn" style="margin-top:12px" onclick="this.closest('.pop-ov').remove()">Anladım!</button>
+  </div></div>`;
+  document.body.insertAdjacentHTML('beforeend',h);
+}
+
+// ══════════════════════════════════════════════════════
+// BABYWEARING (BEBEK TAŞIMA & KANGURU) GUIDE
+// ══════════════════════════════════════════════════════
+function showBabywearingGuide(){
+  S.babywearingRead=true;checkAchievements();saveGame();
+  const sections=[
+    {ico:'🧣',name:'Taşıyıcı Türleri',color:'#E3F2FD',border:'#1E88E5',items:[
+      'Sargı (wrap): en ayarlanabilir, yenidoğandan itibaren kullanılabilir',
+      'Halka taşıyıcı (ring sling): hızlı takıp çıkarma, kısa süreli taşımalar için ideal',
+      'Yapısal taşıyıcı (soft structured carrier): omuz/bel desteği yüksek, uzun yürüyüşlerde rahat',
+      'Doğru taşıyıcı bebeğin yaşına, kilosuna ve kullanım amacına göre seçilmeli',
+    ]},
+    {ico:'🦵',name:'Güvenli Pozisyon (T.I.C.K.S.)',color:'#E8F5E9',border:'#43A047',items:[
+      'Tight (sıkı): bebek taşıyıcıya sıkıca sarılı olmalı, gevşeklik düşme riski yaratır',
+      'In view at all times (her zaman görünür): yüzü her an görülebilmeli',
+      'Close enough to kiss (öpülecek mesafede): baş çene hizasında, öpülebilir yakınlıkta',
+      'Keep chin off chest (çene göğüsten uzak): hava yolu açık kalmalı, "M" pozisyonu (kurbağa bacak)',
+      'Supported back (desteklenmiş sırt): bebeğin sırtı doğal C şeklinde desteklenmeli',
+    ]},
+    {ico:'🤱',name:'Kanguru Bakımı (Skin-to-Skin)',color:'#FCE4EC',border:'#E91E63',items:[
+      'Erken doğan/düşük doğum kilolu bebeklerde ısı, kalp ritmi ve nefesi düzenler',
+      'Ten tene temas oksitosin salgılayarak bağlanmayı ve emzirmeyi destekler',
+      'Günde en az 1 saat, mümkünse her gün kanguru bakımı önerilir',
+      'Hem anne hem baba kanguru bakımı yapabilir, ikisi de fayda sağlar',
+    ]},
+    {ico:'⚠️',name:'Dikkat Edilmesi Gerekenler',color:'#FFF3E0',border:'#FF8F00',items:[
+      'Mutfakta, ocak başında veya spor yaparken taşıyıcı kullanmayın',
+      'Bebek aşırı sıcak giyinmişse taşıyıcı içinde aşırı ısınma riski olabilir',
+      'Doğru kullanım için üretici kılavuzunu okuyun veya babywearing danışmanına başvurun',
+      'Kalça gelişimi için bacakların "M" pozisyonunda (diz kalçadan yüksekte) olması önemli',
+    ]},
+  ];
+  const rows=sections.map(s=>`
+    <div style="border:2px solid ${s.border};border-radius:10px;padding:10px;margin-bottom:8px;background:${s.color}">
+      <div style="font-weight:800;font-size:.84rem;margin-bottom:5px">${s.ico} ${s.name}</div>
+      <ul style="margin:0 0 0 16px;font-size:.75rem;color:#333">${s.items.map(i=>`<li style="margin-bottom:2px">${i}</li>`).join('')}</ul>
+    </div>`).join('');
+  const h=`<div class="pop-ov" onclick="if(event.target===this)this.remove()">
+  <div class="pop-box" style="max-width:490px">
+    <div class="pop-rainbow"></div>
+    <span class="pop-ico">🧣</span>
+    <div class="pop-title">Bebek Taşıma & Kanguru Yöntemi</div>
+    <div class="pop-sub">Güvenli taşıma teknikleri ve ten tene temas bakımı</div>
+    <div style="max-height:55vh;overflow-y:auto;padding:4px 2px">${rows}</div>
+    <button class="pop-btn" style="margin-top:12px" onclick="this.closest('.pop-ov').remove()">Sarıldık!</button>
+  </div></div>`;
+  document.body.insertAdjacentHTML('beforeend',h);
+}
+
+// ══════════════════════════════════════════════════════
+// DIAPER RASH & SKIN CARE GUIDE
+// ══════════════════════════════════════════════════════
+function showDiaperRashGuide(){
+  S.diaperRashRead=true;checkAchievements();saveGame();
+  const sections=[
+    {ico:'🩹',name:'Pişik Nedenleri',color:'#FFEBEE',border:'#E53935',items:[
+      'Uzun süre nemli/kirli bez ile temas en yaygın sebeptir',
+      'Sürtünme, yeni gıdalar (asidik dışkı), antibiyotik kullanımı tetikleyebilir',
+      'Mantar enfeksiyonu (kandida) kırmızı, keskin kenarlı döküntü yapabilir',
+      'Bez markası değişimi veya alerjik reaksiyon da pişiğe yol açabilir',
+    ]},
+    {ico:'🧼',name:'Günlük Önleme',color:'#E8F5E9',border:'#43A047',items:[
+      'Bezi sık değiştirin, ıslak/kirli bezde uzun süre bırakmayın',
+      'Her değişimde ılık su ile nazikçe temizleyip iyice kurulayın',
+      'Mümkün olduğunda günde birkaç kez "bez molası" (havalandırma) verin',
+      'Alkol/parfüm içeren mendil yerine su bazlı, hassas mendiller kullanın',
+      'Her değişimde koruyucu bariyer krem (çinko oksitli) ince tabaka sürün',
+    ]},
+    {ico:'🌡️',name:'Hangi Durumda Doktora?',color:'#FFF3E0',border:'#FF8F00',items:[
+      '2-3 günlük ev bakımına rağmen iyileşmiyor veya kötüleşiyorsa',
+      'Döküntü kabarcıklı, kanamalı, akıntılı veya ateşle birlikteyse',
+      'Parlak kırmızı, keskin sınırlı döküntü (mantar şüphesi) varsa',
+      'Bebek dokunulduğunda aşırı ağlıyor, huzursuzsa',
+    ]},
+    {ico:'💧',name:'Tedavi İpuçları',color:'#E3F2FD',border:'#1E88E5',items:[
+      'Krem kalın tabaka yerine ince, sık uygulamayla daha etkili olur',
+      'Pudra kullanmaktan kaçının — solunum yoluna kaçabilir',
+      'Şiddetli pişikte doktor mantar kremi veya hafif kortizon önerebilir',
+      'Bez bağlamadan önce cildin tamamen kuru olduğundan emin olun',
+    ]},
+  ];
+  const rows=sections.map(s=>`
+    <div style="border:2px solid ${s.border};border-radius:10px;padding:10px;margin-bottom:8px;background:${s.color}">
+      <div style="font-weight:800;font-size:.84rem;margin-bottom:5px">${s.ico} ${s.name}</div>
+      <ul style="margin:0 0 0 16px;font-size:.75rem;color:#333">${s.items.map(i=>`<li style="margin-bottom:2px">${i}</li>`).join('')}</ul>
+    </div>`).join('');
+  const h=`<div class="pop-ov" onclick="if(event.target===this)this.remove()">
+  <div class="pop-box" style="max-width:490px">
+    <div class="pop-rainbow"></div>
+    <span class="pop-ico">🩹</span>
+    <div class="pop-title">Pişik & Cilt Bakımı</div>
+    <div class="pop-sub">Önleme, bakım ve ne zaman doktora gidilmeli</div>
+    <div style="max-height:55vh;overflow-y:auto;padding:4px 2px">${rows}</div>
+    <button class="pop-btn" style="margin-top:12px" onclick="this.closest('.pop-ov').remove()">Cildi Koruyorum!</button>
+  </div></div>`;
+  document.body.insertAdjacentHTML('beforeend',h);
+}
+
+// ══════════════════════════════════════════════════════
+// FEVER MANAGEMENT GUIDE
+// ══════════════════════════════════════════════════════
+function showFeverGuide(){
+  S.feverGuideRead=true;checkAchievements();saveGame();
+  const sections=[
+    {ico:'🌡️',name:'Ateş Nasıl Ölçülür?',color:'#E3F2FD',border:'#1E88E5',items:[
+      'Rektal ölçüm (makattan) en doğru sonucu verir, özellikle 3 ay altı için önerilir',
+      'Koltuk altı/kulak ölçümleri pratiktir ama biraz daha az hassastır',
+      '38°C ve üzeri vücut sıcaklığı ateş olarak kabul edilir',
+      'Bebek çok giyinmişse veya ağlamışsa ölçümden önce 10-15 dk bekleyin',
+    ]},
+    {ico:'🚨',name:'Acil Doktor Gerektiren Durumlar',color:'#FFEBEE',border:'#E53935',items:[
+      '0-3 ay bebekte 38°C ve üzeri ateş HER ZAMAN acil değerlendirme gerektirir',
+      'Ateşle birlikte döküntü, nefes zorluğu, aşırı uykuluk veya huzursuzluk',
+      'Ateş 40°C üzerindeyse veya 3 günden uzun sürüyorsa',
+      'Havale (febril konvülziyon) geçirme, morarma, bilinç bulanıklığı',
+      'Bebek sıvı almıyor, idrar çıkışı azaldıysa',
+    ]},
+    {ico:'🏠',name:'Evde Bakım',color:'#E8F5E9',border:'#43A047',items:[
+      'Hafif giysiler giydirin, aşırı sıkı sarmalamayın',
+      'Sık sık emzirin/beslenme verin — sıvı kaybını önlemek önemli',
+      'Oda sıcaklığını ılık tutun, aşırı sıcak/soğuk ortamdan kaçının',
+      'Doktor onayıyla yaşa uygun dozda ateş düşürücü (parasetamol) verilebilir',
+      'Soğuk duş/buz uygulaması önerilmez, ılık suyla silmek yeterlidir',
+    ]},
+    {ico:'📋',name:'Takip & Kayıt',color:'#FFF9C4',border:'#F9A825',items:[
+      'Ateşin başlangıç saatini, derecesini ve eşlik eden belirtileri not edin',
+      'Doktor muayenesinde bu bilgiler tanıyı hızlandırır',
+      'Ateş düşürücü verdikten sonra etkisini ve süresini kaydedin',
+      'Tekrarlayan ateş ataklarını mutlaka pediatristle paylaşın',
+    ]},
+  ];
+  const rows=sections.map(s=>`
+    <div style="border:2px solid ${s.border};border-radius:10px;padding:10px;margin-bottom:8px;background:${s.color}">
+      <div style="font-weight:800;font-size:.84rem;margin-bottom:5px">${s.ico} ${s.name}</div>
+      <ul style="margin:0 0 0 16px;font-size:.75rem;color:#333">${s.items.map(i=>`<li style="margin-bottom:2px">${i}</li>`).join('')}</ul>
+    </div>`).join('');
+  const h=`<div class="pop-ov" onclick="if(event.target===this)this.remove()">
+  <div class="pop-box" style="max-width:490px">
+    <div class="pop-rainbow"></div>
+    <span class="pop-ico">🌡️</span>
+    <div class="pop-title">Ateş Yönetimi Rehberi</div>
+    <div class="pop-sub">Ölçüm, evde bakım ve acil belirtiler</div>
+    <div style="max-height:55vh;overflow-y:auto;padding:4px 2px">${rows}</div>
+    <div style="font-size:.68rem;color:#777;margin-top:8px;text-align:center">⚕️ Bu içerik tıbbi tavsiye yerine geçmez. Endişe halinde doktora başvurun.</div>
+    <button class="pop-btn" style="margin-top:12px" onclick="this.closest('.pop-ov').remove()">Takipteyim!</button>
+  </div></div>`;
+  document.body.insertAdjacentHTML('beforeend',h);
+}
+
+// ══════════════════════════════════════════════════════
+// SEPARATION ANXIETY GUIDE
+// ══════════════════════════════════════════════════════
+function showSeparationAnxietyGuide(){
+  S.separationAnxietyRead=true;checkAchievements();saveGame();
+  const sections=[
+    {ico:'😰',name:'Ayrılık Anksiyetesi Nedir?',color:'#FFF3E0',border:'#FF8F00',items:[
+      'Genellikle 6-10. aylarda başlar, 18-24. aylarda zirveye çıkabilir',
+      'Bebeğin "nesne sürekliliği" kavramını öğrenmesiyle ilişkilidir — siz gözden kaybolunca da var olduğunuzu anlar',
+      'Sağlıklı bağlanmanın bir işaretidir, endişe edilecek bir durum değildir',
+      'Yeni ortamlar, bakıcı değişimi veya kreşe başlama tetikleyebilir',
+    ]},
+    {ico:'🚪',name:'Ayrılık Anlarını Kolaylaştırma',color:'#E8F5E9',border:'#43A047',items:[
+      'Vedalaşmayı kısa, sakin ve tutarlı tutun — uzatmak kaygıyı artırır',
+      'Asla sessizce kaçmayın, bu güveni zedeler — her zaman vedalaşın',
+      'Geri döneceğinizi basit sözlerle ifade edin: "Seni öpücükten sonra geleceğim"',
+      'Ayrılık öncesi sevdiği bir oyuncak/objeyle güven köprüsü kurun',
+    ]},
+    {ico:'🧩',name:'Pekiştirme Oyunları',color:'#E3F2FD',border:'#1E88E5',items:[
+      'Ce-ee (peek-a-boo) oyunu nesne sürekliliğini oyunla öğretir',
+      'Saklambaç benzeri kısa "kaybolma-geri gelme" oyunları güveni artırır',
+      'Başka odaya gidip sesle iletişim kurarak kısa ayrılıkları alıştırın',
+      'Aşamalı ayrılık pratiği: önce kısa süreli, güvenilir biriyle bırakma',
+    ]},
+    {ico:'⚠️',name:'Ne Zaman Desteğe İhtiyaç Var?',color:'#FFEBEE',border:'#E53935',items:[
+      '3 yaş sonrası hala her ayrılıkta aşırı panik yaşanıyorsa',
+      'Ayrılık kaygısı günlük yaşamı (uyku, yemek, oyun) ciddi etkiliyorsa',
+      'Fiziksel belirtiler (kusma, aşırı ağlama nöbetleri) sıklaşıyorsa',
+      'Gerekirse çocuk gelişim uzmanına danışmak faydalı olabilir',
+    ]},
+  ];
+  const rows=sections.map(s=>`
+    <div style="border:2px solid ${s.border};border-radius:10px;padding:10px;margin-bottom:8px;background:${s.color}">
+      <div style="font-weight:800;font-size:.84rem;margin-bottom:5px">${s.ico} ${s.name}</div>
+      <ul style="margin:0 0 0 16px;font-size:.75rem;color:#333">${s.items.map(i=>`<li style="margin-bottom:2px">${i}</li>`).join('')}</ul>
+    </div>`).join('');
+  const h=`<div class="pop-ov" onclick="if(event.target===this)this.remove()">
+  <div class="pop-box" style="max-width:490px">
+    <div class="pop-rainbow"></div>
+    <span class="pop-ico">😰</span>
+    <div class="pop-title">Ayrılık Anksiyetesi</div>
+    <div class="pop-sub">Güven köprüsü kurma ve ayrılık anlarını kolaylaştırma</div>
+    <div style="max-height:55vh;overflow-y:auto;padding:4px 2px">${rows}</div>
+    <button class="pop-btn" style="margin-top:12px" onclick="this.closest('.pop-ov').remove()">Güven Köprüsü Kuruldu!</button>
   </div></div>`;
   document.body.insertAdjacentHTML('beforeend',h);
 }
