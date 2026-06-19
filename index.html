@@ -3644,6 +3644,15 @@ function showDailyRoutine(){
     {t:'20:00','a':'Uyku'},
   ];
   const rHtml=routine.map(r=>`<div style="display:flex;gap:10px;align-items:center;padding:5px 0;border-bottom:1px solid #F0E6FF"><span style="font-size:.65rem;font-weight:800;color:var(--purple);min-width:38px">${r.t}</span><span style="font-size:.72rem;color:#555">${r.a}</span></div>`).join('');
+  const wakeWindows=[
+    {age:'0-3 ay','w':'45-60 dakika'},
+    {age:'3-6 ay','w':'1.5-2 saat'},
+    {age:'6-9 ay','w':'2-3 saat'},
+    {age:'9-12 ay','w':'2.5-3.5 saat'},
+    {age:'12-18 ay','w':'4-5 saat (1 şekerleme)'},
+    {age:'18-24 ay','w':'5-6 saat (1 şekerleme)'},
+  ];
+  const wwHtml=wakeWindows.map(w=>`<div style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid #F0E6FF;font-size:.71rem"><strong style="color:var(--purple)">${w.age}</strong><span style="color:#555">${w.w}</span></div>`).join('');
   const h=`<div class="pop-ov" onclick="if(event.target===this)this.remove()">
   <div class="pop-box">
     <div class="pop-rainbow"></div>
@@ -3651,6 +3660,21 @@ function showDailyRoutine(){
     <div class="pop-title">Günlük Rutin Önerisi</div>
     <div class="pop-sub">${mo}. Ay için yaklaşık program (esneklikle uygulayın)</div>
     <div class="pop-sec">${rHtml}</div>
+    <div class="pop-sec" style="background:#E3F2FD">
+      <h4>⏰ Uyanıklık Pencereleri (Wake Windows)</h4>
+      <p style="font-size:.71rem;color:#555;margin-bottom:4px">Bebeğin yorgunluk belirtisi göstermeden önceki maksimum uyanık kalma süresi. Bu pencereyi aşmak aşırı yorgunluğa, kısaltmak ise erken uyumaya neden olur.</p>
+      ${wwHtml}
+    </div>
+    <div class="pop-sec" style="background:#FFF3E0">
+      <h4>🔄 Rutin Nasıl Esnetilir?</h4>
+      <ul style="padding-left:14px;font-size:.71rem;color:#555;line-height:1.7">
+        <li>Saat değil, <strong>uyku işaretlerini</strong> takip edin: göz ovuşturma, esneme, sinirlenme</li>
+        <li>Büyüme atağı (growth spurt) dönemlerinde beslenme sıklığı artabilir — normaldir</li>
+        <li>Hastalık, seyahat, diş çıkarma rutini geçici olarak bozabilir — sabırlı olun, 3-5 günde toparlar</li>
+        <li>Yeni rutine geçişi 1-2 hafta kademeli yapın, ani değişiklik direnç yaratır</li>
+        <li>Gündüz ışığına maruziyet sabah, loş ışık akşam — sirkadiyen ritmi destekler</li>
+      </ul>
+    </div>
     <div class="pop-tip"><div class="pop-tip-t">💡 Rutin Hakkında</div><p>Bu örnek bir rehberdir — her bebek farklıdır! Rutini bebeğinizin uyku işaretlerine göre ayarlayın. Tutarlılık önemlidir, dakika mükemmeliyeti değil.</p></div>
     <button class="pop-btn" onclick="this.closest('.pop-ov').remove()">🌟 Harika Rehber!</button>
   </div></div>`;
@@ -3687,6 +3711,23 @@ function showPostpartumGuide(){
     <div class="pop-sec" style="background:#FFF5F5">
       <h4 style="color:#C62828">🔴 Dikkat Edilmesi Gereken Belirtiler</h4>
       <div>${sHtml}</div>
+    </div>
+
+    <div class="pop-sec" style="background:#F3E5F5">
+      <h4 style="color:#6A1B9A">🩹 Fiziksel İyileşme (Lohusalık)</h4>
+      <ul style="padding-left:14px;font-size:.72rem;color:#555;line-height:1.7">
+        <li><strong>Lohusa kanaması (loşi):</strong> 4-6 hafta sürebilir, giderek azalır — ani artarsa doktora başvurun</li>
+        <li><strong>Rahim küçülmesi:</strong> 6 haftada doğum öncesi boyutuna döner, kasılma sancıları (özellikle emzirirken) normaldir</li>
+        <li><strong>Epizyotomi/sezaryen kesisi:</strong> İlk 2 hafta hassasiyet normal, kızarıklık/akıntı/ateş varsa enfeksiyon belirtisi olabilir</li>
+        <li><strong>Göğüs hassasiyeti:</strong> Süt gelişiyle şişlik artabilir, sıcak/soğuk kompres ve sık emzirme rahatlatır</li>
+        <li><strong>Saç dökülmesi:</strong> Doğumdan 2-4 ay sonra hormonal nedenle artabilir — 6-12 ayda normale döner</li>
+        <li><strong>Cinsel yaşama dönüş:</strong> Genelde 6 hafta kontrolü sonrası, vücut ve istek hazır olduğunda — acele etmeyin</li>
+      </ul>
+    </div>
+
+    <div class="pop-sec" style="background:#FFFDE7">
+      <h4 style="color:#F57F17">⚠️ Risk Faktörleri</h4>
+      <p style="font-size:.71rem;color:#555;line-height:1.6">Postpartum depresyon her anneyi etkileyebilir, ancak şu durumlar riski artırır: geçmişte depresyon/anksiyete öyküsü, zor/travmatik doğum, sosyal destek eksikliği, prematüre bebek veya yoğun bakım süreci, ikiz/çoğul doğum, maddi/ilişkisel stres. Risk faktörü taşıyorsanız doğum öncesi planlama yapın ve doğum sonrası takibi sıklaştırın.</p>
     </div>
 
     <div class="pop-sec" style="background:#E8F5E9">
@@ -3807,6 +3848,27 @@ function showSignLanguage(){
       <p>Bebekler 8-12. aydan itibaren işaretleri anlayabilir ve 10-14. ayda kullanabilir. Konuşma gelişmeden önce iletişim kurulmasını sağlar, hayal kırıklığı krizlerini azaltır!</p>
     </div>
     <div class="pop-sec"><h4>✋ Temel İşaretler</h4>${rows}</div>
+    <div class="pop-sec" style="background:#E0F7FA">
+      <h4>📈 Hangi Yaşta Ne Beklenir?</h4>
+      <ul style="padding-left:14px;font-size:.71rem;color:#555;line-height:1.7">
+        <li><strong>6-8 ay:</strong> Bebek işaretleri izlemeye ve anlamaya başlar, henüz üretmez</li>
+        <li><strong>8-10 ay:</strong> Basit el sallama/işaret etme gibi taklitler başlar</li>
+        <li><strong>10-14 ay:</strong> İlk net işaret (genelde "süt" veya "bitti") ortaya çıkar</li>
+        <li><strong>14-18 ay:</strong> 5-10 işaret aktif kullanılabilir, kombinasyonlar başlayabilir</li>
+        <li>İşaret dili konuşmayı GECİKTİRMEZ — tam tersine kelime hazinesini destekler</li>
+      </ul>
+    </div>
+    <div class="pop-sec" style="background:#FFF3E0">
+      <h4>🎯 Öğretim İpuçları</h4>
+      <ul style="padding-left:14px;font-size:.71rem;color:#555;line-height:1.7">
+        <li>Her işareti sözcükle birlikte söyleyerek yapın — sadece işaret değil, konuşma da devam etsin</li>
+        <li>İlk 3-5 işaretle başlayın: süt, daha, bitti, su, uyku</li>
+        <li>Bebeğin görüş alanında, yavaş ve net hareketlerle gösterin</li>
+        <li>Bebek size bakarken işareti tekrarlayın — göz teması öğrenmeyi hızlandırır</li>
+        <li>Yemek, oyun, banyo gibi günlük rutinlerde tutarlı kullanın</li>
+        <li>Bebeğin "kendi versiyonu" (yaklaşık hareket) da kabul edilebilir — mükemmellik beklemeyin</li>
+      </ul>
+    </div>
     <div class="pop-tip"><div class="pop-tip-t">💡 Nasıl Öğretilir?</div><p>Her aktivitede işareti kullanın. Tekrar ve tutarlılık şarttır. 2-4 hafta düzenli kullanımda bebek ilk işareti geri yapabilir. Sabırlı olun — mucizevi an gelecek!</p></div>
     <button class="pop-btn" onclick="this.closest('.pop-ov').remove()">👋 Öğrenmeye Başlayalım!</button>
   </div></div>`;
@@ -3842,6 +3904,21 @@ function showToyGuide(){
       </ul>
     </div>
     ${html}
+    <div class="pop-sec" style="background:#E8F5E9">
+      <h4>🧠 Oyuncak Türü & Gelişim Alanı</h4>
+      <ul style="padding-left:14px;font-size:.71rem;color:#555;line-height:1.7">
+        <li><strong>🧩 Yapboz/Bloklar:</strong> Mekansal akıl yürütme, problem çözme, ince motor</li>
+        <li><strong>🎨 Sanat malzemeleri:</strong> Yaratıcılık, el-göz koordinasyonu, duyusal keşif</li>
+        <li><strong>📚 Kitaplar:</strong> Dil gelişimi, kelime hazinesi, dikkat süresi</li>
+        <li><strong>🎭 Kukla/bebek/rol oyunu:</strong> Empati, sosyal-duygusal gelişim, dil</li>
+        <li><strong>🚗 İtme/çekme oyuncaklar:</strong> Kaba motor, denge, koordinasyon</li>
+        <li><strong>🎵 Müzik aletleri:</strong> Ritim algısı, işitsel işleme, kendini ifade</li>
+      </ul>
+    </div>
+    <div class="pop-sec" style="background:#FFF3E0">
+      <h4>♾️ Açık Uçlu Oyuncaklar Neden Daha İyi?</h4>
+      <p style="font-size:.71rem;color:#555;line-height:1.6">"Açık uçlu" oyuncaklar (bloklar, kumaş parçaları, kutu, su/kum) tek bir doğru kullanım şekli olmayan, bebeğin hayal gücüyle yönlendirdiği oyuncaklardır. Elektronik/ışıklı-sesli oyuncaklar kısa süreli dikkat çekse de, araştırmalar açık uçlu oyuncaklarla oynayan bebeklerin daha uzun süre odaklandığını ve daha fazla kelime kullandığını gösteriyor (Sosa, 2016 - JAMA Pediatrics).</p>
+    </div>
     <div class="pop-tip"><div class="pop-tip-t">💡 En İyi Oyuncak</div><p>Araştırmalar gösteriyor: Boş karton kutu, kap-kacak, renkli eşarplar ve ebeveyn dikkati — pahalı oyuncaklardan çok daha değerli. Kaliteli vakit geçirin!</p></div>
     <button class="pop-btn" onclick="this.closest('.pop-ov').remove()">🧸 Harika Rehber!</button>
   </div></div>`;
