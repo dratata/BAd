@@ -195,6 +195,14 @@ body{font-family:'Nunito',sans-serif;background:linear-gradient(135deg,#FFF5F8,#
 .pop-ov{position:fixed;inset:0;background:rgba(61,44,141,.6);display:flex;align-items:center;justify-content:center;z-index:10000;backdrop-filter:blur(6px);animation:fadeIn .3s;padding:16px}
 @keyframes fadeIn{from{opacity:0}to{opacity:1}}
 .pop-box{background:#fff;border-radius:28px;padding:26px;max-width:430px;width:100%;box-shadow:0 25px 60px rgba(61,44,141,.3);animation:popIn .4s cubic-bezier(.175,.885,.32,1.275);position:relative;overflow:hidden;max-height:90vh;overflow-y:auto}
+/* ── GUIDE FULL PAGE ──────────────────────────────────
+   Applied on top of .pop-ov/.pop-box for guide screens so they
+   render as dedicated full pages instead of small modals. */
+.guide-page-ov{align-items:flex-start;padding:3vh 12px}
+.guide-page-box{display:flex;flex-direction:column;max-width:760px;width:100%;height:92vh;max-height:92vh;border-radius:24px;margin:0 auto}
+.guide-page-box [style*="overflow-y:auto"]{flex:1 1 auto;min-height:0;max-height:none!important}
+.guide-page-box .pop-btn{flex:0 0 auto}
+.guide-page-box .guide-grid{flex:1 1 auto;min-height:0;overflow-y:auto}
 @keyframes popIn{from{transform:scale(.5) translateY(30px);opacity:0}to{transform:scale(1) translateY(0);opacity:1}}
 .pop-rainbow{position:absolute;top:0;left:0;right:0;height:6px;background:linear-gradient(90deg,#FF6B9D,#FFD166,#52B788,#48CAE4,#C77DFF)}
 .pop-ico{font-size:4rem;display:block;text-align:center;margin:12px 0 6px}
@@ -481,6 +489,8 @@ body{font-family:'Nunito',sans-serif;background:linear-gradient(135deg,#FFF5F8,#
   .pop-btn{padding:11px;font-size:.85rem}
   .guide-grid{grid-template-columns:repeat(3,1fr);gap:5px}
   .guide-chip{padding:7px 4px;font-size:.62rem}
+  .guide-page-ov{padding:0}
+  .guide-page-box{width:100vw;height:100vh;max-height:100vh;border-radius:0;margin:0}
 
   /* challenge card */
   .ch-card{padding:12px}
@@ -600,6 +610,7 @@ body{font-family:'Nunito',sans-serif;background:linear-gradient(135deg,#FFF5F8,#
       <div class="hbadge" id="hDay">📅 1. Gün</div>
       <div class="hbadge dad" id="hDad">👨 Baba: 0%</div>
       <div class="hbadge ms" id="hMs">🏆 0/20</div>
+      <button onclick="togglePause()" id="pauseBtn" style="background:rgba(255,87,87,.35);color:#fff;border:none;padding:5px 11px;border-radius:20px;font-size:.72rem;font-weight:700;cursor:pointer;font-family:'Nunito',sans-serif" title="Oyunu Durdur/Devam Ettir">⏸️ Durdur</button>
       <button onclick="manualSave()" style="background:rgba(82,183,136,.3);color:#fff;border:none;padding:5px 11px;border-radius:20px;font-size:.72rem;font-weight:700;cursor:pointer;font-family:'Nunito',sans-serif" title="Kaydet">💾 Kaydet</button>
       <button onclick="showReportCard()" style="background:rgba(255,209,102,.3);color:#fff;border:none;padding:5px 11px;border-radius:20px;font-size:.72rem;font-weight:700;cursor:pointer;font-family:'Nunito',sans-serif" title="Bebek Karnesi">📊 Karne</button>
       <button onclick="toggleSound()" id="soundBtn" style="background:rgba(199,125,255,.3);color:#fff;border:none;padding:5px 11px;border-radius:20px;font-size:.72rem;font-weight:700;cursor:pointer;font-family:'Nunito',sans-serif" title="Ses Aç/Kapat">🔊 Ses</button>
@@ -2006,6 +2017,7 @@ const ACT_DATA = {
 // STATE
 // ══════════════════════════════════════════════════════
 const S = {
+  paused:false,
   started:false, babyName:'Bebek', gender:'kiz', momName:'Anne', dadName:'Baba',
   hunger:80, happy:70, energy:90, health:100, diaper:100,
   milk:100, dadScore:0, momWellbeing:85,
@@ -2219,10 +2231,26 @@ function startGame(){
 }
 
 // ══════════════════════════════════════════════════════
+// PAUSE
+// ══════════════════════════════════════════════════════
+function togglePause(){
+  S.paused=!S.paused;
+  const btn=document.getElementById('pauseBtn');
+  if(btn) btn.innerHTML = S.paused ? '▶️ Devam Et' : '⏸️ Durdur';
+  if(S.paused){
+    addLog('⏸️ Oyun durduruldu. Devam etmek için tekrar tıkla.');
+  }else{
+    S.lastTick=Date.now();
+    addLog('▶️ Oyuna devam ediliyor!');
+  }
+}
+
+// ══════════════════════════════════════════════════════
 // TICK
 // ══════════════════════════════════════════════════════
 function tick(){
   if(!S.started)return;
+  if(S.paused){ S.lastTick=Date.now(); return; }
   const now=Date.now(), dt=(now-S.lastTick)/1000;
   S.lastTick=now;
   // dp accumulation
@@ -3382,6 +3410,28 @@ function showBreastfeedingGuide(){
     <div class="pop-title">Emzirme Rehberi</div>
     <div class="pop-sub" style="color:var(--pink);font-weight:700">💖 ${S.momName}, sen harikasın!</div>
     <div class="pop-sec"><h4>📍 Emzirme Pozisyonları</h4>${posHtml}</div>
+    <div class="pop-sec" style="background:#E8F5E9">
+      <h4>👅 Doğru Tutunma (Latch) Adımları</h4>
+      <ul style="padding-left:14px;font-size:.73rem;color:#555;line-height:1.7">
+        <li>Meme başını burna doğru hizalayın, bebek ağzını geniş açana kadar bekleyin</li>
+        <li>Ağzı genişçe açtığı anda bebeği meme başına yaklaştırın, sizi ona değil siz onu götürün</li>
+        <li>Dudaklar dışa kıvrık ("balık ağzı"), çene memeye gömülü olmalı</li>
+        <li>Areolanın çoğu (özellikle alt kısmı) ağızda olmalı, sadece meme başı değil</li>
+        <li>Doğru tutunmada acı hissedilmez, sadece çekiş hissi olur — acı varsa tekrar deneyin</li>
+        <li>Yutma sesleri (düzenli "klik-yutma") etkili emmenin işaretidir</li>
+      </ul>
+    </div>
+    <div class="pop-sec" style="background:#E3F2FD">
+      <h4>⏱️ Emzirme Sıklığı & Süresi (Yaşa Göre)</h4>
+      <ul style="padding-left:14px;font-size:.73rem;color:#555;line-height:1.7">
+        <li><strong>0-1 ay:</strong> 24 saatte 8-12 kez, her 2-3 saatte bir, gece dahil — talep üzerine besleme</li>
+        <li><strong>1-3 ay:</strong> 24 saatte 7-9 kez, beslenmeler biraz daha öngörülebilir hale gelir</li>
+        <li><strong>3-6 ay:</strong> 24 saatte 5-7 kez, her öğün daha verimli ve hızlı olur</li>
+        <li><strong>6+ ay:</strong> Katı gıdayla birlikte 4-6 kez emzirme + anne sütü temel besin kaynağı kalır</li>
+        <li>Bir öğün ortalama 10-20 dk sürer, bebek kendi temposunda bırakana kadar emzirilmeli</li>
+        <li>Büyüme atakları (growth spurt) sırasında (2-3 hafta, 6 hafta, 3 ay) sıklık geçici olarak artabilir</li>
+      </ul>
+    </div>
     <div class="pop-sec" style="background:#FFF5F5">
       <h4>🔴 Sorun Giderme</h4>
       <ul style="padding-left:14px;font-size:.73rem;color:#555;line-height:1.7">
@@ -3389,6 +3439,16 @@ function showBreastfeedingGuide(){
         <li><strong>Dolgunluk/engorgement:</strong> Sık sık emzirin, ılık kompres, sütü biraz boşaltın</li>
         <li><strong>Mastit:</strong> Ateş + sertlik + kızarıklık → doktora gidin, emzirmeye devam edin</li>
         <li><strong>Az süt hissi:</strong> Bebek ıslak bez + kilo alıyorsa yeterlidir. Daha fazla emzirmek üretimi artırır</li>
+        <li>Daha detaylı sorun giderme için "Emzirme Sorunları" rehberine bakabilirsiniz</li>
+      </ul>
+    </div>
+    <div class="pop-sec" style="background:#FFFDE7">
+      <h4>🍽️ Emziren Annenin Beslenmesi</h4>
+      <ul style="padding-left:14px;font-size:.73rem;color:#555;line-height:1.7">
+        <li>Günlük kalori ihtiyacı normalin ~500 kcal üzerine çıkar, dengeli ve çeşitli beslenin</li>
+        <li>Bol su tüketimi süt üretimini destekler — susuzluk hissini bekletmeyin</li>
+        <li>Çoğu gıda güvenlidir; aşırı kafein ve alkol sınırlı tutulmalı</li>
+        <li>Bazı bebeklerde annenin tükettiği gıdalara (süt ürünleri, baharatlı yemek) hassasiyet görülebilir, takip edin</li>
       </ul>
     </div>
     <div class="pop-tip"><div class="pop-tip-t">💡 WHO Altın Kural</div><p>İlk 6 ay SADECE anne sütü. 6. aydan itibaren destekleyici katı gıda + anne sütü. Tercihen 2 yaşa kadar devam edin. ${S.momName}, her damlası için teşekkürler! 🌸</p></div>
@@ -3439,6 +3499,26 @@ function showSleepGuide(){
         <li>Gece uyku sürekliliği 4. ayda gelişir</li>
         <li>Gündüz uykuları 18. ayda birleşerek 1'e iner</li>
         <li>Tutarlı uyku zamanı en önemli faktördür</li>
+      </ul>
+    </div>
+    <div class="pop-sec" style="background:#E8F5E9">
+      <h4>🛏️ Güvenli Uyku Ortamı (AAP Önerileri)</h4>
+      <ul style="padding-left:14px;font-size:.71rem;color:#555;line-height:1.7">
+        <li>Bebek her zaman sırtüstü yatırılmalı — yan veya yüzüstü değil</li>
+        <li>Sert, düz bir yatak yüzeyi kullanılmalı, yumuşak yatak/yastık önerilmez</li>
+        <li>Yatakta yastık, battaniye, oyuncak, kenar koruyucu bulunmamalı — boğulma riski taşır</li>
+        <li>1 yaşına kadar aynı odada ama ayrı yatakta (room-sharing) uyumak önerilir</li>
+        <li>Oda sıcaklığı 18-21°C arası ideal, bebeği aşırı giydirmeyin (aşırı ısınma SIDS riskini artırır)</li>
+        <li>Emzik kullanımı SIDS riskini azaltabilir, doktorunuzla görüşebilirsiniz</li>
+      </ul>
+    </div>
+    <div class="pop-sec" style="background:#FFF3E0">
+      <h4>🌊 Uyku Gerilemesi (Sleep Regression)</h4>
+      <ul style="padding-left:14px;font-size:.71rem;color:#555;line-height:1.7">
+        <li>4. ay, 8-10. ay ve 18. ay civarında geçici uyku bozulmaları normaldir</li>
+        <li>Beyin gelişimi, yeni motor beceriler (oturma, yürüme) veya ayrılık kaygısı tetikleyebilir</li>
+        <li>Bu dönemlerde rutine sadık kalmak, sakin ve tutarlı tepki vermek iyileşmeyi hızlandırır</li>
+        <li>Gerileme genellikle 2-6 hafta içinde kendiliğinden düzelir, kalıcı değildir</li>
       </ul>
     </div>
     <div class="pop-tip"><div class="pop-tip-t">💙 ${S.dadName} için</div><p>Uyku rutinini sen de üstlen! Baba yatıştırması bebek için farklı ama bir o kadar değerlidir. Annenin dinlenmesini sağla.</p></div>
@@ -3783,6 +3863,18 @@ function showScreenTimeGuide(){
 // ══════════════════════════════════════════════════════
 // ALL GUIDES QUICK ACCESS
 // ══════════════════════════════════════════════════════
+// Opens a guide function's popup as a dedicated full page (instead of a small modal),
+// stacked on top of the open guide menu so closing it reveals the menu again.
+function openGuidePage(fnExpr){
+  try{ (new Function(fnExpr))(); }catch(e){ console.error('Rehber açılamadı:',fnExpr,e); return; }
+  const ov=document.body.lastElementChild;
+  if(ov && ov.classList && ov.classList.contains('pop-ov')){
+    ov.classList.add('guide-page-ov');
+    const box=ov.querySelector('.pop-box');
+    if(box) box.classList.add('guide-page-box');
+  }
+}
+
 function showAllGuides(){
   const guides=[
     {ico:'📈',name:'Büyüme Grafiği',fn:'showGrowthChart()'},
@@ -3943,13 +4035,17 @@ function showAllGuides(){
     {ico:'💧',name:'İshal & Sıvı Kaybı Yönetimi',fn:'showDiarrheaGuide()'},
     {ico:'☀️',name:'Bebek Cildi için Güneş Koruması',fn:'showSunProtectionGuide()'},
   ];
-  const chips=guides.map(g=>`<button class="guide-chip" onclick="${g.fn};this.closest('.pop-ov').remove()">${g.ico}<br>${g.name}</button>`).join('');
-  const h=`<div class="pop-ov" onclick="if(event.target===this)this.remove()">
-  <div class="pop-box">
+  const chips=guides.map(g=>{
+    const isGuidePage=/^show\w+\(\)$/.test(g.fn);
+    const action=isGuidePage?`openGuidePage('${g.fn}')`:`${g.fn};this.closest('.pop-ov').remove()`;
+    return `<button class="guide-chip" onclick="${action}">${g.ico}<br>${g.name}</button>`;
+  }).join('');
+  const h=`<div class="pop-ov guide-page-ov" onclick="if(event.target===this)this.remove()">
+  <div class="pop-box guide-page-box">
     <div class="pop-rainbow"></div>
     <span class="pop-ico">📚</span>
     <div class="pop-title">Tüm Rehberler</div>
-    <div class="pop-sub">Ebeveynlik yolculuğunuzda her rehber bir tık uzağınızda</div>
+    <div class="pop-sub">Ebeveynlik yolculuğunuzda her rehber bir tık uzağınızda — bir rehbere tıkla, kendi sayfasında açılsın</div>
     <div class="guide-grid">${chips}</div>
     <button class="pop-btn" style="margin-top:12px" onclick="this.closest('.pop-ov').remove()">Kapat</button>
   </div></div>`;
@@ -5533,6 +5629,33 @@ function showSolidFoodGuide(){
       <h4>🗓️ Gıda Tanıtım Takvimi</h4>
       <div style="font-size:.72rem;color:#888;margin-bottom:6px">Her yeni gıdayı 3-5 gün bekleyerek tanıtın (alerji takibi)</div>
       ${rowHtml}
+    </div>
+    <div class="pop-sec" style="background:#E3F2FD">
+      <h4>🥄 Püre mi, BLW mi?</h4>
+      <ul style="padding-left:14px;font-size:.72rem;color:#555;line-height:1.7">
+        <li><strong>Klasik (kaşıkla püre):</strong> İnce püreden kademeli olarak daha katı dokuya geçilir, porsiyon kontrolü kolaydır</li>
+        <li><strong>BLW (Baby-Led Weaning):</strong> Bebek başından itibaren parmak yiyeceklerle kendi yer, el-göz koordinasyonunu geliştirir</li>
+        <li>İki yöntem de karma kullanılabilir — "kendi hızında karma beslenme" çoğu aile için en pratik yoldur</li>
+        <li>Hangi yöntem seçilirse seçilsin bebek her zaman oturur pozisyonda ve gözetim altında beslenmeli</li>
+      </ul>
+    </div>
+    <div class="pop-sec" style="background:#FFEBEE">
+      <h4>🚨 Boğulma Güvenliği</h4>
+      <ul style="padding-left:14px;font-size:.72rem;color:#555;line-height:1.7">
+        <li>Yiyecekleri bebeğin yumruğu kalınlığında, kolay tutulabilir şekillerde sunun</li>
+        <li>Yuvarlak, sert, kayan gıdalar (tam üzüm, fındık, sosis dilimi) küçük parçalara bölünmeli</li>
+        <li>Bebek yerken her zaman gözetim altında olmalı, asla tek başına bırakılmamalı</li>
+        <li>"Gag reflex" (öğürme) ile "choking" (boğulma) farklıdır — öğürme normal bir öğrenme tepkisidir</li>
+      </ul>
+    </div>
+    <div class="pop-sec" style="background:#FFF9C4">
+      <h4>🍽️ Porsiyon & Öğün Sayısı</h4>
+      <ul style="padding-left:14px;font-size:.72rem;color:#555;line-height:1.7">
+        <li><strong>6-8 ay:</strong> Günde 1-2 küçük öğün (1-2 yemek kaşığı), anne sütü/mama temel besin kalır</li>
+        <li><strong>9-11 ay:</strong> Günde 2-3 öğün + 1-2 ara öğün, porsiyon kademeli artar</li>
+        <li><strong>12+ ay:</strong> Günde 3 ana öğün + 2 ara öğün, aile sofrasına katılım artar</li>
+        <li>Bebeğin tokluk sinyallerine (başını çevirme, ağzını kapatma) saygı gösterin, zorlamayın</li>
+      </ul>
     </div>
     <div class="pop-tip">
       <div class="pop-tip-t">💡 WHO Önerisi</div>
