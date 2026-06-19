@@ -1465,6 +1465,9 @@ function saveGame(){
     bathSafetyRead:S.bathSafetyRead||false, fineMotorRead:S.fineMotorRead||false,
     siblingRivalryRead:S.siblingRivalryRead||false, sharentingRead:S.sharentingRead||false,
     motionSicknessRead:S.motionSicknessRead||false,
+    milkStorageRead:S.milkStorageRead||false, ppdRead:S.ppdRead||false,
+    nurseryRead:S.nurseryRead||false, singleParentRead:S.singleParentRead||false,
+    adoptionRead:S.adoptionRead||false,
     savedAt:Date.now(),
   };
   try { localStorage.setItem(SAVE_KEY, JSON.stringify(data)); } catch(e){}
@@ -1614,6 +1617,11 @@ function applySaveData(d){
   S.siblingRivalryRead = d.siblingRivalryRead||false;
   S.sharentingRead = d.sharentingRead||false;
   S.motionSicknessRead = d.motionSicknessRead||false;
+  S.milkStorageRead = d.milkStorageRead||false;
+  S.ppdRead = d.ppdRead||false;
+  S.nurseryRead = d.nurseryRead||false;
+  S.singleParentRead = d.singleParentRead||false;
+  S.adoptionRead = d.adoptionRead||false;
   S.started = true;
 }
 
@@ -1836,6 +1844,11 @@ const ACHIEVEMENTS = [
   {id:'rivalry_pro',    icon:'😠', name:'Aile Barışçısı',       desc:'Kardeş kıskançlığı rehberi okundu',        check:s=>(s.siblingRivalryRead||false)},
   {id:'sharenting_pro', icon:'📵', name:'Mahremiyet Bekçisi',   desc:'Sharenting rehberi okundu',                check:s=>(s.sharentingRead||false)},
   {id:'motion_pro',     icon:'🚗', name:'Yol Dostu',            desc:'Yolculuk tutması rehberi okundu',          check:s=>(s.motionSicknessRead||false)},
+  {id:'milk_storage',   icon:'🍼', name:'Süt Saklama Ustası',   desc:'Anne sütü saklama rehberi okundu',         check:s=>(s.milkStorageRead||false)},
+  {id:'ppd_aware',      icon:'😢', name:'Ruh Sağlığı Bekçisi',  desc:'Doğum sonrası depresyon rehberi okundu',   check:s=>(s.ppdRead||false)},
+  {id:'nursery_pro',    icon:'🏠', name:'Oda Tasarımcısı',      desc:'Bebek odası tasarımı rehberi okundu',      check:s=>(s.nurseryRead||false)},
+  {id:'single_parent',  icon:'👨‍👩‍👧', name:'Güçlü Ebeveyn',        desc:'Tek ebeveynlik rehberi okundu',            check:s=>(s.singleParentRead||false)},
+  {id:'adoption_pro',   icon:'💕', name:'Kalp Bağı',            desc:'Evlat edinme rehberi okundu',              check:s=>(s.adoptionRead||false)},
   {id:'challenge50',    icon:'🌟', name:'50 Kriz Ustası',     desc:'50 zorlu anı çözdün!',                   check:s=>(s.challengesSolved||0)>=50},
   {id:'full_2years',    icon:'🎊', name:'2 Yıl Tamamlandı!',  desc:'Bebeğin 24. aya ulaştı!',                check:s=>(s.ageMonths||0)>=24},
   {id:'ebeveyn_legend', icon:'👑', name:'Efsane Ebeveyn',     desc:'18.000+ GP toplandı!',                   check:s=>s.dp>=18000},
@@ -2096,6 +2109,11 @@ const S = {
   siblingRivalryRead:false,
   sharentingRead:false,
   motionSicknessRead:false,
+  milkStorageRead:false,
+  ppdRead:false,
+  nurseryRead:false,
+  singleParentRead:false,
+  adoptionRead:false,
 };
 
 // ══════════════════════════════════════════════════════
@@ -3846,6 +3864,11 @@ function showAllGuides(){
     {ico:'😠',name:'Kardeş Kıskançlığı',fn:'showSiblingRivalryGuide()'},
     {ico:'📵',name:'Sharenting & Dijital Mahremiyet',fn:'showSharentingGuide()'},
     {ico:'🚗',name:'Yolculuk Tutması (Motion Sickness)',fn:'showMotionSicknessGuide()'},
+    {ico:'🍼',name:'Anne Sütü Saklama & Pompalama',fn:'showMilkStorageGuide()'},
+    {ico:'😢',name:'Doğum Sonrası Depresyon',fn:'showPostpartumDepressionGuide()'},
+    {ico:'🏠',name:'Bebek Odası Tasarımı',fn:'showNurseryDesignGuide()'},
+    {ico:'👨‍👩‍👧',name:'Tek Ebeveynlik Rehberi',fn:'showSingleParentGuide()'},
+    {ico:'💕',name:'Evlat Edinme Rehberi',fn:'showAdoptionGuide()'},
   ];
   const chips=guides.map(g=>`<button class="guide-chip" onclick="${g.fn};this.closest('.pop-ov').remove()">${g.ico}<br>${g.name}</button>`).join('');
   const h=`<div class="pop-ov" onclick="if(event.target===this)this.remove()">
@@ -7730,6 +7753,302 @@ function showMotionSicknessGuide(){
     <div class="pop-sub">Araç tutması belirtileri, önleme ve güvenli çözümler</div>
     <div style="max-height:55vh;overflow-y:auto;padding:4px 2px">${rows}</div>
     <button class="pop-btn" style="margin-top:12px" onclick="this.closest('.pop-ov').remove()">Yolculuğa Hazırım!</button>
+  </div></div>`;
+  document.body.insertAdjacentHTML('beforeend',h);
+}
+
+// ══════════════════════════════════════════════════════
+// BREAST MILK STORAGE & PUMPING GUIDE
+// ══════════════════════════════════════════════════════
+function showMilkStorageGuide(){
+  S.milkStorageRead=true;checkAchievements();saveGame();
+  const sections=[
+    {ico:'🌡️',name:'Saklama Süreleri',color:'#E3F2FD',border:'#1E88E5',items:[
+      'Oda sıcaklığı (16-25°C): 4 saate kadar',
+      'Buzdolabı (≤4°C): 4 güne kadar',
+      'Buzdolabı dondurucusu (kapı içi): 2 haftaya kadar',
+      'Ayrı kapılı derin dondurucu (-18°C): 6-12 aya kadar',
+      'Taze sağılmış süt en kaliteli besin değerine sahiptir',
+    ]},
+    {ico:'🧊',name:'Dondurma & Çözme',color:'#E8F5E9',border:'#43A047',items:[
+      'Küçük porsiyonlar halinde dondurun (60-120 ml) — israfı önler',
+      'Torbaları düz yatırıp dondurun, üstüne tarih yazın',
+      'Çözme: bir gece önceden buzdolabına alın veya ılık suda',
+      'ASLA mikrodalgada ısıtmayın — sıcak nokta oluşur, yakar',
+      'Çözülmüş süt buzdolabında 24 saat içinde kullanılmalı, tekrar dondurulmaz',
+    ]},
+    {ico:'🤱',name:'Pompalama İpuçları',color:'#FFF9C4',border:'#F9A825',items:[
+      'İlk haftalarda her 2-3 saatte pompalama süt üretimini destekler',
+      'Bebeğin fotoğrafı/kokusu yanınızdayken pompalama refleksi tetikler',
+      'Çift pompalama (her iki meme aynı anda) zaman kazandırır',
+      'Pompa parçalarını her kullanım sonrası temizleyin, günde 1 sterilize edin',
+      'Güç pompalama (power pumping): üretimi artırmak için aralıklı pompalama tekniği',
+    ]},
+    {ico:'🏷️',name:'Etiketleme & Organizasyon',color:'#FCE4EC',border:'#E91E63',items:[
+      'Her torbaya sağım tarihi ve saatini yazın',
+      '"İlk giren ilk çıkar" sistemi: eski sütü önce kullanın',
+      'Bakıcı/kreş için ayrı etiketli porsiyonlar hazırlayın',
+      'Anne ilaç kullanıyorsa süt üzerine not düşün',
+      'Dondurucu envanteri tutmak kaybı önler',
+    ]},
+    {ico:'⚠️',name:'Güvenlik Uyarıları',color:'#F3E5F5',border:'#AB47BC',items:[
+      'Bebeğin içtiği sütü artık tekrar saklamayın (bakteri riski)',
+      'Renk/koku değişikliği varsa kullanmayın — sabun kokusu normal olabilir',
+      'Elektrik kesintisinde dondurucuyu kapalı tutun, içini kontrol edin',
+      'BPA içermeyen saklama kapları/torbaları tercih edin',
+      'Şüphede kaldığınızda atın — "olur mu" diye risk almayın',
+    ]},
+  ];
+  const rows=sections.map(s=>`
+    <div style="border:2px solid ${s.border};border-radius:10px;padding:10px;margin-bottom:8px;background:${s.color}">
+      <div style="font-weight:800;font-size:.84rem;margin-bottom:5px">${s.ico} ${s.name}</div>
+      <ul style="margin:0 0 0 16px;font-size:.75rem;color:#333">${s.items.map(i=>`<li style="margin-bottom:2px">${i}</li>`).join('')}</ul>
+    </div>`).join('');
+  const h=`<div class="pop-ov" onclick="if(event.target===this)this.remove()">
+  <div class="pop-box" style="max-width:490px">
+    <div class="pop-rainbow"></div>
+    <span class="pop-ico">🍼</span>
+    <div class="pop-title">Anne Sütü Saklama & Pompalama</div>
+    <div class="pop-sub">Saklama süreleri, çözme, pompalama ve güvenlik rehberi</div>
+    <div style="max-height:55vh;overflow-y:auto;padding:4px 2px">${rows}</div>
+    <button class="pop-btn" style="margin-top:12px" onclick="this.closest('.pop-ov').remove()">Sütümü Güvenle Sakladım!</button>
+  </div></div>`;
+  document.body.insertAdjacentHTML('beforeend',h);
+}
+
+// ══════════════════════════════════════════════════════
+// POSTPARTUM DEPRESSION AWARENESS GUIDE
+// ══════════════════════════════════════════════════════
+function showPostpartumDepressionGuide(){
+  S.ppdRead=true;checkAchievements();saveGame();
+  const sections=[
+    {ico:'ℹ️',name:'Önce Bilinmesi Gerekenler',color:'#E3F2FD',border:'#1E88E5',items:[
+      'Bu rehber tanı koymaz — farkındalık ve yönlendirme amaçlıdır',
+      'Doğum sonrası depresyon bir karakter zayıflığı DEĞİLDİR',
+      'Her 7 anneden biri PPD yaşar — yalnız değilsiniz',
+      'Babalar/partnerler de doğum sonrası depresyon yaşayabilir',
+      'Tedavi edilebilir bir durumdur — yardım almak güçlülük göstergesidir',
+    ]},
+    {ico:'😔',name:'"Baby Blues" vs. Gerçek PPD',color:'#FFF9C4',border:'#F9A825',items:[
+      'Baby blues: doğumdan sonraki 2 hafta içinde, hafif, kendiliğinden geçer',
+      'PPD: 2 haftadan uzun sürer, günlük yaşamı ciddi etkiler',
+      'PPD belirtileri doğumdan sonra herhangi bir zamanda (1 yıla kadar) başlayabilir',
+      'Yoğunluk farkı: hafif hüzün değil, derin çaresizlik ve işlev kaybı',
+      'Şüphede kalmayın — ikisi arasındaki çizgiyi doktor belirler',
+    ]},
+    {ico:'🚩',name:'Uyarı İşaretleri',color:'#FCE4EC',border:'#E91E63',items:[
+      'Sürekli üzüntü, boşluk hissi, ağlama nöbetleri',
+      'Bebeğe karşı bağ kuramama veya ilgisizlik hissi',
+      'Aşırı kaygı, panik atak, sürekli "yetersiz anne" hissi',
+      'Uyku/iştah aşırı değişimi (bebekten bağımsız)',
+      'Kendine veya bebeğe zarar verme düşünceleri — BU ACİL DURUMDUR',
+    ]},
+    {ico:'🆘',name:'Acil Durum',color:'#FFEBEE',border:'#E53935',items:[
+      'Kendinize veya bebeğinize zarar verme düşünceniz varsa HEMEN yardım alın',
+      'Acil servis, 112, veya güvendiğiniz birini hemen arayın',
+      'Yalnız kalmayın — yanınızda biri olsun',
+      'Bu düşünceler hastalığın bir parçasıdır, siz değilsiniz',
+      'Doğru tedaviyle bu düşünceler tamamen geçer — umut gerçek',
+    ]},
+    {ico:'💚',name:'Yardım Almak',color:'#E8F5E9',border:'#43A047',items:[
+      'Kadın doğum uzmanı veya pediatriste açıkça anlatın',
+      'Psikiyatrist/psikolog desteği: terapi ve gerekirse ilaç tedavisi',
+      'Emzirme uyumlu antidepresanlar mevcuttur — doktor yönlendirir',
+      'Destek grupları: deneyim paylaşımı yalnızlığı azaltır',
+      'Partner/aile desteği isteyin: ev işi, bebek bakımı paylaşımı',
+    ]},
+  ];
+  const rows=sections.map(s=>`
+    <div style="border:2px solid ${s.border};border-radius:10px;padding:10px;margin-bottom:8px;background:${s.color}">
+      <div style="font-weight:800;font-size:.84rem;margin-bottom:5px">${s.ico} ${s.name}</div>
+      <ul style="margin:0 0 0 16px;font-size:.75rem;color:#333">${s.items.map(i=>`<li style="margin-bottom:2px">${i}</li>`).join('')}</ul>
+    </div>`).join('');
+  const h=`<div class="pop-ov" onclick="if(event.target===this)this.remove()">
+  <div class="pop-box" style="max-width:490px">
+    <div class="pop-rainbow"></div>
+    <span class="pop-ico">😢</span>
+    <div class="pop-title">Doğum Sonrası Depresyon Farkındalığı</div>
+    <div class="pop-sub">Yalnız değilsiniz — tanıma, anlama ve yardım alma rehberi</div>
+    <div style="max-height:55vh;overflow-y:auto;padding:4px 2px">${rows}</div>
+    <div style="font-size:.68rem;color:#888;margin-top:8px;text-align:center;font-style:italic">⚕️ Bu içerik tıbbi tavsiye yerine geçmez. Belirti yaşıyorsanız bir uzmana başvurun.</div>
+    <button class="pop-btn" style="margin-top:10px" onclick="this.closest('.pop-ov').remove()">Yalnız Değilim!</button>
+  </div></div>`;
+  document.body.insertAdjacentHTML('beforeend',h);
+}
+
+// ══════════════════════════════════════════════════════
+// NURSERY DESIGN GUIDE
+// ══════════════════════════════════════════════════════
+function showNurseryDesignGuide(){
+  S.nurseryRead=true;checkAchievements();saveGame();
+  const sections=[
+    {ico:'🛏️',name:'Güvenli Yatak Alanı',color:'#FFEBEE',border:'#E53935',items:[
+      'Beşik/yatak: pencere, perde kordonu, prizden uzak yerleştirin',
+      'Beşik üstüne raf/resim çerçevesi asmayın (devrilme riski)',
+      'Yatakta yastık, battaniye, oyuncak, koruyucu kenarlık OLMAMALI',
+      'Yatak çubukları arası max 6 cm — bebeğin başı sıkışmamalı',
+      'Mobilyaları duvara sabitleyin — tırmanma/devrilme riskine karşı',
+    ]},
+    {ico:'💡',name:'Işıklandırma',color:'#FFF9C4',border:'#F9A825',items:[
+      'Karartma perdesi: gündüz uykuları için karanlık ortam',
+      'Gece lambası: kırmızı/turuncu tonlu, loş — melatonini korur',
+      'Bez değiştirme alanı için ayrı, parlak ama göz batmayan ışık',
+      'Doğal ışık girişi: sabah rutini için faydalı',
+      'Ana ışık dimmer (kısılabilir) olursa gece kullanımı kolaylaşır',
+    ]},
+    {ico:'🎨',name:'Renk & Atmosfer',color:'#E8F5E9',border:'#43A047',items:[
+      'Yumuşak, sakinleştirici tonlar: pastel mavi, yeşil, bej',
+      'Aşırı uyarıcı parlak renk/desen aşırı kullanımından kaçının',
+      'Doğa temalı dekorasyon sakinleştirici etki yapar',
+      'Cinsiyet nötr tonlar (sarı, yeşil, gri) esneklik sağlar',
+      'Boyalar VOC-free (düşük kimyasal) seçilmeli',
+    ]},
+    {ico:'🗄️',name:'Fonksiyonel Düzen',color:'#E3F2FD',border:'#1E88E5',items:[
+      'Üçgen düzen: yatak, bez değiştirme, saklama alanı yakın olmalı',
+      'Gece beslemesi için rahat koltuk/sandalye bulundurun',
+      'Bez/kıyafet kolay erişilebilir, ama bebeğin ulaşamayacağı yükseklikte',
+      'Saklama: kutular/sepetler ile düzenli, etiketli sistem',
+      'Büyüyünce dönüştürülebilir mobilya (büyüyen yatak) uzun vadede tasarruf',
+    ]},
+    {ico:'🌡️',name:'Hava Kalitesi & İklim',color:'#F3E5F5',border:'#AB47BC',items:[
+      'Oda sıcaklığı: 18-20°C ideal uyku sıcaklığı',
+      'Nem oranı %40-60: kuru hava mukozayı tahriş eder',
+      'Düzenli havalandırma: günde en az 10-15 dakika',
+      'Halı/kilim yerine kolay temizlenen yüzeyler (akar/toz birikimi)',
+      'Hava temizleyici (HEPA filtre): şehir/alerji riskinde faydalı',
+    ]},
+  ];
+  const rows=sections.map(s=>`
+    <div style="border:2px solid ${s.border};border-radius:10px;padding:10px;margin-bottom:8px;background:${s.color}">
+      <div style="font-weight:800;font-size:.84rem;margin-bottom:5px">${s.ico} ${s.name}</div>
+      <ul style="margin:0 0 0 16px;font-size:.75rem;color:#333">${s.items.map(i=>`<li style="margin-bottom:2px">${i}</li>`).join('')}</ul>
+    </div>`).join('');
+  const h=`<div class="pop-ov" onclick="if(event.target===this)this.remove()">
+  <div class="pop-box" style="max-width:490px">
+    <div class="pop-rainbow"></div>
+    <span class="pop-ico">🏠</span>
+    <div class="pop-title">Bebek Odası Tasarımı</div>
+    <div class="pop-sub">Güvenli, sakinleştirici ve fonksiyonel bir oda yaratma rehberi</div>
+    <div style="max-height:55vh;overflow-y:auto;padding:4px 2px">${rows}</div>
+    <button class="pop-btn" style="margin-top:12px" onclick="this.closest('.pop-ov').remove()">Odamı Tasarladım!</button>
+  </div></div>`;
+  document.body.insertAdjacentHTML('beforeend',h);
+}
+
+// ══════════════════════════════════════════════════════
+// SINGLE PARENTING GUIDE
+// ══════════════════════════════════════════════════════
+function showSingleParentGuide(){
+  S.singleParentRead=true;checkAchievements();saveGame();
+  const sections=[
+    {ico:'💪',name:'Gerçekçi Beklentiler',color:'#E3F2FD',border:'#1E88E5',items:[
+      'Mükemmel ebeveyn olmaya çalışmayın — "yeterince iyi" yeterlidir',
+      'Tek ebeveynlik daha yoğun ama eksik bir aile demek değildir',
+      'Çocuklar tek ebeveynli ailelerde de sağlıklı, mutlu büyür',
+      'Kendi sınırlarınızı bilin — her şeyi tek başınıza yapmak zorunda değilsiniz',
+      'Bazı günler yetersiz hissetmek normaldir, sizi tanımlamaz',
+    ]},
+    {ico:'🤝',name:'Destek Ağı Kurma',color:'#E8F5E9',border:'#43A047',items:[
+      'Aile, arkadaş, komşu desteğini kabul edin — yardım istemek zayıflık değil',
+      'Tek ebeveyn destek grupları: deneyim paylaşımı paha biçilmez',
+      'Güvenilir bakıcı/kreş ile düzenli mola planı yapın',
+      'Komşularla "takas" sistemi: nöbetleşe çocuk bakımı',
+      'Profesyonel destek (terapi, danışmanlık) gerekirse çekinmeyin',
+    ]},
+    {ico:'💰',name:'Pratik Organizasyon',color:'#FFF9C4',border:'#F9A825',items:[
+      'Rutin oluşturma: öngörülebilirlik hem size hem çocuğa güven verir',
+      'Bütçe planlaması: tek gelirle yönetim için öncelik sıralaması',
+      'Zaman yönetimi: haftalık plan, görev listesi stresi azaltır',
+      'Esnek çalışma seçenekleri araştırın (uzaktan, yarı zamanlı)',
+      'Devlet desteklerini ve sosyal hizmet kaynaklarını araştırın',
+    ]},
+    {ico:'❤️',name:'Çocukla İlişki',color:'#FCE4EC',border:'#E91E63',items:[
+      'Çocuğunuzla kaliteli zaman miktardan daha önemlidir',
+      'Diğer ebeveyn hakkında olumsuz konuşmaktan kaçının (varsa)',
+      'Çocuğun sorularına yaşına uygun, dürüst cevaplar verin',
+      'Rutin ve tutarlılık çocuğa güvenlik hissi verir',
+      'Kendi duygularınızı yönetmek çocuğunuzun duygusal sağlığını korur',
+    ]},
+    {ico:'🌟',name:'Kendinize İyi Bakın',color:'#F3E5F5',border:'#AB47BC',items:[
+      'Tükenmişlik riski yüksek — öz bakımı lükse değil, gerekliliğe çevirin',
+      'Kısa molalar bile (10 dakika) yenileyicidir',
+      'Sosyal bağlarınızı koparmayın — izolasyon riskini azaltır',
+      'Başarılarınızı kutlayın: her gün ayakta kalmak bile bir başarıdır',
+      'Profesyonel yardım almak güç göstergesidir, asla zayıflık değil',
+    ]},
+  ];
+  const rows=sections.map(s=>`
+    <div style="border:2px solid ${s.border};border-radius:10px;padding:10px;margin-bottom:8px;background:${s.color}">
+      <div style="font-weight:800;font-size:.84rem;margin-bottom:5px">${s.ico} ${s.name}</div>
+      <ul style="margin:0 0 0 16px;font-size:.75rem;color:#333">${s.items.map(i=>`<li style="margin-bottom:2px">${i}</li>`).join('')}</ul>
+    </div>`).join('');
+  const h=`<div class="pop-ov" onclick="if(event.target===this)this.remove()">
+  <div class="pop-box" style="max-width:490px">
+    <div class="pop-rainbow"></div>
+    <span class="pop-ico">👨‍👩‍👧</span>
+    <div class="pop-title">Tek Ebeveynlik Rehberi</div>
+    <div class="pop-sub">Güçlü, gerçekçi ve sürdürülebilir tek başına ebeveynlik</div>
+    <div style="max-height:55vh;overflow-y:auto;padding:4px 2px">${rows}</div>
+    <button class="pop-btn" style="margin-top:12px" onclick="this.closest('.pop-ov').remove()">Güçlüyüm!</button>
+  </div></div>`;
+  document.body.insertAdjacentHTML('beforeend',h);
+}
+
+// ══════════════════════════════════════════════════════
+// ADOPTION GUIDE
+// ══════════════════════════════════════════════════════
+function showAdoptionGuide(){
+  S.adoptionRead=true;checkAchievements();saveGame();
+  const sections=[
+    {ico:'💕',name:'Bağ Kurma Süreci',color:'#FCE4EC',border:'#E91E63',items:[
+      'Bağlanma doğumla değil, ilişkiyle oluşur — biyolojik bağ şart değildir',
+      'Ten teması, göz kontağı, tutarlı bakım bağlanmayı güçlendirir',
+      'Bağ kurma zaman alabilir — her ailenin süreci farklıdır',
+      'Bağlanma yavaş geliştiğinde suçluluk duymayın, bu normal olabilir',
+      'Evlat edinme uzmanı/terapisti bağlanma sürecinde destek olabilir',
+    ]},
+    {ico:'🗣️',name:'Evlat Edinme Konuşması',color:'#E3F2FD',border:'#1E88E5',items:[
+      'Çocuğa evlat edinildiğini erken yaştan itibaren açık konuşun',
+      'Yaşa uygun, basit, olumlu dille anlatın: "seni özellikle seçtik"',
+      'Gizlemek yerine doğal bir aile hikayesi parçası olarak sunun',
+      'Sorularına sabırla, dürüstçe cevap verin — yaşla detay artar',
+      'Evlat edinme kitapları (resimli) konuşmayı kolaylaştırır',
+    ]},
+    {ico:'🌍',name:'Kimlik & Köken',color:'#E8F5E9',border:'#43A047',items:[
+      'Biyolojik kökene saygı: mümkünse bilgi/bağlantı koruyun',
+      'Farklı etnik kökenden evlat edinmede kültürel bağı destekleyin',
+      'Çocuğun "nereden geldiğini" bilme hakkı ve merakını onaylayın',
+      'Kimlik gelişimi ergenlikte yoğunlaşabilir — destekleyici olun',
+      'Evlat edinme hikayesini olumlu bir kimlik parçası olarak çerçeveleyin',
+    ]},
+    {ico:'🩺',name:'Sağlık & Gelişim Takibi',color:'#FFF9C4',border:'#F9A825',items:[
+      'Evlat edinilen bebeğin tıbbi geçmişi sınırlı olabilir — pediatriste bildirin',
+      'Gelişim taraması: erken dönem deneyimleri (varsa) dikkatle değerlendirilir',
+      'Travma sonrası stres belirtileri büyük çocuklarda görülebilir',
+      'Düzenli sağlık kontrolleri ve gerekirse uzman desteği',
+      'Sabırlı gözlem: her çocuk kendi hızında uyum sağlar',
+    ]},
+    {ico:'👨‍👩‍👧‍👦',name:'Aile Olarak Destek',color:'#F3E5F5',border:'#AB47BC',items:[
+      'Evlat edinen aile destek grupları deneyim paylaşımı sağlar',
+      'Genişletilmiş aileye (büyükanne-büyükbaba) süreci açıklayın',
+      'Diğer çocuklara (varsa) evlat edinmeyi yaşına uygun anlatın',
+      'Toplumsal önyargılara karşı hazırlıklı, güvenli bir aile ortamı kurun',
+      'Sevgi biyolojik bağdan değil, günlük özen ve bağlılıktan gelir',
+    ]},
+  ];
+  const rows=sections.map(s=>`
+    <div style="border:2px solid ${s.border};border-radius:10px;padding:10px;margin-bottom:8px;background:${s.color}">
+      <div style="font-weight:800;font-size:.84rem;margin-bottom:5px">${s.ico} ${s.name}</div>
+      <ul style="margin:0 0 0 16px;font-size:.75rem;color:#333">${s.items.map(i=>`<li style="margin-bottom:2px">${i}</li>`).join('')}</ul>
+    </div>`).join('');
+  const h=`<div class="pop-ov" onclick="if(event.target===this)this.remove()">
+  <div class="pop-box" style="max-width:490px">
+    <div class="pop-rainbow"></div>
+    <span class="pop-ico">💕</span>
+    <div class="pop-title">Evlat Edinme Rehberi</div>
+    <div class="pop-sub">Bağ kurma, kimlik ve sevgiyle örülen aile yolculuğu</div>
+    <div style="max-height:55vh;overflow-y:auto;padding:4px 2px">${rows}</div>
+    <button class="pop-btn" style="margin-top:12px" onclick="this.closest('.pop-ov').remove()">Kalp Bağımı Kurdum!</button>
   </div></div>`;
   document.body.insertAdjacentHTML('beforeend',h);
 }
