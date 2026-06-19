@@ -1474,6 +1474,9 @@ function saveGame(){
     umbilicalCareRead:S.umbilicalCareRead||false, carSeatRead:S.carSeatRead||false,
     eyeEarCareRead:S.eyeEarCareRead||false, bfProblemsRead:S.bfProblemsRead||false,
     cradleCapRead:S.cradleCapRead||false,
+    formulaPrepRead:S.formulaPrepRead||false, teethingPainRead:S.teethingPainRead||false,
+    crawlWalkRead:S.crawlWalkRead||false, saltSugarRead:S.saltSugarRead||false,
+    diarrheaRead:S.diarrheaRead||false, sunProtectionRead:S.sunProtectionRead||false,
     savedAt:Date.now(),
   };
   try { localStorage.setItem(SAVE_KEY, JSON.stringify(data)); } catch(e){}
@@ -1638,6 +1641,12 @@ function applySaveData(d){
   S.eyeEarCareRead = d.eyeEarCareRead||false;
   S.bfProblemsRead = d.bfProblemsRead||false;
   S.cradleCapRead = d.cradleCapRead||false;
+  S.formulaPrepRead = d.formulaPrepRead||false;
+  S.teethingPainRead = d.teethingPainRead||false;
+  S.crawlWalkRead = d.crawlWalkRead||false;
+  S.saltSugarRead = d.saltSugarRead||false;
+  S.diarrheaRead = d.diarrheaRead||false;
+  S.sunProtectionRead = d.sunProtectionRead||false;
   S.started = true;
 }
 
@@ -1875,6 +1884,12 @@ const ACHIEVEMENTS = [
   {id:'eyeear_pro',     icon:'👁️', name:'Duyu Bekçisi',         desc:'Göz & kulak bakımı rehberi okundu',        check:s=>(s.eyeEarCareRead||false)},
   {id:'bf_problems_pro',icon:'🤱', name:'Emzirme Çözücüsü',     desc:'Emzirme sorunları rehberi okundu',         check:s=>(s.bfProblemsRead||false)},
   {id:'cradlecap_pro',  icon:'👶', name:'Pürüzsüz Kafa',        desc:'Beşik başlığı bakımı rehberi okundu',      check:s=>(s.cradleCapRead||false)},
+  {id:'formula_pro',    icon:'🍼', name:'Mama Ustası',          desc:'Formül mama hazırlama rehberi okundu',     check:s=>(s.formulaPrepRead||false)},
+  {id:'teething_pro',   icon:'🦷', name:'Diş Ağrısı Avcısı',    desc:'Diş çıkarma ağrısı rehberi okundu',        check:s=>(s.teethingPainRead||false)},
+  {id:'crawlwalk_pro',  icon:'🚶', name:'İlk Adımlar',          desc:'Emekleme & yürüme rehberi okundu',         check:s=>(s.crawlWalkRead||false)},
+  {id:'saltsugar_pro',  icon:'🧂', name:'Bilinçli Beslenme',    desc:'Tuz & şeker sınırları rehberi okundu',     check:s=>(s.saltSugarRead||false)},
+  {id:'diarrhea_pro',   icon:'💧', name:'Sıvı Dengesi Ustası',  desc:'İshal & sıvı kaybı rehberi okundu',        check:s=>(s.diarrheaRead||false)},
+  {id:'sunprotect_pro', icon:'☀️', name:'Güneş Koruyucu',       desc:'Güneş koruması rehberi okundu',            check:s=>(s.sunProtectionRead||false)},
   {id:'challenge50',    icon:'🌟', name:'50 Kriz Ustası',     desc:'50 zorlu anı çözdün!',                   check:s=>(s.challengesSolved||0)>=50},
   {id:'full_2years',    icon:'🎊', name:'2 Yıl Tamamlandı!',  desc:'Bebeğin 24. aya ulaştı!',                check:s=>(s.ageMonths||0)>=24},
   {id:'ebeveyn_legend', icon:'👑', name:'Efsane Ebeveyn',     desc:'18.000+ GP toplandı!',                   check:s=>s.dp>=18000},
@@ -2150,6 +2165,12 @@ const S = {
   eyeEarCareRead:false,
   bfProblemsRead:false,
   cradleCapRead:false,
+  formulaPrepRead:false,
+  teethingPainRead:false,
+  crawlWalkRead:false,
+  saltSugarRead:false,
+  diarrheaRead:false,
+  sunProtectionRead:false,
 };
 
 // ══════════════════════════════════════════════════════
@@ -3915,6 +3936,12 @@ function showAllGuides(){
     {ico:'👁️',name:'Göz & Kulak Bakımı',fn:'showEyeEarCareGuide()'},
     {ico:'🤱',name:'Emzirme Sorunları',fn:'showBreastfeedingProblemsGuide()'},
     {ico:'👶',name:'Beşik Başlığı Bakımı',fn:'showCradleCapGuide()'},
+    {ico:'🍼',name:'Formül Mama Hazırlama & Güvenliği',fn:'showFormulaPrepGuide()'},
+    {ico:'🦷',name:'Diş Çıkarma Ağrısı Yönetimi',fn:'showTeethingPainGuide()'},
+    {ico:'🚶',name:'Emekleme & Yürümeye Geçiş',fn:'showCrawlWalkGuide()'},
+    {ico:'🧂',name:'Tuz & Şeker Sınırları',fn:'showSaltSugarGuide()'},
+    {ico:'💧',name:'İshal & Sıvı Kaybı Yönetimi',fn:'showDiarrheaGuide()'},
+    {ico:'☀️',name:'Bebek Cildi için Güneş Koruması',fn:'showSunProtectionGuide()'},
   ];
   const chips=guides.map(g=>`<button class="guide-chip" onclick="${g.fn};this.closest('.pop-ov').remove()">${g.ico}<br>${g.name}</button>`).join('');
   const h=`<div class="pop-ov" onclick="if(event.target===this)this.remove()">
@@ -8566,6 +8593,327 @@ function showCradleCapGuide(){
     <div class="pop-sub">Nazik temizlik ve doğal iyileşme süreci</div>
     <div style="max-height:55vh;overflow-y:auto;padding:4px 2px">${rows}</div>
     <button class="pop-btn" style="margin-top:12px" onclick="this.closest('.pop-ov').remove()">Pürüzsüzleşti!</button>
+  </div></div>`;
+  document.body.insertAdjacentHTML('beforeend',h);
+}
+
+// ══════════════════════════════════════════════════════
+// FORMULA PREPARATION & SAFETY GUIDE
+// ══════════════════════════════════════════════════════
+function showFormulaPrepGuide(){
+  S.formulaPrepRead=true;checkAchievements();saveGame();
+  const sections=[
+    {ico:'🧴',name:'Hijyen & Hazırlık Öncesi',color:'#E3F2FD',border:'#1E88E5',items:[
+      'Hazırlık öncesi ellerinizi sabunla en az 20 saniye yıkayın',
+      'Biberon, emzik ve halkaları her kullanımdan önce sterilize edin (kaynatma, buharlı sterilizatör veya bulaşık makinesi)',
+      'Çalışma yüzeyini temizleyip kuru bir bezle silin',
+      'İlk 6-12 ay için sterilizasyon özellikle önemlidir, bağışıklık sistemi henüz gelişmektedir',
+      'Açılmış mama kutusunu sıkıca kapatıp serin, kuru bir yerde saklayın (genelde 1 ay içinde tüketin)',
+    ]},
+    {ico:'💧',name:'Doğru Su & Ölçü',color:'#E8F5E9',border:'#43A047',items:[
+      'Kaynatılmış ve 70°C\'ye kadar soğutulmuş su kullanın (WHO önerisi, bakteri riskini azaltır)',
+      'Mama kutusu üzerindeki su:toz oranına harfiyen uyun — fazla sulandırmak veya koyu hazırlamak zararlıdır',
+      'Ölçek kaşığını düz (sıkıştırmadan, tepeleme olmadan) doldurun',
+      'Şişe suyu kullanılacaksa "bebekler için uygun, düşük mineralli" etiketli olanı tercih edin',
+      'Musluk suyunu uzun süre kaynattıktan sonra kullanmak nitrat birikimine yol açabilir, tazesini kullanın',
+    ]},
+    {ico:'🌡️',name:'Hazırlama & Isıtma',color:'#FFF3E0',border:'#FF8F00',items:[
+      'Hazırlanan mamayı bilek içine damlatarak ılık olduğundan emin olun (vücut sıcaklığı, yakmamalı)',
+      'Mikrodalga kullanmayın — eşit ısınmaz, sıcak noktalar oluşabilir ve yanık riski taşır',
+      'Biberon ısıtıcısı veya sıcak su banyosu (kap içinde) en güvenli ısıtma yöntemidir',
+      'Hazırlanan mamayı çalkalayarak (vurmadan) topaklanmayı önleyin',
+      'Tercihen her öğün için taze hazırlayın — toplu hazırlık gerekiyorsa hemen buzdolabına koyun',
+    ]},
+    {ico:'⏱️',name:'Saklama Süreleri',color:'#FFFDE7',border:'#FBC02D',items:[
+      'Hazırlanmış mama oda sıcaklığında en fazla 2 saat bekletilebilir',
+      'Buzdolabında hazırlanmış mama en fazla 24 saat saklanabilir',
+      'Bebeğin içtiği biberondan kalan mama 1-2 saat içinde atılmalı, asla saklanmamalı',
+      'Dondurucuda formül mama saklanması önerilmez (besin değeri ve doku bozulabilir)',
+      'Seyahatte soğutucu çanta + buz aküsü ile 4 saate kadar güvenle taşınabilir',
+    ]},
+    {ico:'⚠️',name:'Sık Yapılan Hatalar',color:'#FFEBEE',border:'#E53935',items:[
+      'Daha "doyurucu" olsun diye fazla toz eklemek — böbrekler için tehlikelidir',
+      'Mamayı seyrelterek uzatmaya çalışmak — yetersiz beslenmeye yol açar',
+      'Kalan mamayı tekrar ısıtıp vermek — bakteri üremesi riski taşır',
+      'Biberonu yatarak, kendi başına emmesi için desteksiz bırakmak — boğulma ve kulak enfeksiyonu riski',
+    ]},
+  ];
+  const rows=sections.map(s=>`
+    <div style="border:2px solid ${s.border};border-radius:10px;padding:10px;margin-bottom:8px;background:${s.color}">
+      <div style="font-weight:800;font-size:.84rem;margin-bottom:5px">${s.ico} ${s.name}</div>
+      <ul style="margin:0 0 0 16px;font-size:.75rem;color:#333">${s.items.map(i=>`<li style="margin-bottom:2px">${i}</li>`).join('')}</ul>
+    </div>`).join('');
+  const h=`<div class="pop-ov" onclick="if(event.target===this)this.remove()">
+  <div class="pop-box" style="max-width:520px">
+    <div class="pop-rainbow"></div>
+    <span class="pop-ico">🍼</span>
+    <div class="pop-title">Formül Mama Hazırlama & Güvenliği</div>
+    <div class="pop-sub">Hijyen, ölçü, ısıtma ve saklama — kapsamlı rehber</div>
+    <div style="max-height:58vh;overflow-y:auto;padding:4px 2px">${rows}</div>
+    <div style="font-size:.68rem;color:#777;margin-top:8px;text-align:center">⚕️ Bu içerik tıbbi tavsiye yerine geçmez. Mama seçimi/miktarı için pediatristinize danışın.</div>
+    <button class="pop-btn" style="margin-top:12px" onclick="this.closest('.pop-ov').remove()">Mama Hazır!</button>
+  </div></div>`;
+  document.body.insertAdjacentHTML('beforeend',h);
+}
+
+// ══════════════════════════════════════════════════════
+// TEETHING PAIN MANAGEMENT GUIDE
+// ══════════════════════════════════════════════════════
+function showTeethingPainGuide(){
+  S.teethingPainRead=true;checkAchievements();saveGame();
+  const sections=[
+    {ico:'🦷',name:'Diş Çıkarma Belirtileri',color:'#FFF3E0',border:'#FF8F00',items:[
+      'Aşırı salya akıntısı, her şeyi ısırma/çiğneme isteği',
+      'Diş etlerinde şişlik, kızarıklık ve hassasiyet',
+      'Huzursuzluk, uyku düzeninde bozulma, iştahsızlık',
+      'Hafif ateş (38°C\'yi geçmeyen) olabilir — yüksek ateş diş çıkarmaya bağlanmamalı',
+      'Yanak/çene bölgesinde kızarıklık (salya nedeniyle tahriş)',
+    ]},
+    {ico:'🧊',name:'Soğuk Uygulama Yöntemleri',color:'#E3F2FD',border:'#1E88E5',items:[
+      'Temiz, soğutulmuş (dondurulmamış) diş kaşıyıcıları diş etini rahatlatır',
+      'Soğuk, ıslak bir bez ısırması için verilebilir',
+      'Buzdolabında bekletilmiş (dondurucuda değil) meyve filesi güvenli bir seçenektir',
+      'Dondurulmuş, çok sert nesneler diş etine zarar verebilir — sadece soğutulmuş olanları kullanın',
+    ]},
+    {ico:'💆',name:'Masaj & Rahatlatma',color:'#E8F5E9',border:'#43A047',items:[
+      'Temiz parmakla diş etine nazikçe dairesel masaj yapın',
+      'Soğutulmuş, temiz bir kaşığın tersiyle hafif bastırarak masaj yapılabilir',
+      'Ekstra kucağa alma, sallama ve sakinleştirici ses bu dönemde önemlidir',
+      'Dikkat dağıtıcı oyunlar/aktiviteler rahatsızlığı azaltabilir',
+    ]},
+    {ico:'💊',name:'Ağrı Kesici Kullanımı',color:'#FFEBEE',border:'#E53935',items:[
+      'Doktor onayıyla yaşa uygun dozda parasetamol kullanılabilir',
+      'Diş çıkarma jelleri (benzokain içerenler) bebeklerde önerilmez — ciddi yan etki riski taşır',
+      'Diş çıkarma kolye/bilezikleri boğulma ve şerit riski nedeniyle önerilmez',
+      'Şiddetli ağrı, ateş 38.5°C üzerinde veya ishal/kusma varsa doktora danışın',
+    ]},
+    {ico:'📅',name:'Diş Çıkma Sırası & Zamanlama',color:'#F3E5F5',border:'#AB47BC',items:[
+      'İlk dişler genelde 6-10. aylarda alt ön kesicilerden başlar',
+      'Her bebeğin zamanlaması farklıdır — 3. ayda veya 14. ayda başlayabilir',
+      'Diş çıkarma sırası genel bir kalıp izler ama kesin kural değildir',
+      'Diş etini düzenli kontrol ederek yeni çıkan dişleri takip edin',
+    ]},
+  ];
+  const rows=sections.map(s=>`
+    <div style="border:2px solid ${s.border};border-radius:10px;padding:10px;margin-bottom:8px;background:${s.color}">
+      <div style="font-weight:800;font-size:.84rem;margin-bottom:5px">${s.ico} ${s.name}</div>
+      <ul style="margin:0 0 0 16px;font-size:.75rem;color:#333">${s.items.map(i=>`<li style="margin-bottom:2px">${i}</li>`).join('')}</ul>
+    </div>`).join('');
+  const h=`<div class="pop-ov" onclick="if(event.target===this)this.remove()">
+  <div class="pop-box" style="max-width:520px">
+    <div class="pop-rainbow"></div>
+    <span class="pop-ico">🦷</span>
+    <div class="pop-title">Diş Çıkarma Ağrısı Yönetimi</div>
+    <div class="pop-sub">Belirtiler, soğuk uygulama ve güvenli rahatlatma yöntemleri</div>
+    <div style="max-height:58vh;overflow-y:auto;padding:4px 2px">${rows}</div>
+    <div style="font-size:.68rem;color:#777;margin-top:8px;text-align:center">⚕️ Bu içerik tıbbi tavsiye yerine geçmez. Şüphede pediatriste başvurun.</div>
+    <button class="pop-btn" style="margin-top:12px" onclick="this.closest('.pop-ov').remove()">Rahatladık!</button>
+  </div></div>`;
+  document.body.insertAdjacentHTML('beforeend',h);
+}
+
+// ══════════════════════════════════════════════════════
+// CRAWLING & WALKING TRANSITION GUIDE
+// ══════════════════════════════════════════════════════
+function showCrawlWalkGuide(){
+  S.crawlWalkRead=true;checkAchievements();saveGame();
+  const sections=[
+    {ico:'🍼',name:'Hazırlık Aşamaları (0-6 ay)',color:'#E3F2FD',border:'#1E88E5',items:[
+      'Karın üstü zamanı (tummy time) boyun/sırt kaslarını güçlendirir',
+      'Baş kontrolü ve gövde dengesi emeklemenin temelini oluşturur',
+      'Yana yuvarlanma, sırtüstü-yüzüstü dönüşler ilk büyük motor kazanımlardır',
+      'Destekli oturma 4-6. aylarda gövde kontrolünü geliştirir',
+    ]},
+    {ico:'🐛',name:'Emekleme Öncesi Hareketler (6-9 ay)',color:'#E8F5E9',border:'#43A047',items:[
+      'Karın üstü sürünme (commando crawl) genellikle gerçek emeklemeden önce gelir',
+      'Elleri ve dizleri üzerinde sallanma/denge kurma çalışmaları görülür',
+      'Oturma pozisyonundan emekleme pozisyonuna geçiş pratiği yapılır',
+      'Bazı bebekler hiç emeklemeden doğrudan yürümeye geçebilir — bu da normaldir',
+    ]},
+    {ico:'🚼',name:'Emekleme (8-12 ay)',color:'#FFF9C4',border:'#F9A825',items:[
+      'Klasik karşılıklı emekleme (el-diz koordinasyonu) çoğu bebekte 9-10 ayda görülür',
+      'Ayı yürüyüşü, kalça kayması gibi alternatif emekleme stilleri de normaldir',
+      'Emekleme mesafe algısı, derinlik görüşü ve beyin-beden koordinasyonunu geliştirir',
+      'Emekleme alanını güvenli hale getirin: keskin köşeleri kapatın, küçük nesneleri kaldırın',
+    ]},
+    {ico:'🧍',name:'Ayağa Kalkma & Yürüme (9-18 ay)',color:'#FCE4EC',border:'#E91E63',items:[
+      'Mobilyaya tutunarak ayağa kalkma (pulling to stand) genelde 9-12 ayda başlar',
+      '"Cruising" (eşyaya tutunarak yanlamasına yürüme) yürümenin habercisidir',
+      'İlk bağımsız adımlar genelde 12-15 ay arasında görülür, 18 aya kadar normaldir',
+      'Çıplak ayakla veya kaymaz tabanlı ayakkabıyla denge gelişimi desteklenir',
+      'Yürüme yaşı çok değişkendir, 18. ayda hala yürümüyorsa pediatriste danışın',
+    ]},
+    {ico:'🛡️',name:'Güvenlik Önlemleri',color:'#FFEBEE',border:'#E53935',items:[
+      'Merdiven başlarına bariyer, prizlere koruyucu takın',
+      'Sivri/sert mobilya köşelerine koruyucu yastıkçık uygulayın',
+      'Yürüteç (baby walker) kullanımı düşme/merdiven kazaları riski nedeniyle önerilmez',
+      'Yere serili minderler ve geniş, açık alanlar pratik için idealdir',
+    ]},
+  ];
+  const rows=sections.map(s=>`
+    <div style="border:2px solid ${s.border};border-radius:10px;padding:10px;margin-bottom:8px;background:${s.color}">
+      <div style="font-weight:800;font-size:.84rem;margin-bottom:5px">${s.ico} ${s.name}</div>
+      <ul style="margin:0 0 0 16px;font-size:.75rem;color:#333">${s.items.map(i=>`<li style="margin-bottom:2px">${i}</li>`).join('')}</ul>
+    </div>`).join('');
+  const h=`<div class="pop-ov" onclick="if(event.target===this)this.remove()">
+  <div class="pop-box" style="max-width:520px">
+    <div class="pop-rainbow"></div>
+    <span class="pop-ico">🚶</span>
+    <div class="pop-title">Emekleme & Yürümeye Geçiş</div>
+    <div class="pop-sub">Motor gelişim aşamaları ve güvenlik önlemleri</div>
+    <div style="max-height:58vh;overflow-y:auto;padding:4px 2px">${rows}</div>
+    <button class="pop-btn" style="margin-top:12px" onclick="this.closest('.pop-ov').remove()">Adımlar Atılıyor!</button>
+  </div></div>`;
+  document.body.insertAdjacentHTML('beforeend',h);
+}
+
+// ══════════════════════════════════════════════════════
+// SALT & SUGAR LIMITS GUIDE
+// ══════════════════════════════════════════════════════
+function showSaltSugarGuide(){
+  S.saltSugarRead=true;checkAchievements();saveGame();
+  const sections=[
+    {ico:'🧂',name:'Tuz Neden Tehlikeli?',color:'#FFEBEE',border:'#E53935',items:[
+      'Bebek böbrekleri 1 yaşına kadar fazla tuzu işleyecek kadar gelişmemiştir',
+      'Aşırı tuz alımı böbrek yüküne ve uzun vadede tansiyon sorunlarına yol açabilir',
+      '0-12 ay bebeklerde günlük 1g\'den az tuz (yaklaşık 0.4g sodyum) önerilir',
+      'Anne sütü/formül mama bebeğin tuz ihtiyacının tamamını zaten karşılar',
+    ]},
+    {ico:'🚫',name:'Tuzdan Kaçınılması Gerekenler',color:'#FFF3E0',border:'#FF8F00',items:[
+      'Hazır bebek mamalarına ek tuz katmayın',
+      'Yetişkin yemeklerinden (çorba, ekmek, peynir) bebek payını ayırırken tuz eklemeyin',
+      'İşlenmiş et (sosis, salam), cips, hazır soslar yüksek tuz içerir — kaçınılmalı',
+      'Tuzlu peynirler (beyaz peynir, kaşar) sınırlı miktarda ve geç tanıtılmalı',
+    ]},
+    {ico:'🍬',name:'Şeker Neden Sınırlanmalı?',color:'#E3F2FD',border:'#1E88E5',items:[
+      'WHO, 2 yaş altı bebeklere eklenmiş şeker önermez',
+      'Şeker erken yaşta tatlı tercihini pekiştirir, sebze/meyve kabulünü zorlaştırabilir',
+      'Diş çürümesi riski ilk dişlerden itibaren başlar',
+      'Meyve suyu (şekerli) yerine bütün meyve tercih edilmeli — lif içerir, şeker yükü daha azdır',
+    ]},
+    {ico:'✅',name:'Pratik Öneriler',color:'#E8F5E9',border:'#43A047',items:[
+      'Yemekleri doğal baharatlar (kimyon, tarçın, vanilya) ile lezzetlendirin, tuz/şeker yerine',
+      'Ev yapımı, taze pişmiş yiyecekler hazır/işlenmiş ürünlere göre her zaman daha güvenlidir',
+      'Etiket okuma alışkanlığı edinin: "sodyum", "şeker", "şurup" içeriklerine dikkat edin',
+      '2 yaş sonrası şeker/tuz tanıtımı yapılırken bile mümkün olduğunca az ve seyrek tutun',
+    ]},
+  ];
+  const rows=sections.map(s=>`
+    <div style="border:2px solid ${s.border};border-radius:10px;padding:10px;margin-bottom:8px;background:${s.color}">
+      <div style="font-weight:800;font-size:.84rem;margin-bottom:5px">${s.ico} ${s.name}</div>
+      <ul style="margin:0 0 0 16px;font-size:.75rem;color:#333">${s.items.map(i=>`<li style="margin-bottom:2px">${i}</li>`).join('')}</ul>
+    </div>`).join('');
+  const h=`<div class="pop-ov" onclick="if(event.target===this)this.remove()">
+  <div class="pop-box" style="max-width:520px">
+    <div class="pop-rainbow"></div>
+    <span class="pop-ico">🧂</span>
+    <div class="pop-title">Tuz & Şeker Sınırları</div>
+    <div class="pop-sub">Bebek beslenmesinde bilinçli ve dengeli tatlandırma</div>
+    <div style="max-height:58vh;overflow-y:auto;padding:4px 2px">${rows}</div>
+    <button class="pop-btn" style="margin-top:12px" onclick="this.closest('.pop-ov').remove()">Bilinçli Beslendik!</button>
+  </div></div>`;
+  document.body.insertAdjacentHTML('beforeend',h);
+}
+
+// ══════════════════════════════════════════════════════
+// DIARRHEA & FLUID LOSS MANAGEMENT GUIDE
+// ══════════════════════════════════════════════════════
+function showDiarrheaGuide(){
+  S.diarrheaRead=true;checkAchievements();saveGame();
+  const sections=[
+    {ico:'💧',name:'İshal Nedenleri',color:'#E3F2FD',border:'#1E88E5',items:[
+      'Viral enfeksiyonlar (rotavirüs, norovirüs) en sık nedendir',
+      'Yeni gıdalar, antibiyotik kullanımı veya gıda intoleransı tetikleyebilir',
+      'Diş çıkarma döneminde hafif yumuşak dışkı görülebilir (gerçek ishalle karıştırılmamalı)',
+      'Bakteriyel enfeksiyonlar daha şiddetli, kanlı/mukuslu dışkıya yol açabilir',
+    ]},
+    {ico:'🚨',name:'Acil Doktor Gerektiren Belirtiler',color:'#FFEBEE',border:'#E53935',items:[
+      'Dışkıda kan veya mukus görülmesi',
+      '24 saatten uzun süren yüksek ateşle birlikte ishal',
+      'Susuzluk belirtileri: kuru ağız, ağlarken gözyaşı azlığı, 6 saatten uzun idrar yapmama',
+      'Aşırı uykululuk, halsizlik, bebeğin tepkisinin azalması',
+      '0-3 ay bebekte herhangi bir ishal/kusma durumu mutlaka değerlendirilmeli',
+    ]},
+    {ico:'🥤',name:'Sıvı Kaybını Önleme',color:'#E8F5E9',border:'#43A047',items:[
+      'Anne sütü/formül mama vermeye normal şekilde devam edin, kesmeyin',
+      'Doktor onayıyla oral rehidrasyon solüsyonu (ORS) sıvı kaybını dengeler',
+      'Meyve suyu ve şekerli içecekler ishali kötüleştirebilir, vermeyin',
+      'Küçük sık yutumlarla sıvı vermek, büyük miktarları bir kerede vermekten daha etkilidir',
+    ]},
+    {ico:'🍌',name:'Beslenme Önerileri',color:'#FFF9C4',border:'#F9A825',items:[
+      'Katı gıdaya başlamış bebeklerde muz, pirinç, elma püresi gibi hafif gıdalar tolere edilebilir',
+      'Yağlı, baharatlı, şekerli yiyeceklerden iyileşene kadar kaçının',
+      'İshal sırasında gıda kesmek önerilmez — beslenmeye tolere edebildiği kadar devam edin',
+      'İyileşme sonrası normal beslenmeye kademeli geri dönün',
+    ]},
+    {ico:'🧷',name:'Bez Bölgesi Bakımı',color:'#FCE4EC',border:'#E91E63',items:[
+      'Sık ishal pişik riskini artırır — her değişimde nazik temizlik ve bariyer krem uygulayın',
+      'Mümkünse kısa süreli bez molaları vererek cildi havalandırın',
+      'Ciltte ciddi tahriş/kanama varsa pediatriste danışın',
+    ]},
+  ];
+  const rows=sections.map(s=>`
+    <div style="border:2px solid ${s.border};border-radius:10px;padding:10px;margin-bottom:8px;background:${s.color}">
+      <div style="font-weight:800;font-size:.84rem;margin-bottom:5px">${s.ico} ${s.name}</div>
+      <ul style="margin:0 0 0 16px;font-size:.75rem;color:#333">${s.items.map(i=>`<li style="margin-bottom:2px">${i}</li>`).join('')}</ul>
+    </div>`).join('');
+  const h=`<div class="pop-ov" onclick="if(event.target===this)this.remove()">
+  <div class="pop-box" style="max-width:520px">
+    <div class="pop-rainbow"></div>
+    <span class="pop-ico">💧</span>
+    <div class="pop-title">İshal & Sıvı Kaybı Yönetimi</div>
+    <div class="pop-sub">Nedenler, sıvı dengesi ve acil belirtiler</div>
+    <div style="max-height:58vh;overflow-y:auto;padding:4px 2px">${rows}</div>
+    <div style="font-size:.68rem;color:#777;margin-top:8px;text-align:center">⚕️ Bu içerik tıbbi tavsiye yerine geçmez. Endişe halinde doktora başvurun.</div>
+    <button class="pop-btn" style="margin-top:12px" onclick="this.closest('.pop-ov').remove()">Dengede!</button>
+  </div></div>`;
+  document.body.insertAdjacentHTML('beforeend',h);
+}
+
+// ══════════════════════════════════════════════════════
+// SUN PROTECTION GUIDE
+// ══════════════════════════════════════════════════════
+function showSunProtectionGuide(){
+  S.sunProtectionRead=true;checkAchievements();saveGame();
+  const sections=[
+    {ico:'☀️',name:'Yaşa Göre Güneş Koruması',color:'#FFFDE7',border:'#FBC02D',items:[
+      '0-6 ay bebekler doğrudan güneş ışığından tamamen korunmalı, güneş kremi yerine gölge tercih edilmeli',
+      '6 ay üzeri bebeklerde bebeklere özel, mineral bazlı (çinko oksit/titanyum dioksit) güneş kremi kullanılabilir',
+      'SPF 30-50 arası, geniş spektrumlu (UVA+UVB) ürünler önerilir',
+      'Güneş kremini dışarı çıkmadan 15-20 dakika önce uygulayın',
+    ]},
+    {ico:'🧴',name:'Doğru Uygulama',color:'#E3F2FD',border:'#1E88E5',items:[
+      'Her 2 saatte bir, yüzme/terlemeden sonra hemen tekrar uygulayın',
+      'Kulak, ayak üstü, ense gibi unutulan bölgeleri ihmal etmeyin',
+      'Küçük bir cilt bölgesinde alerji testi yaparak yeni ürünleri deneyin',
+      'Göz çevresine bulaşmasını önlemek için şapka/güneş gözlüğü ile destekleyin',
+    ]},
+    {ico:'👒',name:'Fiziksel Koruma Yöntemleri',color:'#E8F5E9',border:'#43A047',items:[
+      'Geniş kenarlı şapka, UV korumalı giysiler en güvenilir koruma yöntemidir',
+      'Bebek arabası güneşliği veya gölgelik kullanarak doğrudan ışığı azaltın',
+      'En yoğun güneş saatlerinde (11:00-16:00) dışarıda kalmaktan kaçının',
+      'Gölgeli alanlarda bile UV yansıması (su, kum, beton) cilde etki edebilir',
+    ]},
+    {ico:'🚨',name:'Güneş Yanığı Belirtileri & Bakımı',color:'#FFEBEE',border:'#E53935',items:[
+      'Ciltte kızarıklık, sıcaklık, hassasiyet güneş yanığı işaretidir',
+      'Yanık alanını serin, nemli bezle hafifçe soğutun, doğrudan buz uygulamayın',
+      'Kabarcıklanma, ateş veya yaygın yanıkta vakit kaybetmeden doktora başvurun',
+      'İyileşene kadar etkilenen bölgeyi güneşten tamamen koruyun',
+    ]},
+  ];
+  const rows=sections.map(s=>`
+    <div style="border:2px solid ${s.border};border-radius:10px;padding:10px;margin-bottom:8px;background:${s.color}">
+      <div style="font-weight:800;font-size:.84rem;margin-bottom:5px">${s.ico} ${s.name}</div>
+      <ul style="margin:0 0 0 16px;font-size:.75rem;color:#333">${s.items.map(i=>`<li style="margin-bottom:2px">${i}</li>`).join('')}</ul>
+    </div>`).join('');
+  const h=`<div class="pop-ov" onclick="if(event.target===this)this.remove()">
+  <div class="pop-box" style="max-width:520px">
+    <div class="pop-rainbow"></div>
+    <span class="pop-ico">☀️</span>
+    <div class="pop-title">Bebek Cildi için Güneş Koruması</div>
+    <div class="pop-sub">Yaşa göre koruma, doğru uygulama ve güneş yanığı bakımı</div>
+    <div style="max-height:58vh;overflow-y:auto;padding:4px 2px">${rows}</div>
+    <button class="pop-btn" style="margin-top:12px" onclick="this.closest('.pop-ov').remove()">Korunduk!</button>
   </div></div>`;
   document.body.insertAdjacentHTML('beforeend',h);
 }
