@@ -1462,6 +1462,9 @@ function saveGame(){
     autismRead:S.autismRead||false, tantrumRead:S.tantrumRead||false,
     pickyEatRead:S.pickyEatRead||false, thumbPacifierRead:S.thumbPacifierRead||false,
     nightFearsRead:S.nightFearsRead||false,
+    bathSafetyRead:S.bathSafetyRead||false, fineMotorRead:S.fineMotorRead||false,
+    siblingRivalryRead:S.siblingRivalryRead||false, sharentingRead:S.sharentingRead||false,
+    motionSicknessRead:S.motionSicknessRead||false,
     savedAt:Date.now(),
   };
   try { localStorage.setItem(SAVE_KEY, JSON.stringify(data)); } catch(e){}
@@ -1606,6 +1609,11 @@ function applySaveData(d){
   S.pickyEatRead = d.pickyEatRead||false;
   S.thumbPacifierRead = d.thumbPacifierRead||false;
   S.nightFearsRead = d.nightFearsRead||false;
+  S.bathSafetyRead = d.bathSafetyRead||false;
+  S.fineMotorRead = d.fineMotorRead||false;
+  S.siblingRivalryRead = d.siblingRivalryRead||false;
+  S.sharentingRead = d.sharentingRead||false;
+  S.motionSicknessRead = d.motionSicknessRead||false;
   S.started = true;
 }
 
@@ -1823,6 +1831,11 @@ const ACHIEVEMENTS = [
   {id:'picky_pro',      icon:'🍽️', name:'Yemek Diplomatı',      desc:'Seçici yeme rehberi okundu',                check:s=>(s.pickyEatRead||false)},
   {id:'thumb_pro',      icon:'🤏', name:'Alışkanlık Koçu',      desc:'Parmak emme ve emzik rehberi okundu',       check:s=>(s.thumbPacifierRead||false)},
   {id:'nightfear_pro',  icon:'🌙', name:'Gece Bekçisi',         desc:'Gece korkuları rehberi okundu',             check:s=>(s.nightFearsRead||false)},
+  {id:'bath_safety',    icon:'🛁', name:'Banyo Bekçisi',        desc:'Banyo zamanı güvenliği rehberi okundu',     check:s=>(s.bathSafetyRead||false)},
+  {id:'finemotor_pro',  icon:'✋', name:'El Becerisi Koçu',     desc:'İnce motor beceriler rehberi okundu',      check:s=>(s.fineMotorRead||false)},
+  {id:'rivalry_pro',    icon:'😠', name:'Aile Barışçısı',       desc:'Kardeş kıskançlığı rehberi okundu',        check:s=>(s.siblingRivalryRead||false)},
+  {id:'sharenting_pro', icon:'📵', name:'Mahremiyet Bekçisi',   desc:'Sharenting rehberi okundu',                check:s=>(s.sharentingRead||false)},
+  {id:'motion_pro',     icon:'🚗', name:'Yol Dostu',            desc:'Yolculuk tutması rehberi okundu',          check:s=>(s.motionSicknessRead||false)},
   {id:'challenge50',    icon:'🌟', name:'50 Kriz Ustası',     desc:'50 zorlu anı çözdün!',                   check:s=>(s.challengesSolved||0)>=50},
   {id:'full_2years',    icon:'🎊', name:'2 Yıl Tamamlandı!',  desc:'Bebeğin 24. aya ulaştı!',                check:s=>(s.ageMonths||0)>=24},
   {id:'ebeveyn_legend', icon:'👑', name:'Efsane Ebeveyn',     desc:'18.000+ GP toplandı!',                   check:s=>s.dp>=18000},
@@ -2078,6 +2091,11 @@ const S = {
   pickyEatRead:false,
   thumbPacifierRead:false,
   nightFearsRead:false,
+  bathSafetyRead:false,
+  fineMotorRead:false,
+  siblingRivalryRead:false,
+  sharentingRead:false,
+  motionSicknessRead:false,
 };
 
 // ══════════════════════════════════════════════════════
@@ -3823,6 +3841,11 @@ function showAllGuides(){
     {ico:'🍽️',name:'Seçici Yeme & İştahsızlık',fn:'showPickyEatingGuide()'},
     {ico:'🤏',name:'Parmak Emme & Emzik Bırakma',fn:'showThumbPacifierGuide()'},
     {ico:'🌙',name:'Gece Korkuları & Kabuslar',fn:'showNightFearsGuide()'},
+    {ico:'🛁',name:'Banyo Zamanı Güvenliği',fn:'showBathSafetyGuide()'},
+    {ico:'✋',name:'İnce Motor & El Becerileri',fn:'showFineMotorGuide()'},
+    {ico:'😠',name:'Kardeş Kıskançlığı',fn:'showSiblingRivalryGuide()'},
+    {ico:'📵',name:'Sharenting & Dijital Mahremiyet',fn:'showSharentingGuide()'},
+    {ico:'🚗',name:'Yolculuk Tutması (Motion Sickness)',fn:'showMotionSicknessGuide()'},
   ];
   const chips=guides.map(g=>`<button class="guide-chip" onclick="${g.fn};this.closest('.pop-ov').remove()">${g.ico}<br>${g.name}</button>`).join('');
   const h=`<div class="pop-ov" onclick="if(event.target===this)this.remove()">
@@ -7408,6 +7431,305 @@ function showNightFearsGuide(){
     <div class="pop-sub">Kabus, gece terörü ve karanlık korkusunu anlama rehberi</div>
     <div style="max-height:55vh;overflow-y:auto;padding:4px 2px">${rows}</div>
     <button class="pop-btn" style="margin-top:12px" onclick="this.closest('.pop-ov').remove()">Geceyi Güvenli Kıldım!</button>
+  </div></div>`;
+  document.body.insertAdjacentHTML('beforeend',h);
+}
+
+// ══════════════════════════════════════════════════════
+// BATH TIME SAFETY GUIDE
+// ══════════════════════════════════════════════════════
+function showBathSafetyGuide(){
+  S.bathSafetyRead=true;checkAchievements();saveGame();
+  const sections=[
+    {ico:'🌡️',name:'Su Sıcaklığı',color:'#E3F2FD',border:'#1E88E5',items:[
+      'İdeal su sıcaklığı: 37-38°C (bilekle test edin, asla elinizle değil)',
+      'Sıcak su tesisatı 49°C üstüne çıkmayacak şekilde ayarlanmalı',
+      'Önce soğuk suyu açıp sonra sıcak ekleyin — yanık riskini azaltır',
+      'Banyo termometresi yatırım değer — tutarlı güvenlik sağlar',
+      'Su seviyesini düşük tutun: oturduğunda omuzlarına kadar yeterli',
+    ]},
+    {ico:'👀',name:'ASLA Gözetimsiz Bırakmayın',color:'#FFEBEE',border:'#E53935',items:[
+      'Bebek/küçük çocuk banyoda BİR SANİYE bile yalnız bırakılmaz',
+      'Telefon çalsa, kapı çalsa bile — bebeği alıp gidin, bırakmayın',
+      'Boğulma sessiz olur — çığlık veya çırpınma olmayabilir',
+      '5 cm su bile boğulma riski taşır (1 yaş altı)',
+      'Kardeşe "göz kulak ol" demek yeterli güvenlik değildir',
+    ]},
+    {ico:'🧴',name:'Kayma & Düşme Önleme',color:'#E8F5E9',border:'#43A047',items:[
+      'Küvet tabanına kaymaz mat/çıkartma yerleştirin',
+      'Bebek banyo koltuğu/halkası boğulmayı ÖNLEMEZ — gözetim hâlâ şart',
+      'Küvet kenarına/zemine ıslak paspas — ebeveyn kayması da risk',
+      'Yürümeye başlayan çocuğu küvette ayakta durdurmayın',
+      'Sabun köpüğü zemini kayganlaştırır — dikkatli durulayın',
+    ]},
+    {ico:'🧪',name:'Ürün Güvenliği',color:'#FFF9C4',border:'#F9A825',items:[
+      'Göze batmayan (tear-free) bebek şampuanı kullanın',
+      'Aşırı sabun/şampuan cildi kurutur — az miktar yeterli',
+      'Banyo ürünlerini bebeğin ulaşamayacağı rafa koyun',
+      'Elektrikli cihazları (saç kurutma makinesi) banyodan uzak tutun',
+      'Banyo sonrası hemen kurulayıp giydirin — üşütmeyi önler',
+    ]},
+    {ico:'📋',name:'Hazırlık Rutini',color:'#F3E5F5',border:'#AB47BC',items:[
+      'Banyoya başlamadan TÜM malzemeleri (havlu, kıyafet) hazırlayın',
+      'Asla suyu doluyken bebeği küvete koyup musluğu açık bırakmayın',
+      'Banyo süresini kısa tutun: yenidoğanda 5-10 dakika yeterli',
+      'Göbek kordonu düşmeden küçük leğen banyosu tercih edin',
+      'Sakin, eğlenceli bir rutin oluşturun — uyku öncesi ideal zaman',
+    ]},
+  ];
+  const rows=sections.map(s=>`
+    <div style="border:2px solid ${s.border};border-radius:10px;padding:10px;margin-bottom:8px;background:${s.color}">
+      <div style="font-weight:800;font-size:.84rem;margin-bottom:5px">${s.ico} ${s.name}</div>
+      <ul style="margin:0 0 0 16px;font-size:.75rem;color:#333">${s.items.map(i=>`<li style="margin-bottom:2px">${i}</li>`).join('')}</ul>
+    </div>`).join('');
+  const h=`<div class="pop-ov" onclick="if(event.target===this)this.remove()">
+  <div class="pop-box" style="max-width:490px">
+    <div class="pop-rainbow"></div>
+    <span class="pop-ico">🛁</span>
+    <div class="pop-title">Banyo Zamanı Güvenliği</div>
+    <div class="pop-sub">Su sıcaklığı, gözetim ve kayma önleme — eğlenceli ve güvenli banyo</div>
+    <div style="max-height:55vh;overflow-y:auto;padding:4px 2px">${rows}</div>
+    <button class="pop-btn" style="margin-top:12px" onclick="this.closest('.pop-ov').remove()">Banyoyu Güvenli Yaptım!</button>
+  </div></div>`;
+  document.body.insertAdjacentHTML('beforeend',h);
+}
+
+// ══════════════════════════════════════════════════════
+// FINE MOTOR SKILLS GUIDE
+// ══════════════════════════════════════════════════════
+function showFineMotorGuide(){
+  S.fineMotorRead=true;checkAchievements();saveGame();
+  const stages=[
+    {age:'0-3 Ay',ico:'✊',color:'#E3F2FD',border:'#1E88E5',items:[
+      'Yakalama refleksi: parmağı avucuna koyunca sıkıca tutar',
+      'Eller genelde yumruk halinde, kontrol henüz yok',
+      'Ellerini yüzüne doğru getirme — keşif başlangıcı',
+      'Asılı oyuncaklara rastgele vurma hareketleri',
+    ]},
+    {age:'3-6 Ay',ico:'🤚',color:'#E8F5E9',border:'#43A047',items:[
+      'Bilinçli uzanma ve kavrama (palmar grasp) gelişir',
+      'Nesneyi elden ele geçirme',
+      'Her şeyi ağzına götürme — bu dokunsal keşiftir, doğaldır',
+      'İki eliyle nesneyi tutmaya çalışma',
+    ]},
+    {age:'6-9 Ay',ico:'👌',color:'#FFF9C4',border:'#F9A825',items:[
+      'Maşa kavrama (raking grasp): küçük nesneleri tırmıklama',
+      'Bir elden diğerine aktarma ustalaşır',
+      'Nesneyi bırakmayı öğrenme (istemli bırakma)',
+      'İki nesneyi birbirine vurma',
+    ]},
+    {age:'9-12 Ay',ico:'🤏',color:'#FCE4EC',border:'#E91E63',items:[
+      'Pinset kavrama: baş ve işaret parmağıyla küçük nesne tutma',
+      'Parmakla işaret etme (önemli iletişim kilometre taşı)',
+      'Kitap sayfası çevirme denemesi (birkaç sayfayı birlikte)',
+      'Kutuya nesne koyma ve çıkarma',
+    ]},
+    {age:'12-24 Ay',ico:'✏️',color:'#F3E5F5',border:'#AB47BC',items:[
+      'Kalem/kalın boya tutma ve karalama yapma',
+      'Blokları üst üste koyma (2-4 blok)',
+      'Kaşık kullanmaya başlama (dökse de)',
+      'Kavanoz kapağı açma-kapama, düğme/fermuar denemesi',
+      'Şekil kutusuna doğru parçayı yerleştirme',
+    ]},
+  ];
+  const acts=[
+    'Duyu kutuları: pirinç, makarna içine küçük oyuncak gizleme (gözetimli)',
+    'Boncuk dizme (büyük, yutma riski olmayan boncuklarla, 18+ ay)',
+    'Parmak boyası ve yoğurt ile dokunsal sanat',
+    'Kavanoz kapağı açma-kapama oyunu',
+    'Sünger sıkma, su oyunları (el kası güçlendirir)',
+  ];
+  const rows=stages.map(s=>`
+    <div style="border:2px solid ${s.border};border-radius:10px;padding:10px;margin-bottom:8px;background:${s.color}">
+      <div style="font-weight:800;font-size:.84rem;margin-bottom:5px">${s.ico} ${s.age}</div>
+      <ul style="margin:0 0 0 16px;font-size:.75rem;color:#333">${s.items.map(i=>`<li style="margin-bottom:2px">${i}</li>`).join('')}</ul>
+    </div>`).join('');
+  const h=`<div class="pop-ov" onclick="if(event.target===this)this.remove()">
+  <div class="pop-box" style="max-width:490px">
+    <div class="pop-rainbow"></div>
+    <span class="pop-ico">✋</span>
+    <div class="pop-title">İnce Motor & El Becerileri</div>
+    <div class="pop-sub">Yakalamadan kalem tutmaya — el-göz koordinasyonu rehberi</div>
+    <div style="max-height:50vh;overflow-y:auto;padding:4px 2px">${rows}</div>
+    <div class="pop-tip"><div class="pop-tip-t">🎨 Eğlenceli Aktiviteler</div><ul style="margin:4px 0 0 16px;font-size:.72rem">${acts.map(a=>`<li style="margin-bottom:2px">${a}</li>`).join('')}</ul></div>
+    <button class="pop-btn" style="margin-top:12px" onclick="this.closest('.pop-ov').remove()">Becerileri Destekledim!</button>
+  </div></div>`;
+  document.body.insertAdjacentHTML('beforeend',h);
+}
+
+// ══════════════════════════════════════════════════════
+// SIBLING RIVALRY GUIDE
+// ══════════════════════════════════════════════════════
+function showSiblingRivalryGuide(){
+  S.siblingRivalryRead=true;checkAchievements();saveGame();
+  const sections=[
+    {ico:'💭',name:'Neden Kıskanır?',color:'#E3F2FD',border:'#1E88E5',items:[
+      'Büyük çocuk için ebeveyn ilgisinin paylaşılması büyük değişim',
+      'Yeni bebek = "tahtını kaybetme" hissi, özellikle ilk haftalar',
+      'Gerileme davranışları normal: altını kirletme, bebek gibi konuşma',
+      'Kıskançlık sevgi eksikliği değil — güvenlik arayışıdır',
+      'Yaşa bağlı: 2-4 yaş arası tepkiler genelde en yoğun olur',
+    ]},
+    {ico:'💛',name:'Önleyici Stratejiler',color:'#E8F5E9',border:'#43A047',items:[
+      'Bebek gelmeden önce hazırlık: kitap, rol oynama, konuşma',
+      'Büyük çocuğa "büyük kardeş" rolü ve özel görevler verin',
+      'Ziyaretçilerin önce büyük çocuğu selamlamasını isteyin',
+      'Hediye getirenlerden büyük çocuğa da küçük bir şey istemek normal',
+      'Değişiklikleri (oda, kreş) bebek gelmeden çok önce yapın',
+    ]},
+    {ico:'⏰',name:'Bireysel Zaman',color:'#FFF9C4',border:'#F9A825',items:[
+      'Her gün sadece büyük çocukla 10-15 dakika özel zaman ayırın',
+      '"Sen benim için özelsin" mesajını sözle ve davranışla gösterin',
+      'Bebek uyurken büyük çocukla oyun/kitap zamanı',
+      'Her ebeveyn ayrı ayrı bireysel zaman geçirebilir',
+      'Büyük çocuğun başarılarını bebekten bağımsız kutlayın',
+    ]},
+    {ico:'🗣️',name:'Duyguları Yönetme',color:'#FCE4EC',border:'#E91E63',items:[
+      'Kıskançlığı yargılamadan kabul edin: "Bazen zor, anlıyorum"',
+      'Olumsuz duyguyu ifade etmesine izin verin, davranışı sınırlayın',
+      '"Bebek seni de çok seviyor" mesajını sık tekrarlayın',
+      'Karşılaştırma yapmayın: "Bebek hiç ağlamıyor, sen niye ağlıyorsun"',
+      'Fiziksel zarar verme girişimlerini sakince ama net engelleyin',
+    ]},
+    {ico:'🌟',name:'Pozitif Bağ Kurma',color:'#F3E5F5',border:'#AB47BC',items:[
+      'Bebek bakımına dahil edin: bez getirme, şarkı söyleme',
+      'Birlikte fotoğraf çekin, "kardeş günlüğü" tutun',
+      'Büyüdükçe ilişki güçlenir — ilk aylar bir başlangıçtır',
+      'Sabırlı olun: sağlıklı kardeş bağı zamanla inşa edilir',
+      'Kendi kardeşlik deneyimlerinizi paylaşmak rahatlatıcı olabilir',
+    ]},
+  ];
+  const rows=sections.map(s=>`
+    <div style="border:2px solid ${s.border};border-radius:10px;padding:10px;margin-bottom:8px;background:${s.color}">
+      <div style="font-weight:800;font-size:.84rem;margin-bottom:5px">${s.ico} ${s.name}</div>
+      <ul style="margin:0 0 0 16px;font-size:.75rem;color:#333">${s.items.map(i=>`<li style="margin-bottom:2px">${i}</li>`).join('')}</ul>
+    </div>`).join('');
+  const h=`<div class="pop-ov" onclick="if(event.target===this)this.remove()">
+  <div class="pop-box" style="max-width:490px">
+    <div class="pop-rainbow"></div>
+    <span class="pop-ico">😠</span>
+    <div class="pop-title">Kardeş Kıskançlığı Rehberi</div>
+    <div class="pop-sub">Yeni bebekle gelen değişimi sevgiyle yönetme</div>
+    <div style="max-height:55vh;overflow-y:auto;padding:4px 2px">${rows}</div>
+    <button class="pop-btn" style="margin-top:12px" onclick="this.closest('.pop-ov').remove()">Aile Barışını Kurdum!</button>
+  </div></div>`;
+  document.body.insertAdjacentHTML('beforeend',h);
+}
+
+// ══════════════════════════════════════════════════════
+// SHARENTING & DIGITAL PRIVACY GUIDE
+// ══════════════════════════════════════════════════════
+function showSharentingGuide(){
+  S.sharentingRead=true;checkAchievements();saveGame();
+  const sections=[
+    {ico:'❓',name:'Sharenting Nedir?',color:'#E3F2FD',border:'#1E88E5',items:[
+      '"Share" + "parenting": ebeveynlerin çocuk içeriğini paylaşması',
+      'Çocuğun dijital ayak izi onun izni olmadan oluşturulur',
+      'Ortalama bir çocuğun 13 yaşına kadar binlerce fotoğrafı paylaşılır',
+      'Çocuk büyüdüğünde bu içeriği silmek çoğu zaman mümkün değildir',
+      'Birçok ülke artık "çocuğun dijital unutulma hakkı" tartışıyor',
+    ]},
+    {ico:'⚠️',name:'Riskler',color:'#FFEBEE',border:'#E53935',items:[
+      'Konum bilgisi paylaşımı: ev/kreş adresini ifşa edebilir',
+      'Kötüye kullanım riski: fotoğrafların izinsiz kullanımı',
+      'Dijital kimlik hırsızlığı: doğum tarihi, isim bilgisi birikimi',
+      'Çocuğun gelecekte mahremiyetine saygısızlık hissi',
+      'Banyo, çıplak bebek fotoğrafları asla paylaşılmamalı',
+    ]},
+    {ico:'✅',name:'Güvenli Paylaşım İlkeleri',color:'#E8F5E9',border:'#43A047',items:[
+      'Gizlilik ayarlarını "yalnızca arkadaşlar/aile" yapın, herkese açık değil',
+      'Konum etiketlerini kapatın, gerçek zamanlı paylaşımdan kaçının',
+      'Okul/kreş üniforması/tabela görünen fotoğraflardan kaçının',
+      'Tam isim + doğum tarihi birlikte asla paylaşmayın',
+      'Mahrem anları (tuvalet eğitimi, hastalık) paylaşmadan düşünün',
+    ]},
+    {ico:'🧒',name:'Çocuğun Bakış Açısı',color:'#FFF9C4',border:'#F9A825',items:[
+      'Çocuk büyüdükçe "bu paylaşılsın mı?" diye sorabilirsiniz',
+      '"Gazete testi": bu fotoğraf gazetede olsaydı rahat olur muydunuz?',
+      'Çocuğun gelecekte mahcup olabileceği içerikten kaçının',
+      'Bazı aileler "paylaşım yok" kuralını tamamen seçiyor — bu da geçerli',
+      'Sosyal medya yerine özel aile grupları/bulut albümü düşünün',
+    ]},
+    {ico:'💡',name:'Alternatif Anı Paylaşımı',color:'#F3E5F5',border:'#AB47BC',items:[
+      'Özel WhatsApp/aile grubu: sadece istenen kişilerle paylaşım',
+      'Şifreli bulut albümü: büyükanne-büyükbaba erişimi sınırlı',
+      'Fiziksel albüm/baskı: dijital iz bırakmaz',
+      'Influencer/marka anlaşmalarında çocuk içeriği kullanımına dikkat',
+      'Paylaşmadan önce 24 saat bekleme kuralı dürtüsel paylaşımı azaltır',
+    ]},
+  ];
+  const rows=sections.map(s=>`
+    <div style="border:2px solid ${s.border};border-radius:10px;padding:10px;margin-bottom:8px;background:${s.color}">
+      <div style="font-weight:800;font-size:.84rem;margin-bottom:5px">${s.ico} ${s.name}</div>
+      <ul style="margin:0 0 0 16px;font-size:.75rem;color:#333">${s.items.map(i=>`<li style="margin-bottom:2px">${i}</li>`).join('')}</ul>
+    </div>`).join('');
+  const h=`<div class="pop-ov" onclick="if(event.target===this)this.remove()">
+  <div class="pop-box" style="max-width:490px">
+    <div class="pop-rainbow"></div>
+    <span class="pop-ico">📵</span>
+    <div class="pop-title">Sharenting & Dijital Mahremiyet</div>
+    <div class="pop-sub">Sosyal medyada bebek paylaşımının riskleri ve güvenli yollar</div>
+    <div style="max-height:55vh;overflow-y:auto;padding:4px 2px">${rows}</div>
+    <button class="pop-btn" style="margin-top:12px" onclick="this.closest('.pop-ov').remove()">Mahremiyeti Koruyorum!</button>
+  </div></div>`;
+  document.body.insertAdjacentHTML('beforeend',h);
+}
+
+// ══════════════════════════════════════════════════════
+// MOTION SICKNESS GUIDE
+// ══════════════════════════════════════════════════════
+function showMotionSicknessGuide(){
+  S.motionSicknessRead=true;checkAchievements();saveGame();
+  const sections=[
+    {ico:'🧠',name:'Neden Olur?',color:'#E3F2FD',border:'#1E88E5',items:[
+      'İç kulak (denge sistemi) ile gözlerin algısı uyuşmaz',
+      'Genelde 2 yaştan büyük çocuklarda daha belirgin görülür',
+      'Otobüs, araba, tekne, uçakta — hareket eden her araçta olabilir',
+      'Bazı çocuklar genetik olarak daha hassastır',
+      'Yaşla birlikte iç kulak sistemi olgunlaştıkça azalır',
+    ]},
+    {ico:'⚠️',name:'Belirtiler',color:'#FFF9C4',border:'#F9A825',items:[
+      'Solgunluk, terleme, huzursuzluk',
+      'Bulantı, kusma',
+      'Aşırı esneme, sessizleşme, içe çekilme',
+      'Baş ağrısı şikayeti (büyük çocuklarda)',
+      'İlk belirtide hemen önlem alın — erken müdahale kusmayı önleyebilir',
+    ]},
+    {ico:'🚗',name:'Önleme Stratejileri',color:'#E8F5E9',border:'#43A047',items:[
+      'İleriye bakan koltuk, ufka/yola bakış (kitap/ekrana değil)',
+      'Pencereyi hafif aralayın: taze hava bulantıyı azaltır',
+      'Ağır/yağlı yemek yerine hafif atıştırmalık, yolculuktan 1 saat önce',
+      'Sık mola: her 1-2 saatte dışarı çıkıp yürüyün',
+      'Zencefil (büyük çocuklarda): doğal bulantı önleyici',
+    ]},
+    {ico:'📱',name:'Ekran ve Hareket',color:'#FCE4EC',border:'#E91E63',items:[
+      'Araç hareket ederken kitap/tablet okuma bulantıyı kötüleştirir',
+      'Sesli kitap/müzik ekran yerine iyi bir alternatiftir',
+      'Ufka bakma/manzara izleme dengeyi düzeltmeye yardımcı olur',
+      'Oyun: "dışarıda kırmızı araba bul" gibi ufka odaklı oyunlar',
+      'Kusma torbası/poşeti her zaman erişilebilir tutun',
+    ]},
+    {ico:'💊',name:'İlaç ve Doktor Onayı',color:'#F3E5F5',border:'#AB47BC',items:[
+      'Yolculuk hastalığı ilaçları yaş sınırlamalarına tabidir',
+      '2 yaş altına hiçbir ilaç doktor onayı olmadan verilmemeli',
+      'Bileklik (basınç noktası) yan etkisiz alternatif olabilir',
+      'Sık ve şiddetli yolculuk hastalığı için pediatriste danışın',
+      'Susuz kalmayı önleyin: küçük yudumlarla su verin',
+    ]},
+  ];
+  const rows=sections.map(s=>`
+    <div style="border:2px solid ${s.border};border-radius:10px;padding:10px;margin-bottom:8px;background:${s.color}">
+      <div style="font-weight:800;font-size:.84rem;margin-bottom:5px">${s.ico} ${s.name}</div>
+      <ul style="margin:0 0 0 16px;font-size:.75rem;color:#333">${s.items.map(i=>`<li style="margin-bottom:2px">${i}</li>`).join('')}</ul>
+    </div>`).join('');
+  const h=`<div class="pop-ov" onclick="if(event.target===this)this.remove()">
+  <div class="pop-box" style="max-width:490px">
+    <div class="pop-rainbow"></div>
+    <span class="pop-ico">🚗</span>
+    <div class="pop-title">Yolculuk Tutması Rehberi</div>
+    <div class="pop-sub">Araç tutması belirtileri, önleme ve güvenli çözümler</div>
+    <div style="max-height:55vh;overflow-y:auto;padding:4px 2px">${rows}</div>
+    <button class="pop-btn" style="margin-top:12px" onclick="this.closest('.pop-ov').remove()">Yolculuğa Hazırım!</button>
   </div></div>`;
   document.body.insertAdjacentHTML('beforeend',h);
 }
