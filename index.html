@@ -1326,6 +1326,12 @@ const BABY_SAFETY = [
   'Banyo ve mutfak kapıları kilitlenebilir hale getirildi ✅',
   'Bebek yürüteci KULLANILMIYOR (basamak riski!) ✅',
   'Pencere koruyucuları takıldı ✅',
+  'Sıcak su sıcaklığı 49°C altına ayarlandı (yanık önleme) ✅',
+  'Çekmece/dolap kapaklarına çocuk kilidi takıldı ✅',
+  'Sallanan/devrilebilir TV, ayna duvara sabitlendi ✅',
+  'Plastik poşetler bebeğin erişemeyeceği yerde saklanıyor ✅',
+  'Ev bitkileri zehirli türler için kontrol edildi ✅',
+  'Balkon/bahçe kapıları kilitli, havuz/su birikintisi gözetimsiz değil ✅',
 ];
 
 const QUIZ_QUESTIONS = [
@@ -3269,6 +3275,26 @@ function showSafetyChecklist(){
     <div style="background:#E3F2FD;border-radius:12px;padding:10px;margin-bottom:12px;font-size:.73rem">
       <strong style="color:#1565C0">💡 Bilgi:</strong>
       <span style="color:#1976D2"> Bebek yürüteci kullanmayın! Basamaklardan düşme riski çok yüksektir. WHO ve AAP tarafından önerilmez.</span>
+    </div>
+    <div class="pop-sec" style="background:#FFF9C4">
+      <h4>🏠 Oda Oda Güvenlik Rehberi</h4>
+      <ul style="padding-left:14px;font-size:.71rem;color:#555;line-height:1.7">
+        <li><strong>🍳 Mutfak:</strong> Ocak düğmelerine koruyucu takın, tencere saplarını içe çevirin, bıçak/kimyasalları üst raflara taşıyın</li>
+        <li><strong>🛁 Banyo:</strong> Bebeği küvette ASLA tek başına bırakmayın, ilaç dolabını kilitleyin, zemin kaymaz paspas kullanın</li>
+        <li><strong>🛏️ Yatak Odası:</strong> Beşik içinde yastık/battaniye/oyuncak olmamalı, perde kordonları erişilemez yükseklikte olmalı</li>
+        <li><strong>🛋️ Oturma Odası:</strong> Sehpa köşelerine koruyucu takın, kitaplık/TV ünitesini duvara sabitleyin, küçük süs eşyalarını kaldırın</li>
+        <li><strong>🌳 Balkon/Bahçe:</strong> Korkuluk aralıkları 10cm'den az olmalı, havuz/kova suyu boşaltılmalı, bitki saksıları erişilemez yerde olmalı</li>
+        <li><strong>🚗 Araç:</strong> Onaylı oto koltuğu doğru kurulmuş olmalı, bebek asla araçta tek başına bırakılmamalı</li>
+      </ul>
+    </div>
+    <div class="pop-sec" style="background:#FFEBEE">
+      <h4>📅 Yaşa Göre Değişen Riskler</h4>
+      <ul style="padding-left:14px;font-size:.71rem;color:#555;line-height:1.7">
+        <li><strong>0-6 ay:</strong> Düşme (değiştirme masası, kanepe), boğulma (yatak içi eşyalar) en büyük risk</li>
+        <li><strong>6-12 ay:</strong> Emeklemeyle merdiven, priz, küçük nesne yutma riskleri artar</li>
+        <li><strong>12-24 ay:</strong> Yürümeyle yüksekten düşme, dolap/çekmece tırmanma, zehirli madde erişimi öne çıkar</li>
+        <li>Güvenlik kontrolünü her gelişim aşamasında (emekleme, ayağa kalkma, yürüme) tekrar gözden geçirin</li>
+      </ul>
     </div>
     <button class="pop-btn green" id="safetyDoneBtn" onclick="completeSafety()" style="opacity:.5;cursor:not-allowed" disabled>
       🛡️ Güvenli Yuva Oluşturuldu! (+30 GP)
