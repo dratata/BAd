@@ -6218,6 +6218,16 @@ function showBabyProofingGuide(){
     <span class="pop-ico">🏠</span><div class="pop-title">Oda Oda Ev Güvenliği</div>
     <div class="pop-sub">6-8. aydan itibaren · Emekleme döneminde kritik</div>
     <div style="max-height:380px;overflow-y:auto;margin:10px 0">${cards}</div>
+    <div class="pop-sec" style="background:#FFFDE7">
+      <h4>🙈 Sık Unutulan Tehlikeler</h4>
+      <ul style="padding-left:14px;font-size:.71rem;color:#555;line-height:1.7">
+        <li>Misafir gelen evler "baby-proof" değildir — anne-babanız/arkadaşlarınızın evinde de kontrol yapın</li>
+        <li>Çanta içindeki ilaç, kozmetik, şarj aleti pilleri bebeğin erişebileceği yere düşebilir</li>
+        <li>Mıknatıslı oyuncaklar ve düğme piller yutulursa ACİL — bağırsak deliği riski</li>
+        <li>Köpek/kedi mama kapları, kum kapları bebeğin erişebileceği yükseklikte olmamalı</li>
+        <li>Halı/kilim köşelerini sabitleyin — yürümeye başlayan bebekler için düşme riski</li>
+      </ul>
+    </div>
     <div class="pop-tip"><div class="pop-tip-t">📋 Baby-Proofing Turu</div><p>En etkili yöntem: yere diz çök ve bebeğin gözünden gör. Elinizin erişebildiği her şey tehlike! Her 3 ayda bir bebeğin gelişimine göre tur tekrarlayın — emekleyen farklı, yürüyen farklı risk taşır.</p></div>
     <button class="pop-btn" style="background:linear-gradient(135deg,#1B5E20,#2E7D32)" onclick="this.closest('.pop-ov').remove()">🏠 Güvenli Yuva!</button>
   </div></div>`;
@@ -6331,6 +6341,9 @@ function showMaternalIdentityGuide(){
       ${['Hem bebeği çok sevmek hem bazen özgürlük istemek','Önceki kimliği kaybetmek gibi hissetmek','Birden önce kim olduğunu sormak','Yoğun sevgi + yoğun yorgunluk = çelişki değil','Aynalar karşısında kendini tanımamak'].map(f=>`<div style="padding:6px;background:#FFF0F5;border-radius:7px;margin-bottom:4px;font-size:.77rem">💗 ${f}</div>`).join('')}
       <div style="font-weight:700;font-size:.82rem;margin:10px 0 6px">🌱 Kimlik Köprüleri:</div>
       ${['Eski ilgi alanlarından biri için haftada 30 dakika','"Ben"im ve "Anne"yim — ikisi birlikte var olabilir','Partnerle eskiden ne sevdiğinizi konuşun','Annelik öncesi arkadaşlarla bağlantıda kal','Başka annelerle dürüst konuş — sadece mutlu paylaşımlar değil'].map(k=>`<div style="padding:6px;background:#E8F5E9;border-radius:7px;margin-bottom:4px;font-size:.77rem">✅ ${k}</div>`).join('')}
+      <div style="background:#E0F2F1;border:2px solid #26A69A;border-radius:10px;padding:10px;font-size:.77rem;margin-top:8px">
+        <b>👨 Patrescence — Babalar İçin Dönüşüm</b><br>Babalar da kimlik dönüşümü yaşar: hormonal değişim (testosteron düşüşü, oksitosin artışı), rol/öncelik değişimi, "yeterli baba mıyım" kaygısı. Bu süreç çoğu zaman görmezden gelinir — babaların da duygusal destek hakkı vardır.
+      </div>
       <div style="background:#E8EAF6;border:2px solid #5C6BC0;border-radius:10px;padding:10px;font-size:.78rem;margin-top:8px">
         <b>💜 Önemli:</b> Annelik kimliğinin yeniden inşası 1-2 yıl sürebilir. Bu dönemde PPD belirtilerini izleyin. Profesyonel destek almak — terapi veya annelik grupları — bu süreci önemli ölçüde kolaylaştırır.<br><br>
         <b>📚 Kaynak:</b> Alexandra Sacks MD "Matrescence", Aurelie Athan Columbia araştırmaları
@@ -11020,6 +11033,8 @@ function showSiblingGuide(){
      items:['Regresyon (bezi ıslatma, bebek gibi konuşma) normaldir — cezalandırma!','Büyük kardeşin özel zamanı: sadece onunla 15-20 dk/gün','Bebeği görmezden gelme dönemleri olabilir — kabul et','Kıskançlık sağlıklı bağlanmanın işareti, duygularını yargılama','Yardım isteyerek büyüklük hissi ver: "Bebeğe bezi getirir misin?"']},
     {ico:'🤝',title:'Kardeş Bağını Güçlendirmek',color:'#E8F5E9',border:'#A5D6A7',tc:'#1B5E20',
      items:['Kardeşleri birbiriyle tanıştır: büyük kardeş bebeği kucağında tutsun','"Bebeğin seni seviyor" diyalogları kur','Ortak fotoğraf, ortak şarkılar oluştur','Rekabeti körükleme: kardeşini sev, onu oyna değil','Ailece ritüeller: hep birlikte sabah kahvaltısı, akşam masalı']},
+    {ico:'📅',title:'Yaşa Göre Tepkiler',color:'#F3E5F5',border:'#CE93D8',tc:'#6A1B9A',
+     items:['2-3 yaş: Regresyon en yoğun, dil ile ifade zayıf — davranışla gösterir','3-5 yaş: Sözel kıskançlık ifade edebilir, "bebeği geri ver" diyebilir, yargılamayın','5+ yaş: Sorumluluk üstlenmeye isteklidir, "yardımcı büyük kardeş" rolü verin','Her yaşta bireysel zaman ihtiyacı sürer — büyüdükçe azalmaz, şekil değiştirir']},
   ];
   const cards=sections.map(s=>`
   <div style="background:${s.color};border-radius:12px;padding:10px;margin-bottom:8px;border-left:3px solid ${s.border}">
@@ -11168,6 +11183,19 @@ function showWorkReturnGuide(){
     <span class="pop-ico">🏢</span><div class="pop-title">İşe Dönüş Rehberi</div>
     <div class="pop-sub">Planla, hazırlan, suçluluk duyma</div>
     <div style="max-height:370px;overflow-y:auto;margin:10px 0">${cards}</div>
+    <div class="pop-sec" style="background:#E1F5FE">
+      <h4>🍼 İş Yerinde Süt Pompalama</h4>
+      <ul style="padding-left:14px;font-size:.71rem;color:#555;line-height:1.7">
+        <li>Her 3 saatte bir pompalamak süt üretimini korur — takvime alarm koyun</li>
+        <li>Pompalanan süt oda sıcaklığında 4 saat, buzdolabında 4 gün, dondurucuda 6 ay saklanabilir</li>
+        <li>Soğuk çanta + buz kalıbı ile işten eve taşıyın</li>
+        <li>İlk hafta üretim düşebilir — stres normaldir, su tüketimi ve sık pompalama yardımcı olur</li>
+      </ul>
+    </div>
+    <div class="pop-sec" style="background:#FCE4EC">
+      <h4>💗 Ayrılık Duygularıyla Baş Etme</h4>
+      <p style="font-size:.71rem;color:#555;line-height:1.6">Suçluluk ve özlem hissi tamamen normaldir ve çoğu ebeveyn yaşar. Araştırmalar, kaliteli kreş/bakıcı bakımının bebek-anne bağına zarar vermediğini gösteriyor. Ayrılık öncesi/sonrası kısa bir "ritüel" (özel bir kucaklama, vedalaşma cümlesi) geçişi kolaylaştırır. İlk 2-3 hafta en zor dönemdir — sabırlı olun.</p>
+    </div>
     <div class="pop-tip"><div class="pop-tip-t">💡 Türkiye'de Yasal Haklar</div><p>Doğum sonrası 16 hafta (çoğul gebelikte 18 hafta) ücretli izin. Ücretsiz izin hakkı 6 aya kadar. Emzirme molası: günde 1.5 saat (6. aya kadar). İşveren emzirme odası sağlamakla yükümlü. Haklarınızı bilin!</p></div>
     <button class="pop-btn" style="background:linear-gradient(135deg,#2E7D32,#388E3C)" onclick="this.closest('.pop-ov').remove()">🏢 Hazırım!</button>
   </div></div>`;
