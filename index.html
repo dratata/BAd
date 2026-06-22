@@ -4962,13 +4962,14 @@ function showParentingQuiz(){
   // pick 5 random questions
   const pool=[...QUIZ_QUESTIONS].sort(()=>Math.random()-.5).slice(0,5);
   let current=0, score=0;
-  const qEl=document.getElementById('quizQuestion');
-  const optsEl=document.getElementById('quizOpts');
-  const progEl=document.getElementById('quizProg');
-  const resultEl=document.getElementById('quizResult');
   function renderQ(){
     if(current>=pool.length){ endQuiz(); return; }
     const q=pool[current];
+    const qEl=document.getElementById('quizQuestion');
+    const optsEl=document.getElementById('quizOpts');
+    const progEl=document.getElementById('quizProg');
+    const resultEl=document.getElementById('quizResult');
+    if(!qEl||!optsEl||!progEl||!resultEl) return;
     progEl.textContent=`Soru ${current+1}/${pool.length}`;
     qEl.textContent=q.q;
     optsEl.innerHTML=q.opts.map((o,i)=>`<button class="quiz-opt" onclick="answerQuiz(${i})">${String.fromCharCode(65+i)}) ${o}</button>`).join('');
@@ -4985,6 +4986,11 @@ function showParentingQuiz(){
     if(score===pool.length) S.quizPerfect=true;
     spawnParticles(['🎓','⭐','🌟'],5);
     playSound('achieve');
+    const qEl=document.getElementById('quizQuestion');
+    const optsEl=document.getElementById('quizOpts');
+    const progEl=document.getElementById('quizProg');
+    const resultEl=document.getElementById('quizResult');
+    if(!qEl||!optsEl||!progEl||!resultEl) return;
     qEl.textContent=`Test tamamlandı! ${score}/${pool.length} doğru`;
     optsEl.innerHTML='';
     progEl.textContent='';
