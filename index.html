@@ -1246,12 +1246,12 @@ const DAILY_TASKS = [
   {ico:'🎤',text:'Şarkı söyle — her türlü şarkı!',reward:35,act:'sarki'},
   {ico:'⭐',text:'Gece uyanmasında baba kalksın',reward:55,act:'dad-gece'},
   {ico:'🌈',text:'Duyusal oyun oyna',reward:40,act:'duyusal'},
-  {ico:'🤸',text:'Bebek jimnastiği yap',reward:40,act:'jimnastik'},
+  {ico:'🤸',text:'Bebek jimnastiği yap',reward:40,act:'jimnastik',minAge:3},
   {ico:'☕',text:'Anne mola versin — iyi hak etti!',reward:35,act:'mom-dinlen'},
   {ico:'💐',text:'Baba anneye destek versin',reward:45,act:'dad-anne'},
-  {ico:'🏊',text:'Bebek yüzme seansı',reward:45,act:'yuzme'},
-  {ico:'🧱',text:'Renkli bloklar veya oyuncaklar',reward:40,act:'bloklar'},
-  {ico:'🎭',text:'Tekerleme söyle',reward:35,act:'tekerleme'},
+  {ico:'🏊',text:'Bebek yüzme seansı',reward:45,act:'yuzme',minAge:3},
+  {ico:'🧱',text:'Renkli bloklar veya oyuncaklar',reward:40,act:'bloklar',minAge:6},
+  {ico:'🎭',text:'Tekerleme söyle',reward:35,act:'tekerleme',minAge:12},
   {ico:'🩺',text:'Bugün bir doktor kontrolü yap',reward:60,act:null},
   {ico:'🌿',text:'Bebek ile 15 dk dışarı çık — taze hava!',reward:38,act:null},
   {ico:'🪞',text:'Bebeği ayna karşısında tutup yüz ifadeleri yap',reward:32,act:null},
@@ -1708,8 +1708,7 @@ function showSaveIndicator(){
 
 function applyAgeUnlocks(mo){
   if(mo>=3){['btn-jimnastik','btn-yuzme'].forEach(id=>{const b=document.getElementById(id);if(b)b.disabled=false})}
-  if(mo>=4){const b=document.getElementById('btn-mama');if(b)b.disabled=false;}
-  if(mo>=6){['btn-su','btn-blok'].forEach(id=>{const b=document.getElementById(id);if(b)b.disabled=false})}
+  if(mo>=6){['btn-mama','btn-su','btn-blok'].forEach(id=>{const b=document.getElementById(id);if(b)b.disabled=false})}
   if(mo>=9){const b=document.getElementById('btn-sekil');if(b)b.disabled=false;}
   if(mo>=12){const b=document.getElementById('btn-teker');if(b)b.disabled=false;}
 }
@@ -2324,7 +2323,9 @@ function tick(){
   if(curDay!==S.dailyTaskDay){
     S.dailyTaskDay=curDay;
     S.dailyTaskDone=false;
-    S.dailyTaskIdx=Math.floor(Math.random()*DAILY_TASKS.length);
+    const eligible=DAILY_TASKS.filter(t=>!t.minAge||S.ageMonths>=t.minAge);
+    const pick=eligible[Math.floor(Math.random()*eligible.length)];
+    S.dailyTaskIdx=DAILY_TASKS.indexOf(pick);
     renderDailyTask();
   }
   // reset daily quiz
@@ -3484,14 +3485,6 @@ function showBreastfeedingGuide(){
 }
 
 // ══════════════════════════════════════════════════════
-// NUTRITION GUIDE (solid foods reminder)
-// ══════════════════════════════════════════════════════
-function showNutritionGuide(){
-  if(S.ageMonths<6){showPopupInfo({icon:'🥣',title:'Katı Gıda Henüz Yok!',sub:'6. aya kadar sadece anne sütü / mama',info:'WHO önerisine göre ilk 6 ay TÜM besin ihtiyacı anne sütü veya mama ile karşılanabilir. Erken katı gıda sindirim sistemine zarar verebilir.',tip:'6. ayda başlamak için sabırsızlanın! Katı gıda rehberini 6. ayda açabilirsiniz.',btnTxt:'Anladım'});return;}
-  showSolidFoodGuide();
-}
-
-// ══════════════════════════════════════════════════════
 // SLEEP TRAINING GUIDE
 // ══════════════════════════════════════════════════════
 function showSleepGuide(){
@@ -3934,52 +3927,6 @@ function showToyGuide(){
     </div>
     <div class="pop-tip"><div class="pop-tip-t">💡 En İyi Oyuncak</div><p>Araştırmalar gösteriyor: Boş karton kutu, kap-kacak, renkli eşarplar ve ebeveyn dikkati — pahalı oyuncaklardan çok daha değerli. Kaliteli vakit geçirin!</p></div>
     <button class="pop-btn" onclick="this.closest('.pop-ov').remove()">🧸 Harika Rehber!</button>
-  </div></div>`;
-  document.body.insertAdjacentHTML('beforeend',h);
-}
-
-// ══════════════════════════════════════════════════════
-// SCREEN TIME GUIDE
-// ══════════════════════════════════════════════════════
-function showScreenTimeGuide(){
-  const h=`<div class="pop-ov" onclick="if(event.target===this)this.remove()">
-  <div class="pop-box">
-    <div class="pop-rainbow" style="background:linear-gradient(90deg,#FF4757,#FF9A3C,#52B788)"></div>
-    <span class="pop-ico">📱</span>
-    <div class="pop-title">Ekran Süresi Rehberi</div>
-    <div class="pop-sub">WHO &amp; AAP Önerileri</div>
-    <div class="pop-sec" style="background:#FFF5F5">
-      <h4 style="color:#C62828">🚫 0-18 Ay: Ekran Yok!</h4>
-      <p>WHO: 18 aylıktan küçük bebekler için <strong>sıfır ekran süresi</strong> (video görüşme hariç). Ekran, beyin gelişimini olumsuz etkiler, dil gelişimini geciktirir.</p>
-    </div>
-    <div class="pop-sec" style="background:#FFF8E1">
-      <h4>⚠️ 18-24 Ay: Çok Sınırlı</h4>
-      <p>Sadece kaliteli içerik, ebeveynle birlikte izleme. Yalnız bırakmayın. Günde 30 dakikayı geçmeyin.</p>
-    </div>
-    <div class="pop-sec" style="background:#F0FFF4">
-      <h4>✅ 2-5 Yaş: Günde 1 Saat</h4>
-      <p>Kaliteli eğitici içerik tercih edin. Yemek ve uyku saatlerinde ekran kapatın. Ekran aktivitesi hakkında konuşun.</p>
-    </div>
-    <div class="pop-sec">
-      <h4>💡 Bunun Yerine Ne Yapmalı?</h4>
-      <ul style="padding-left:14px;font-size:.72rem;color:#555;line-height:1.7">
-        <li>Yüz yüze konuşma ve göz teması</li>
-        <li>Kitap okuma ve şarkı söyleme</li>
-        <li>Duyusal oyun (hamur, su, kum)</li>
-        <li>Dışarı çıkma ve doğa keşfi</li>
-        <li>Bebek masajı ve beden oyunları</li>
-      </ul>
-    </div>
-    <div class="pop-sec" style="background:#E3F2FD">
-      <h4>📺 Pasif mi, Etkileşimli mi?</h4>
-      <p style="font-size:.71rem;color:#555;line-height:1.6">Tüm ekranlar eşit değildir. <strong>Pasif izleme</strong> (çizgi film, otomatik oynatma) en zararlısıdır — tek yönlü ve dikkat süresini parçalar. <strong>Video görüşme</strong> (büyükanne ile görüşme gibi) gerçek sosyal etkileşim içerdiği için 18 ay altı için bile istisna sayılır. Etkileşimli/eğitici uygulamalar 2 yaş üstü için göreceli olarak daha az zararlıdır ama yine de canlı oyunun yerini tutamaz.</p>
-    </div>
-    <div class="pop-sec" style="background:#FCE4EC">
-      <h4>👀 Ebeveyn Modellemesi</h4>
-      <p style="font-size:.71rem;color:#555;line-height:1.6">Bebekler ebeveynin ekran kullanımını da gözlemler ve taklit eder. "Teknoferans" (technoference) — ebeveynin telefonla ilgilenirken bebeğin göz teması/tepki alamaması — dil gelişimini ve bağlanmayı olumsuz etkileyebilir. Bebekle birlikteyken telefonu kenara koymaya özen gösterin; özellikle beslenme ve oyun sırasında.</p>
-    </div>
-    <div class="pop-tip"><div class="pop-tip-t">💡 Gerçek</div><p>Bebekler dil gelişimini CANLI insanlardan öğrenir. Video'daki dil, canlı etkileşimin yerini tutmaz. ${S.babyName}'e konuşun, okuyun, şarkı söyleyin — ekrandan çok daha etkilidir!</p></div>
-    <button class="pop-btn" onclick="this.closest('.pop-ov').remove()">📴 Anlıyorum!</button>
   </div></div>`;
   document.body.insertAdjacentHTML('beforeend',h);
 }
@@ -10442,6 +10389,7 @@ function showParentJournal(){
 // NUTRITION GUIDE — 6-24 AY
 // ══════════════════════════════════════════════════════
 function showNutritionGuide(){
+  if(S.ageMonths<6){showPopupInfo({icon:'🥣',title:'Katı Gıda Henüz Yok!',sub:'6. aya kadar sadece anne sütü / mama',info:'WHO önerisine göre ilk 6 ay TÜM besin ihtiyacı anne sütü veya mama ile karşılanabilir. Erken katı gıda sindirim sistemine zarar verebilir.',tip:'6. ayda başlamak için sabırsızlanın! Katı gıda rehberini 6. ayda açabilirsiniz.',btnTxt:'Anladım'});return;}
   S.nutritionRead=true;checkAchievements();saveGame();
   const stages=[
     {age:'6. Ay',ico:'🥣',color:'#E8F5E9',border:'#66BB6A',
