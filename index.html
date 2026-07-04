@@ -11667,10 +11667,29 @@ const Baby3D=(function(){
   let blinkT=2,blinkV=0,tearT=0,zT=0,lookT=0,syncT=0;
   let ptr={x:0,y:0},lastFrame=0;
   const V=(x,y,z)=>new THREE.Vector3(x,y,z);
-  const WALLS=['#3b2a63','#CDEEF5','#FFF3C9','#DFF3E0','#D6E6FB','#FFE8CC','#E4E1F7'];
-  const RUGS =['#5a4390','#8FD8E8','#FFD98E','#A8DFB2','#A9C8F5','#FFC98F','#BDB5EE'];
+  const WALLS=['#4A3580','#7FD4E8','#FFDF7E','#8FD9A0','#8FB8F2','#FFC077','#B3A5F0'];
+  const RUGS =['#6C50AE','#3FB8D6','#FFB84D','#52BE72','#5D8FE8','#FF9E4D','#8A78D9'];
 
-  function mat(c,rough=0.85){return new THREE.MeshStandardMaterial({color:c,roughness:rough,metalness:0})}
+  // ── Toon (cel) shading: keskin ışık bantları için gradyan haritası ──
+  let gradTex=null,outMat=null;
+  function toonGrad(){
+    if(!gradTex){
+      const c=new Uint8Array([90,150,215,255]);
+      gradTex=new THREE.DataTexture(c,c.length,1,THREE.RedFormat);
+      gradTex.minFilter=THREE.NearestFilter;gradTex.magFilter=THREE.NearestFilter;
+      gradTex.needsUpdate=true;
+    }
+    return gradTex;
+  }
+  function mat(c){return new THREE.MeshToonMaterial({color:c,gradientMap:toonGrad()})}
+  // Kontur çizgisi: ters yüz (BackSide) siyah kabuk — cel görünümün "keskin hat" sırrı
+  function outline(mesh,th=0.045){
+    if(!outMat)outMat=new THREE.MeshBasicMaterial({color:'#33245C',side:THREE.BackSide});
+    const o=new THREE.Mesh(mesh.geometry,outMat);
+    o.scale.setScalar(1+th);
+    mesh.add(o);
+    return mesh;
+  }
   function box(w,h,d,c){const m=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),mat(c));m.castShadow=true;m.receiveShadow=true;return m}
   function sph(r,c,seg=24){const m=new THREE.Mesh(new THREE.SphereGeometry(r,seg,seg),mat(c));m.castShadow=true;return m}
   function cyl(rt,rb,h,c,seg=20){const m=new THREE.Mesh(new THREE.CylinderGeometry(rt,rb,h,seg),mat(c));m.castShadow=true;return m}
@@ -11705,19 +11724,26 @@ const Baby3D=(function(){
   }
 
   function buildRoom(){
-    // floor
-    floorM=new THREE.Mesh(new THREE.BoxGeometry(11,0.3,8),mat('#E8CBA8'));
+    // floor: sıcak ahşap ton + tahta çizgileri
+    floorM=new THREE.Mesh(new THREE.BoxGeometry(11,0.3,8),mat('#D9A76C'));
     floorM.position.y=-0.15;floorM.receiveShadow=true;root.add(floorM);
-    // rug
-    rugM=new THREE.Mesh(new THREE.CylinderGeometry(2.35,2.35,0.06,36),mat('#8FD8E8',1));
-    rugM.position.set(0.4,0.03,1.1);rugM.receiveShadow=true;root.add(rugM);
-    const rugIn=new THREE.Mesh(new THREE.CylinderGeometry(1.7,1.7,0.065,36),mat('#FFFFFF',1));
-    rugIn.position.set(0.4,0.035,1.1);rugIn.receiveShadow=true;rugM.attach(rugIn);
-    // walls
-    wallB=box(11,6,0.3,'#CDEEF5');wallB.position.set(0,2.85,-3.9);root.add(wallB);
-    wallS=box(0.3,6,8,'#EAE0F8');wallS.position.set(-5.45,2.85,0);root.add(wallS);
-    const skirt=box(11,0.35,0.34,'#FFFFFF');skirt.position.set(0,0.18,-3.88);root.add(skirt);
-    const skirt2=box(0.34,0.35,8,'#FFFFFF');skirt2.position.set(-5.43,0.18,0);root.add(skirt2);
+    for(let i=0;i<7;i++){
+      const plank=box(0.035,0.02,8,'#B9854C');plank.position.set(-4.5+i*1.5,0.005,0);plank.castShadow=false;root.add(plank);
+    }
+    // rug: kalın kontrast halkalı
+    rugM=new THREE.Mesh(new THREE.CylinderGeometry(2.35,2.35,0.07,40),mat('#3FB8D6'));
+    rugM.position.set(0.4,0.035,1.1);rugM.receiveShadow=true;root.add(rugM);
+    const rugMid=new THREE.Mesh(new THREE.CylinderGeometry(1.85,1.85,0.075,40),mat('#FFFFFF'));
+    rugMid.position.set(0.4,0.038,1.1);rugMid.receiveShadow=true;root.add(rugMid);
+    const rugIn=new THREE.Mesh(new THREE.CylinderGeometry(1.35,1.35,0.08,40),mat('#FFE9A8'));
+    rugIn.position.set(0.4,0.04,1.1);rugIn.receiveShadow=true;root.add(rugIn);
+    // walls: üst renk + beyaz lambri (wainscot) + koyu ayraç çıtası
+    wallB=box(11,6,0.3,'#7FD4E8');wallB.position.set(0,2.85,-3.9);root.add(wallB);
+    wallS=box(0.3,6,8,'#C9B8F2');wallS.position.set(-5.45,2.85,0);root.add(wallS);
+    const wainB=box(11,1.15,0.34,'#FFFFFF');wainB.position.set(0,0.58,-3.89);root.add(wainB);
+    const wainS=box(0.34,1.15,8,'#FFFFFF');wainS.position.set(-5.44,0.58,0);root.add(wainS);
+    const trimB=box(11,0.09,0.36,'#5F4CA8');trimB.position.set(0,1.18,-3.89);root.add(trimB);
+    const trimS=box(0.36,0.09,8,'#5F4CA8');trimS.position.set(-5.44,1.18,0);root.add(trimS);
     // window (back wall)
     const wf=box(2.6,2.6,0.18,'#FFFFFF');wf.position.set(1.9,3.2,-3.73);root.add(wf);
     skyMat=new THREE.MeshBasicMaterial({color:'#9BDCFF'});
@@ -11759,23 +11785,24 @@ const Baby3D=(function(){
       sp.position.set(x,-0.38,0);mobileG.add(sp);
     });
     mobileG.position.set(-3.15,2.5,-2.45);root.add(mobileG);
-    // toy: ball
+    // toy: ball — canlı, konturlu
     ballM=new THREE.Group();
-    const b1=sph(0.3,'#FF6B6B');ballM.add(b1);
-    const stripe=new THREE.Mesh(new THREE.TorusGeometry(0.295,0.045,10,28),mat('#FFF'));stripe.rotation.x=Math.PI/2;ballM.add(stripe);
+    const b1=sph(0.3,'#FF4757');outline(b1,0.05);ballM.add(b1);
+    const stripe=new THREE.Mesh(new THREE.TorusGeometry(0.295,0.05,10,28),mat('#FFD166'));stripe.rotation.x=Math.PI/2;ballM.add(stripe);
     ballM.position.set(2.6,0.3,0.6);root.add(ballM);
-    // toy blocks
-    const bl=['#FFB4C6','#9EDDF0','#FFE08A'];
-    bl.forEach((c2,i)=>{const b2=box(0.4,0.4,0.4,c2);b2.position.set(-2.2+i*0.06,0.2+i*0.41,2.05-i*0.03);b2.rotation.y=i*0.5;root.add(b2);});
-    // teddy bear on floor
+    // toy blocks — doygun renkler + kontur
+    const bl=['#FF6B9D','#3FB8D6','#FFC93C'];
+    bl.forEach((c2,i)=>{const b2=box(0.4,0.4,0.4,c2);outline(b2,0.04);b2.position.set(-2.2+i*0.06,0.2+i*0.41,2.05-i*0.03);b2.rotation.y=i*0.5;root.add(b2);});
+    // teddy bear on floor — konturlu
     teddyG=new THREE.Group();
-    const tb=sph(0.32,'#C89F7B');tb.position.y=0.32;teddyG.add(tb);
-    const th=sph(0.24,'#C89F7B');th.position.y=0.75;teddyG.add(th);
-    const te1=sph(0.09,'#C89F7B');te1.position.set(-0.17,0.95,0);teddyG.add(te1);
-    const te2=sph(0.09,'#C89F7B');te2.position.set(0.17,0.95,0);teddyG.add(te2);
-    const tsn=sph(0.1,'#E8CBA8');tsn.position.set(0,0.72,0.2);teddyG.add(tsn);
-    const ta1=sph(0.11,'#C89F7B');ta1.position.set(-0.32,0.42,0.08);teddyG.add(ta1);
-    const ta2=sph(0.11,'#C89F7B');ta2.position.set(0.32,0.42,0.08);teddyG.add(ta2);
+    const tb=sph(0.32,'#B07E52');outline(tb,0.06);tb.position.y=0.32;teddyG.add(tb);
+    const th=sph(0.24,'#B07E52');outline(th,0.07);th.position.y=0.75;teddyG.add(th);
+    const te1=sph(0.09,'#B07E52');te1.position.set(-0.17,0.95,0);teddyG.add(te1);
+    const te2=sph(0.09,'#B07E52');te2.position.set(0.17,0.95,0);teddyG.add(te2);
+    const tsn=sph(0.1,'#F2D3A7');tsn.position.set(0,0.72,0.2);teddyG.add(tsn);
+    const tbel=sph(0.18,'#F2D3A7');tbel.scale.z=0.5;tbel.position.set(0,0.34,0.25);teddyG.add(tbel);
+    const ta1=sph(0.11,'#B07E52');ta1.position.set(-0.32,0.42,0.08);teddyG.add(ta1);
+    const ta2=sph(0.11,'#B07E52');ta2.position.set(0.32,0.42,0.08);teddyG.add(ta2);
     teddyG.position.set(3.1,0,-1.7);teddyG.rotation.y=-0.7;root.add(teddyG);
     // lamp
     const lampG=new THREE.Group();
@@ -11796,25 +11823,55 @@ const Baby3D=(function(){
 
   function buildBaby(){
     baby=new THREE.Group();
-    const SKIN='#FFDCC2',outfit=(typeof S!=='undefined'&&S.gender==='erkek')?'#8FC8F5':'#FFB4C9';
-    body=cap(0.52,0.5,outfit);body.position.y=0.72;baby.add(body);
-    // belly button patch
-    const patch=sph(0.16,'#FFFFFF');patch.scale.z=0.4;patch.position.set(0,0.68,0.44);baby.add(patch);
-    head=new THREE.Group();head.position.y=1.62;
-    headM=sph(0.55,SKIN,28);head.add(headM);
-    hair=sph(0.16,'#8A5A3B');hair.scale.set(1,0.55,1);hair.position.set(0,0.52,0.05);head.add(hair);
-    eyeL=sph(0.075,'#3A2B22',12);eyeL.position.set(-0.2,0.08,0.48);head.add(eyeL);
-    eyeR=sph(0.075,'#3A2B22',12);eyeR.position.set(0.2,0.08,0.48);head.add(eyeR);
-    const chL=sph(0.1,'#FFB3A0',10);chL.scale.z=0.42;chL.position.set(-0.33,-0.1,0.4);head.add(chL);
-    const chR=sph(0.1,'#FFB3A0',10);chR.scale.z=0.42;chR.position.set(0.33,-0.1,0.4);head.add(chR);
-    mouth=sph(0.075,'#C4574E',12);mouth.scale.set(1.15,0.55,0.5);mouth.position.set(0,-0.21,0.5);head.add(mouth);
-    browL=box(0.14,0.035,0.02,'#8A5A3B');browL.position.set(-0.2,0.26,0.5);head.add(browL);
-    browR=box(0.14,0.035,0.02,'#8A5A3B');browR.position.set(0.2,0.26,0.5);head.add(browR);
+    const SKIN='#FFC69A',outfit=(typeof S!=='undefined'&&S.gender==='erkek')?'#4EA8F0':'#FF7BAC';
+    const outfit2=(typeof S!=='undefined'&&S.gender==='erkek')?'#2E7FC4':'#E0508A';
+    // gövde: belden hafif daralan tulum
+    body=cap(0.5,0.52,outfit);body.position.y=0.74;body.scale.set(1,1,0.88);outline(body);baby.add(body);
+    // göğüs paneli + düğmeler
+    const patch=sph(0.18,'#FFF3E0');patch.scale.set(0.7,0.95,0.3);patch.position.set(0,0.76,0.4);baby.add(patch);
+    const bt1=sph(0.045,outfit2,10);bt1.position.set(0,0.92,0.47);baby.add(bt1);
+    const bt2=sph(0.045,outfit2,10);bt2.position.set(0,0.68,0.5);baby.add(bt2);
+    // yaka
+    const collar=new THREE.Mesh(new THREE.TorusGeometry(0.3,0.075,12,26),mat('#FFFFFF'));
+    collar.rotation.x=Math.PI/2;collar.position.y=1.22;collar.castShadow=true;baby.add(collar);
+    head=new THREE.Group();head.position.y=1.72;
+    headM=sph(0.56,SKIN,32);headM.scale.set(1,0.94,0.96);outline(headM,0.04);head.add(headM);
+    // saç: tepe perçemi + kıvrım
+    hair=sph(0.47,'#6E4226');hair.scale.set(1.12,0.62,1.06);hair.position.set(0,0.3,-0.04);outline(hair,0.05);head.add(hair);
+    const curl=new THREE.Mesh(new THREE.TorusGeometry(0.09,0.035,8,16,4.2),mat('#6E4226'));
+    curl.position.set(0.02,0.6,0.12);curl.rotation.set(0.3,0.4,1.2);head.add(curl);
+    // gözler: büyük, parıltılı
+    eyeL=sph(0.1,'#2E1F17',14);eyeL.scale.z=0.6;eyeL.position.set(-0.21,0.06,0.47);head.add(eyeL);
+    eyeR=sph(0.1,'#2E1F17',14);eyeR.scale.z=0.6;eyeR.position.set(0.21,0.06,0.47);head.add(eyeR);
+    const glL=new THREE.Mesh(new THREE.SphereGeometry(0.032,8,8),new THREE.MeshBasicMaterial({color:'#FFFFFF'}));
+    glL.position.set(0.03,0.04,0.09);eyeL.add(glL);
+    const glR=new THREE.Mesh(new THREE.SphereGeometry(0.032,8,8),new THREE.MeshBasicMaterial({color:'#FFFFFF'}));
+    glR.position.set(0.03,0.04,0.09);eyeR.add(glR);
+    // burun
+    const nose=sph(0.055,'#F5B98E',10);nose.scale.set(1,0.75,0.7);nose.position.set(0,-0.06,0.55);head.add(nose);
+    // yanaklar
+    const chL=sph(0.1,'#FF9E88',10);chL.scale.z=0.35;chL.position.set(-0.34,-0.12,0.4);head.add(chL);
+    const chR=sph(0.1,'#FF9E88',10);chR.scale.z=0.35;chR.position.set(0.34,-0.12,0.4);head.add(chR);
+    mouth=sph(0.08,'#B03A30',12);mouth.scale.set(1.2,0.55,0.5);mouth.position.set(0,-0.23,0.5);head.add(mouth);
+    browL=box(0.16,0.045,0.03,'#6E4226');browL.position.set(-0.21,0.27,0.5);head.add(browL);
+    browR=box(0.16,0.045,0.03,'#6E4226');browR.position.set(0.21,0.27,0.5);head.add(browR);
+    // kulaklar
+    const earL=sph(0.11,SKIN,12);earL.scale.set(0.5,1,0.8);earL.position.set(-0.55,-0.02,0.02);outline(earL,0.08);head.add(earL);
+    const earR=sph(0.11,SKIN,12);earR.scale.set(0.5,1,0.8);earR.position.set(0.55,-0.02,0.02);outline(earR,0.08);head.add(earR);
     baby.add(head);
-    armL=cap(0.15,0.3,SKIN);armL.geometry.translate(0,-0.22,0);armL.position.set(-0.56,1.05,0);baby.add(armL);
-    armR=cap(0.15,0.3,SKIN);armR.geometry.translate(0,-0.22,0);armR.position.set(0.56,1.05,0);baby.add(armR);
-    legL=cap(0.17,0.28,SKIN);legL.geometry.translate(0,-0.2,0);legL.position.set(-0.26,0.28,0.05);baby.add(legL);
-    legR=cap(0.17,0.28,SKIN);legR.geometry.translate(0,-0.2,0);legR.position.set(0.26,0.28,0.05);baby.add(legR);
+    // kollar: tulum kollu + ten rengi el
+    armL=cap(0.14,0.3,outfit);armL.geometry.translate(0,-0.22,0);armL.position.set(-0.54,1.05,0);outline(armL,0.06);baby.add(armL);
+    const handL=sph(0.13,SKIN,14);handL.position.set(0,-0.44,0);outline(handL,0.08);armL.add(handL);
+    armR=cap(0.14,0.3,outfit);armR.geometry.translate(0,-0.22,0);armR.position.set(0.54,1.05,0);outline(armR,0.06);baby.add(armR);
+    const handR=sph(0.13,SKIN,14);handR.position.set(0,-0.44,0);outline(handR,0.08);armR.add(handR);
+    // bacaklar: tulum + beyaz patik
+    legL=cap(0.16,0.28,outfit);legL.geometry.translate(0,-0.2,0);legL.position.set(-0.25,0.3,0.05);outline(legL,0.06);baby.add(legL);
+    const footL=sph(0.15,'#FFFFFF',14);footL.scale.set(1,0.8,1.25);footL.position.set(0,-0.42,0.05);outline(footL,0.07);legL.add(footL);
+    legR=cap(0.16,0.28,outfit);legR.geometry.translate(0,-0.2,0);legR.position.set(0.25,0.3,0.05);outline(legR,0.06);baby.add(legR);
+    const footR=sph(0.15,'#FFFFFF',14);footR.scale.set(1,0.8,1.25);footR.position.set(0,-0.42,0.05);outline(footR,0.07);legR.add(footR);
+    // cinsiyet renk senkronu için tulum malzemeleri
+    baby.userData.outfitMats=[body.material,armL.material,armR.material,legL.material,legR.material];
+    baby.userData.outfitMats2=[bt1.material,bt2.material];
     // bottle prop (hidden by default)
     bottle=new THREE.Group();
     const bt=cyl(0.11,0.13,0.4,'#EAF7FF');bt.position.y=0.2;bottle.add(bt);
@@ -11908,9 +11965,9 @@ const Baby3D=(function(){
     const dayPhase=((typeof S!=='undefined'?S.dayTime||0:0)%4)/4;
     const isNight=dayPhase>0.5&&dayPhase<1.0;
     const nAmt=isNight?Math.sin((dayPhase-0.5)*Math.PI):0;
-    sunL.intensity=0.78-0.6*nAmt;
-    ambL.intensity=0.38-0.2*nAmt;
-    hemiL.intensity=0.22-0.11*nAmt;
+    sunL.intensity=0.85-0.62*nAmt;
+    ambL.intensity=0.55-0.28*nAmt;
+    hemiL.intensity=0.2-0.1*nAmt;
     sunL.color.setHSL(0.12,0.35,0.98-nAmt*0.3);
     lampL.intensity=nAmt*1.35;
     skyMat.color.lerpColors(new THREE.Color('#9BDCFF'),new THREE.Color('#131A3F'),nAmt);
@@ -11923,7 +11980,7 @@ const Baby3D=(function(){
     ballM.position.x=2.6+Math.sin(t*0.6)*0.12;
     teddyG.rotation.z=Math.sin(t*0.9)*0.03;
     // nefes alma
-    if(body){const br=1+Math.sin(t*2.2)*0.022;body.scale.set(br,1,br);}
+    if(body){const br=1+Math.sin(t*2.2)*0.022;body.scale.set(br,1,0.88*br);}
     // göz kırpma
     blinkT-=dt;
     if(blinkT<=0){blinkV=1;blinkT=1.8+Math.random()*3;}
@@ -12007,9 +12064,13 @@ const Baby3D=(function(){
     syncT-=dt;
     if(syncT<=0){
       syncT=1.5;
-      if(typeof S!=='undefined'&&body){
-        const want=S.gender==='erkek'?'#8FC8F5':'#FFB4C9';
-        if('#'+body.material.color.getHexString().toUpperCase()!==want.toUpperCase())body.material.color.set(want);
+      if(typeof S!=='undefined'&&baby&&baby.userData.outfitMats){
+        const want=S.gender==='erkek'?'#4EA8F0':'#FF7BAC';
+        const want2=S.gender==='erkek'?'#2E7FC4':'#E0508A';
+        if('#'+body.material.color.getHexString().toUpperCase()!==want.toUpperCase()){
+          baby.userData.outfitMats.forEach(m2=>m2.color.set(want));
+          baby.userData.outfitMats2.forEach(m2=>m2.color.set(want2));
+        }
       }
     }
     // ── kamera paralaks + evreye göre zoom ──
@@ -12028,7 +12089,6 @@ const Baby3D=(function(){
     if(!container)return false;
     try{
       scene=new THREE.Scene();
-      scene.fog=new THREE.Fog('#E8F4FB',14,30);
       root=new THREE.Group();scene.add(root);
       camera=new THREE.PerspectiveCamera(42,1,0.1,50);
       camera.position.set(0.4,2.3,5.6);
@@ -12039,9 +12099,9 @@ const Baby3D=(function(){
       renderer.outputEncoding=THREE.sRGBEncoding;
       container.appendChild(renderer.domElement);
       // ışıklar
-      ambL=new THREE.AmbientLight('#FFFFFF',0.38);scene.add(ambL);
-      hemiL=new THREE.HemisphereLight('#BFE7FF','#FFD9C4',0.22);scene.add(hemiL);
-      sunL=new THREE.DirectionalLight('#FFF6E0',0.78);
+      ambL=new THREE.AmbientLight('#FFFFFF',0.55);scene.add(ambL);
+      hemiL=new THREE.HemisphereLight('#BFE7FF','#FFD9C4',0.2);scene.add(hemiL);
+      sunL=new THREE.DirectionalLight('#FFF6E0',0.85);
       sunL.position.set(4,7,5);sunL.castShadow=true;
       sunL.shadow.mapSize.set(1024,1024);
       sunL.shadow.camera.left=-7;sunL.shadow.camera.right=7;
