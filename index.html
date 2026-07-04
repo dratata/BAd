@@ -11686,7 +11686,7 @@ const Baby3D=(function(){
   let gradTex=null,outMat=null;
   function toonGrad(){
     if(!gradTex){
-      const c=new Uint8Array([90,150,215,255]);
+      const c=new Uint8Array([80,135,185,228]); // üst bant 255 değil — saf beyaza patlamayı önler
       gradTex=new THREE.DataTexture(c,c.length,1,THREE.RedFormat);
       gradTex.minFilter=THREE.NearestFilter;gradTex.magFilter=THREE.NearestFilter;
       gradTex.needsUpdate=true;
@@ -11736,33 +11736,45 @@ const Baby3D=(function(){
   }
 
   function buildRoom(){
-    // floor: sıcak ahşap ton + tahta çizgileri
-    floorM=new THREE.Mesh(new THREE.BoxGeometry(11,0.3,8),mat('#D9A76C'));
+    // floor: koyu sıcak ahşap + tahta çizgileri
+    floorM=new THREE.Mesh(new THREE.BoxGeometry(11,0.3,8),mat('#C08A50'));
     floorM.position.y=-0.15;floorM.receiveShadow=true;root.add(floorM);
     for(let i=0;i<7;i++){
-      const plank=box(0.035,0.02,8,'#B9854C');plank.position.set(-4.5+i*1.5,0.005,0);plank.castShadow=false;root.add(plank);
+      const plank=box(0.035,0.02,8,'#96622F');plank.position.set(-4.5+i*1.5,0.005,0);plank.castShadow=false;root.add(plank);
     }
-    // rug: kalın kontrast halkalı
+    // rug: doygun üç halka — beyaz yok
     rugM=new THREE.Mesh(new THREE.CylinderGeometry(2.35,2.35,0.07,40),mat('#3FB8D6'));
     rugM.position.set(0.4,0.035,1.1);rugM.receiveShadow=true;root.add(rugM);
-    const rugMid=new THREE.Mesh(new THREE.CylinderGeometry(1.85,1.85,0.075,40),mat('#FFFFFF'));
+    const rugMid=new THREE.Mesh(new THREE.CylinderGeometry(1.85,1.85,0.075,40),mat('#FFD166'));
     rugMid.position.set(0.4,0.038,1.1);rugMid.receiveShadow=true;root.add(rugMid);
-    const rugIn=new THREE.Mesh(new THREE.CylinderGeometry(1.35,1.35,0.08,40),mat('#FFE9A8'));
+    const rugIn=new THREE.Mesh(new THREE.CylinderGeometry(1.35,1.35,0.08,40),mat('#FF8FAB'));
     rugIn.position.set(0.4,0.04,1.1);rugIn.receiveShadow=true;root.add(rugIn);
-    // walls: üst renk + beyaz lambri (wainscot) + koyu ayraç çıtası
-    wallB=box(11,6,0.3,'#7FD4E8');wallB.position.set(0,2.85,-3.9);root.add(wallB);
-    wallS=box(0.3,6,8,'#C9B8F2');wallS.position.set(-5.45,2.85,0);root.add(wallS);
-    const wainB=box(11,1.15,0.34,'#FFFFFF');wainB.position.set(0,0.58,-3.89);root.add(wainB);
-    const wainS=box(0.34,1.15,8,'#FFFFFF');wainS.position.set(-5.44,0.58,0);root.add(wainS);
-    const trimB=box(11,0.09,0.36,'#5F4CA8');trimB.position.set(0,1.18,-3.89);root.add(trimB);
-    const trimS=box(0.36,0.09,8,'#5F4CA8');trimS.position.set(-5.44,1.18,0);root.add(trimS);
+    // walls: doygun üst renk + krem lambri + koyu ayraç çıtası
+    wallB=box(11,6,0.3,'#5BC4DE');wallB.position.set(0,2.85,-3.9);root.add(wallB);
+    wallS=box(0.3,6,8,'#A990E8');wallS.position.set(-5.45,2.85,0);root.add(wallS);
+    const wainB=box(11,1.15,0.34,'#FFE8C2');wainB.position.set(0,0.58,-3.89);root.add(wainB);
+    const wainS=box(0.34,1.15,8,'#FFE8C2');wainS.position.set(-5.44,0.58,0);root.add(wainS);
+    const trimB=box(11,0.09,0.36,'#4A3580');trimB.position.set(0,1.18,-3.89);root.add(trimB);
+    const trimS=box(0.36,0.09,8,'#4A3580');trimS.position.set(-5.44,1.18,0);root.add(trimS);
+    // flama süsü (bunting): arka duvarda renkli üçgen bayraklar
+    const flagCols=['#FF6B9D','#FFC93C','#3FB8D6','#52BE72','#C77DFF','#FF9A3C','#FF6B9D'];
+    const triShape=new THREE.Shape();
+    triShape.moveTo(-0.22,0);triShape.lineTo(0.22,0);triShape.lineTo(0,-0.42);triShape.closePath();
+    const triGeo=new THREE.ShapeGeometry(triShape);
+    for(let i=0;i<7;i++){
+      const fl=new THREE.Mesh(triGeo,mat(flagCols[i]));
+      const fx=-3.6+i*1.05;
+      fl.position.set(fx,4.5-Math.sin((i/6)*Math.PI)*0.55,-3.7);
+      fl.rotation.z=(i-3)*0.06;
+      root.add(fl);
+    }
     // window (back wall)
-    const wf=box(2.6,2.6,0.18,'#FFFFFF');wf.position.set(1.9,3.2,-3.73);root.add(wf);
+    const wf=box(2.6,2.6,0.18,'#FFF0D9');wf.position.set(1.9,3.2,-3.73);root.add(wf);
     skyMat=new THREE.MeshBasicMaterial({color:'#9BDCFF'});
     const sky=new THREE.Mesh(new THREE.PlaneGeometry(2.25,2.25),skyMat);
     sky.position.set(1.9,3.2,-3.62);root.add(sky);
-    const mullH=box(2.3,0.09,0.06,'#FFFFFF');mullH.position.set(1.9,3.2,-3.58);root.add(mullH);
-    const mullV=box(0.09,2.3,0.06,'#FFFFFF');mullV.position.set(1.9,3.2,-3.58);root.add(mullV);
+    const mullH=box(2.3,0.09,0.06,'#FFF0D9');mullH.position.set(1.9,3.2,-3.58);root.add(mullH);
+    const mullV=box(0.09,2.3,0.06,'#FFF0D9');mullV.position.set(1.9,3.2,-3.58);root.add(mullV);
     sunMesh=new THREE.Mesh(new THREE.CircleGeometry(0.32,24),new THREE.MeshBasicMaterial({color:'#FFE066'}));
     sunMesh.position.set(1.45,3.6,-3.6);root.add(sunMesh);
     moonMesh=new THREE.Mesh(new THREE.CircleGeometry(0.26,24),new THREE.MeshBasicMaterial({color:'#F4F1DE'}));
@@ -11775,7 +11787,7 @@ const Baby3D=(function(){
     // crib (back-left)
     crib=new THREE.Group();
     const cw=2.1,cd=1.25,ch=1.35;
-    const matt=box(cw-0.16,0.22,cd-0.16,'#FFF7FA');matt.position.y=0.52;crib.add(matt);
+    const matt=box(cw-0.16,0.22,cd-0.16,'#FFEBC9');matt.position.y=0.52;crib.add(matt);
     [[-cw/2,-cd/2],[cw/2,-cd/2],[-cw/2,cd/2],[cw/2,cd/2]].forEach(p=>{
       const post=cyl(0.06,0.06,ch,'#F6C6D8');post.position.set(p[0],ch/2,p[1]);crib.add(post);
       const knob=sph(0.09,'#F6C6D8');knob.position.set(p[0],ch+0.02,p[1]);crib.add(knob);
@@ -11824,7 +11836,7 @@ const Baby3D=(function(){
     lampG.position.set(-4.4,0,1.9);root.add(lampG);
     lampL=new THREE.PointLight('#FFB65C',0,7,2);lampL.position.set(-4.4,2.0,1.9);root.add(lampL);
     // picture frame
-    const pf=box(0.95,0.75,0.08,'#FFFFFF');pf.position.set(-1.7,3.4,-3.72);root.add(pf);
+    const pf=box(0.95,0.75,0.08,'#FFF0D9');pf.position.set(-1.7,3.4,-3.72);root.add(pf);
     const pic=new THREE.Mesh(new THREE.PlaneGeometry(0.75,0.55),new THREE.MeshBasicMaterial({color:'#FFC7DA'}));
     pic.position.set(-1.7,3.4,-3.66);root.add(pic);
     const pheart=emojiSprite('🧸');pheart.scale.setScalar(0.5);pheart.position.set(-1.7,3.4,-3.6);root.add(pheart);
@@ -11844,7 +11856,7 @@ const Baby3D=(function(){
     const bt1=sph(0.045,outfit2,10);bt1.position.set(0,0.92,0.47);baby.add(bt1);
     const bt2=sph(0.045,outfit2,10);bt2.position.set(0,0.68,0.5);baby.add(bt2);
     // yaka
-    const collar=new THREE.Mesh(new THREE.TorusGeometry(0.3,0.075,12,26),mat('#FFFFFF'));
+    const collar=new THREE.Mesh(new THREE.TorusGeometry(0.3,0.075,12,26),mat('#FFF0D9'));
     collar.rotation.x=Math.PI/2;collar.position.y=1.22;collar.castShadow=true;baby.add(collar);
     head=new THREE.Group();head.position.y=1.72;
     headM=sph(0.56,SKIN,32);headM.scale.set(1,0.94,0.96);outline(headM,0.04);head.add(headM);
@@ -11878,9 +11890,9 @@ const Baby3D=(function(){
     const handR=sph(0.13,SKIN,14);handR.position.set(0,-0.44,0);outline(handR,0.08);armR.add(handR);
     // bacaklar: tulum + beyaz patik
     legL=cap(0.16,0.28,outfit);legL.geometry.translate(0,-0.2,0);legL.position.set(-0.25,0.3,0.05);outline(legL,0.06);baby.add(legL);
-    const footL=sph(0.15,'#FFFFFF',14);footL.scale.set(1,0.8,1.25);footL.position.set(0,-0.42,0.05);outline(footL,0.07);legL.add(footL);
+    const footL=sph(0.15,'#FFF0D9',14);footL.scale.set(1,0.8,1.25);footL.position.set(0,-0.42,0.05);outline(footL,0.07);legL.add(footL);
     legR=cap(0.16,0.28,outfit);legR.geometry.translate(0,-0.2,0);legR.position.set(0.25,0.3,0.05);outline(legR,0.06);baby.add(legR);
-    const footR=sph(0.15,'#FFFFFF',14);footR.scale.set(1,0.8,1.25);footR.position.set(0,-0.42,0.05);outline(footR,0.07);legR.add(footR);
+    const footR=sph(0.15,'#FFF0D9',14);footR.scale.set(1,0.8,1.25);footR.position.set(0,-0.42,0.05);outline(footR,0.07);legR.add(footR);
     // cinsiyet renk senkronu için tulum malzemeleri
     baby.userData.outfitMats=[body.material,armL.material,armR.material,legL.material,legR.material];
     baby.userData.outfitMats2=[bt1.material,bt2.material];
@@ -11977,9 +11989,9 @@ const Baby3D=(function(){
     const dayPhase=((typeof S!=='undefined'?S.dayTime||0:0)%4)/4;
     const isNight=dayPhase>0.5&&dayPhase<1.0;
     const nAmt=isNight?Math.sin((dayPhase-0.5)*Math.PI):0;
-    sunL.intensity=0.85-0.62*nAmt;
-    ambL.intensity=0.55-0.28*nAmt;
-    hemiL.intensity=0.2-0.1*nAmt;
+    sunL.intensity=0.72-0.52*nAmt;
+    ambL.intensity=0.42-0.2*nAmt;
+    hemiL.intensity=0.15-0.07*nAmt;
     sunL.color.setHSL(0.12,0.35,0.98-nAmt*0.3);
     lampL.intensity=nAmt*1.35;
     skyMat.color.lerpColors(new THREE.Color('#9BDCFF'),new THREE.Color('#131A3F'),nAmt);
@@ -12111,9 +12123,9 @@ const Baby3D=(function(){
       renderer.outputEncoding=THREE.sRGBEncoding;
       container.appendChild(renderer.domElement);
       // ışıklar
-      ambL=new THREE.AmbientLight('#FFFFFF',0.55);scene.add(ambL);
-      hemiL=new THREE.HemisphereLight('#BFE7FF','#FFD9C4',0.2);scene.add(hemiL);
-      sunL=new THREE.DirectionalLight('#FFF6E0',0.85);
+      ambL=new THREE.AmbientLight('#FFF2E4',0.42);scene.add(ambL);
+      hemiL=new THREE.HemisphereLight('#BFE7FF','#FFC9A8',0.15);scene.add(hemiL);
+      sunL=new THREE.DirectionalLight('#FFEFC9',0.72);
       sunL.position.set(4,7,5);sunL.castShadow=true;
       sunL.shadow.mapSize.set(1024,1024);
       sunL.shadow.camera.left=-7;sunL.shadow.camera.right=7;
