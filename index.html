@@ -53,6 +53,11 @@ body{font-family:'Nunito',sans-serif;background:linear-gradient(135deg,#FFF5F8,#
 .baby-panel{display:flex;flex-direction:column;gap:12px}
 .baby-card{background:#fff;border-radius:24px;overflow:hidden;box-shadow:var(--shadow);border:3px solid transparent}
 .baby-scene{height:195px;position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center;transition:background 1s}
+body.has3d .baby-scene{height:340px}
+#baby3d{position:absolute;inset:0;z-index:1;cursor:pointer;display:none}
+body.has3d #baby3d{display:block}
+#baby3d canvas{display:block;width:100%!important;height:100%!important}
+body.has3d .baby-char,body.has3d .scene-deco{display:none}
 .scene-deco{position:absolute;inset:0;display:flex;align-items:flex-end;justify-content:space-around;padding:0 10px 10px;font-size:1.4rem;pointer-events:none;opacity:.6}
 .baby-char{position:relative;z-index:2;text-align:center}
 .baby-emoji{font-size:5.5rem;line-height:1;filter:drop-shadow(0 4px 8px rgba(0,0,0,.12));animation:float 3s ease-in-out infinite;cursor:pointer;user-select:none;transition:all .4s}
@@ -451,6 +456,7 @@ body{font-family:'Nunito',sans-serif;background:linear-gradient(135deg,#FFF5F8,#
 
   /* baby scene smaller */
   .baby-scene{height:155px}
+  body.has3d .baby-scene{height:250px}
   .baby-emoji{font-size:4.2rem}
   .baby-nm{font-size:1.1rem}
 
@@ -635,6 +641,7 @@ body{font-family:'Nunito',sans-serif;background:linear-gradient(135deg,#FFF5F8,#
 
       <div class="baby-card" id="babyCard">
         <div class="baby-scene" id="babyScene">
+          <div id="baby3d" onclick="babyClick()" title="Tıkla!"></div>
           <div class="scene-deco" id="sceneDeco"></div>
           <div class="baby-char">
             <div class="baby-emoji" id="babyFace" onclick="babyClick()" title="Tıkla!">👶</div>
@@ -993,6 +1000,7 @@ body{font-family:'Nunito',sans-serif;background:linear-gradient(135deg,#FFF5F8,#
   </div><!-- /grid -->
 </div><!-- /gameScreen -->
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/0.149.0/three.min.js"></script>
 <script>
 // ══════════════════════════════════════════════════════
 // DATA
@@ -2442,6 +2450,7 @@ function doAct(id){
   const msg=typeof a.msg==='function'?a.msg(S.gender,S.babyName,S.dadName):a.msg;
   addLog(msg, id.startsWith('dad-')?'dad':'');
   spawnParticles(a.sfx||['✨'],3);
+  if(typeof Baby3D!=='undefined'&&Baby3D.active)Baby3D.onAction(id);
   checkMilestones();
   updateUI();
 }
@@ -2462,6 +2471,7 @@ function applyMomWb(pts){
 function babyClick(){
   S.dp+=3; S.happy=clamp(S.happy+3);
   spawnParticles(['⭐','✨','💫','🌟'],2);
+  if(typeof Baby3D!=='undefined'&&Baby3D.active)Baby3D.poke();
   playSound('click');
 }
 
@@ -2504,6 +2514,7 @@ function activateChallenge(ch){
   document.getElementById('chDesc').textContent=ch.desc;
   document.getElementById('chBtn').textContent=ch.action;
   spawnParticles([ch.icon],2);
+  if(typeof Baby3D!=='undefined'&&Baby3D.active)Baby3D.setCrying(true);
   showToast(`${ch.icon} ${ch.name}`,'red');
   addLog(`${ch.icon} ${ch.name} — Hızlıca çöz!`,'ch');
 }
@@ -2541,6 +2552,7 @@ function clearChallenge(){
   S.challengeTimer=0;
   document.getElementById('chCard').style.display='none';
   S.nextChallengeIn=60+Math.random()*80;
+  if(typeof Baby3D!=='undefined'&&Baby3D.active)Baby3D.setCrying(false);
 }
 
 // ══════════════════════════════════════════════════════
@@ -2558,6 +2570,7 @@ function checkMilestones(){
         el.onclick=()=>showMilestonePopup(m,false);
       }
       spawnParticles(['🌟','⭐','🎉'],6);
+      if(typeof Baby3D!=='undefined'&&Baby3D.active)Baby3D.celebrate();
       addLog(`🌟 Yeni gelişim: ${m.name}!`,'ms');
       playSound('milestone');
       showMilestonePopup(m,true);
@@ -2723,6 +2736,7 @@ function updateBabyScene(si){
   document.getElementById('sceneDeco').textContent=st.deco;
   document.getElementById('sceneFx').textContent=st.fx;
   document.getElementById('babyBodyDeco').textContent=st.body;
+  if(typeof Baby3D!=='undefined'&&Baby3D.active)Baby3D.setStage(si);
 }
 
 function getBabyFace(si){
@@ -11637,9 +11651,437 @@ function showReflexGuide(){
 }
 
 // init scene on page load
+// ══════════════════════════════════════════════════════
+// 3D NURSERY ENGINE (Three.js)
+// Stylized 3D bebek odası: animasyonlu bebek karakteri,
+// gün/gece ışık döngüsü, aksiyon animasyonları, partiküller.
+// THREE yüklenemezse oyun emoji sahnesiyle aynen çalışır.
+// ══════════════════════════════════════════════════════
+const Baby3D=(function(){
+  let ok=false,scene,camera,renderer,root,container;
+  let baby,head,headM,body,armL,armR,legL,legR,eyeL,eyeR,mouth,browL,browR,hair,bottle,pacifier;
+  let sunL,ambL,hemiL,lampL,skyMat,sunMesh,moonMesh,winStars=[],mobileG,ballM,teddyG,shadowBlob;
+  let wallB,wallS,floorM,rugM,crib;
+  let particles=[],sprCache={};
+  let stage=0,poseT={},anim=null,crying=false,sleeping=false;
+  let blinkT=2,blinkV=0,tearT=0,zT=0,lookT=0,syncT=0;
+  let ptr={x:0,y:0},lastFrame=0;
+  const V=(x,y,z)=>new THREE.Vector3(x,y,z);
+  const WALLS=['#3b2a63','#CDEEF5','#FFF3C9','#DFF3E0','#D6E6FB','#FFE8CC','#E4E1F7'];
+  const RUGS =['#5a4390','#8FD8E8','#FFD98E','#A8DFB2','#A9C8F5','#FFC98F','#BDB5EE'];
+
+  function mat(c,rough=0.85){return new THREE.MeshStandardMaterial({color:c,roughness:rough,metalness:0})}
+  function box(w,h,d,c){const m=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),mat(c));m.castShadow=true;m.receiveShadow=true;return m}
+  function sph(r,c,seg=24){const m=new THREE.Mesh(new THREE.SphereGeometry(r,seg,seg),mat(c));m.castShadow=true;return m}
+  function cyl(rt,rb,h,c,seg=20){const m=new THREE.Mesh(new THREE.CylinderGeometry(rt,rb,h,seg),mat(c));m.castShadow=true;return m}
+  function cap(r,len,c){const m=new THREE.Mesh(new THREE.CapsuleGeometry(r,len,6,14),mat(c));m.castShadow=true;return m}
+
+  function emojiSprite(ch,size=64){
+    if(!sprCache[ch]){
+      const cv=document.createElement('canvas');cv.width=cv.height=size;
+      const cx=cv.getContext('2d');cx.font=(size*0.8)+'px serif';cx.textAlign='center';cx.textBaseline='middle';
+      cx.fillText(ch,size/2,size/2+size*0.05);
+      sprCache[ch]=new THREE.CanvasTexture(cv);
+    }
+    const sp=new THREE.Sprite(new THREE.SpriteMaterial({map:sprCache[ch],transparent:true,depthWrite:false}));
+    sp.scale.setScalar(0.42);
+    return sp;
+  }
+  function burst(chars,n,at,spread=1.2,up=2.2){
+    if(!ok)return;
+    for(let i=0;i<n;i++){
+      const sp=emojiSprite(chars[i%chars.length]);
+      sp.position.set(at.x+(Math.random()-.5)*.4,at.y+(Math.random()-.5)*.3,at.z+(Math.random()-.5)*.4);
+      sp.userData={vx:(Math.random()-.5)*spread,vy:up*(0.5+Math.random()*.7),vz:(Math.random()-.5)*spread,life:1.4+Math.random()*.8,t:0,grav:-3.2};
+      root.add(sp);particles.push(sp);
+    }
+  }
+  function floatUp(ch,at){
+    if(!ok)return;
+    const sp=emojiSprite(ch);
+    sp.position.set(at.x+(Math.random()-.5)*.5,at.y,at.z);
+    sp.userData={vx:(Math.random()-.5)*.15,vy:0.55,vz:0,life:2.4,t:0,grav:0};
+    root.add(sp);particles.push(sp);
+  }
+
+  function buildRoom(){
+    // floor
+    floorM=new THREE.Mesh(new THREE.BoxGeometry(11,0.3,8),mat('#E8CBA8'));
+    floorM.position.y=-0.15;floorM.receiveShadow=true;root.add(floorM);
+    // rug
+    rugM=new THREE.Mesh(new THREE.CylinderGeometry(2.35,2.35,0.06,36),mat('#8FD8E8',1));
+    rugM.position.set(0.4,0.03,1.1);rugM.receiveShadow=true;root.add(rugM);
+    const rugIn=new THREE.Mesh(new THREE.CylinderGeometry(1.7,1.7,0.065,36),mat('#FFFFFF',1));
+    rugIn.position.set(0.4,0.035,1.1);rugIn.receiveShadow=true;rugM.attach(rugIn);
+    // walls
+    wallB=box(11,6,0.3,'#CDEEF5');wallB.position.set(0,2.85,-3.9);root.add(wallB);
+    wallS=box(0.3,6,8,'#EAE0F8');wallS.position.set(-5.45,2.85,0);root.add(wallS);
+    const skirt=box(11,0.35,0.34,'#FFFFFF');skirt.position.set(0,0.18,-3.88);root.add(skirt);
+    const skirt2=box(0.34,0.35,8,'#FFFFFF');skirt2.position.set(-5.43,0.18,0);root.add(skirt2);
+    // window (back wall)
+    const wf=box(2.6,2.6,0.18,'#FFFFFF');wf.position.set(1.9,3.2,-3.73);root.add(wf);
+    skyMat=new THREE.MeshBasicMaterial({color:'#9BDCFF'});
+    const sky=new THREE.Mesh(new THREE.PlaneGeometry(2.25,2.25),skyMat);
+    sky.position.set(1.9,3.2,-3.62);root.add(sky);
+    const mullH=box(2.3,0.09,0.06,'#FFFFFF');mullH.position.set(1.9,3.2,-3.58);root.add(mullH);
+    const mullV=box(0.09,2.3,0.06,'#FFFFFF');mullV.position.set(1.9,3.2,-3.58);root.add(mullV);
+    sunMesh=new THREE.Mesh(new THREE.CircleGeometry(0.32,24),new THREE.MeshBasicMaterial({color:'#FFE066'}));
+    sunMesh.position.set(1.45,3.6,-3.6);root.add(sunMesh);
+    moonMesh=new THREE.Mesh(new THREE.CircleGeometry(0.26,24),new THREE.MeshBasicMaterial({color:'#F4F1DE'}));
+    moonMesh.position.set(2.4,3.65,-3.6);root.add(moonMesh);
+    for(let i=0;i<7;i++){
+      const st=new THREE.Mesh(new THREE.CircleGeometry(0.035,8),new THREE.MeshBasicMaterial({color:'#FFFFFF',transparent:true,opacity:0}));
+      st.position.set(1.05+Math.random()*1.7,2.45+Math.random()*1.5,-3.61);
+      st.userData.tw=Math.random()*6;root.add(st);winStars.push(st);
+    }
+    // crib (back-left)
+    crib=new THREE.Group();
+    const cw=2.1,cd=1.25,ch=1.35;
+    const matt=box(cw-0.16,0.22,cd-0.16,'#FFF7FA');matt.position.y=0.52;crib.add(matt);
+    [[-cw/2,-cd/2],[cw/2,-cd/2],[-cw/2,cd/2],[cw/2,cd/2]].forEach(p=>{
+      const post=cyl(0.06,0.06,ch,'#F6C6D8');post.position.set(p[0],ch/2,p[1]);crib.add(post);
+      const knob=sph(0.09,'#F6C6D8');knob.position.set(p[0],ch+0.02,p[1]);crib.add(knob);
+    });
+    for(const zz of [-cd/2,cd/2]){
+      const rail=box(cw,0.07,0.07,'#F6C6D8');rail.position.set(0,ch-0.12,zz);crib.add(rail);
+      for(let i=1;i<7;i++){const bar=cyl(0.028,0.028,ch-0.35,'#FBDCE8');bar.position.set(-cw/2+i*cw/7,(ch-0.35)/2+0.28,zz);crib.add(bar);}
+    }
+    const railL=box(0.07,0.07,cd,'#F6C6D8');railL.position.set(-cw/2,ch-0.12,0);crib.add(railL);
+    const railR=box(0.07,0.07,cd,'#F6C6D8');railR.position.set(cw/2,ch-0.12,0);crib.add(railR);
+    crib.position.set(-3.15,0,-2.45);root.add(crib);
+    // mobile above crib
+    mobileG=new THREE.Group();
+    const mArm=cyl(0.03,0.03,1.5,'#C9B6F0');mArm.rotation.z=Math.PI/2;mArm.position.y=0;mobileG.add(mArm);
+    ['⭐','🌙','☁️','⭐'].forEach((c2,i)=>{
+      const sp=emojiSprite(c2);sp.scale.setScalar(0.34);
+      const x=-0.62+i*0.42;
+      const str=cyl(0.008,0.008,0.3,'#D9CCF5');str.position.set(x,-0.16,0);mobileG.add(str);
+      sp.position.set(x,-0.38,0);mobileG.add(sp);
+    });
+    mobileG.position.set(-3.15,2.5,-2.45);root.add(mobileG);
+    // toy: ball
+    ballM=new THREE.Group();
+    const b1=sph(0.3,'#FF6B6B');ballM.add(b1);
+    const stripe=new THREE.Mesh(new THREE.TorusGeometry(0.295,0.045,10,28),mat('#FFF'));stripe.rotation.x=Math.PI/2;ballM.add(stripe);
+    ballM.position.set(2.6,0.3,0.6);root.add(ballM);
+    // toy blocks
+    const bl=['#FFB4C6','#9EDDF0','#FFE08A'];
+    bl.forEach((c2,i)=>{const b2=box(0.4,0.4,0.4,c2);b2.position.set(-2.2+i*0.06,0.2+i*0.41,2.05-i*0.03);b2.rotation.y=i*0.5;root.add(b2);});
+    // teddy bear on floor
+    teddyG=new THREE.Group();
+    const tb=sph(0.32,'#C89F7B');tb.position.y=0.32;teddyG.add(tb);
+    const th=sph(0.24,'#C89F7B');th.position.y=0.75;teddyG.add(th);
+    const te1=sph(0.09,'#C89F7B');te1.position.set(-0.17,0.95,0);teddyG.add(te1);
+    const te2=sph(0.09,'#C89F7B');te2.position.set(0.17,0.95,0);teddyG.add(te2);
+    const tsn=sph(0.1,'#E8CBA8');tsn.position.set(0,0.72,0.2);teddyG.add(tsn);
+    const ta1=sph(0.11,'#C89F7B');ta1.position.set(-0.32,0.42,0.08);teddyG.add(ta1);
+    const ta2=sph(0.11,'#C89F7B');ta2.position.set(0.32,0.42,0.08);teddyG.add(ta2);
+    teddyG.position.set(3.1,0,-1.7);teddyG.rotation.y=-0.7;root.add(teddyG);
+    // lamp
+    const lampG=new THREE.Group();
+    const lbase=cyl(0.26,0.34,0.1,'#D9CCF5');lbase.position.y=0.05;lampG.add(lbase);
+    const lpole=cyl(0.045,0.045,1.9,'#D9CCF5');lpole.position.y=1.0;lampG.add(lpole);
+    const lshade=cyl(0.3,0.48,0.55,'#FFD98E');lshade.position.y=2.1;lampG.add(lshade);
+    lampG.position.set(-4.4,0,1.9);root.add(lampG);
+    lampL=new THREE.PointLight('#FFB65C',0,7,2);lampL.position.set(-4.4,2.0,1.9);root.add(lampL);
+    // picture frame
+    const pf=box(0.95,0.75,0.08,'#FFFFFF');pf.position.set(-1.7,3.4,-3.72);root.add(pf);
+    const pic=new THREE.Mesh(new THREE.PlaneGeometry(0.75,0.55),new THREE.MeshBasicMaterial({color:'#FFC7DA'}));
+    pic.position.set(-1.7,3.4,-3.66);root.add(pic);
+    const pheart=emojiSprite('🧸');pheart.scale.setScalar(0.5);pheart.position.set(-1.7,3.4,-3.6);root.add(pheart);
+    // soft blob shadow under baby
+    shadowBlob=new THREE.Mesh(new THREE.CircleGeometry(0.85,26),new THREE.MeshBasicMaterial({color:'#3D2C8D',transparent:true,opacity:0.13}));
+    shadowBlob.rotation.x=-Math.PI/2;shadowBlob.position.set(0.4,0.075,1.15);root.add(shadowBlob);
+  }
+
+  function buildBaby(){
+    baby=new THREE.Group();
+    const SKIN='#FFDCC2',outfit=(typeof S!=='undefined'&&S.gender==='erkek')?'#8FC8F5':'#FFB4C9';
+    body=cap(0.52,0.5,outfit);body.position.y=0.72;baby.add(body);
+    // belly button patch
+    const patch=sph(0.16,'#FFFFFF');patch.scale.z=0.4;patch.position.set(0,0.68,0.44);baby.add(patch);
+    head=new THREE.Group();head.position.y=1.62;
+    headM=sph(0.55,SKIN,28);head.add(headM);
+    hair=sph(0.16,'#8A5A3B');hair.scale.set(1,0.55,1);hair.position.set(0,0.52,0.05);head.add(hair);
+    eyeL=sph(0.075,'#3A2B22',12);eyeL.position.set(-0.2,0.08,0.48);head.add(eyeL);
+    eyeR=sph(0.075,'#3A2B22',12);eyeR.position.set(0.2,0.08,0.48);head.add(eyeR);
+    const chL=sph(0.1,'#FFB3A0',10);chL.scale.z=0.42;chL.position.set(-0.33,-0.1,0.4);head.add(chL);
+    const chR=sph(0.1,'#FFB3A0',10);chR.scale.z=0.42;chR.position.set(0.33,-0.1,0.4);head.add(chR);
+    mouth=sph(0.075,'#C4574E',12);mouth.scale.set(1.15,0.55,0.5);mouth.position.set(0,-0.21,0.5);head.add(mouth);
+    browL=box(0.14,0.035,0.02,'#8A5A3B');browL.position.set(-0.2,0.26,0.5);head.add(browL);
+    browR=box(0.14,0.035,0.02,'#8A5A3B');browR.position.set(0.2,0.26,0.5);head.add(browR);
+    baby.add(head);
+    armL=cap(0.15,0.3,SKIN);armL.geometry.translate(0,-0.22,0);armL.position.set(-0.56,1.05,0);baby.add(armL);
+    armR=cap(0.15,0.3,SKIN);armR.geometry.translate(0,-0.22,0);armR.position.set(0.56,1.05,0);baby.add(armR);
+    legL=cap(0.17,0.28,SKIN);legL.geometry.translate(0,-0.2,0);legL.position.set(-0.26,0.28,0.05);baby.add(legL);
+    legR=cap(0.17,0.28,SKIN);legR.geometry.translate(0,-0.2,0);legR.position.set(0.26,0.28,0.05);baby.add(legR);
+    // bottle prop (hidden by default)
+    bottle=new THREE.Group();
+    const bt=cyl(0.11,0.13,0.4,'#EAF7FF');bt.position.y=0.2;bottle.add(bt);
+    const bn=cyl(0.02,0.07,0.14,'#F6C6D8');bn.position.y=0.47;bottle.add(bn);
+    bottle.visible=false;bottle.position.set(0.55,1.45,0.55);bottle.rotation.z=-1.0;baby.add(bottle);
+    // pacifier prop
+    pacifier=new THREE.Group();
+    const pc=new THREE.Mesh(new THREE.TorusGeometry(0.09,0.028,8,18),mat('#FFD166'));pacifier.add(pc);
+    pacifier.visible=false;pacifier.position.set(0,1.4,0.56);baby.add(pacifier);
+    baby.position.set(0.4,0,1.15);
+    root.add(baby);
+    setStage(stage,true);
+  }
+
+  // ── Poses: her gelişim evresi için hedef duruş ──
+  function poseFor(si){
+    if(si<=0) return {rot:[-1.05,0,0],y:0.55,hx:0.35,aL:[-2.6,0,-0.5],aR:[-2.6,0,0.5],lL:[-2.3,0,-0.3],lR:[-2.3,0,0.3],scale:0.8};   // sırtüstü yatan yenidoğan
+    if(si===1)return {rot:[-0.95,0,0],y:0.55,hx:0.5,aL:[-2.9,0,-0.7],aR:[-2.9,0,0.7],lL:[-2.0,0,-0.35],lR:[-2.0,0,0.35],scale:0.86}; // uzanıp keşfeden
+    if(si===2)return {rot:[1.25,0,0],y:0.62,hx:-1.5,aL:[2.4,0,-0.3],aR:[2.4,0,0.3],lL:[1.6,0,-0.2],lR:[1.6,0,0.2],scale:0.9};        // tummy time
+    if(si===3)return {rot:[0,0,0],y:0.18,hx:0,aL:[-0.5,0,-0.35],aR:[-0.5,0,0.35],lL:[-1.5,0,-0.25],lR:[-1.5,0,0.25],scale:0.96};     // oturan
+    if(si===4)return {rot:[1.15,0,0],y:0.6,hx:-1.35,aL:[2.9,0,-0.15],aR:[2.9,0,0.15],lL:[2.4,0,-0.2],lR:[2.4,0,0.2],scale:1.02};     // emekleyen
+    if(si===5)return {rot:[0,0,0],y:0.42,hx:0,aL:[-0.35,0,-0.55],aR:[-0.35,0,0.55],lL:[0,0,-0.08],lR:[0,0,0.08],scale:1.1};          // ilk adımlar
+    return      {rot:[0,0,0],y:0.46,hx:0,aL:[0,0,-0.35],aR:[0,0,0.35],lL:[0,0,-0.06],lR:[0,0,0.06],scale:1.22};                      // toddler
+  }
+  function setStage(si,instant){
+    stage=si;
+    poseT=poseFor(si);
+    if(ok){
+      if(wallB)wallB.material.color.set(WALLS[si]||WALLS[1]);
+      if(rugM)rugM.material.color.set(RUGS[si]||RUGS[1]);
+      if(instant)applyPose(1);
+      if(!instant)burst(['🎉','⭐','🎊','✨'],14,V(baby.position.x,1.6,baby.position.z),2.2,3);
+    }
+  }
+  function applyPose(k){
+    if(!baby)return;
+    const p=poseT;
+    baby.rotation.x+=(p.rot[0]-baby.rotation.x)*k;
+    baby.rotation.z+=(p.rot[2]-baby.rotation.z)*k;
+    baby.position.y+=(p.y+ (anim&&anim.name==='jump'?anim.jy||0:0) -baby.position.y)*k;
+    head.rotation.x+=(p.hx-head.rotation.x)*k;
+    armL.rotation.x+=(p.aL[0]-armL.rotation.x)*k; armL.rotation.z+=(p.aL[2]-armL.rotation.z)*k;
+    armR.rotation.x+=(p.aR[0]-armR.rotation.x)*k; armR.rotation.z+=(p.aR[2]-armR.rotation.z)*k;
+    legL.rotation.x+=(p.lL[0]-legL.rotation.x)*k; legL.rotation.z+=(p.lL[2]-legL.rotation.z)*k;
+    legR.rotation.x+=(p.lR[0]-legR.rotation.x)*k; legR.rotation.z+=(p.lR[2]-legR.rotation.z)*k;
+    const sc=baby.scale.x+(p.scale-baby.scale.x)*k;
+    baby.scale.setScalar(sc);
+  }
+
+  // ── Aksiyon animasyonları ──
+  const ANIM_MAP={
+    annesutu:'feed',biberon:'feed',mama:'feed',su:'feed',vitamin:'feed',
+    uyut:'sleep',ninni:'sleep',
+    saril:'hug','dad-saril':'hug',
+    banyo:'bath',bez:'sparkle',atesol:'sparkle',masaj:'hug',
+    muzik:'dance',sarki:'dance',tekerleme:'dance',dans:'dance',
+    kitap:'wave',konus:'wave',tummytime:'wave',
+  };
+  function onAction(id){
+    if(!ok)return;
+    const name=ANIM_MAP[id]||(id.startsWith('dad-')?'jump':'jump');
+    startAnim(name);
+  }
+  function startAnim(name){
+    anim={name,t:0,dur:name==='sleep'?3.2:name==='feed'?2.4:1.6};
+    sleeping=(name==='sleep');
+    if(name==='feed'){bottle.visible=true;}
+    if(name==='hug')burst(['💖','💕','❤️'],8,V(baby.position.x,1.8,baby.position.z),1.4,2.4);
+    if(name==='bath')burst(['🫧','💧','🫧','✨'],12,V(baby.position.x,1.4,baby.position.z),1.6,2.0);
+    if(name==='sparkle')burst(['✨','⭐'],7,V(baby.position.x,1.6,baby.position.z),1.4,2.2);
+    if(name==='dance')burst(['🎵','🎶','♪'],9,V(baby.position.x,2.0,baby.position.z),1.8,2.2);
+  }
+  function poke(){
+    if(!ok)return;
+    startAnim('jump');
+    burst(['⭐','✨','💫'],6,V(baby.position.x,1.7,baby.position.z),1.5,2.6);
+  }
+  function celebrate(){
+    if(!ok)return;
+    startAnim('jump');
+    burst(['🎉','🎊','⭐','🎈','✨'],22,V(baby.position.x,1.9,baby.position.z),3.0,3.4);
+  }
+  function setCrying(v){crying=v;}
+
+  function tick3d(now){
+    requestAnimationFrame(tick3d);
+    if(!ok||document.hidden)return;
+    const t=now/1000, dt=Math.min(0.05,(now-lastFrame)/1000||0.016);
+    lastFrame=now;
+    // ── gün/gece ──
+    const dayPhase=((typeof S!=='undefined'?S.dayTime||0:0)%4)/4;
+    const isNight=dayPhase>0.5&&dayPhase<1.0;
+    const nAmt=isNight?Math.sin((dayPhase-0.5)*Math.PI):0;
+    sunL.intensity=0.78-0.6*nAmt;
+    ambL.intensity=0.38-0.2*nAmt;
+    hemiL.intensity=0.22-0.11*nAmt;
+    sunL.color.setHSL(0.12,0.35,0.98-nAmt*0.3);
+    lampL.intensity=nAmt*1.35;
+    skyMat.color.lerpColors(new THREE.Color('#9BDCFF'),new THREE.Color('#131A3F'),nAmt);
+    sunMesh.material.opacity=1;sunMesh.visible=nAmt<0.45;
+    moonMesh.visible=nAmt>=0.45;
+    winStars.forEach(st2=>{st2.material.opacity=nAmt*(0.4+0.6*Math.abs(Math.sin(t*1.7+st2.userData.tw)));});
+    // ── idle hareketler ──
+    mobileG.rotation.y=t*0.5;
+    ballM.rotation.z=Math.sin(t*0.6)*0.4;
+    ballM.position.x=2.6+Math.sin(t*0.6)*0.12;
+    teddyG.rotation.z=Math.sin(t*0.9)*0.03;
+    // nefes alma
+    if(body){const br=1+Math.sin(t*2.2)*0.022;body.scale.set(br,1,br);}
+    // göz kırpma
+    blinkT-=dt;
+    if(blinkT<=0){blinkV=1;blinkT=1.8+Math.random()*3;}
+    if(blinkV>0)blinkV=Math.max(0,blinkV-dt*7);
+    const eyeSc=(sleeping||(typeof S!=='undefined'&&S.energy<15))?0.12:(1-blinkV*0.88);
+    eyeL.scale.y=eyeSc;eyeR.scale.y=eyeSc;
+    // bakış yönü
+    lookT+=dt;
+    const lx=Math.sin(t*0.4)*0.05;
+    eyeL.position.x=-0.2+lx;eyeR.position.x=0.2+lx;
+    // ── yüz ifadesi ──
+    let mood='ok';
+    if(crying)mood='cry';
+    else if(typeof S!=='undefined'){
+      if(S.happy>75)mood='happy';
+      else if(S.happy<30||S.hunger<15)mood='sad';
+    }
+    if(mood==='cry'){mouth.scale.set(0.8,1.15,0.5);mouth.position.y=-0.24;browL.rotation.z=-0.45;browR.rotation.z=0.45;}
+    else if(mood==='happy'){mouth.scale.set(1.5,0.5,0.5);mouth.position.y=-0.19;browL.rotation.z=0.12;browR.rotation.z=-0.12;}
+    else if(mood==='sad'){mouth.scale.set(0.9,0.4,0.5);mouth.position.y=-0.25;browL.rotation.z=0.4;browR.rotation.z=-0.4;}
+    else{mouth.scale.set(1.15,0.55,0.5);mouth.position.y=-0.21;browL.rotation.z=0;browR.rotation.z=0;}
+    // ağlama efektleri
+    if(crying){
+      head.rotation.z=Math.sin(t*14)*0.07;
+      tearT-=dt;
+      if(tearT<=0){tearT=0.5;floatUp('💧',V(baby.position.x+0.25,1.6,baby.position.z+0.4));}
+    } else head.rotation.z*=0.9;
+    // uyku Z'leri
+    if(sleeping||(typeof S!=='undefined'&&S.energy<15&&!crying)){
+      zT-=dt;
+      if(zT<=0){zT=0.9;floatUp('💤',V(baby.position.x+0.3,2.0,baby.position.z));}
+    }
+    // ── aktif animasyon ──
+    if(anim){
+      anim.t+=dt;
+      const p=Math.min(1,anim.t/anim.dur);
+      if(anim.name==='jump'){
+        anim.jy=Math.abs(Math.sin(p*Math.PI*2))*0.55*(1-p*0.4);
+        baby.rotation.y=Math.sin(p*Math.PI)*0.6;
+      } else if(anim.name==='dance'){
+        anim.jy=Math.abs(Math.sin(p*Math.PI*3))*0.3;
+        baby.rotation.y=Math.sin(p*Math.PI*4)*0.5;
+        armL.rotation.z=-0.5-Math.sin(t*9)*0.5;armR.rotation.z=0.5+Math.sin(t*9)*0.5;
+      } else if(anim.name==='feed'){
+        head.rotation.x=poseT.hx+0.25;
+        bottle.visible=true;
+        if(Math.random()<dt*2.2)floatUp('💛',V(baby.position.x,2.0,baby.position.z));
+      } else if(anim.name==='hug'){
+        const s=1+Math.sin(p*Math.PI)*0.1;baby.scale.setScalar(poseT.scale*s);
+        armL.rotation.z=-1.4*Math.sin(p*Math.PI);armR.rotation.z=1.4*Math.sin(p*Math.PI);
+      } else if(anim.name==='wave'){
+        armR.rotation.z=0.5+Math.sin(t*10)*0.7;
+      } else if(anim.name==='sleep'){
+        head.rotation.x=poseT.hx+0.35;
+      } else if(anim.name==='bath'||anim.name==='sparkle'){
+        baby.rotation.y=Math.sin(t*6)*0.15;
+      }
+      if(p>=1){
+        if(anim.name==='feed')bottle.visible=false;
+        anim=null;sleeping=false;baby.rotation.y*=0.5;
+      }
+    } else {
+      baby.rotation.y+=(0-baby.rotation.y)*0.06;
+      // idle sway
+      baby.rotation.y+=Math.sin(t*0.8)*0.0015;
+    }
+    applyPose(anim?0.18:0.07);
+    shadowBlob.scale.setScalar(baby.scale.x*(1-(anim&&anim.jy?anim.jy*0.4:0)));
+    // ── partiküller ──
+    for(let i=particles.length-1;i>=0;i--){
+      const sp=particles[i],u=sp.userData;
+      u.t+=dt;
+      u.vy+=u.grav*dt;
+      sp.position.x+=u.vx*dt;sp.position.y+=u.vy*dt;sp.position.z+=u.vz*dt;
+      sp.material.opacity=Math.max(0,1-(u.t/u.life));
+      sp.material.rotation=(sp.material.rotation||0)+dt*2;
+      if(sp.position.y<0.1&&u.grav){u.vy=Math.abs(u.vy)*0.35;sp.position.y=0.1;}
+      if(u.t>=u.life){root.remove(sp);sp.material.dispose();particles.splice(i,1);}
+    }
+    // ── kıyafet rengi senkronu (cinsiyet değişirse) ──
+    syncT-=dt;
+    if(syncT<=0){
+      syncT=1.5;
+      if(typeof S!=='undefined'&&body){
+        const want=S.gender==='erkek'?'#8FC8F5':'#FFB4C9';
+        if('#'+body.material.color.getHexString().toUpperCase()!==want.toUpperCase())body.material.color.set(want);
+      }
+    }
+    // ── kamera paralaks + evreye göre zoom ──
+    const bsc=baby?baby.scale.x:0.9;
+    const camZ=4.4+bsc*1.55, camY=1.7+bsc*0.8;
+    camera.position.x+=((0.4+ptr.x*0.8)-camera.position.x)*0.04;
+    camera.position.y+=((camY+ptr.y*0.4)-camera.position.y)*0.04;
+    camera.position.z+=(camZ-camera.position.z)*0.04;
+    camera.lookAt(0.35,0.55+bsc*0.62,0.6);
+    renderer.render(scene,camera);
+  }
+
+  function init(){
+    if(!window.THREE)return false;
+    container=document.getElementById('baby3d');
+    if(!container)return false;
+    try{
+      scene=new THREE.Scene();
+      scene.fog=new THREE.Fog('#E8F4FB',14,30);
+      root=new THREE.Group();scene.add(root);
+      camera=new THREE.PerspectiveCamera(42,1,0.1,50);
+      camera.position.set(0.4,2.3,5.6);
+      renderer=new THREE.WebGLRenderer({antialias:true,alpha:true});
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio,2));
+      renderer.shadowMap.enabled=true;
+      renderer.shadowMap.type=THREE.PCFSoftShadowMap;
+      renderer.outputEncoding=THREE.sRGBEncoding;
+      container.appendChild(renderer.domElement);
+      // ışıklar
+      ambL=new THREE.AmbientLight('#FFFFFF',0.38);scene.add(ambL);
+      hemiL=new THREE.HemisphereLight('#BFE7FF','#FFD9C4',0.22);scene.add(hemiL);
+      sunL=new THREE.DirectionalLight('#FFF6E0',0.78);
+      sunL.position.set(4,7,5);sunL.castShadow=true;
+      sunL.shadow.mapSize.set(1024,1024);
+      sunL.shadow.camera.left=-7;sunL.shadow.camera.right=7;
+      sunL.shadow.camera.top=7;sunL.shadow.camera.bottom=-7;
+      scene.add(sunL);
+      buildRoom();
+      buildBaby();
+      // boyutlandırma
+      const resize=()=>{
+        const w=container.clientWidth||300,h=container.clientHeight||300;
+        camera.aspect=w/h;camera.updateProjectionMatrix();
+        renderer.setSize(w,h,false);
+      };
+      new ResizeObserver(resize).observe(container);
+      resize();
+      // pointer paralaks
+      container.addEventListener('pointermove',e=>{
+        const r=container.getBoundingClientRect();
+        ptr.x=((e.clientX-r.left)/r.width-0.5)*2;
+        ptr.y=-(((e.clientY-r.top)/r.height)-0.5)*2;
+      });
+      container.addEventListener('pointerleave',()=>{ptr.x=0;ptr.y=0;});
+      ok=true;
+      document.body.classList.add('has3d');
+      requestAnimationFrame(tick3d);
+      return true;
+    }catch(e){
+      console.warn('3D sahne başlatılamadı, emoji moduna dönülüyor:',e);
+      ok=false;
+      return false;
+    }
+  }
+
+  return {init,setStage,onAction,poke,celebrate,setCrying,get active(){return ok}};
+})();
+
 window.addEventListener('load',()=>{
   updateBabyScene(0);
   document.getElementById('babyScene').style.background=BABY_STAGES[0].bg;
+  Baby3D.init();
 });
 </script>
 </body>
