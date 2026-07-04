@@ -58,6 +58,8 @@ body.has3d .baby-scene{height:340px}
 body.has3d #baby3d{display:block}
 #baby3d canvas{display:block;width:100%!important;height:100%!important}
 body.has3d .baby-char,body.has3d .scene-deco{display:none}
+.float-txt{position:absolute;font-family:'Fredoka',sans-serif;font-weight:700;font-size:1.15rem;color:#fff;text-shadow:0 2px 6px rgba(61,44,141,.55),0 0 2px rgba(61,44,141,.9);pointer-events:none;z-index:40;animation:floatReward 1.1s ease-out forwards}
+@keyframes floatReward{0%{transform:translateY(0) scale(.7);opacity:0}15%{opacity:1;transform:translateY(-8px) scale(1.15)}100%{transform:translateY(-70px) scale(1);opacity:0}}
 .scene-deco{position:absolute;inset:0;display:flex;align-items:flex-end;justify-content:space-around;padding:0 10px 10px;font-size:1.4rem;pointer-events:none;opacity:.6}
 .baby-char{position:relative;z-index:2;text-align:center}
 .baby-emoji{font-size:5.5rem;line-height:1;filter:drop-shadow(0 4px 8px rgba(0,0,0,.12));animation:float 3s ease-in-out infinite;cursor:pointer;user-select:none;transition:all .4s}
@@ -1243,6 +1245,7 @@ const SEASONS = [
 const DAILY_TASKS = [
   {ico:'🤱',text:'3 kez anne sütü veya biberon ver',reward:50,act:'annesutu'},
   {ico:'💪',text:'Tummy Time egzersizi yap',reward:35,act:'tummytime'},
+  // minAge: bebek o aya gelmeden görev havuzuna girmez (yaş kilitli aktiviteler)
   {ico:'💆',text:'Bebek masajı yap',reward:35,act:'masaj'},
   {ico:'🎵',text:'Ninni söyle ve sakinleştir',reward:30,act:'ninni'},
   {ico:'📚',text:'Bebek kitabı oku',reward:40,act:'kitap'},
@@ -1257,9 +1260,9 @@ const DAILY_TASKS = [
   {ico:'🤸',text:'Bebek jimnastiği yap',reward:40,act:'jimnastik'},
   {ico:'☕',text:'Anne mola versin — iyi hak etti!',reward:35,act:'mom-dinlen'},
   {ico:'💐',text:'Baba anneye destek versin',reward:45,act:'dad-anne'},
-  {ico:'🏊',text:'Bebek yüzme seansı',reward:45,act:'yuzme'},
-  {ico:'🧱',text:'Renkli bloklar veya oyuncaklar',reward:40,act:'bloklar'},
-  {ico:'🎭',text:'Tekerleme söyle',reward:35,act:'tekerleme'},
+  {ico:'🏊',text:'Bebek yüzme seansı',reward:45,act:'yuzme',minAge:3},
+  {ico:'🧱',text:'Renkli bloklar veya oyuncaklar',reward:40,act:'bloklar',minAge:6},
+  {ico:'🎭',text:'Tekerleme söyle',reward:35,act:'tekerleme',minAge:12},
   {ico:'🩺',text:'Bugün bir doktor kontrolü yap',reward:60,act:null},
   {ico:'🌿',text:'Bebek ile 15 dk dışarı çık — taze hava!',reward:38,act:null},
   {ico:'🪞',text:'Bebeği ayna karşısında tutup yüz ifadeleri yap',reward:32,act:null},
@@ -1678,6 +1681,24 @@ function applySaveData(d){
 function loadSavedGame(){
   const d = loadSave(); if(!d) return;
   applySaveData(d);
+  // ── Çevrimdışı ilerleme: sen yokken bebek büyümeye devam etti ──
+  const awaySec=(Date.now()-(d.savedAt||Date.now()))/1000;
+  if(awaySec>120){
+    const idleRate=0.5+S.dadScore*0.004+S.unlocked.size*0.05;
+    const cappedSec=Math.min(awaySec,8*3600); // en fazla 8 saatlik birikim
+    const earned=Math.floor(idleRate*cappedSec*0.35); // çevrimdışı %35 verim
+    if(earned>0){
+      S.dp+=earned;
+      S.milk=100;
+      S.energy=clamp(S.energy+25);
+      const awayTxt=awaySec<3600?`${Math.round(awaySec/60)} dakika uzaktaydın`:`${(awaySec/3600).toFixed(1)} saat uzaktaydın`;
+      setTimeout(()=>showPopupInfo({icon:'🌙',title:'Tekrar Hoş Geldin!',sub:awayTxt,
+        info:`Sen yokken ${S.babyName} mışıl mışıl uyudu, süt deposu doldu ve gelişimine devam etti. Birikmiş gelişim puanların seni bekliyor!`,
+        tip:'Çevrimdışı birikim en fazla 8 saate kadar işler — düzenli uğramak en hızlı büyüme yoludur!',
+        btnTxt:`🎁 +${earned.toLocaleString('tr')} GP Topla!`}),700);
+      addLog(`🌙 Çevrimdışı ilerleme: +${earned.toLocaleString('tr')} GP birikti!`,'ms');
+    }
+  }
   if(d.gender==='erkek'){
     document.documentElement.style.setProperty('--accent','#4169E1');
     document.documentElement.style.setProperty('--accent2','#5B8DEE');
@@ -1716,8 +1737,7 @@ function showSaveIndicator(){
 
 function applyAgeUnlocks(mo){
   if(mo>=3){['btn-jimnastik','btn-yuzme'].forEach(id=>{const b=document.getElementById(id);if(b)b.disabled=false})}
-  if(mo>=4){const b=document.getElementById('btn-mama');if(b)b.disabled=false;}
-  if(mo>=6){['btn-su','btn-blok'].forEach(id=>{const b=document.getElementById(id);if(b)b.disabled=false})}
+  if(mo>=6){['btn-su','btn-blok','btn-mama'].forEach(id=>{const b=document.getElementById(id);if(b)b.disabled=false})}
   if(mo>=9){const b=document.getElementById('btn-sekil');if(b)b.disabled=false;}
   if(mo>=12){const b=document.getElementById('btn-teker');if(b)b.disabled=false;}
 }
@@ -2332,7 +2352,7 @@ function tick(){
   if(curDay!==S.dailyTaskDay){
     S.dailyTaskDay=curDay;
     S.dailyTaskDone=false;
-    S.dailyTaskIdx=Math.floor(Math.random()*DAILY_TASKS.length);
+    S.dailyTaskIdx=pickDailyTaskIdx();
     renderDailyTask();
   }
   // reset daily quiz
@@ -2469,10 +2489,35 @@ function applyMomWb(pts){
 }
 
 function babyClick(){
-  S.dp+=3; S.happy=clamp(S.happy+3);
+  // okşama serisi: hızlı ardışık tıklamalar bonus verir
+  const now=Date.now();
+  S._petStreak=(now-(S._petLast||0)<1600)?(S._petStreak||0)+1:1;
+  S._petLast=now;
+  let gain=3;
+  if(S._petStreak%5===0){
+    gain=15;
+    spawnParticles(['💖','💕','🥰'],4);
+    showToast(`🥰 ${S.babyName} kıkırdıyor! Okşama serisi x${S._petStreak} · +15 GP`);
+    if(typeof Baby3D!=='undefined'&&Baby3D.active)Baby3D.celebrate();
+  }
+  S.dp+=gain; S.happy=clamp(S.happy+3);
+  floatText(`+${gain} ✨`);
   spawnParticles(['⭐','✨','💫','🌟'],2);
   if(typeof Baby3D!=='undefined'&&Baby3D.active)Baby3D.poke();
   playSound('click');
+}
+
+// sahnede yukarı süzülen ödül yazısı
+function floatText(txt){
+  const sc=document.getElementById('babyScene');
+  if(!sc)return;
+  const el=document.createElement('div');
+  el.className='float-txt';
+  el.textContent=txt;
+  el.style.left=(25+Math.random()*50)+'%';
+  el.style.top=(45+Math.random()*15)+'%';
+  sc.appendChild(el);
+  setTimeout(()=>el.remove(),1150);
 }
 
 // ══════════════════════════════════════════════════════
@@ -2573,7 +2618,9 @@ function checkMilestones(){
       if(typeof Baby3D!=='undefined'&&Baby3D.active)Baby3D.celebrate();
       addLog(`🌟 Yeni gelişim: ${m.name}!`,'ms');
       playSound('milestone');
-      showMilestonePopup(m,true);
+      // açık modal varsa üstüne yığma — toast yeterli (albümden okunabilir)
+      if(document.querySelector('.pop-ov')) showToast(`🌟 Yeni gelişim: ${m.name}! Albümden inceleyebilirsin.`);
+      else showMilestonePopup(m,true);
       if(S.unlocked.size>=20) setTimeout(showGrandFinale, 3500);
       document.getElementById('msCount').textContent=`${S.unlocked.size}/20`;
       renderAlbum();
@@ -3498,14 +3545,6 @@ function showBreastfeedingGuide(){
 }
 
 // ══════════════════════════════════════════════════════
-// NUTRITION GUIDE (solid foods reminder)
-// ══════════════════════════════════════════════════════
-function showNutritionGuide(){
-  if(S.ageMonths<6){showPopupInfo({icon:'🥣',title:'Katı Gıda Henüz Yok!',sub:'6. aya kadar sadece anne sütü / mama',info:'WHO önerisine göre ilk 6 ay TÜM besin ihtiyacı anne sütü veya mama ile karşılanabilir. Erken katı gıda sindirim sistemine zarar verebilir.',tip:'6. ayda başlamak için sabırsızlanın! Katı gıda rehberini 6. ayda açabilirsiniz.',btnTxt:'Anladım'});return;}
-  showSolidFoodGuide();
-}
-
-// ══════════════════════════════════════════════════════
 // SLEEP TRAINING GUIDE
 // ══════════════════════════════════════════════════════
 function showSleepGuide(){
@@ -3785,8 +3824,17 @@ function showPostpartumGuide(){
 // ══════════════════════════════════════════════════════
 // DAILY TASK
 // ══════════════════════════════════════════════════════
+function pickDailyTaskIdx(){
+  const avail=DAILY_TASKS.map((t,i)=>({t,i})).filter(x=>(x.t.minAge||0)<=S.ageMonths);
+  return avail[Math.floor(Math.random()*avail.length)].i;
+}
+
 function renderDailyTask(){
-  const t=DAILY_TASKS[S.dailyTaskIdx%DAILY_TASKS.length];
+  let t=DAILY_TASKS[S.dailyTaskIdx%DAILY_TASKS.length];
+  if((t.minAge||0)>S.ageMonths){ // eski kayıttan yaş kilitli görev geldiyse yeniden seç
+    S.dailyTaskIdx=pickDailyTaskIdx();
+    t=DAILY_TASKS[S.dailyTaskIdx];
+  }
   const ico=document.getElementById('dtIco');
   const txt=document.getElementById('dtText');
   const rwd=document.getElementById('dtReward');
@@ -3948,52 +3996,6 @@ function showToyGuide(){
     </div>
     <div class="pop-tip"><div class="pop-tip-t">💡 En İyi Oyuncak</div><p>Araştırmalar gösteriyor: Boş karton kutu, kap-kacak, renkli eşarplar ve ebeveyn dikkati — pahalı oyuncaklardan çok daha değerli. Kaliteli vakit geçirin!</p></div>
     <button class="pop-btn" onclick="this.closest('.pop-ov').remove()">🧸 Harika Rehber!</button>
-  </div></div>`;
-  document.body.insertAdjacentHTML('beforeend',h);
-}
-
-// ══════════════════════════════════════════════════════
-// SCREEN TIME GUIDE
-// ══════════════════════════════════════════════════════
-function showScreenTimeGuide(){
-  const h=`<div class="pop-ov" onclick="if(event.target===this)this.remove()">
-  <div class="pop-box">
-    <div class="pop-rainbow" style="background:linear-gradient(90deg,#FF4757,#FF9A3C,#52B788)"></div>
-    <span class="pop-ico">📱</span>
-    <div class="pop-title">Ekran Süresi Rehberi</div>
-    <div class="pop-sub">WHO &amp; AAP Önerileri</div>
-    <div class="pop-sec" style="background:#FFF5F5">
-      <h4 style="color:#C62828">🚫 0-18 Ay: Ekran Yok!</h4>
-      <p>WHO: 18 aylıktan küçük bebekler için <strong>sıfır ekran süresi</strong> (video görüşme hariç). Ekran, beyin gelişimini olumsuz etkiler, dil gelişimini geciktirir.</p>
-    </div>
-    <div class="pop-sec" style="background:#FFF8E1">
-      <h4>⚠️ 18-24 Ay: Çok Sınırlı</h4>
-      <p>Sadece kaliteli içerik, ebeveynle birlikte izleme. Yalnız bırakmayın. Günde 30 dakikayı geçmeyin.</p>
-    </div>
-    <div class="pop-sec" style="background:#F0FFF4">
-      <h4>✅ 2-5 Yaş: Günde 1 Saat</h4>
-      <p>Kaliteli eğitici içerik tercih edin. Yemek ve uyku saatlerinde ekran kapatın. Ekran aktivitesi hakkında konuşun.</p>
-    </div>
-    <div class="pop-sec">
-      <h4>💡 Bunun Yerine Ne Yapmalı?</h4>
-      <ul style="padding-left:14px;font-size:.72rem;color:#555;line-height:1.7">
-        <li>Yüz yüze konuşma ve göz teması</li>
-        <li>Kitap okuma ve şarkı söyleme</li>
-        <li>Duyusal oyun (hamur, su, kum)</li>
-        <li>Dışarı çıkma ve doğa keşfi</li>
-        <li>Bebek masajı ve beden oyunları</li>
-      </ul>
-    </div>
-    <div class="pop-sec" style="background:#E3F2FD">
-      <h4>📺 Pasif mi, Etkileşimli mi?</h4>
-      <p style="font-size:.71rem;color:#555;line-height:1.6">Tüm ekranlar eşit değildir. <strong>Pasif izleme</strong> (çizgi film, otomatik oynatma) en zararlısıdır — tek yönlü ve dikkat süresini parçalar. <strong>Video görüşme</strong> (büyükanne ile görüşme gibi) gerçek sosyal etkileşim içerdiği için 18 ay altı için bile istisna sayılır. Etkileşimli/eğitici uygulamalar 2 yaş üstü için göreceli olarak daha az zararlıdır ama yine de canlı oyunun yerini tutamaz.</p>
-    </div>
-    <div class="pop-sec" style="background:#FCE4EC">
-      <h4>👀 Ebeveyn Modellemesi</h4>
-      <p style="font-size:.71rem;color:#555;line-height:1.6">Bebekler ebeveynin ekran kullanımını da gözlemler ve taklit eder. "Teknoferans" (technoference) — ebeveynin telefonla ilgilenirken bebeğin göz teması/tepki alamaması — dil gelişimini ve bağlanmayı olumsuz etkileyebilir. Bebekle birlikteyken telefonu kenara koymaya özen gösterin; özellikle beslenme ve oyun sırasında.</p>
-    </div>
-    <div class="pop-tip"><div class="pop-tip-t">💡 Gerçek</div><p>Bebekler dil gelişimini CANLI insanlardan öğrenir. Video'daki dil, canlı etkileşimin yerini tutmaz. ${S.babyName}'e konuşun, okuyun, şarkı söyleyin — ekrandan çok daha etkilidir!</p></div>
-    <button class="pop-btn" onclick="this.closest('.pop-ov').remove()">📴 Anlıyorum!</button>
   </div></div>`;
   document.body.insertAdjacentHTML('beforeend',h);
 }
@@ -4975,37 +4977,8 @@ function showParentingQuiz(){
   }
   // pick 5 random questions
   const pool=[...QUIZ_QUESTIONS].sort(()=>Math.random()-.5).slice(0,5);
-  let current=0, score=0;
-  const qEl=document.getElementById('quizQuestion');
-  const optsEl=document.getElementById('quizOpts');
-  const progEl=document.getElementById('quizProg');
-  const resultEl=document.getElementById('quizResult');
-  function renderQ(){
-    if(current>=pool.length){ endQuiz(); return; }
-    const q=pool[current];
-    progEl.textContent=`Soru ${current+1}/${pool.length}`;
-    qEl.textContent=q.q;
-    optsEl.innerHTML=q.opts.map((o,i)=>`<button class="quiz-opt" onclick="answerQuiz(${i})">${String.fromCharCode(65+i)}) ${o}</button>`).join('');
-    resultEl.style.display='none';
-  }
   window._quizPool=pool;
-  window._quizState={current,score,renderQ};
-  function endQuiz(){
-    const dpEarned=score*20;
-    S.dp+=dpEarned;
-    S.quizDone=true;
-    S.quizDay=Math.floor(S.dayTime);
-    S.quizTotal=(S.quizTotal||0)+1;
-    if(score===pool.length) S.quizPerfect=true;
-    spawnParticles(['🎓','⭐','🌟'],5);
-    playSound('achieve');
-    qEl.textContent=`Test tamamlandı! ${score}/${pool.length} doğru`;
-    optsEl.innerHTML='';
-    progEl.textContent='';
-    resultEl.innerHTML=`<div style="text-align:center;margin-top:10px"><div style="font-size:2rem">${score===pool.length?'🏅':score>=3?'⭐':'📚'}</div><div style="font-family:'Fredoka',sans-serif;font-size:1.3rem;color:var(--text)">${score}/${pool.length} Doğru</div><div style="font-size:.75rem;color:#888;margin:4px 0">+${dpEarned} Gelişim Puanı kazandın!</div><button class="pop-btn" style="margin-top:10px" onclick="this.closest('.pop-ov').remove()">Harika! 🎓</button></div>`;
-    resultEl.style.display='block';
-  }
-  window._quizEnd=endQuiz;
+  window._quizState={current:0,score:0};
   const h=`<div class="pop-ov" onclick="if(event.target===this)this.remove()">
   <div class="pop-box">
     <div class="pop-rainbow"></div>
@@ -5018,7 +4991,47 @@ function showParentingQuiz(){
     <div id="quizResult" style="display:none"></div>
   </div></div>`;
   document.body.insertAdjacentHTML('beforeend',h);
-  setTimeout(renderQ,50);
+  renderQuizQuestion();
+}
+
+function renderQuizQuestion(){
+  const state=window._quizState,pool=window._quizPool;
+  const qEl=document.getElementById('quizQuestion');
+  const optsEl=document.getElementById('quizOpts');
+  const progEl=document.getElementById('quizProg');
+  const resultEl=document.getElementById('quizResult');
+  if(!state||!pool||!qEl)return; // modal kapatılmış
+  if(state.current>=pool.length){ endParentingQuiz(); return; }
+  const q=pool[state.current];
+  progEl.textContent=`Soru ${state.current+1}/${pool.length}`;
+  qEl.textContent=q.q;
+  optsEl.innerHTML=q.opts.map((o,i)=>`<button class="quiz-opt" onclick="answerQuiz(${i})">${String.fromCharCode(65+i)}) ${o}</button>`).join('');
+  resultEl.style.display='none';
+}
+
+function endParentingQuiz(){
+  const state=window._quizState,pool=window._quizPool;
+  const qEl=document.getElementById('quizQuestion');
+  const optsEl=document.getElementById('quizOpts');
+  const progEl=document.getElementById('quizProg');
+  const resultEl=document.getElementById('quizResult');
+  if(!state||!pool)return;
+  const score=state.score;
+  const dpEarned=score*20;
+  S.dp+=dpEarned;
+  S.quizDone=true;
+  S.quizDay=Math.floor(S.dayTime);
+  S.quizTotal=(S.quizTotal||0)+1;
+  if(score===pool.length) S.quizPerfect=true;
+  spawnParticles(['🎓','⭐','🌟'],5);
+  playSound('achieve');
+  saveGame();
+  if(!qEl)return; // modal kapatılmışsa ödül yine verilir, sadece görsel atlanır
+  qEl.textContent=`Test tamamlandı! ${score}/${pool.length} doğru`;
+  optsEl.innerHTML='';
+  progEl.textContent='';
+  resultEl.innerHTML=`<div style="text-align:center;margin-top:10px"><div style="font-size:2rem">${score===pool.length?'🏅':score>=3?'⭐':'📚'}</div><div style="font-family:'Fredoka',sans-serif;font-size:1.3rem;color:var(--text)">${score}/${pool.length} Doğru</div><div style="font-size:.75rem;color:#888;margin:4px 0">+${dpEarned} Gelişim Puanı kazandın!</div><button class="pop-btn" style="margin-top:10px" onclick="this.closest('.pop-ov').remove()">Harika! 🎓</button></div>`;
+  resultEl.style.display='block';
 }
 
 function answerQuiz(idx){
@@ -5029,6 +5042,7 @@ function answerQuiz(idx){
   if(correct) state.score++;
   const optsEl=document.getElementById('quizOpts');
   const resultEl=document.getElementById('quizResult');
+  if(!optsEl)return;
   // highlight correct/wrong
   optsEl.querySelectorAll('.quiz-opt').forEach((b,i)=>{
     b.disabled=true;
@@ -5038,10 +5052,7 @@ function answerQuiz(idx){
   resultEl.innerHTML=`<div style="margin-top:8px;padding:8px;border-radius:10px;background:${correct?'#E8F5E9':'#FFF9C4'};font-size:.72rem;color:#444;line-height:1.5">${correct?'✅ Doğru!':'⚠️ Yanlış.'} <strong>${q.fact}</strong></div>`;
   resultEl.style.display='block';
   state.current++;
-  setTimeout(()=>{
-    if(state.current>=window._quizPool.length){ window._quizEnd(); }
-    else { state.renderQ(); }
-  },2200);
+  setTimeout(renderQuizQuestion,2200);
 }
 
 // ══════════════════════════════════════════════════════
@@ -10456,6 +10467,7 @@ function showParentJournal(){
 // NUTRITION GUIDE — 6-24 AY
 // ══════════════════════════════════════════════════════
 function showNutritionGuide(){
+  if(S.ageMonths<6){showPopupInfo({icon:'🥣',title:'Katı Gıda Henüz Yok!',sub:'6. aya kadar sadece anne sütü / mama',info:'WHO önerisine göre ilk 6 ay TÜM besin ihtiyacı anne sütü veya mama ile karşılanabilir. Erken katı gıda sindirim sistemine zarar verebilir.',tip:'6. ayda başlamak için sabırsızlanın! Katı gıda rehberini 6. ayda açabilirsiniz.',btnTxt:'Anladım'});return;}
   S.nutritionRead=true;checkAchievements();saveGame();
   const stages=[
     {age:'6. Ay',ico:'🥣',color:'#E8F5E9',border:'#66BB6A',
@@ -12124,6 +12136,30 @@ const Baby3D=(function(){
         ptr.y=-(((e.clientY-r.top)/r.height)-0.5)*2;
       });
       container.addEventListener('pointerleave',()=>{ptr.x=0;ptr.y=0;});
+      // tıklanabilir 3D objeler: oyuncaklar aktivite tetikler, boşluk bebeği sever
+      container.onclick=null; // inline babyClick devre dışı — raycast yönetiyor
+      const ray=new THREE.Raycaster(),clickPt=new THREE.Vector2();
+      container.addEventListener('click',e=>{
+        const r=container.getBoundingClientRect();
+        clickPt.x=((e.clientX-r.left)/r.width)*2-1;
+        clickPt.y=-((e.clientY-r.top)/r.height)*2+1;
+        ray.setFromCamera(clickPt,camera);
+        const targets=[
+          {g:ballM, act:'duyusal', msg:'⚽ Topla duyusal oyun zamanı!'},
+          {g:teddyG,act:'saril',   msg:'🧸 Ayıcıkla birlikte kocaman sarılma!'},
+          {g:crib,  act:'ninni',   msg:'🎵 Beşik başında ninni söylendi!'},
+          {g:mobileG,act:'ninni',  msg:'🎵 Dönence eşliğinde ninni söylendi!'},
+        ];
+        for(const it of targets){
+          if(it.g&&ray.intersectObject(it.g,true).length){
+            burst(['✨','⭐'],5,it.g.position?it.g.position.clone().setY(1.2):V(0,1.2,0),1.2,2.0);
+            if(typeof doAct==='function')doAct(it.act);
+            if(typeof showToast==='function')showToast(it.msg);
+            return;
+          }
+        }
+        if(typeof babyClick==='function')babyClick();
+      });
       ok=true;
       document.body.classList.add('has3d');
       requestAnimationFrame(tick3d);
