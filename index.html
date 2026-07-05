@@ -581,22 +581,22 @@ body.has3d .baby-char,body.has3d .scene-deco{display:none}
     </div>
     <div id="newGameForm">
     <div class="fgrp">
-      <label>👶 Bebeğinizin Adı</label>
+      <label for="inp-baby">👶 Bebeğinizin Adı</label>
       <input id="inp-baby" type="text" placeholder="Bebek adını yazın..." maxlength="18">
     </div>
     <div class="fgrp">
-      <label>Cinsiyet</label>
-      <div class="gender-row">
+      <label id="genderLabel">Cinsiyet</label>
+      <div class="gender-row" role="group" aria-labelledby="genderLabel">
         <button class="gbtn girl sel" id="btn-girl" onclick="selGender('kiz')">👧 Kız</button>
         <button class="gbtn boy"       id="btn-boy"  onclick="selGender('erkek')">👦 Erkek</button>
       </div>
     </div>
     <div class="fgrp">
-      <label>💖 Annenin Adı</label>
+      <label for="inp-mom">💖 Annenin Adı</label>
       <input id="inp-mom" type="text" placeholder="Anne adını yazın..." maxlength="18">
     </div>
     <div class="fgrp">
-      <label>💙 Babanın Adı</label>
+      <label for="inp-dad">💙 Babanın Adı</label>
       <input id="inp-dad" type="text" placeholder="Baba adını yazın..." maxlength="18">
     </div>
     <button class="start-btn" onclick="startGame()">🌟 Maceraya Başla!</button>
@@ -3318,7 +3318,7 @@ function callEmergency(){
 // ══════════════════════════════════════════════════════
 function showSafetyChecklist(){
   const checks=BABY_SAFETY.map((item,i)=>`
-    <label class="safety-item" id="sitem-${i}" onclick="toggleSafety(${i})">
+    <label class="safety-item" id="sitem-${i}">
       <input type="checkbox" id="sch-${i}" onchange="toggleSafety(${i})">
       <span class="safety-txt">${item}</span>
     </label>`).join('');
@@ -3369,7 +3369,6 @@ function toggleSafety(i){
   const cb=document.getElementById('sch-'+i);
   const item=document.getElementById('sitem-'+i);
   if(!cb||!item)return;
-  cb.checked=!cb.checked;
   if(cb.checked){_safetyChecked.add(i);item.className='safety-item checked';}
   else{_safetyChecked.delete(i);item.className='safety-item';}
   const btn=document.getElementById('safetyDoneBtn');
