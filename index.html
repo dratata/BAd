@@ -115,6 +115,17 @@ body.has3d .baby-char,body.has3d .scene-deco{display:none}
 .tnav-btn{padding:7px 4px;border:none;border-radius:10px;background:transparent;cursor:pointer;font-family:'Nunito',sans-serif;font-weight:700;font-size:.65rem;color:var(--text);transition:all .2s;text-align:center;line-height:1.2}
 .tnav-btn.on{background:#fff;box-shadow:0 2px 8px rgba(0,0,0,.08);color:var(--purple)}
 .tab-body{display:none}.tab-body.on{display:flex;flex-direction:column;gap:8px}
+.itab-nav{display:grid;grid-template-columns:repeat(6,1fr);gap:4px;background:var(--soft);border-radius:14px;padding:4px;margin-bottom:10px}
+.itab-btn{padding:6px 2px;border:none;border-radius:10px;background:transparent;cursor:pointer;font-family:'Nunito',sans-serif;font-weight:700;font-size:.58rem;color:var(--text);transition:all .2s;text-align:center;line-height:1.25}
+.itab-btn.on{background:#fff;box-shadow:0 2px 8px rgba(0,0,0,.08);color:var(--purple)}
+.itab-body{display:none}.itab-body.on{display:block}
+.gcat{margin-bottom:8px;border:1.5px solid var(--soft);border-radius:12px;overflow:hidden}
+.gcat summary{cursor:pointer;padding:9px 12px;font-weight:800;font-size:.8rem;color:var(--text);background:var(--soft);list-style:none;display:flex;justify-content:space-between;align-items:center}
+.gcat summary::after{content:'▸';color:var(--purple);transition:transform .2s}
+.gcat[open] summary::after{transform:rotate(90deg)}
+.gcat .guide-grid{padding:8px}
+.guide-search{width:100%;padding:10px 14px;border:2px solid var(--soft);border-radius:12px;font-family:'Nunito',sans-serif;font-size:.85rem;outline:none;margin:8px 0}
+.guide-search:focus{border-color:var(--purple)}
 .act-stitle{font-family:'Fredoka',sans-serif;font-size:.82rem;color:var(--text);margin:6px 0 4px;padding-left:2px}
 .act-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px}
 .abt{padding:11px 8px;border:none;border-radius:15px;cursor:pointer;font-family:'Nunito',sans-serif;font-weight:800;font-size:.72rem;color:#fff;transition:all .2s;display:flex;flex-direction:column;align-items:center;gap:3px;position:relative;overflow:hidden}
@@ -750,12 +761,9 @@ body.has3d .baby-char,body.has3d .scene-deco{display:none}
       <!-- TAB: BESLENME -->
       <div class="tab-body on" id="tab-beslenme">
         <div style="display:flex;gap:5px;margin-bottom:4px;flex-wrap:wrap">
-          <button class="info-btn" onclick="showBreastfeedingGuide()">🤱 Emzirme Rehberi</button>
-          <button class="info-btn" onclick="showNutritionGuide()">🥣 Beslenme Bilgisi</button>
-          <button class="info-btn" onclick="showFoodRecipes()">👨‍🍳 Tarifler</button>
-          <button class="info-btn" onclick="showSleepTrainingGuide()">🌙 Uyku Eğitimi</button>
-          <button class="info-btn" onclick="showWHONutritionGuide()">🌍 WHO Rehberi</button>
-          <button class="info-btn" onclick="showDevScreeningGuide()">🔍 Gelişim Tarama</button>
+          <button class="info-btn" onclick="showBreastfeedingGuide()">🤱 Emzirme</button>
+          <button class="info-btn" onclick="showNutritionGuide()">🥣 Beslenme</button>
+          <button class="info-btn" onclick="showAllGuides()">📚 Tüm Rehberler</button>
         </div>
         <button class="abt special" onclick="doAct('annesutu')">
           <span class="ai">🤱</span>
@@ -785,17 +793,9 @@ body.has3d .baby-char,body.has3d .scene-deco{display:none}
       <div class="tab-body" id="tab-gelisim">
         <div style="display:flex;gap:5px;margin-bottom:6px;flex-wrap:wrap">
           <button class="info-btn" onclick="showToyGuide()">🧸 Oyuncak</button>
-          <button class="info-btn" onclick="showScreenTimeGuide()">📱 Ekran</button>
           <button class="info-btn" onclick="showActivityIdeas()">🎯 Aktivite</button>
-          <button class="info-btn" onclick="showBabyMythsGuide()">🔍 Efsaneler</button>
-          <button class="info-btn" onclick="showLanguageProgram()">💬 Dil Gelişimi</button>
-          <button class="info-btn" onclick="showGentleDiscipline()">🌿 Disiplin</button>
-          <button class="info-btn" onclick="showMotorGuide()">🏃 Motor Gelişim</button>
-          <button class="info-btn" onclick="showImmunityGuide()">🛡️ Bağışıklık</button>
-          <button class="info-btn" onclick="showSocialGuide()">🤝 Sosyal</button>
-          <button class="info-btn" onclick="showColorShapeGame()">🎨 Renk & Şekil</button>
-          <button class="info-btn" onclick="showDigitalHealthGuide()">📵 Dijital Sağlık</button>
-          <button class="info-btn" onclick="showAttachmentGuide()">💞 Bağlanma</button>
+          <button class="info-btn" onclick="showLanguageProgram()">💬 Dil</button>
+          <button class="info-btn" onclick="showAllGuides()">📚 Tüm Rehberler</button>
         </div>
         <div class="stab-nav">
           <button class="stab-btn on" onclick="switchSubTab('fizik')" id="stab-fizik">🏋️ Fiziksel</button>
@@ -850,20 +850,9 @@ body.has3d .baby-char,body.has3d .scene-deco{display:none}
       <div class="tab-body" id="tab-bakim">
         <div style="display:flex;gap:5px;margin-bottom:4px;flex-wrap:wrap">
           <button class="info-btn" onclick="showSleepGuide()">😴 Uyku</button>
-          <button class="info-btn" onclick="showDentalGuide()">🦷 Diş</button>
           <button class="info-btn" onclick="showDailyRoutine()">🗓️ Rutin</button>
-          <button class="info-btn" onclick="showNinniLibrary()">🎵 Ninniler</button>
-          <button class="info-btn" onclick="showSignLanguage()">👋 İşaret Dili</button>
-          <button class="info-btn" onclick="showMassageGuide()">💆 Masaj</button>
           <button class="info-btn" onclick="showRedFlags()">⚠️ Uyarılar</button>
-          <button class="info-btn" onclick="showTravelGuide()">✈️ Seyahat</button>
-          <button class="info-btn" onclick="showPottyGuide()">🚽 Tuvalet</button>
-          <button class="info-btn" onclick="showBabyPoems()">📜 Şiirler</button>
-          <button class="info-btn" onclick="showGrowthJournal()">📏 Büyüme</button>
-          <button class="info-btn" onclick="showCryDecoder()">😭 Ağlama Kodu</button>
-          <button class="info-btn" onclick="showStressChecker()">🧘 Stres Ölçer</button>
-          <button class="info-btn" onclick="showSafeSleepGuide()">🛡️ Güvenli Uyku</button>
-          <button class="info-btn" onclick="showAttachmentGuide()">💞 Bağlanma</button>
+          <button class="info-btn" onclick="showAllGuides()">📚 Tüm Rehberler</button>
         </div>
         <div class="act-grid">
           <button class="abt care" onclick="doAct('uyut')">
@@ -953,51 +942,60 @@ body.has3d .baby-char,body.has3d .scene-deco{display:none}
 
     </div><!-- /act-panel -->
 
-    <!-- ════════ RIGHT: INFO ════════ -->
+    <!-- ════════ RIGHT: INFO (sekmeli — kaydırma yok) ════════ -->
     <div class="info-panel">
-
-      <!-- VACCINES + DOCTOR -->
       <div class="icard">
-        <h3>🏥 Sağlık Takvimi <span id="vaxCount">0/0 yapıldı</span></h3>
-        <div class="doc-tab-btns">
-          <button class="doc-tab-btn on" onclick="switchHealthTab('vax')" id="ht-vax">💉 Aşılar</button>
-          <button class="doc-tab-btn"    onclick="switchHealthTab('doc')" id="ht-doc">🩺 Doktor Kontrolleri</button>
+        <div class="itab-nav">
+          <button class="itab-btn on" onclick="switchInfoTab('saglik')" id="itab-saglik">🏥<br>Sağlık</button>
+          <button class="itab-btn" onclick="switchInfoTab('gelisim')" id="itab-gelisim">🌟<br>Gelişim</button>
+          <button class="itab-btn" onclick="switchInfoTab('basarim')" id="itab-basarim">🏅<br>Başarım</button>
+          <button class="itab-btn" onclick="switchInfoTab('acil')" id="itab-acil">🚨<br>Acil</button>
+          <button class="itab-btn" onclick="switchInfoTab('album')" id="itab-album">📸<br>Albüm</button>
+          <button class="itab-btn" onclick="switchInfoTab('gunluk')" id="itab-gunluk">📓<br>Günlük</button>
         </div>
-        <div id="htab-vax"><div class="vax-list" id="vaxList"></div></div>
-        <div id="htab-doc" style="display:none"><div class="vax-list" id="docList"></div></div>
-      </div>
 
-      <!-- MILESTONES -->
-      <div class="icard">
-        <h3>🌟 Gelişim Basamakları <span id="msCount">0/20</span></h3>
-        <div class="ms-list" id="msList"></div>
-      </div>
+        <!-- SAĞLIK -->
+        <div class="itab-body on" id="ibody-saglik">
+          <h3>🏥 Sağlık Takvimi <span id="vaxCount">0/0 yapıldı</span></h3>
+          <div class="doc-tab-btns">
+            <button class="doc-tab-btn on" onclick="switchHealthTab('vax')" id="ht-vax">💉 Aşılar</button>
+            <button class="doc-tab-btn"    onclick="switchHealthTab('doc')" id="ht-doc">🩺 Doktor Kontrolleri</button>
+          </div>
+          <div id="htab-vax"><div class="vax-list" id="vaxList"></div></div>
+          <div id="htab-doc" style="display:none"><div class="vax-list" id="docList"></div></div>
+        </div>
 
-      <!-- ACHIEVEMENTS -->
-      <div class="ach-card">
-        <h3>🏅 Başarımlar <span id="achCount">0/15</span></h3>
-        <div class="ach-list" id="achList"></div>
-      </div>
+        <!-- GELİŞİM -->
+        <div class="itab-body" id="ibody-gelisim">
+          <h3>🌟 Gelişim Basamakları <span id="msCount">0/20</span></h3>
+          <div class="ms-list" id="msList"></div>
+        </div>
 
-      <!-- FIRST AID -->
-      <div class="icard">
-        <h3>🚨 Acil Rehberi <span style="font-size:.65rem;font-weight:600;color:#EF5350">Hızlı bilgi</span></h3>
-        <div class="faid-list" id="faidList"></div>
-        <button class="emergency-btn" onclick="callEmergency()">🆘 Acil Durum — 112 Ara!</button>
-      </div>
+        <!-- BAŞARIMLAR -->
+        <div class="itab-body" id="ibody-basarim">
+          <h3>🏅 Başarımlar <span id="achCount">0/15</span></h3>
+          <div class="ach-list" id="achList"></div>
+        </div>
 
-      <!-- ALBUM -->
-      <div class="icard">
-        <h3>📸 Bebek Albümü <span id="albumCount" style="font-size:.72rem;font-weight:600;color:#888;margin-left:auto">0 anı</span></h3>
-        <div class="album-grid" id="albumGrid"><div class="album-empty">Gelişim basamakları açıldıkça burada görünecek! 🌟</div></div>
-      </div>
+        <!-- ACİL -->
+        <div class="itab-body" id="ibody-acil">
+          <h3>🚨 Acil Rehberi <span style="font-size:.65rem;font-weight:600;color:#EF5350">Hızlı bilgi</span></h3>
+          <div class="faid-list" id="faidList"></div>
+          <button class="emergency-btn" onclick="callEmergency()">🆘 Acil Durum — 112 Ara!</button>
+        </div>
 
-      <!-- LOG -->
-      <div class="icard">
-        <h3>📓 Bebek Günlüğü</h3>
-        <div class="log-wrap" id="logWrap"></div>
-      </div>
+        <!-- ALBÜM -->
+        <div class="itab-body" id="ibody-album">
+          <h3>📸 Bebek Albümü <span id="albumCount" style="font-size:.72rem;font-weight:600;color:#888;margin-left:auto">0 anı</span></h3>
+          <div class="album-grid" id="albumGrid"><div class="album-empty">Gelişim basamakları açıldıkça burada görünecek! 🌟</div></div>
+        </div>
 
+        <!-- GÜNLÜK -->
+        <div class="itab-body" id="ibody-gunluk">
+          <h3>📓 Bebek Günlüğü</h3>
+          <div class="log-wrap" id="logWrap"></div>
+        </div>
+      </div>
     </div>
   </div><!-- /grid -->
 </div><!-- /gameScreen -->
@@ -3224,6 +3222,14 @@ function markDocDone(id){
   spawnParticles(['🩺','✅','💚'],3);
 }
 
+function switchInfoTab(t){
+  ['saglik','gelisim','basarim','acil','album','gunluk'].forEach(k=>{
+    const btn=document.getElementById('itab-'+k), body=document.getElementById('ibody-'+k);
+    if(btn)btn.className='itab-btn'+(k===t?' on':'');
+    if(body)body.className='itab-body'+(k===t?' on':'');
+  });
+}
+
 function switchHealthTab(t){
   document.getElementById('htab-vax').style.display=t==='vax'?'block':'none';
   document.getElementById('htab-doc').style.display=t==='doc'?'block':'none';
@@ -4175,21 +4181,57 @@ function showAllGuides(){
     {ico:'💧',name:'İshal & Sıvı Kaybı Yönetimi',fn:'showDiarrheaGuide()'},
     {ico:'☀️',name:'Bebek Cildi için Güneş Koruması',fn:'showSunProtectionGuide()'},
   ];
-  const chips=guides.map(g=>{
+  // ── kategorilere ayır: sade, açılır-kapanır menü ──
+  const CATS=[
+    {t:'🍼 Beslenme & Emzirme',re:/emzir|beslen|gıda|mama|tarif|süt|blw|alerjen|tuz|iştah|yemek|parmak|vitamin|formül|weaning|sütten|besin|mikro|d vitamini|demir/i},
+    {t:'😴 Uyku',re:/uyku|ninni|uyut|gece|rüya|kabus|regresyon/i},
+    {t:'🏥 Sağlık & Güvenlik',re:/sağlık|aşı|ateş|hasta|ilk ?yardım|acil|güvenlik|kaza|boğulma|güneş|ishal|sarılık|pişik|diş|kolik|reflü|gaz|alerji|cpr|göbek|kulak|göz|mikrop|bağışıklık|hijyen|banyo|oto koltuğu|doktor|deprem|ilaç|takviye|soğuk|grip|sindirim|beşik başlığı|tutması|koruma|uyarı|tarama|kontrol/i},
+    {t:'🧠 Gelişim & Oyun',re:/gelişim|oyun|oyuncak|motor|dil |dil$|konuş|kelime|duyusal|zeka|beyin|müzik|kitap|okuma|masal|sosyal|işaret|renk|şekil|emekle|yürü|tuvalet|disiplin|ekran|sanat|yaratıcı|bağlanma|mizaç|kişilik|iki dilli|hikaye|şiir|ağlama|dişlenme|wonder|basamak/i},
+    {t:'💖 Anne & Baba',re:/anne|baba|lohusa|depresyon|tükenmişlik|öz ?bakım|çift|ilişki|aile|kimlik|matres|patres|stres|mindful|nefes|egzersiz|motivasyon|destek/i},
+    {t:'🏠 Yaşam & Pratik',re:/seyahat|tatil|bütçe|oda|kıyafet|giydir|hava|bez|kreş|bakıcı|iş|çalış|kardeş|ikiz|evcil|büyükanne|sosyal medya|fotoğraf|anı|misafir|sürdürülebilir|tek ebeveyn|evlat|prematüre|taşıma|karne|günlük|rutin/i},
+  ];
+  const buckets=CATS.map(c=>({t:c.t,items:[]}));
+  const other={t:'📚 Diğer Rehberler',items:[]};
+  guides.forEach(g=>{
+    const c=CATS.findIndex(c2=>c2.re.test(g.name));
+    (c>=0?buckets[c]:other).items.push(g);
+  });
+  buckets.push(other);
+  const chipHtml=g=>{
     const isGuidePage=/^show\w+\(\)$/.test(g.fn);
-    const action=isGuidePage?`openGuidePage('${g.fn}')`:`${g.fn};this.closest('.pop-ov').remove()`;
-    return `<button class="guide-chip" onclick="${action}">${g.ico}<br>${g.name}</button>`;
-  }).join('');
+    const action=isGuidePage?`openGuidePage('${g.fn}')`:`${g.fn.replace(/"/g,'&quot;')};this.closest('.pop-ov').remove()`;
+    return `<button class="guide-chip" data-gname="${g.name.toLowerCase()}" onclick="${action}">${g.ico}<br>${g.name}</button>`;
+  };
+  const cats=buckets.filter(b=>b.items.length).map((b,i)=>
+    `<details class="gcat"${i===0?' open':''}><summary>${b.t}<span style="font-size:.68rem;font-weight:600;color:#888">${b.items.length} rehber</span></summary><div class="guide-grid">${b.items.map(chipHtml).join('')}</div></details>`
+  ).join('');
   const h=`<div class="pop-ov guide-page-ov" onclick="if(event.target===this)this.remove()">
   <div class="pop-box guide-page-box">
     <div class="pop-rainbow"></div>
     <span class="pop-ico">📚</span>
-    <div class="pop-title">Tüm Rehberler</div>
-    <div class="pop-sub">Ebeveynlik yolculuğunuzda her rehber bir tık uzağınızda — bir rehbere tıkla, kendi sayfasında açılsın</div>
-    <div class="guide-grid">${chips}</div>
+    <div class="pop-title">Rehber Kütüphanesi</div>
+    <div class="pop-sub">${guides.length} rehber · kategoriye tıkla ya da ara</div>
+    <input class="guide-search" placeholder="🔍 Rehber ara... (ör. uyku, alerji, emzirme)" oninput="filterGuides(this)">
+    <div id="guideCats">${cats}</div>
     <button class="pop-btn" style="margin-top:12px" onclick="this.closest('.pop-ov').remove()">Kapat</button>
   </div></div>`;
   document.body.insertAdjacentHTML('beforeend',h);
+}
+
+function filterGuides(inp){
+  const q=inp.value.trim().toLowerCase();
+  const wrap=document.getElementById('guideCats');
+  if(!wrap)return;
+  wrap.querySelectorAll('.gcat').forEach(cat=>{
+    let vis=0;
+    cat.querySelectorAll('.guide-chip').forEach(ch=>{
+      const hit=!q||ch.dataset.gname.includes(q);
+      ch.style.display=hit?'':'none';
+      if(hit)vis++;
+    });
+    cat.style.display=vis?'':'none';
+    if(q)cat.open=true;
+  });
 }
 
 // ══════════════════════════════════════════════════════
@@ -11671,22 +11713,19 @@ function showReflexGuide(){
 // ══════════════════════════════════════════════════════
 const Baby3D=(function(){
   let ok=false,scene,camera,renderer,root,container;
-  let baby,head,headM,body,armL,armR,legL,legR,eyeL,eyeR,mouth,browL,browR,hair,bottle,pacifier;
-  let sunL,ambL,hemiL,lampL,skyMat,sunMesh,moonMesh,winStars=[],mobileG,ballM,teddyG,shadowBlob;
-  let wallB,wallS,floorM,rugM,crib;
+  let baby,head,headM,body,armL,armR,legL,legR,eyeL,eyeR,mouth,browL,browR,hair,bottle,book,paci,shadowBlob;
+  let sunL,ambL,orbiters=[];
   let particles=[],sprCache={};
   let stage=0,poseT={},anim=null,crying=false,sleeping=false;
-  let blinkT=2,blinkV=0,tearT=0,zT=0,lookT=0,syncT=0;
+  let blinkT=2,blinkV=0,tearT=0,zT=0,syncT=0;
   let ptr={x:0,y:0},lastFrame=0;
   const V=(x,y,z)=>new THREE.Vector3(x,y,z);
-  const WALLS=['#4A3580','#7FD4E8','#FFDF7E','#8FD9A0','#8FB8F2','#FFC077','#B3A5F0'];
-  const RUGS =['#6C50AE','#3FB8D6','#FFB84D','#52BE72','#5D8FE8','#FF9E4D','#8A78D9'];
 
-  // ── Toon (cel) shading: keskin ışık bantları için gradyan haritası ──
+  // ── Toon (cel) shading: keskin ışık bantları ──
   let gradTex=null,outMat=null;
   function toonGrad(){
     if(!gradTex){
-      const c=new Uint8Array([80,135,185,228]); // üst bant 255 değil — saf beyaza patlamayı önler
+      const c=new Uint8Array([90,145,195,232]); // üst bant 255 değil — beyaz patlaması yok
       gradTex=new THREE.DataTexture(c,c.length,1,THREE.RedFormat);
       gradTex.minFilter=THREE.NearestFilter;gradTex.magFilter=THREE.NearestFilter;
       gradTex.needsUpdate=true;
@@ -11694,18 +11733,18 @@ const Baby3D=(function(){
     return gradTex;
   }
   function mat(c){return new THREE.MeshToonMaterial({color:c,gradientMap:toonGrad()})}
-  // Kontur çizgisi: ters yüz (BackSide) siyah kabuk — cel görünümün "keskin hat" sırrı
-  function outline(mesh,th=0.045){
-    if(!outMat)outMat=new THREE.MeshBasicMaterial({color:'#33245C',side:THREE.BackSide});
+  // Kontur çizgisi: ters yüz siyah kabuk — keskin çizgi film hattı
+  function outline(mesh,th=0.05){
+    if(!outMat)outMat=new THREE.MeshBasicMaterial({color:'#4A3169',side:THREE.BackSide});
     const o=new THREE.Mesh(mesh.geometry,outMat);
     o.scale.setScalar(1+th);
     mesh.add(o);
     return mesh;
   }
-  function box(w,h,d,c){const m=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),mat(c));m.castShadow=true;m.receiveShadow=true;return m}
-  function sph(r,c,seg=24){const m=new THREE.Mesh(new THREE.SphereGeometry(r,seg,seg),mat(c));m.castShadow=true;return m}
-  function cyl(rt,rb,h,c,seg=20){const m=new THREE.Mesh(new THREE.CylinderGeometry(rt,rb,h,seg),mat(c));m.castShadow=true;return m}
-  function cap(r,len,c){const m=new THREE.Mesh(new THREE.CapsuleGeometry(r,len,6,14),mat(c));m.castShadow=true;return m}
+  function box(w,h,d,c){return new THREE.Mesh(new THREE.BoxGeometry(w,h,d),mat(c))}
+  function sph(r,c,seg=24){return new THREE.Mesh(new THREE.SphereGeometry(r,seg,seg),mat(c))}
+  function cyl(rt,rb,h,c,seg=20){return new THREE.Mesh(new THREE.CylinderGeometry(rt,rb,h,seg),mat(c))}
+  function cap(r,len,c){return new THREE.Mesh(new THREE.CapsuleGeometry(r,len,6,14),mat(c))}
 
   function emojiSprite(ch,size=64){
     if(!sprCache[ch]){
@@ -11715,7 +11754,7 @@ const Baby3D=(function(){
       sprCache[ch]=new THREE.CanvasTexture(cv);
     }
     const sp=new THREE.Sprite(new THREE.SpriteMaterial({map:sprCache[ch],transparent:true,depthWrite:false}));
-    sp.scale.setScalar(0.42);
+    sp.scale.setScalar(0.4);
     return sp;
   }
   function burst(chars,n,at,spread=1.2,up=2.2){
@@ -11735,199 +11774,94 @@ const Baby3D=(function(){
     root.add(sp);particles.push(sp);
   }
 
-  function buildRoom(){
-    // floor: koyu sıcak ahşap + tahta çizgileri
-    floorM=new THREE.Mesh(new THREE.BoxGeometry(11,0.3,8),mat('#C08A50'));
-    floorM.position.y=-0.15;floorM.receiveShadow=true;root.add(floorM);
-    for(let i=0;i<7;i++){
-      const plank=box(0.035,0.02,8,'#96622F');plank.position.set(-4.5+i*1.5,0.005,0);plank.castShadow=false;root.add(plank);
-    }
-    // rug: doygun üç halka — beyaz yok
-    rugM=new THREE.Mesh(new THREE.CylinderGeometry(2.35,2.35,0.07,40),mat('#3FB8D6'));
-    rugM.position.set(0.4,0.035,1.1);rugM.receiveShadow=true;root.add(rugM);
-    const rugMid=new THREE.Mesh(new THREE.CylinderGeometry(1.85,1.85,0.075,40),mat('#FFD166'));
-    rugMid.position.set(0.4,0.038,1.1);rugMid.receiveShadow=true;root.add(rugMid);
-    const rugIn=new THREE.Mesh(new THREE.CylinderGeometry(1.35,1.35,0.08,40),mat('#FF8FAB'));
-    rugIn.position.set(0.4,0.04,1.1);rugIn.receiveShadow=true;root.add(rugIn);
-    // walls: doygun üst renk + krem lambri + koyu ayraç çıtası
-    wallB=box(11,6,0.3,'#5BC4DE');wallB.position.set(0,2.85,-3.9);root.add(wallB);
-    wallS=box(0.3,6,8,'#A990E8');wallS.position.set(-5.45,2.85,0);root.add(wallS);
-    const wainB=box(11,1.15,0.34,'#FFE8C2');wainB.position.set(0,0.58,-3.89);root.add(wainB);
-    const wainS=box(0.34,1.15,8,'#FFE8C2');wainS.position.set(-5.44,0.58,0);root.add(wainS);
-    const trimB=box(11,0.09,0.36,'#4A3580');trimB.position.set(0,1.18,-3.89);root.add(trimB);
-    const trimS=box(0.36,0.09,8,'#4A3580');trimS.position.set(-5.44,1.18,0);root.add(trimS);
-    // flama süsü (bunting): arka duvarda renkli üçgen bayraklar
-    const flagCols=['#FF6B9D','#FFC93C','#3FB8D6','#52BE72','#C77DFF','#FF9A3C','#FF6B9D'];
-    const triShape=new THREE.Shape();
-    triShape.moveTo(-0.22,0);triShape.lineTo(0.22,0);triShape.lineTo(0,-0.42);triShape.closePath();
-    const triGeo=new THREE.ShapeGeometry(triShape);
-    for(let i=0;i<7;i++){
-      const fl=new THREE.Mesh(triGeo,mat(flagCols[i]));
-      const fx=-3.6+i*1.05;
-      fl.position.set(fx,4.5-Math.sin((i/6)*Math.PI)*0.55,-3.7);
-      fl.rotation.z=(i-3)*0.06;
-      root.add(fl);
-    }
-    // window (back wall)
-    const wf=box(2.6,2.6,0.18,'#FFF0D9');wf.position.set(1.9,3.2,-3.73);root.add(wf);
-    skyMat=new THREE.MeshBasicMaterial({color:'#9BDCFF'});
-    const sky=new THREE.Mesh(new THREE.PlaneGeometry(2.25,2.25),skyMat);
-    sky.position.set(1.9,3.2,-3.62);root.add(sky);
-    const mullH=box(2.3,0.09,0.06,'#FFF0D9');mullH.position.set(1.9,3.2,-3.58);root.add(mullH);
-    const mullV=box(0.09,2.3,0.06,'#FFF0D9');mullV.position.set(1.9,3.2,-3.58);root.add(mullV);
-    sunMesh=new THREE.Mesh(new THREE.CircleGeometry(0.32,24),new THREE.MeshBasicMaterial({color:'#FFE066'}));
-    sunMesh.position.set(1.45,3.6,-3.6);root.add(sunMesh);
-    moonMesh=new THREE.Mesh(new THREE.CircleGeometry(0.26,24),new THREE.MeshBasicMaterial({color:'#F4F1DE'}));
-    moonMesh.position.set(2.4,3.65,-3.6);root.add(moonMesh);
-    for(let i=0;i<7;i++){
-      const st=new THREE.Mesh(new THREE.CircleGeometry(0.035,8),new THREE.MeshBasicMaterial({color:'#FFFFFF',transparent:true,opacity:0}));
-      st.position.set(1.05+Math.random()*1.7,2.45+Math.random()*1.5,-3.61);
-      st.userData.tw=Math.random()*6;root.add(st);winStars.push(st);
-    }
-    // crib (back-left)
-    crib=new THREE.Group();
-    const cw=2.1,cd=1.25,ch=1.35;
-    const matt=box(cw-0.16,0.22,cd-0.16,'#FFEBC9');matt.position.y=0.52;crib.add(matt);
-    [[-cw/2,-cd/2],[cw/2,-cd/2],[-cw/2,cd/2],[cw/2,cd/2]].forEach(p=>{
-      const post=cyl(0.06,0.06,ch,'#F6C6D8');post.position.set(p[0],ch/2,p[1]);crib.add(post);
-      const knob=sph(0.09,'#F6C6D8');knob.position.set(p[0],ch+0.02,p[1]);crib.add(knob);
-    });
-    for(const zz of [-cd/2,cd/2]){
-      const rail=box(cw,0.07,0.07,'#F6C6D8');rail.position.set(0,ch-0.12,zz);crib.add(rail);
-      for(let i=1;i<7;i++){const bar=cyl(0.028,0.028,ch-0.35,'#FBDCE8');bar.position.set(-cw/2+i*cw/7,(ch-0.35)/2+0.28,zz);crib.add(bar);}
-    }
-    const railL=box(0.07,0.07,cd,'#F6C6D8');railL.position.set(-cw/2,ch-0.12,0);crib.add(railL);
-    const railR=box(0.07,0.07,cd,'#F6C6D8');railR.position.set(cw/2,ch-0.12,0);crib.add(railR);
-    crib.position.set(-3.15,0,-2.45);root.add(crib);
-    // mobile above crib
-    mobileG=new THREE.Group();
-    const mArm=cyl(0.03,0.03,1.5,'#C9B6F0');mArm.rotation.z=Math.PI/2;mArm.position.y=0;mobileG.add(mArm);
-    ['⭐','🌙','☁️','⭐'].forEach((c2,i)=>{
-      const sp=emojiSprite(c2);sp.scale.setScalar(0.34);
-      const x=-0.62+i*0.42;
-      const str=cyl(0.008,0.008,0.3,'#D9CCF5');str.position.set(x,-0.16,0);mobileG.add(str);
-      sp.position.set(x,-0.38,0);mobileG.add(sp);
-    });
-    mobileG.position.set(-3.15,2.5,-2.45);root.add(mobileG);
-    // toy: ball — canlı, konturlu
-    ballM=new THREE.Group();
-    const b1=sph(0.3,'#FF4757');outline(b1,0.05);ballM.add(b1);
-    const stripe=new THREE.Mesh(new THREE.TorusGeometry(0.295,0.05,10,28),mat('#FFD166'));stripe.rotation.x=Math.PI/2;ballM.add(stripe);
-    ballM.position.set(2.6,0.3,0.6);root.add(ballM);
-    // toy blocks — doygun renkler + kontur
-    const bl=['#FF6B9D','#3FB8D6','#FFC93C'];
-    bl.forEach((c2,i)=>{const b2=box(0.4,0.4,0.4,c2);outline(b2,0.04);b2.position.set(-2.2+i*0.06,0.2+i*0.41,2.05-i*0.03);b2.rotation.y=i*0.5;root.add(b2);});
-    // teddy bear on floor — konturlu
-    teddyG=new THREE.Group();
-    const tb=sph(0.32,'#B07E52');outline(tb,0.06);tb.position.y=0.32;teddyG.add(tb);
-    const th=sph(0.24,'#B07E52');outline(th,0.07);th.position.y=0.75;teddyG.add(th);
-    const te1=sph(0.09,'#B07E52');te1.position.set(-0.17,0.95,0);teddyG.add(te1);
-    const te2=sph(0.09,'#B07E52');te2.position.set(0.17,0.95,0);teddyG.add(te2);
-    const tsn=sph(0.1,'#F2D3A7');tsn.position.set(0,0.72,0.2);teddyG.add(tsn);
-    const tbel=sph(0.18,'#F2D3A7');tbel.scale.z=0.5;tbel.position.set(0,0.34,0.25);teddyG.add(tbel);
-    const ta1=sph(0.11,'#B07E52');ta1.position.set(-0.32,0.42,0.08);teddyG.add(ta1);
-    const ta2=sph(0.11,'#B07E52');ta2.position.set(0.32,0.42,0.08);teddyG.add(ta2);
-    teddyG.position.set(3.1,0,-1.7);teddyG.rotation.y=-0.7;root.add(teddyG);
-    // lamp
-    const lampG=new THREE.Group();
-    const lbase=cyl(0.26,0.34,0.1,'#D9CCF5');lbase.position.y=0.05;lampG.add(lbase);
-    const lpole=cyl(0.045,0.045,1.9,'#D9CCF5');lpole.position.y=1.0;lampG.add(lpole);
-    const lshade=cyl(0.3,0.48,0.55,'#FFD98E');lshade.position.y=2.1;lampG.add(lshade);
-    lampG.position.set(-4.4,0,1.9);root.add(lampG);
-    lampL=new THREE.PointLight('#FFB65C',0,7,2);lampL.position.set(-4.4,2.0,1.9);root.add(lampL);
-    // picture frame
-    const pf=box(0.95,0.75,0.08,'#FFF0D9');pf.position.set(-1.7,3.4,-3.72);root.add(pf);
-    const pic=new THREE.Mesh(new THREE.PlaneGeometry(0.75,0.55),new THREE.MeshBasicMaterial({color:'#FFC7DA'}));
-    pic.position.set(-1.7,3.4,-3.66);root.add(pic);
-    const pheart=emojiSprite('🧸');pheart.scale.setScalar(0.5);pheart.position.set(-1.7,3.4,-3.6);root.add(pheart);
-    // soft blob shadow under baby
-    shadowBlob=new THREE.Mesh(new THREE.CircleGeometry(0.85,26),new THREE.MeshBasicMaterial({color:'#3D2C8D',transparent:true,opacity:0.13}));
-    shadowBlob.rotation.x=-Math.PI/2;shadowBlob.position.set(0.4,0.075,1.15);root.add(shadowBlob);
-  }
-
   function buildBaby(){
     baby=new THREE.Group();
+    // chibi oranlar: kocaman kafa, minik gövde — maksimum sevimlilik
     const SKIN='#FFC69A',outfit=(typeof S!=='undefined'&&S.gender==='erkek')?'#4EA8F0':'#FF7BAC';
     const outfit2=(typeof S!=='undefined'&&S.gender==='erkek')?'#2E7FC4':'#E0508A';
-    // gövde: belden hafif daralan tulum
-    body=cap(0.5,0.52,outfit);body.position.y=0.74;body.scale.set(1,1,0.88);outline(body);baby.add(body);
-    // göğüs paneli + düğmeler
-    const patch=sph(0.18,'#FFF3E0');patch.scale.set(0.7,0.95,0.3);patch.position.set(0,0.76,0.4);baby.add(patch);
-    const bt1=sph(0.045,outfit2,10);bt1.position.set(0,0.92,0.47);baby.add(bt1);
-    const bt2=sph(0.045,outfit2,10);bt2.position.set(0,0.68,0.5);baby.add(bt2);
-    // yaka
-    const collar=new THREE.Mesh(new THREE.TorusGeometry(0.3,0.075,12,26),mat('#FFF0D9'));
-    collar.rotation.x=Math.PI/2;collar.position.y=1.22;collar.castShadow=true;baby.add(collar);
-    head=new THREE.Group();head.position.y=1.72;
-    headM=sph(0.56,SKIN,32);headM.scale.set(1,0.94,0.96);outline(headM,0.04);head.add(headM);
-    // saç: tepe perçemi + kıvrım
-    hair=sph(0.47,'#6E4226');hair.scale.set(1.12,0.62,1.06);hair.position.set(0,0.3,-0.04);outline(hair,0.05);head.add(hair);
-    const curl=new THREE.Mesh(new THREE.TorusGeometry(0.09,0.035,8,16,4.2),mat('#6E4226'));
-    curl.position.set(0.02,0.6,0.12);curl.rotation.set(0.3,0.4,1.2);head.add(curl);
-    // gözler: büyük, parıltılı
-    eyeL=sph(0.1,'#2E1F17',14);eyeL.scale.z=0.6;eyeL.position.set(-0.21,0.06,0.47);head.add(eyeL);
-    eyeR=sph(0.1,'#2E1F17',14);eyeR.scale.z=0.6;eyeR.position.set(0.21,0.06,0.47);head.add(eyeR);
-    const glL=new THREE.Mesh(new THREE.SphereGeometry(0.032,8,8),new THREE.MeshBasicMaterial({color:'#FFFFFF'}));
-    glL.position.set(0.03,0.04,0.09);eyeL.add(glL);
-    const glR=new THREE.Mesh(new THREE.SphereGeometry(0.032,8,8),new THREE.MeshBasicMaterial({color:'#FFFFFF'}));
-    glR.position.set(0.03,0.04,0.09);eyeR.add(glR);
-    // burun
-    const nose=sph(0.055,'#F5B98E',10);nose.scale.set(1,0.75,0.7);nose.position.set(0,-0.06,0.55);head.add(nose);
-    // yanaklar
-    const chL=sph(0.1,'#FF9E88',10);chL.scale.z=0.35;chL.position.set(-0.34,-0.12,0.4);head.add(chL);
-    const chR=sph(0.1,'#FF9E88',10);chR.scale.z=0.35;chR.position.set(0.34,-0.12,0.4);head.add(chR);
-    mouth=sph(0.08,'#B03A30',12);mouth.scale.set(1.2,0.55,0.5);mouth.position.set(0,-0.23,0.5);head.add(mouth);
-    browL=box(0.16,0.045,0.03,'#6E4226');browL.position.set(-0.21,0.27,0.5);head.add(browL);
-    browR=box(0.16,0.045,0.03,'#6E4226');browR.position.set(0.21,0.27,0.5);head.add(browR);
-    // kulaklar
-    const earL=sph(0.11,SKIN,12);earL.scale.set(0.5,1,0.8);earL.position.set(-0.55,-0.02,0.02);outline(earL,0.08);head.add(earL);
-    const earR=sph(0.11,SKIN,12);earR.scale.set(0.5,1,0.8);earR.position.set(0.55,-0.02,0.02);outline(earR,0.08);head.add(earR);
+    body=cap(0.42,0.36,outfit);body.position.y=0.6;body.scale.set(1,1,0.88);outline(body);baby.add(body);
+    const patch=sph(0.15,'#FFF3E0');patch.scale.set(0.7,0.95,0.3);patch.position.set(0,0.62,0.34);baby.add(patch);
+    const bt1=sph(0.04,outfit2,10);bt1.position.set(0,0.76,0.4);baby.add(bt1);
+    const bt2=sph(0.04,outfit2,10);bt2.position.set(0,0.55,0.42);baby.add(bt2);
+    const collar=new THREE.Mesh(new THREE.TorusGeometry(0.26,0.07,12,26),mat('#FFF0D9'));
+    collar.rotation.x=Math.PI/2;collar.position.y=1.0;baby.add(collar);
+    head=new THREE.Group();head.position.y=1.62;
+    headM=sph(0.66,SKIN,32);headM.scale.set(1,0.95,0.95);outline(headM,0.035);head.add(headM);
+    hair=sph(0.68,'#6E4226');hair.scale.set(1.02,0.55,0.98);hair.position.set(0,0.38,-0.04);outline(hair,0.04);head.add(hair);
+    const curl=new THREE.Mesh(new THREE.TorusGeometry(0.11,0.045,8,16,4.2),mat('#6E4226'));
+    curl.position.set(0.04,0.8,0.08);curl.rotation.set(0.3,0.4,1.2);head.add(curl);
+    // kocaman parıltılı gözler
+    eyeL=sph(0.13,'#3A2A20',16);eyeL.scale.z=0.55;eyeL.position.set(-0.24,0.04,0.55);head.add(eyeL);
+    eyeR=sph(0.13,'#3A2A20',16);eyeR.scale.z=0.55;eyeR.position.set(0.24,0.04,0.55);head.add(eyeR);
+    [eyeL,eyeR].forEach(e=>{
+      const g1=new THREE.Mesh(new THREE.SphereGeometry(0.045,8,8),new THREE.MeshBasicMaterial({color:'#FFFFFF'}));
+      g1.position.set(0.04,0.05,0.1);e.add(g1);
+      const g2=new THREE.Mesh(new THREE.SphereGeometry(0.022,8,8),new THREE.MeshBasicMaterial({color:'#FFFFFF'}));
+      g2.position.set(-0.04,-0.04,0.11);e.add(g2);
+    });
+    const nose=sph(0.055,'#F5B98E',10);nose.scale.set(1,0.7,0.65);nose.position.set(0,-0.1,0.64);head.add(nose);
+    const chL=sph(0.12,'#FF9E9E',10);chL.scale.z=0.32;chL.position.set(-0.38,-0.16,0.47);head.add(chL);
+    const chR=sph(0.12,'#FF9E9E',10);chR.scale.z=0.32;chR.position.set(0.38,-0.16,0.47);head.add(chR);
+    mouth=sph(0.08,'#C4574E',12);mouth.scale.set(1.2,0.55,0.5);mouth.position.set(0,-0.27,0.58);head.add(mouth);
+    browL=box(0.15,0.04,0.03,'#6E4226');browL.position.set(-0.24,0.3,0.58);head.add(browL);
+    browR=box(0.15,0.04,0.03,'#6E4226');browR.position.set(0.24,0.3,0.58);head.add(browR);
+    const earL=sph(0.12,SKIN,12);earL.scale.set(0.5,1,0.8);earL.position.set(-0.65,-0.04,0);outline(earL,0.07);head.add(earL);
+    const earR=sph(0.12,SKIN,12);earR.scale.set(0.5,1,0.8);earR.position.set(0.65,-0.04,0);outline(earR,0.07);head.add(earR);
     baby.add(head);
-    // kollar: tulum kollu + ten rengi el
-    armL=cap(0.14,0.3,outfit);armL.geometry.translate(0,-0.22,0);armL.position.set(-0.54,1.05,0);outline(armL,0.06);baby.add(armL);
-    const handL=sph(0.13,SKIN,14);handL.position.set(0,-0.44,0);outline(handL,0.08);armL.add(handL);
-    armR=cap(0.14,0.3,outfit);armR.geometry.translate(0,-0.22,0);armR.position.set(0.54,1.05,0);outline(armR,0.06);baby.add(armR);
-    const handR=sph(0.13,SKIN,14);handR.position.set(0,-0.44,0);outline(handR,0.08);armR.add(handR);
-    // bacaklar: tulum + beyaz patik
-    legL=cap(0.16,0.28,outfit);legL.geometry.translate(0,-0.2,0);legL.position.set(-0.25,0.3,0.05);outline(legL,0.06);baby.add(legL);
-    const footL=sph(0.15,'#FFF0D9',14);footL.scale.set(1,0.8,1.25);footL.position.set(0,-0.42,0.05);outline(footL,0.07);legL.add(footL);
-    legR=cap(0.16,0.28,outfit);legR.geometry.translate(0,-0.2,0);legR.position.set(0.25,0.3,0.05);outline(legR,0.06);baby.add(legR);
-    const footR=sph(0.15,'#FFF0D9',14);footR.scale.set(1,0.8,1.25);footR.position.set(0,-0.42,0.05);outline(footR,0.07);legR.add(footR);
-    // cinsiyet renk senkronu için tulum malzemeleri
+    // minik kollar & bacaklar
+    armL=cap(0.12,0.22,outfit);armL.geometry.translate(0,-0.18,0);armL.position.set(-0.46,0.86,0);outline(armL,0.06);baby.add(armL);
+    const handL=sph(0.115,SKIN,14);handL.position.set(0,-0.35,0);outline(handL,0.08);armL.add(handL);
+    armR=cap(0.12,0.22,outfit);armR.geometry.translate(0,-0.18,0);armR.position.set(0.46,0.86,0);outline(armR,0.06);baby.add(armR);
+    const handR=sph(0.115,SKIN,14);handR.position.set(0,-0.35,0);outline(handR,0.08);armR.add(handR);
+    legL=cap(0.14,0.2,outfit);legL.geometry.translate(0,-0.16,0);legL.position.set(-0.22,0.26,0.04);outline(legL,0.06);baby.add(legL);
+    const footL=sph(0.13,'#FFF0D9',14);footL.scale.set(1,0.8,1.25);footL.position.set(0,-0.34,0.05);outline(footL,0.07);legL.add(footL);
+    legR=cap(0.14,0.2,outfit);legR.geometry.translate(0,-0.16,0);legR.position.set(0.22,0.26,0.04);outline(legR,0.06);baby.add(legR);
+    const footR=sph(0.13,'#FFF0D9',14);footR.scale.set(1,0.8,1.25);footR.position.set(0,-0.34,0.05);outline(footR,0.07);legR.add(footR);
     baby.userData.outfitMats=[body.material,armL.material,armR.material,legL.material,legR.material];
     baby.userData.outfitMats2=[bt1.material,bt2.material];
-    // bottle prop (hidden by default)
+    // ── bebeğe gelen nesneler (aksiyonlarda belirir) ──
     bottle=new THREE.Group();
-    const bt=cyl(0.11,0.13,0.4,'#EAF7FF');bt.position.y=0.2;bottle.add(bt);
-    const bn=cyl(0.02,0.07,0.14,'#F6C6D8');bn.position.y=0.47;bottle.add(bn);
-    bottle.visible=false;bottle.position.set(0.55,1.45,0.55);bottle.rotation.z=-1.0;baby.add(bottle);
-    // pacifier prop
-    pacifier=new THREE.Group();
-    const pc=new THREE.Mesh(new THREE.TorusGeometry(0.09,0.028,8,18),mat('#FFD166'));pacifier.add(pc);
-    pacifier.visible=false;pacifier.position.set(0,1.4,0.56);baby.add(pacifier);
-    baby.position.set(0.4,0,1.15);
+    const bt=cyl(0.1,0.12,0.36,'#DFF3FF');outline(bt,0.06);bt.position.y=0.18;bottle.add(bt);
+    const bn=cyl(0.02,0.065,0.13,'#F6C6D8');bn.position.y=0.42;bottle.add(bn);
+    bottle.visible=false;bottle.position.set(0.5,1.35,0.5);bottle.rotation.z=-1.0;baby.add(bottle);
+    book=new THREE.Group();
+    const bp1=box(0.4,0.28,0.03,'#FF9A3C');bp1.rotation.y=0.35;outline(bp1,0.05);book.add(bp1);
+    const bp2=box(0.4,0.28,0.03,'#FFE8C2');bp2.rotation.y=-0.35;book.add(bp2);
+    book.visible=false;book.position.set(0,0.95,0.75);baby.add(book);
+    paci=new THREE.Group();
+    const pc=new THREE.Mesh(new THREE.TorusGeometry(0.1,0.032,8,18),mat('#FFD166'));paci.add(pc);
+    const pk=sph(0.055,'#FF9A3C',10);pk.position.z=0.05;paci.add(pk);
+    paci.visible=false;paci.position.set(0,1.35,0.62);baby.add(paci);
+    baby.position.set(0,0,0);
     root.add(baby);
+    // zemin gölgesi (yumuşak daire) — bebeği havada bırakmaz
+    shadowBlob=new THREE.Mesh(new THREE.CircleGeometry(0.85,28),new THREE.MeshBasicMaterial({color:'#3D2C8D',transparent:true,opacity:0.16}));
+    shadowBlob.rotation.x=-Math.PI/2;shadowBlob.position.set(0,0.01,0.1);root.add(shadowBlob);
+    // bebeğin etrafında süzülen tatlı objeler
+    ['⭐','🌙','☁️','✨'].forEach((c2,i)=>{
+      const sp=emojiSprite(c2);sp.scale.setScalar(0.3);
+      sp.userData.orb={r:1.35+i*0.12,sp:0.25+i*0.07,ph:i*1.7,h:1.3+(i%2)*0.5};
+      root.add(sp);orbiters.push(sp);
+    });
     setStage(stage,true);
   }
 
-  // ── Poses: her gelişim evresi için hedef duruş ──
+  // ── Pozlar: gelişim evresine göre duruş ──
   function poseFor(si){
-    if(si<=0) return {rot:[-1.05,0,0],y:0.55,hx:0.35,aL:[-2.6,0,-0.5],aR:[-2.6,0,0.5],lL:[-2.3,0,-0.3],lR:[-2.3,0,0.3],scale:0.8};   // sırtüstü yatan yenidoğan
-    if(si===1)return {rot:[-0.95,0,0],y:0.55,hx:0.5,aL:[-2.9,0,-0.7],aR:[-2.9,0,0.7],lL:[-2.0,0,-0.35],lR:[-2.0,0,0.35],scale:0.86}; // uzanıp keşfeden
-    if(si===2)return {rot:[1.25,0,0],y:0.62,hx:-1.5,aL:[2.4,0,-0.3],aR:[2.4,0,0.3],lL:[1.6,0,-0.2],lR:[1.6,0,0.2],scale:0.9};        // tummy time
-    if(si===3)return {rot:[0,0,0],y:0.18,hx:0,aL:[-0.5,0,-0.35],aR:[-0.5,0,0.35],lL:[-1.5,0,-0.25],lR:[-1.5,0,0.25],scale:0.96};     // oturan
-    if(si===4)return {rot:[1.15,0,0],y:0.6,hx:-1.35,aL:[2.9,0,-0.15],aR:[2.9,0,0.15],lL:[2.4,0,-0.2],lR:[2.4,0,0.2],scale:1.02};     // emekleyen
-    if(si===5)return {rot:[0,0,0],y:0.42,hx:0,aL:[-0.35,0,-0.55],aR:[-0.35,0,0.55],lL:[0,0,-0.08],lR:[0,0,0.08],scale:1.1};          // ilk adımlar
-    return      {rot:[0,0,0],y:0.46,hx:0,aL:[0,0,-0.35],aR:[0,0,0.35],lL:[0,0,-0.06],lR:[0,0,0.06],scale:1.22};                      // toddler
+    if(si<=0) return {rot:[-1.0,0,0],y:0.5,hx:0.3,aL:[-2.6,0,-0.5],aR:[-2.6,0,0.5],lL:[-2.3,0,-0.3],lR:[-2.3,0,0.3],scale:0.85};
+    if(si===1)return {rot:[-0.9,0,0],y:0.5,hx:0.45,aL:[-2.9,0,-0.7],aR:[-2.9,0,0.7],lL:[-2.0,0,-0.35],lR:[-2.0,0,0.35],scale:0.9};
+    if(si===2)return {rot:[1.2,0,0],y:0.55,hx:-1.45,aL:[2.4,0,-0.3],aR:[2.4,0,0.3],lL:[1.6,0,-0.2],lR:[1.6,0,0.2],scale:0.94};
+    if(si===3)return {rot:[0,0,0],y:0.14,hx:0,aL:[-0.5,0,-0.35],aR:[-0.5,0,0.35],lL:[-1.5,0,-0.25],lR:[-1.5,0,0.25],scale:0.98};
+    if(si===4)return {rot:[1.1,0,0],y:0.52,hx:-1.3,aL:[2.9,0,-0.15],aR:[2.9,0,0.15],lL:[2.4,0,-0.2],lR:[2.4,0,0.2],scale:1.03};
+    if(si===5)return {rot:[0,0,0],y:0.34,hx:0,aL:[-0.35,0,-0.55],aR:[-0.35,0,0.55],lL:[0,0,-0.08],lR:[0,0,0.08],scale:1.1};
+    return      {rot:[0,0,0],y:0.38,hx:0,aL:[0,0,-0.35],aR:[0,0,0.35],lL:[0,0,-0.06],lR:[0,0,0.06],scale:1.2};
   }
   function setStage(si,instant){
     stage=si;
     poseT=poseFor(si);
     if(ok){
-      if(wallB)wallB.material.color.set(WALLS[si]||WALLS[1]);
-      if(rugM)rugM.material.color.set(RUGS[si]||RUGS[1]);
       if(instant)applyPose(1);
-      if(!instant)burst(['🎉','⭐','🎊','✨'],14,V(baby.position.x,1.6,baby.position.z),2.2,3);
+      else burst(['🎉','⭐','🎊','✨'],14,V(0,1.6,0),2.2,3);
     }
   }
   function applyPose(k){
@@ -11935,7 +11869,7 @@ const Baby3D=(function(){
     const p=poseT;
     baby.rotation.x+=(p.rot[0]-baby.rotation.x)*k;
     baby.rotation.z+=(p.rot[2]-baby.rotation.z)*k;
-    baby.position.y+=(p.y+ (anim&&anim.name==='jump'?anim.jy||0:0) -baby.position.y)*k;
+    baby.position.y+=(p.y+(anim&&anim.jy||0)-baby.position.y)*k;
     head.rotation.x+=(p.hx-head.rotation.x)*k;
     armL.rotation.x+=(p.aL[0]-armL.rotation.x)*k; armL.rotation.z+=(p.aL[2]-armL.rotation.z)*k;
     armR.rotation.x+=(p.aR[0]-armR.rotation.x)*k; armR.rotation.z+=(p.aR[2]-armR.rotation.z)*k;
@@ -11952,31 +11886,32 @@ const Baby3D=(function(){
     saril:'hug','dad-saril':'hug',
     banyo:'bath',bez:'sparkle',atesol:'sparkle',masaj:'hug',
     muzik:'dance',sarki:'dance',tekerleme:'dance',dans:'dance',
-    kitap:'wave',konus:'wave',tummytime:'wave',
+    kitap:'read',konus:'wave',tummytime:'wave',
   };
   function onAction(id){
     if(!ok)return;
-    const name=ANIM_MAP[id]||(id.startsWith('dad-')?'jump':'jump');
-    startAnim(name);
+    startAnim(ANIM_MAP[id]||'jump');
   }
   function startAnim(name){
-    anim={name,t:0,dur:name==='sleep'?3.2:name==='feed'?2.4:1.6};
+    anim={name,t:0,dur:name==='sleep'?3.2:name==='feed'?2.4:name==='read'?2.6:1.6};
     sleeping=(name==='sleep');
-    if(name==='feed'){bottle.visible=true;}
-    if(name==='hug')burst(['💖','💕','❤️'],8,V(baby.position.x,1.8,baby.position.z),1.4,2.4);
-    if(name==='bath')burst(['🫧','💧','🫧','✨'],12,V(baby.position.x,1.4,baby.position.z),1.6,2.0);
-    if(name==='sparkle')burst(['✨','⭐'],7,V(baby.position.x,1.6,baby.position.z),1.4,2.2);
-    if(name==='dance')burst(['🎵','🎶','♪'],9,V(baby.position.x,2.0,baby.position.z),1.8,2.2);
+    if(name==='feed')bottle.visible=true;
+    if(name==='read')book.visible=true;
+    if(name==='sleep')paci.visible=true;
+    if(name==='hug')burst(['💖','💕','❤️'],8,V(0,1.8,0),1.4,2.4);
+    if(name==='bath')burst(['🫧','💧','🫧','✨'],12,V(0,1.4,0),1.6,2.0);
+    if(name==='sparkle')burst(['✨','⭐'],7,V(0,1.6,0),1.4,2.2);
+    if(name==='dance')burst(['🎵','🎶','♪'],9,V(0,2.0,0),1.8,2.2);
   }
   function poke(){
     if(!ok)return;
     startAnim('jump');
-    burst(['⭐','✨','💫'],6,V(baby.position.x,1.7,baby.position.z),1.5,2.6);
+    burst(['⭐','✨','💫'],6,V(0,1.7,0),1.5,2.6);
   }
   function celebrate(){
     if(!ok)return;
     startAnim('jump');
-    burst(['🎉','🎊','⭐','🎈','✨'],22,V(baby.position.x,1.9,baby.position.z),3.0,3.4);
+    burst(['🎉','🎊','⭐','🎈','✨'],22,V(0,1.9,0),3.0,3.4);
   }
   function setCrying(v){crying=v;}
 
@@ -11985,95 +11920,86 @@ const Baby3D=(function(){
     if(!ok||document.hidden)return;
     const t=now/1000, dt=Math.min(0.05,(now-lastFrame)/1000||0.016);
     lastFrame=now;
-    // ── gün/gece ──
+    // gün/gece: ışık hafifçe yumuşar (sahne yok, sadece karakter aydınlatması)
     const dayPhase=((typeof S!=='undefined'?S.dayTime||0:0)%4)/4;
-    const isNight=dayPhase>0.5&&dayPhase<1.0;
-    const nAmt=isNight?Math.sin((dayPhase-0.5)*Math.PI):0;
-    sunL.intensity=0.72-0.52*nAmt;
-    ambL.intensity=0.42-0.2*nAmt;
-    hemiL.intensity=0.15-0.07*nAmt;
-    sunL.color.setHSL(0.12,0.35,0.98-nAmt*0.3);
-    lampL.intensity=nAmt*1.35;
-    skyMat.color.lerpColors(new THREE.Color('#9BDCFF'),new THREE.Color('#131A3F'),nAmt);
-    sunMesh.material.opacity=1;sunMesh.visible=nAmt<0.45;
-    moonMesh.visible=nAmt>=0.45;
-    winStars.forEach(st2=>{st2.material.opacity=nAmt*(0.4+0.6*Math.abs(Math.sin(t*1.7+st2.userData.tw)));});
-    // ── idle hareketler ──
-    mobileG.rotation.y=t*0.5;
-    ballM.rotation.z=Math.sin(t*0.6)*0.4;
-    ballM.position.x=2.6+Math.sin(t*0.6)*0.12;
-    teddyG.rotation.z=Math.sin(t*0.9)*0.03;
+    const nAmt=(dayPhase>0.5&&dayPhase<1.0)?Math.sin((dayPhase-0.5)*Math.PI):0;
+    sunL.intensity=0.72-0.3*nAmt;
+    ambL.intensity=0.46-0.14*nAmt;
+    // süzülen objeler
+    orbiters.forEach(sp=>{
+      const o=sp.userData.orb;
+      sp.position.set(Math.cos(t*o.sp+o.ph)*o.r,o.h+Math.sin(t*0.9+o.ph)*0.14,Math.sin(t*o.sp+o.ph)*o.r*0.5);
+      sp.material.opacity=0.75+Math.sin(t*1.4+o.ph)*0.25;
+    });
     // nefes alma
-    if(body){const br=1+Math.sin(t*2.2)*0.022;body.scale.set(br,1,0.88*br);}
+    if(body){const br=1+Math.sin(t*2.2)*0.024;body.scale.set(br,1,0.88*br);}
     // göz kırpma
     blinkT-=dt;
     if(blinkT<=0){blinkV=1;blinkT=1.8+Math.random()*3;}
     if(blinkV>0)blinkV=Math.max(0,blinkV-dt*7);
     const eyeSc=(sleeping||(typeof S!=='undefined'&&S.energy<15))?0.12:(1-blinkV*0.88);
     eyeL.scale.y=eyeSc;eyeR.scale.y=eyeSc;
-    // bakış yönü
-    lookT+=dt;
     const lx=Math.sin(t*0.4)*0.05;
-    eyeL.position.x=-0.2+lx;eyeR.position.x=0.2+lx;
-    // ── yüz ifadesi ──
+    eyeL.position.x=-0.24+lx;eyeR.position.x=0.24+lx;
+    // yüz ifadesi
     let mood='ok';
     if(crying)mood='cry';
     else if(typeof S!=='undefined'){
       if(S.happy>75)mood='happy';
       else if(S.happy<30||S.hunger<15)mood='sad';
     }
-    if(mood==='cry'){mouth.scale.set(0.8,1.15,0.5);mouth.position.y=-0.24;browL.rotation.z=-0.45;browR.rotation.z=0.45;}
-    else if(mood==='happy'){mouth.scale.set(1.5,0.5,0.5);mouth.position.y=-0.19;browL.rotation.z=0.12;browR.rotation.z=-0.12;}
-    else if(mood==='sad'){mouth.scale.set(0.9,0.4,0.5);mouth.position.y=-0.25;browL.rotation.z=0.4;browR.rotation.z=-0.4;}
-    else{mouth.scale.set(1.15,0.55,0.5);mouth.position.y=-0.21;browL.rotation.z=0;browR.rotation.z=0;}
-    // ağlama efektleri
+    if(mood==='cry'){mouth.scale.set(0.8,1.2,0.5);mouth.position.y=-0.3;browL.rotation.z=-0.45;browR.rotation.z=0.45;}
+    else if(mood==='happy'){mouth.scale.set(1.6,0.55,0.5);mouth.position.y=-0.25;browL.rotation.z=0.12;browR.rotation.z=-0.12;}
+    else if(mood==='sad'){mouth.scale.set(0.9,0.4,0.5);mouth.position.y=-0.31;browL.rotation.z=0.4;browR.rotation.z=-0.4;}
+    else{mouth.scale.set(1.2,0.55,0.5);mouth.position.y=-0.27;browL.rotation.z=0;browR.rotation.z=0;}
     if(crying){
       head.rotation.z=Math.sin(t*14)*0.07;
       tearT-=dt;
-      if(tearT<=0){tearT=0.5;floatUp('💧',V(baby.position.x+0.25,1.6,baby.position.z+0.4));}
+      if(tearT<=0){tearT=0.5;floatUp('💧',V(0.28,1.55,0.5));}
     } else head.rotation.z*=0.9;
-    // uyku Z'leri
     if(sleeping||(typeof S!=='undefined'&&S.energy<15&&!crying)){
       zT-=dt;
-      if(zT<=0){zT=0.9;floatUp('💤',V(baby.position.x+0.3,2.0,baby.position.z));}
+      if(zT<=0){zT=0.9;floatUp('💤',V(0.35,2.0,0));}
     }
-    // ── aktif animasyon ──
+    // aktif animasyon
     if(anim){
       anim.t+=dt;
       const p=Math.min(1,anim.t/anim.dur);
       if(anim.name==='jump'){
-        anim.jy=Math.abs(Math.sin(p*Math.PI*2))*0.55*(1-p*0.4);
+        anim.jy=Math.abs(Math.sin(p*Math.PI*2))*0.5*(1-p*0.4);
         baby.rotation.y=Math.sin(p*Math.PI)*0.6;
       } else if(anim.name==='dance'){
-        anim.jy=Math.abs(Math.sin(p*Math.PI*3))*0.3;
+        anim.jy=Math.abs(Math.sin(p*Math.PI*3))*0.28;
         baby.rotation.y=Math.sin(p*Math.PI*4)*0.5;
         armL.rotation.z=-0.5-Math.sin(t*9)*0.5;armR.rotation.z=0.5+Math.sin(t*9)*0.5;
       } else if(anim.name==='feed'){
-        head.rotation.x=poseT.hx+0.25;
-        bottle.visible=true;
-        if(Math.random()<dt*2.2)floatUp('💛',V(baby.position.x,2.0,baby.position.z));
+        head.rotation.x=poseT.hx+0.22;
+        if(Math.random()<dt*2.2)floatUp('💛',V(0,2.0,0));
+      } else if(anim.name==='read'){
+        head.rotation.x=poseT.hx+0.35;
+        armL.rotation.z=-0.9;armR.rotation.z=0.9;
+        if(Math.random()<dt*1.6)floatUp('📖',V(0.3,1.9,0));
       } else if(anim.name==='hug'){
         const s=1+Math.sin(p*Math.PI)*0.1;baby.scale.setScalar(poseT.scale*s);
         armL.rotation.z=-1.4*Math.sin(p*Math.PI);armR.rotation.z=1.4*Math.sin(p*Math.PI);
       } else if(anim.name==='wave'){
         armR.rotation.z=0.5+Math.sin(t*10)*0.7;
       } else if(anim.name==='sleep'){
-        head.rotation.x=poseT.hx+0.35;
+        head.rotation.x=poseT.hx+0.3;
       } else if(anim.name==='bath'||anim.name==='sparkle'){
         baby.rotation.y=Math.sin(t*6)*0.15;
       }
       if(p>=1){
-        if(anim.name==='feed')bottle.visible=false;
+        bottle.visible=false;book.visible=false;paci.visible=false;
         anim=null;sleeping=false;baby.rotation.y*=0.5;
       }
     } else {
       baby.rotation.y+=(0-baby.rotation.y)*0.06;
-      // idle sway
       baby.rotation.y+=Math.sin(t*0.8)*0.0015;
     }
     applyPose(anim?0.18:0.07);
     shadowBlob.scale.setScalar(baby.scale.x*(1-(anim&&anim.jy?anim.jy*0.4:0)));
-    // ── partiküller ──
+    // partiküller
     for(let i=particles.length-1;i>=0;i--){
       const sp=particles[i],u=sp.userData;
       u.t+=dt;
@@ -12081,10 +12007,10 @@ const Baby3D=(function(){
       sp.position.x+=u.vx*dt;sp.position.y+=u.vy*dt;sp.position.z+=u.vz*dt;
       sp.material.opacity=Math.max(0,1-(u.t/u.life));
       sp.material.rotation=(sp.material.rotation||0)+dt*2;
-      if(sp.position.y<0.1&&u.grav){u.vy=Math.abs(u.vy)*0.35;sp.position.y=0.1;}
+      if(sp.position.y<0.08&&u.grav){u.vy=Math.abs(u.vy)*0.35;sp.position.y=0.08;}
       if(u.t>=u.life){root.remove(sp);sp.material.dispose();particles.splice(i,1);}
     }
-    // ── kıyafet rengi senkronu (cinsiyet değişirse) ──
+    // kıyafet rengi senkronu
     syncT-=dt;
     if(syncT<=0){
       syncT=1.5;
@@ -12097,13 +12023,13 @@ const Baby3D=(function(){
         }
       }
     }
-    // ── kamera paralaks + evreye göre zoom ──
+    // kamera: bebeğe yakın, evreye göre hafif zoom, paralaks
     const bsc=baby?baby.scale.x:0.9;
-    const camZ=4.4+bsc*1.55, camY=1.7+bsc*0.8;
-    camera.position.x+=((0.4+ptr.x*0.8)-camera.position.x)*0.04;
-    camera.position.y+=((camY+ptr.y*0.4)-camera.position.y)*0.04;
+    const camZ=2.6+bsc*1.9, camY=1.05+bsc*0.72;
+    camera.position.x+=((ptr.x*0.55)-camera.position.x)*0.04;
+    camera.position.y+=((camY+ptr.y*0.3)-camera.position.y)*0.04;
     camera.position.z+=(camZ-camera.position.z)*0.04;
-    camera.lookAt(0.35,0.55+bsc*0.62,0.6);
+    camera.lookAt(0,0.38+bsc*0.68,0);
     renderer.render(scene,camera);
   }
 
@@ -12114,26 +12040,18 @@ const Baby3D=(function(){
     try{
       scene=new THREE.Scene();
       root=new THREE.Group();scene.add(root);
-      camera=new THREE.PerspectiveCamera(42,1,0.1,50);
-      camera.position.set(0.4,2.3,5.6);
+      camera=new THREE.PerspectiveCamera(36,1,0.1,50);
+      camera.position.set(0,1.7,4.0);
       renderer=new THREE.WebGLRenderer({antialias:true,alpha:true});
       renderer.setPixelRatio(Math.min(window.devicePixelRatio,2));
-      renderer.shadowMap.enabled=true;
-      renderer.shadowMap.type=THREE.PCFSoftShadowMap;
       renderer.outputEncoding=THREE.sRGBEncoding;
       container.appendChild(renderer.domElement);
-      // ışıklar
-      ambL=new THREE.AmbientLight('#FFF2E4',0.42);scene.add(ambL);
-      hemiL=new THREE.HemisphereLight('#BFE7FF','#FFC9A8',0.15);scene.add(hemiL);
+      ambL=new THREE.AmbientLight('#FFF2E4',0.46);scene.add(ambL);
       sunL=new THREE.DirectionalLight('#FFEFC9',0.72);
-      sunL.position.set(4,7,5);sunL.castShadow=true;
-      sunL.shadow.mapSize.set(1024,1024);
-      sunL.shadow.camera.left=-7;sunL.shadow.camera.right=7;
-      sunL.shadow.camera.top=7;sunL.shadow.camera.bottom=-7;
-      scene.add(sunL);
-      buildRoom();
+      sunL.position.set(3,6,5);scene.add(sunL);
+      const rim=new THREE.DirectionalLight('#BFE7FF',0.25);
+      rim.position.set(-4,3,-3);scene.add(rim);
       buildBaby();
-      // boyutlandırma
       const resize=()=>{
         const w=container.clientWidth||300,h=container.clientHeight||300;
         camera.aspect=w/h;camera.updateProjectionMatrix();
@@ -12141,37 +12059,12 @@ const Baby3D=(function(){
       };
       new ResizeObserver(resize).observe(container);
       resize();
-      // pointer paralaks
       container.addEventListener('pointermove',e=>{
         const r=container.getBoundingClientRect();
         ptr.x=((e.clientX-r.left)/r.width-0.5)*2;
         ptr.y=-(((e.clientY-r.top)/r.height)-0.5)*2;
       });
       container.addEventListener('pointerleave',()=>{ptr.x=0;ptr.y=0;});
-      // tıklanabilir 3D objeler: oyuncaklar aktivite tetikler, boşluk bebeği sever
-      container.onclick=null; // inline babyClick devre dışı — raycast yönetiyor
-      const ray=new THREE.Raycaster(),clickPt=new THREE.Vector2();
-      container.addEventListener('click',e=>{
-        const r=container.getBoundingClientRect();
-        clickPt.x=((e.clientX-r.left)/r.width)*2-1;
-        clickPt.y=-((e.clientY-r.top)/r.height)*2+1;
-        ray.setFromCamera(clickPt,camera);
-        const targets=[
-          {g:ballM, act:'duyusal', msg:'⚽ Topla duyusal oyun zamanı!'},
-          {g:teddyG,act:'saril',   msg:'🧸 Ayıcıkla birlikte kocaman sarılma!'},
-          {g:crib,  act:'ninni',   msg:'🎵 Beşik başında ninni söylendi!'},
-          {g:mobileG,act:'ninni',  msg:'🎵 Dönence eşliğinde ninni söylendi!'},
-        ];
-        for(const it of targets){
-          if(it.g&&ray.intersectObject(it.g,true).length){
-            burst(['✨','⭐'],5,it.g.position?it.g.position.clone().setY(1.2):V(0,1.2,0),1.2,2.0);
-            if(typeof doAct==='function')doAct(it.act);
-            if(typeof showToast==='function')showToast(it.msg);
-            return;
-          }
-        }
-        if(typeof babyClick==='function')babyClick();
-      });
       ok=true;
       document.body.classList.add('has3d');
       requestAnimationFrame(tick3d);
