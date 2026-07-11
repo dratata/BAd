@@ -1574,6 +1574,15 @@ function saveGame(){
     formulaPrepRead:S.formulaPrepRead||false, teethingPainRead:S.teethingPainRead||false,
     crawlWalkRead:S.crawlWalkRead||false, saltSugarRead:S.saltSugarRead||false,
     diarrheaRead:S.diarrheaRead||false, sunProtectionRead:S.sunProtectionRead||false,
+    hiccupsRead:S.hiccupsRead||false, nailCareRead:S.nailCareRead||false,
+    vaxSideEffectRead:S.vaxSideEffectRead||false, spitVomitRead:S.spitVomitRead||false,
+    babyAcneRead:S.babyAcneRead||false, tongueTieRead:S.tongueTieRead||false,
+    flatHeadRead:S.flatHeadRead||false, witchingHourRead:S.witchingHourRead||false,
+    growthSpurtRead:S.growthSpurtRead||false, colicMassageRead:S.colicMassageRead||false,
+    pacifierProConRead:S.pacifierProConRead||false, bottleRefusalRead:S.bottleRefusalRead||false,
+    teethBrushRead:S.teethBrushRead||false, babyledPlayRead:S.babyledPlayRead||false,
+    routineChangeRead:S.routineChangeRead||false, erGuideRead:S.erGuideRead||false,
+    pincerGraspRead:S.pincerGraspRead||false, secondBabyRead:S.secondBabyRead||false,
     savedAt:Date.now(),
   };
   try { localStorage.setItem(SAVE_KEY, JSON.stringify(data)); } catch(e){}
@@ -1744,6 +1753,24 @@ function applySaveData(d){
   S.saltSugarRead = d.saltSugarRead||false;
   S.diarrheaRead = d.diarrheaRead||false;
   S.sunProtectionRead = d.sunProtectionRead||false;
+  S.hiccupsRead = d.hiccupsRead||false;
+  S.nailCareRead = d.nailCareRead||false;
+  S.vaxSideEffectRead = d.vaxSideEffectRead||false;
+  S.spitVomitRead = d.spitVomitRead||false;
+  S.babyAcneRead = d.babyAcneRead||false;
+  S.tongueTieRead = d.tongueTieRead||false;
+  S.flatHeadRead = d.flatHeadRead||false;
+  S.witchingHourRead = d.witchingHourRead||false;
+  S.growthSpurtRead = d.growthSpurtRead||false;
+  S.colicMassageRead = d.colicMassageRead||false;
+  S.pacifierProConRead = d.pacifierProConRead||false;
+  S.bottleRefusalRead = d.bottleRefusalRead||false;
+  S.teethBrushRead = d.teethBrushRead||false;
+  S.babyledPlayRead = d.babyledPlayRead||false;
+  S.routineChangeRead = d.routineChangeRead||false;
+  S.erGuideRead = d.erGuideRead||false;
+  S.pincerGraspRead = d.pincerGraspRead||false;
+  S.secondBabyRead = d.secondBabyRead||false;
   S.started = true;
 }
 
@@ -2286,6 +2313,24 @@ const S = {
   saltSugarRead:false,
   diarrheaRead:false,
   sunProtectionRead:false,
+  hiccupsRead:false,
+  nailCareRead:false,
+  vaxSideEffectRead:false,
+  spitVomitRead:false,
+  babyAcneRead:false,
+  tongueTieRead:false,
+  flatHeadRead:false,
+  witchingHourRead:false,
+  growthSpurtRead:false,
+  colicMassageRead:false,
+  pacifierProConRead:false,
+  bottleRefusalRead:false,
+  teethBrushRead:false,
+  babyledPlayRead:false,
+  routineChangeRead:false,
+  erGuideRead:false,
+  pincerGraspRead:false,
+  secondBabyRead:false,
 };
 
 // ══════════════════════════════════════════════════════
@@ -4274,6 +4319,24 @@ function showAllGuides(){
     {ico:'🧂',name:'Tuz & Şeker Sınırları',fn:'showSaltSugarGuide()'},
     {ico:'💧',name:'İshal & Sıvı Kaybı Yönetimi',fn:'showDiarrheaGuide()'},
     {ico:'☀️',name:'Bebek Cildi için Güneş Koruması',fn:'showSunProtectionGuide()'},
+    {ico:'😅',name:'Hıçkırık Rehberi',fn:'showHiccupsGuide()'},
+    {ico:'💅',name:'Tırnak Bakımı ve Kesimi',fn:'showNailCareGuide()'},
+    {ico:'💉',name:'Aşı Sonrası Yan Etki Yönetimi',fn:'showVaccineSideEffectsGuide()'},
+    {ico:'🤢',name:'Tükürme vs Kusma Ayrımı',fn:'showSpitUpVsVomitGuide()'},
+    {ico:'🌸',name:'Yenidoğan Cilt Durumları',fn:'showBabyAcneSkinGuide()'},
+    {ico:'👅',name:'Dil Bağı (Ankyloglossi)',fn:'showTongueTieGuide()'},
+    {ico:'🧢',name:'Düz Kafa Sendromu',fn:'showFlatHeadGuide()'},
+    {ico:'🌆',name:'Akşam Huzursuzluğu (Cadı Saati)',fn:'showWitchingHourGuide()'},
+    {ico:'📈',name:'Büyüme Atakları',fn:'showGrowthSpurtsGuide()'},
+    {ico:'🤲',name:'Gaz & Kolik Masaj Teknikleri',fn:'showBabyMassageColicGuide()'},
+    {ico:'🍼',name:'Emzik Artı Eksileri',fn:'showPacifierProConGuide()'},
+    {ico:'🚫',name:'Biberon Reddi Yönetimi',fn:'showBottleRefusalGuide()'},
+    {ico:'🪥',name:'Yaşa Göre Diş Fırçalama',fn:'showTeethBrushingGuide()'},
+    {ico:'🧸',name:'Bebek Liderliğinde Serbest Oyun',fn:'showBabyledPlayGuide()'},
+    {ico:'🔄',name:'Rutin Bozulmaları Yönetimi',fn:'showRoutineChangesGuide()'},
+    {ico:'🚑',name:'Acile Gitmeli mi Rehberi',fn:'showEmergencyRoomGuide()'},
+    {ico:'🤏',name:'İnce Motor Kilometre Taşları',fn:'showPincerGraspGuide()'},
+    {ico:'👨‍👩‍👧‍👦',name:'İkinci Bebeğe Hazırlık',fn:'showSecondBabyGuide()'},
   ];
   // ── kategorilere ayır: sade, açılır-kapanır menü ──
   const CATS=[
@@ -11794,6 +11857,383 @@ function showReflexGuide(){
     <div style="max-height:370px;overflow-y:auto;margin:10px 0">${cards}</div>
     <div class="pop-tip"><div class="pop-tip-t">⚠️ Ne Zaman Endişelenelim?</div><p>Bir refleks gereken yaşta kaybolmuyorsa veya asimetrik ise (bir yanda var diğerinde yok) pediatristinize bildirin. Refleks muayenesi 2. ay kontrolünde rutin olarak yapılır.</p></div>
     <button class="pop-btn" style="background:linear-gradient(135deg,#1565C0,#1976D2)" onclick="this.closest('.pop-ov').remove()">👶 İnanılmaz Bir Bebek!</button>
+  </div></div>`;
+  document.body.insertAdjacentHTML('beforeend',h);
+}
+
+// ══════════════════════════════════════════════════════
+// HICCUPS (HIÇKIRIK) GUIDE
+// ══════════════════════════════════════════════════════
+function showHiccupsGuide(){
+  S.hiccupsRead=true;checkAchievements();saveGame();
+  const h=`<div class="pop-ov" onclick="if(event.target===this)this.remove()"><div class="pop-box">
+    <div class="pop-rainbow" style="background:linear-gradient(90deg,#FFF9C4,#FFE082,#E1F5FE)"></div>
+    <span class="pop-ico">😅</span>
+    <div class="pop-title">Bebeklerde Hıçkırık</div>
+    <div class="pop-sub">${S.babyName} hıçkırınca paniğe gerek yok — işte nedeni</div>
+    <div class="pop-sec" style="background:#FFF9C4"><h4>🤔 Neden Olur?</h4><p style="font-size:.72rem;color:#555;line-height:1.6">Diyafram kası henüz olgunlaşmadığı için ani kasılıp gevşeyebilir. Hızlı emme, hava yutma veya mide germesi hıçkırığı tetikler. Yenidoğanlarda günde birkaç kez görülmesi tamamen normaldir — hatta bazı bebekler rahim içindeyken bile hıçkırır.</p></div>
+    <div class="pop-sec" style="background:#E1F5FE"><h4>✅ Ne Zaman Normal?</h4><p style="font-size:.72rem;color:#555;line-height:1.6">İlk 6-12 ayda sık görülür ve bebeği genelde rahatsız etmez; ${S.babyName} hıçkırırken oynamaya, uyumaya devam edebilir. Genellikle birkaç dakika içinde kendiliğinden geçer, ek bir müdahale gerekmez.</p></div>
+    <div class="pop-sec" style="background:#E8F5E9"><h4>🍼 Nasıl Geçirilir?</h4><p style="font-size:.72rem;color:#555;line-height:1.6">Beslenme sırasında ara verip geğirtin, bebeği dik pozisyonda tutun, sakin bir ortamda yavaşça sallayın. Emzirmeye/beslenmeye devam etmek çoğu zaman hıçkırığı kendiliğinden durdurur. 6 aydan küçük bebeklere su içirmeyin.</p></div>
+    <div class="pop-sec" style="background:#FFEBEE"><h4>🚨 Ne Zaman Doktora?</h4><p style="font-size:.72rem;color:#555;line-height:1.6">Hıçkırık 10 dakikadan uzun sürüyorsa, sık kusma/huzursuzlukla birlikteyse veya nefes almada zorlanma eşlik ediyorsa pediatristinize danışın — bu reflü gibi başka bir durumun işareti olabilir.</p></div>
+    <div class="pop-tip"><div class="pop-tip-t">💡 İpucu</div><p>Hıçkırığı durdurmak için bebeği sarsmayın ya da nefesini tutmasını istemeyin (yetişkin yöntemleri bebeklere uygun değildir) — sakin bekleyip beslenmeyi sürdürmek en güvenlisidir.</p></div>
+    <button class="pop-btn" onclick="this.closest('.pop-ov').remove()">😊 Anladım!</button>
+  </div></div>`;
+  document.body.insertAdjacentHTML('beforeend',h);
+}
+
+// ══════════════════════════════════════════════════════
+// NAIL CARE (TIRNAK BAKIMI) GUIDE
+// ══════════════════════════════════════════════════════
+function showNailCareGuide(){
+  S.nailCareRead=true;checkAchievements();saveGame();
+  const h=`<div class="pop-ov" onclick="if(event.target===this)this.remove()"><div class="pop-box">
+    <div class="pop-rainbow" style="background:linear-gradient(90deg,#F3E5F5,#E1BEE7,#FCE4EC)"></div>
+    <span class="pop-ico">💅</span>
+    <div class="pop-title">Tırnak Bakımı ve Kesimi</div>
+    <div class="pop-sub">${S.babyName}'in minik tırnaklarını güvenle bakımlamak</div>
+    <div class="pop-sec" style="background:#F3E5F5"><h4>🧴 Yenidoğanda Törpü Kullanımı</h4><p style="font-size:.72rem;color:#555;line-height:1.6">İlk haftalarda tırnaklar çok ince ve yumuşaktır; makas yerine bebek törpüsü (cam veya köpük törpü) kullanmak daha güvenlidir. Törpüleme, kesim kadar kesin bir keskin uç bırakmaz ve yaralanma riskini azaltır.</p></div>
+    <div class="pop-sec" style="background:#E1F5FE"><h4>😴 Uyurken Kesme</h4><p style="font-size:.72rem;color:#555;line-height:1.6">Bebek derin uykudayken (gece emzirme sonrası ya da gündüz uykuya daldıktan 15-20 dakika sonra) eller daha sakin durur. Bebek makasını (küt uçlu) veya cımbızlı bebek tırnak makasını kullanın, iyi ışıkta çalışın.</p></div>
+    <div class="pop-sec" style="background:#E8F5E9"><h4>✂️ Batık Tırnak Önleme</h4><p style="font-size:.72rem;color:#555;line-height:1.6">Parmak tırnaklarını hafif yuvarlak, ayak tırnaklarını ise düz kesin — ayak tırnaklarını köşeli bırakmak batık tırnağı önler. Çok kısa kesmekten kaçının, tırnağın ucu parmak ucuyla aynı hizada bitmeli.</p></div>
+    <div class="pop-sec" style="background:#FFF3E0"><h4>🧼 Malzeme ve Hijyen</h4><p style="font-size:.72rem;color:#555;line-height:1.6">Sadece bebeğe özel, küt uçlu makas/törpü kullanın; her kullanım sonrası alkolle temizleyin. Kesim sırasında parmağı hafifçe tuttuğunuzdan ve cildi sıkıştırmadığınızdan emin olun.</p></div>
+    <div class="pop-sec" style="background:#FFEBEE"><h4>🩹 Enfeksiyon Belirtileri</h4><p style="font-size:.72rem;color:#555;line-height:1.6">Kazara kesik oluşursa temiz bezle nazikçe bastırın, kanama kendiliğinden durur. Kızarıklık, şişlik, sıcaklık artışı veya irin görürseniz pediatristinize başvurun.</p></div>
+    <div class="pop-tip"><div class="pop-tip-t">💡 İpucu</div><p>Emzirirken ya da bebeği kucağınızda sakinken kesmeyi deneyin — dikkat dağınıklığı hem sizin hem bebeğin gerginliğini azaltır.</p></div>
+    <button class="pop-btn" onclick="this.closest('.pop-ov').remove()">💅 Anladım!</button>
+  </div></div>`;
+  document.body.insertAdjacentHTML('beforeend',h);
+}
+
+// ══════════════════════════════════════════════════════
+// VACCINE SIDE EFFECTS GUIDE
+// ══════════════════════════════════════════════════════
+function showVaccineSideEffectsGuide(){
+  S.vaxSideEffectRead=true;checkAchievements();saveGame();
+  const h=`<div class="pop-ov" onclick="if(event.target===this)this.remove()"><div class="pop-box">
+    <div class="pop-rainbow" style="background:linear-gradient(90deg,#E3F2FD,#BBDEFB,#FFEBEE)"></div>
+    <span class="pop-ico">💉</span>
+    <div class="pop-title">Aşı Sonrası Yan Etki Yönetimi</div>
+    <div class="pop-sub">Normal tepkiler ile acil durumların ayrımı</div>
+    <div class="pop-sec" style="background:#E8F5E9"><h4>✅ Normal Reaksiyonlar (24-48 saat)</h4><p style="font-size:.72rem;color:#555;line-height:1.6">Hafif ateş (genelde 38-38.5°C), enjeksiyon yerinde kızarıklık/şişlik/hassasiyet, huzursuzluk, iştahsızlık ve uyku hali görülebilir. Bunlar bağışıklık sisteminin aşıya verdiği doğal yanıttır ve genelde 1-2 gün içinde geçer.</p></div>
+    <div class="pop-sec" style="background:#E3F2FD"><h4>🩹 Evde Yönetim</h4><p style="font-size:.72rem;color:#555;line-height:1.6">Doktorunuzun onayladığı dozda parasetamol verilebilir. Enjeksiyon bölgesine temiz, serin (sıcak değil) bir kompres uygulayabilirsiniz. Bol sıvı/emzirme devam etsin, bebeği rahat kıyafetlerle giydirin.</p></div>
+    <div class="pop-sec" style="background:#FFF3E0"><h4>🦵 Aşıya Özel Etkiler</h4><p style="font-size:.72rem;color:#555;line-height:1.6">DaBT-İPA-Hib grubu genelde bacakta/kolda ağrı ve şişlik yapar. KKK (kızamık-kızamıkçık-kabakulak) aşısından 1-2 hafta sonra hafif ateş ve döküntü görülebilir — bu gecikmiş ama normal bir tepkidir.</p></div>
+    <div class="pop-sec" style="background:#FFEBEE"><h4>🚨 Anormal / Acil Belirtiler</h4><p style="font-size:.72rem;color:#555;line-height:1.6">40°C üzeri ateş, 3 saatten uzun süren dinmeyen ağlama, nöbet (havale), bebeğin aşırı gevşek/tepkisiz olması acil değerlendirme gerektirir. Bunları fark ederseniz hemen pediatristinizi arayın veya acile başvurun.</p></div>
+    <div class="pop-sec" style="background:#FCE4EC"><h4>☎️ Ne Zaman 112?</h4><p style="font-size:.72rem;color:#555;line-height:1.6">Yüzde/dudakta şişme, yaygın kurdeşen, nefes almada ciddi zorluk veya morarma anafilaksi (ciddi alerjik reaksiyon) belirtisidir — bu son derece nadirdir ama görülürse hemen 112'yi arayın.</p></div>
+    <div class="pop-tip"><div class="pop-tip-t">💡 İpucu</div><p>Aşı sonrası ilk yarım saat genelde sağlık kuruluşunda beklenir — bu, nadir görülen ani reaksiyonları erken yakalamak içindir, endişelenmeyin.</p></div>
+    <button class="pop-btn" onclick="this.closest('.pop-ov').remove()">💉 Anladım!</button>
+  </div></div>`;
+  document.body.insertAdjacentHTML('beforeend',h);
+}
+
+// ══════════════════════════════════════════════════════
+// SPIT-UP VS VOMIT GUIDE
+// ══════════════════════════════════════════════════════
+function showSpitUpVsVomitGuide(){
+  S.spitVomitRead=true;checkAchievements();saveGame();
+  const h=`<div class="pop-ov" onclick="if(event.target===this)this.remove()"><div class="pop-box">
+    <div class="pop-rainbow" style="background:linear-gradient(90deg,#E8F5E9,#FFF9C4,#FFEBEE)"></div>
+    <span class="pop-ico">🤢</span>
+    <div class="pop-title">Tükürme mi, Kusma mı?</div>
+    <div class="pop-sub">Regürjitasyon ile kusmanın önemli farkları</div>
+    <div class="pop-sec" style="background:#E8F5E9"><h4>😌 Tükürme (Regürjitasyon)</h4><p style="font-size:.72rem;color:#555;line-height:1.6">Ağızdan yavaşça, zorlanmadan akan az miktarda süt/mama tükürmesidir. Bebek rahat, mutlu ve kilo alımı normaldir. Bebeklerin %50'sinden fazlasında ilk aylarda görülür, 12-18 ayda azalarak kaybolur.</p></div>
+    <div class="pop-sec" style="background:#FFF3E0"><h4>🌊 Kusma</h4><p style="font-size:.72rem;color:#555;line-height:1.6">Mide kaslarının kuvvetli kasılmasıyla içeriğin fışkırarak çıkmasıdır, genelde huzursuzluk ve ağlama eşlik eder. Ara sıra olan kusma çoğunlukla zararsızdır ama sıklığı/şiddeti artıyorsa değerlendirilmelidir.</p></div>
+    <div class="pop-sec" style="background:#FFEBEE"><h4>🚨 Projeksiyon Kusma Uyarısı (Pilor Stenozu)</h4><p style="font-size:.72rem;color:#555;line-height:1.6">2-8 haftalık bebeklerde her beslenmeden hemen sonra şiddetli, fışkırır tarzda kusma; kusma sonrası bebeğin hâlâ aç görünmesi ve kilo alamaması pilor stenozu belirtisi olabilir. Bu durum acil pediatrik değerlendirme gerektirir.</p></div>
+    <div class="pop-sec" style="background:#FCE4EC"><h4>⚠️ Safra Renkli (Yeşil) Kusma</h4><p style="font-size:.72rem;color:#555;line-height:1.6">Yeşil veya sarı-yeşil renkte kusma her zaman acildir — bağırsak tıkanıklığı gibi ciddi bir durumun işareti olabilir. Bunu görürseniz hemen acile başvurun.</p></div>
+    <div class="pop-sec" style="background:#E3F2FD"><h4>🩺 Ne Zaman Doktora?</h4><p style="font-size:.72rem;color:#555;line-height:1.6">Kilo alamıyor, kanlı/safra renkli kusma var, dehidrasyon belirtileri (az ıslak bez, çökük gözler) gösteriyorsa mutlaka pediatristinize başvurun.</p></div>
+    <div class="pop-tip"><div class="pop-tip-t">💡 İpucu</div><p>Beslenme sonrası ${S.babyName}'i 15-20 dakika dik tutmak ve sık ara vererek geğirtmek basit tükürmeleri belirgin şekilde azaltır.</p></div>
+    <button class="pop-btn" onclick="this.closest('.pop-ov').remove()">🤢 Anladım!</button>
+  </div></div>`;
+  document.body.insertAdjacentHTML('beforeend',h);
+}
+
+// ══════════════════════════════════════════════════════
+// NEWBORN SKIN CONDITIONS GUIDE
+// ══════════════════════════════════════════════════════
+function showBabyAcneSkinGuide(){
+  S.babyAcneRead=true;checkAchievements();saveGame();
+  const h=`<div class="pop-ov" onclick="if(event.target===this)this.remove()"><div class="pop-box">
+    <div class="pop-rainbow" style="background:linear-gradient(90deg,#FCE4EC,#F8BBD0,#FFF9C4)"></div>
+    <span class="pop-ico">🌸</span>
+    <div class="pop-title">Yenidoğan Cilt Durumları</div>
+    <div class="pop-sub">Bebek aknesi, milia ve daha fazlası — hangisi normal?</div>
+    <div class="pop-sec" style="background:#FCE4EC"><h4>🌟 Bebek Aknesi</h4><p style="font-size:.72rem;color:#555;line-height:1.6">2-4. haftalarda yüzde küçük kırmızı/beyaz sivilceler şeklinde görülür. Annenin hormonlarının etkisiyle oluşur, tamamen zararsızdır ve genelde birkaç hafta içinde kendiliğinden geçer. Sıkmayın, ovmayın.</p></div>
+    <div class="pop-sec" style="background:#FFF9C4"><h4>⚪ Milia</h4><p style="font-size:.72rem;color:#555;line-height:1.6">Burun, çene ve yanaklarda görülen küçük beyaz-sarı noktacıklardır; tıkanmış ter bezi kanallarından kaynaklanır. Yenidoğanların yarısında görülür, birkaç hafta içinde kendiliğinden kaybolur.</p></div>
+    <div class="pop-sec" style="background:#FFF3E0"><h4>🔴 Toksik Eritem (Erythema Toxicum)</h4><p style="font-size:.72rem;color:#555;line-height:1.6">Kırmızı lekelerin ortasında küçük beyaz/sarı noktacıklar bulunur, doğumdan sonraki ilk günlerde vücutta yer değiştirebilir. Adı ürkütücü olsa da tamamen zararsız ve geçicidir.</p></div>
+    <div class="pop-sec" style="background:#E1F5FE"><h4>💧 Kuru Cilt Bakımı</h4><p style="font-size:.72rem;color:#555;line-height:1.6">Parfümsüz, hipoalerjenik bebek nemlendiricisi kullanın. Banyoyu 5-10 dakikayla sınırlayın, ılık (sıcak değil) su kullanın ve banyo sonrası cildi hafifçe nemlendirin.</p></div>
+    <div class="pop-sec" style="background:#FFEBEE"><h4>🚨 Ne Zaman Doktora?</h4><p style="font-size:.72rem;color:#555;line-height:1.6">Döküntüye ateş eşlik ediyorsa, lezyonlar irinli/kabuklu görünüyorsa, hızla yayılıyorsa veya sarılıkla karışan bir renk değişimi varsa pediatristinize danışın.</p></div>
+    <div class="pop-tip"><div class="pop-tip-t">💡 İpucu</div><p>Yenidoğan cilt durumlarının çoğu "tedavi" değil zaman ister — sabırlı olun, ${S.babyName}'in cildi birkaç hafta içinde pürüzsüzleşecek.</p></div>
+    <button class="pop-btn" onclick="this.closest('.pop-ov').remove()">🌸 Anladım!</button>
+  </div></div>`;
+  document.body.insertAdjacentHTML('beforeend',h);
+}
+
+// ══════════════════════════════════════════════════════
+// TONGUE TIE GUIDE
+// ══════════════════════════════════════════════════════
+function showTongueTieGuide(){
+  S.tongueTieRead=true;checkAchievements();saveGame();
+  const h=`<div class="pop-ov" onclick="if(event.target===this)this.remove()"><div class="pop-box">
+    <div class="pop-rainbow" style="background:linear-gradient(90deg,#FFEBEE,#F8BBD0,#E1F5FE)"></div>
+    <span class="pop-ico">👅</span>
+    <div class="pop-title">Dil Bağı (Ankyloglossi)</div>
+    <div class="pop-sub">Emzirmeyi etkileyen sık görülen bir durum</div>
+    <div class="pop-sec" style="background:#FFEBEE"><h4>🔍 Belirtiler</h4><p style="font-size:.72rem;color:#555;line-height:1.6">Dilin ucu ağzı açtığında kalp şeklinde görünebilir, bebek dilini damağa kadar kaldıramaz veya dışarı tam çıkaramaz. Dil altındaki bağ dokusu (frenulum) beklenenden kısa/sıkıdır.</p></div>
+    <div class="pop-sec" style="background:#FFF3E0"><h4>🤱 Emzirmeye Etkisi</h4><p style="font-size:.72rem;color:#555;line-height:1.6">Anne meme başında ağrı, çatlama veya yassılaşma yaşayabilir; bebek uzun süre emmesine rağmen yeterince süt alamayabilir, sık huzursuzlanabilir ve kilo alımı yavaşlayabilir.</p></div>
+    <div class="pop-sec" style="background:#E3F2FD"><h4>🩺 Değerlendirme Süreci</h4><p style="font-size:.72rem;color:#555;line-height:1.6">Sertifikalı bir laktasyon danışmanı ve pediatrist (gerekirse KBB) birlikte değerlendirmelidir. Her sıkı frenulum mutlaka işlem gerektirmez — asıl belirleyici emzirme/beslenmenin fonksiyonel olarak etkilenip etkilenmediğidir.</p></div>
+    <div class="pop-sec" style="background:#E8F5E9"><h4>✂️ Frenotomi Kararı</h4><p style="font-size:.72rem;color:#555;line-height:1.6">Frenotomi (bağın kesilmesi) genelde hızlı, düşük riskli bir işlemdir ve klinik olarak emzirmeyi zorlaştırdığı doğrulandığında önerilir. Her vakada gerekli değildir — karar tıbbi değerlendirmeyle verilmelidir.</p></div>
+    <div class="pop-sec" style="background:#F3E5F5"><h4>📋 İşlem Sonrası</h4><p style="font-size:.72rem;color:#555;line-height:1.6">İşlem sonrası emzirme danışmanlığına devam etmek önemlidir — bebek yeni dil hareketini öğrenirken destek almak iyileşme sürecini hızlandırır.</p></div>
+    <div class="pop-tip"><div class="pop-tip-t">💡 İpucu</div><p>Emzirmede sürekli ağrı yaşıyorsanız bunu normal kabul etmeyin — erken laktasyon desteği hem sizi hem ${S.babyName}'i rahatlatabilir.</p></div>
+    <button class="pop-btn" onclick="this.closest('.pop-ov').remove()">👅 Anladım!</button>
+  </div></div>`;
+  document.body.insertAdjacentHTML('beforeend',h);
+}
+
+// ══════════════════════════════════════════════════════
+// FLAT HEAD (PLAGIOSEFALİ) GUIDE
+// ══════════════════════════════════════════════════════
+function showFlatHeadGuide(){
+  S.flatHeadRead=true;checkAchievements();saveGame();
+  const h=`<div class="pop-ov" onclick="if(event.target===this)this.remove()"><div class="pop-box">
+    <div class="pop-rainbow" style="background:linear-gradient(90deg,#E3F2FD,#B3E5FC,#E8EAF6)"></div>
+    <span class="pop-ico">🧢</span>
+    <div class="pop-title">Düz Kafa Sendromu (Plagiosefali)</div>
+    <div class="pop-sub">Önleme, pozisyonlama ve tedavi kararı</div>
+    <div class="pop-sec" style="background:#E3F2FD"><h4>🛡️ Önleme</h4><p style="font-size:.72rem;color:#555;line-height:1.6">Sırtüstü uyku SIDS riskini azaltmak için şarttır — bunu asla değiştirmeyin. Ancak gündüz uyanıkken bol karın üstü zamanı (tummy time) kafa şeklini korur ve boyun/omuz kaslarını güçlendirir.</p></div>
+    <div class="pop-sec" style="background:#E8F5E9"><h4>🔄 Pozisyonlama Teknikleri</h4><p style="font-size:.72rem;color:#555;line-height:1.6">Emzirme/beslenme sırasında baş yönünü değiştirin, beşikte bebeğin ilgisini çekebilecek nesneleri farklı yönlere koyun, kucağa alma ve taşıma şeklini çeşitlendirin. Bebek koltuğu/salıncakta uzun süre bırakmaktan kaçının.</p></div>
+    <div class="pop-sec" style="background:#FFF3E0"><h4>💆 Tortikollis İlişkisi</h4><p style="font-size:.72rem;color:#555;line-height:1.6">Boyun kasının kısalığı (tortikollis) bebeğin başını hep aynı yöne çevirmesine ve düzleşmeye yol açabilir. Bu durumda fizyoterapi egzersizleri düzleşmeyi de düzeltmeye yardımcı olur.</p></div>
+    <div class="pop-sec" style="background:#FCE4EC"><h4>⛑️ Kask Tedavisi Ne Zaman?</h4><p style="font-size:.72rem;color:#555;line-height:1.6">4-6 aydan sonra pozisyonel önlemlere rağmen orta-şiddetli asimetri devam ediyorsa, kraniyofasiyal uzman kask (helmet) tedavisini değerlendirebilir. Kask tedavisi genelde en etkili 4-8 ay aralığında uygulanır.</p></div>
+    <div class="pop-sec" style="background:#F3E5F5"><h4>🩺 Pediatrik Takip</h4><p style="font-size:.72rem;color:#555;line-height:1.6">Rutin kontrollerde pediatristiniz kafa şeklini değerlendirir. Asimetri fark ederseniz erken değerlendirme, ileride daha kolay çözüm anlamına gelir.</p></div>
+    <div class="pop-tip"><div class="pop-tip-t">💡 İpucu</div><p>Günde birkaç kez, kısa süreli karın üstü zamanı hem düz kafayı önler hem de motor gelişimi destekler — oyun gibi sunun.</p></div>
+    <button class="pop-btn" onclick="this.closest('.pop-ov').remove()">🧢 Anladım!</button>
+  </div></div>`;
+  document.body.insertAdjacentHTML('beforeend',h);
+}
+
+// ══════════════════════════════════════════════════════
+// WITCHING HOUR GUIDE
+// ══════════════════════════════════════════════════════
+function showWitchingHourGuide(){
+  S.witchingHourRead=true;checkAchievements();saveGame();
+  const h=`<div class="pop-ov" onclick="if(event.target===this)this.remove()"><div class="pop-box">
+    <div class="pop-rainbow" style="background:linear-gradient(90deg,#5C6BC0,#7986CB,#FFB74D)"></div>
+    <span class="pop-ico">🌆</span>
+    <div class="pop-title">Akşam Huzursuzluğu ("Cadı Saati")</div>
+    <div class="pop-sub">17-22 arası neden zorlaşıyor, nasıl atlatılır</div>
+    <div class="pop-sec" style="background:#E8EAF6"><h4>🕔 Neden 17-22 Arası?</h4><p style="font-size:.72rem;color:#555;line-height:1.6">Gün boyu biriken uyarılma, artan yorgunluk ve akşam kortizol seviyesindeki düşüş bir araya gelir. Emziren annelerde günün bu saatlerinde süt akış hızı da doğal olarak yavaşlayabilir — bu bebeği daha huzursuz gösterebilir ama süt yetersizliği anlamına gelmez.</p></div>
+    <div class="pop-sec" style="background:#FFF3E0"><h4>😢 Belirtiler</h4><p style="font-size:.72rem;color:#555;line-height:1.6">Aynı saatlerde tekrarlayan ağlama nöbetleri, sürekli emme isteği, kolay sakinleşmeme ve huzursuz kıvranma tipiktir. Genelde 3 haftalıktan itibaren başlar, 3-4. ayda belirgin şekilde azalır.</p></div>
+    <div class="pop-sec" style="background:#E1F5FE"><h4>🛟 Sağ Kalma Stratejileri</h4><p style="font-size:.72rem;color:#555;line-height:1.6">Sarmalama (swaddle), beyaz gürültü, karanlık/sakin ortam, kısa bir dış yürüyüş veya taze hava işe yarayabilir. Ebeveynler arasında "nöbet değişimi" yaparak ikisinin de nefes alacak zaman bulması önemlidir.</p></div>
+    <div class="pop-sec" style="background:#FCE4EC"><h4>💗 Beklentiyi Düşürmek</h4><p style="font-size:.72rem;color:#555;line-height:1.6">Bu saatlerde ev işlerini/misafirlikleri erteleyin, "mükemmel akşam" beklentisinden vazgeçin. Bebeğin ağlaması sizin ebeveynlik başarınızı yansıtmaz — bu dönem geçicidir.</p></div>
+    <div class="pop-sec" style="background:#FFEBEE"><h4>🩺 Kolikle Karışabilir mi?</h4><p style="font-size:.72rem;color:#555;line-height:1.6">Günde 3 saatten fazla, haftada 3 günden fazla, 3 haftadan uzun süren ağlama "kolik" kriterlerine girer. Ateş, kusma, kilo alamama gibi belirtiler eşlik ediyorsa pediatristinize danışın.</p></div>
+    <div class="pop-tip"><div class="pop-tip-t">💡 İpucu</div><p>${S.momName} ve ${S.dadName} sırayla dinlenme molası alırsa akşam saatlerini çok daha az yıpratıcı geçirirsiniz.</p></div>
+    <button class="pop-btn" onclick="this.closest('.pop-ov').remove()">🌆 Anladım!</button>
+  </div></div>`;
+  document.body.insertAdjacentHTML('beforeend',h);
+}
+
+// ══════════════════════════════════════════════════════
+// GROWTH SPURTS GUIDE
+// ══════════════════════════════════════════════════════
+function showGrowthSpurtsGuide(){
+  S.growthSpurtRead=true;checkAchievements();saveGame();
+  const h=`<div class="pop-ov" onclick="if(event.target===this)this.remove()"><div class="pop-box">
+    <div class="pop-rainbow" style="background:linear-gradient(90deg,#E8F5E9,#C8E6C9,#FFF9C4)"></div>
+    <span class="pop-ico">📈</span>
+    <div class="pop-title">Büyüme Atakları</div>
+    <div class="pop-sub">${S.babyName} birden çok acıkırsa endişelenmeyin</div>
+    <div class="pop-sec" style="background:#E8F5E9"><h4>📅 Hangi Haftalarda?</h4><p style="font-size:.72rem;color:#555;line-height:1.6">Büyüme atakları en sık 7-10. gün, 2-3. hafta, 6. hafta ve 3. ay civarında görülür; 6. ayda da bir tane daha yaşanabilir. Her bebekte zamanlama biraz farklılık gösterebilir.</p></div>
+    <div class="pop-sec" style="background:#FFF9C4"><h4>🍽️ Belirtiler: Küme Beslenme</h4><p style="font-size:.72rem;color:#555;line-height:1.6">Bebek normalden çok daha sık emmek/beslenmek ister ("cluster feeding"), huzursuzlaşabilir ve uyku düzeni geçici olarak bozulabilir. Bu, vücudun büyüme için daha fazla enerjiye ihtiyaç duymasının doğal sonucudur.</p></div>
+    <div class="pop-sec" style="background:#E3F2FD"><h4>⏳ Kaç Gün Sürer?</h4><p style="font-size:.72rem;color:#555;line-height:1.6">Genellikle 2-3 gün içinde normale döner, bazen bir haftaya kadar uzayabilir. Sabırla devam edin — bu geçici bir dönemdir, düzen kısa süre sonra geri gelir.</p></div>
+    <div class="pop-sec" style="background:#FCE4EC"><h4>🤱 Anne Sütü Yeterliliği</h4><p style="font-size:.72rem;color:#555;line-height:1.6">Küme beslenme aslında süt üretimini artıran doğal bir mekanizmadır — bebek sık emerek vücuda "daha fazla süt üret" sinyali gönderir. Bu dönemde formülle takviye gerekmez, sık emzirmeye devam etmek yeterlidir.</p></div>
+    <div class="pop-sec" style="background:#FFEBEE"><h4>🩺 Ne Zaman Doktora?</h4><p style="font-size:.72rem;color:#555;line-height:1.6">Huzursuzluk/aşırı açlık 1-2 haftadan uzun sürüyorsa, kilo alımı düzenli kontrollerde yetersizse veya ıslak bez sayısı azalıyorsa pediatristinize danışın.</p></div>
+    <div class="pop-tip"><div class="pop-tip-t">💡 İpucu</div><p>Büyüme atağı sırasında kendinize de ekstra su ve destek ayırın — sık emzirmek yorucu olabilir, bu tamamen normal.</p></div>
+    <button class="pop-btn" onclick="this.closest('.pop-ov').remove()">📈 Anladım!</button>
+  </div></div>`;
+  document.body.insertAdjacentHTML('beforeend',h);
+}
+
+// ══════════════════════════════════════════════════════
+// COLIC MASSAGE GUIDE (I-L-U)
+// ══════════════════════════════════════════════════════
+function showBabyMassageColicGuide(){
+  S.colicMassageRead=true;checkAchievements();saveGame();
+  const h=`<div class="pop-ov" onclick="if(event.target===this)this.remove()"><div class="pop-box">
+    <div class="pop-rainbow" style="background:linear-gradient(90deg,#FFF3E0,#FFE0B2,#E1F5FE)"></div>
+    <span class="pop-ico">🤲</span>
+    <div class="pop-title">Gaz / Kolik Masaj Teknikleri</div>
+    <div class="pop-sub">I-L-U masajı ve bisiklet hareketiyle rahatlatma</div>
+    <div class="pop-sec" style="background:#FFF3E0"><h4>1️⃣ "I" Hareketi</h4><p style="font-size:.72rem;color:#555;line-height:1.6">Parmak uçlarınızla bebeğin karnının sol tarafında, göğüs kafesinin altından kasık hizasına kadar düz bir çizgi çizerek yavaşça inin (kalın bağırsağın inen bölümünü takip eder).</p></div>
+    <div class="pop-sec" style="background:#FFE0B2"><h4>2️⃣ "L" Hareketi</h4><p style="font-size:.72rem;color:#555;line-height:1.6">Karnın üst kısmında sağdan sola yatay bir çizgi çizin, sonra sol taraftan aşağı inerek ters "L" harfi oluşturun.</p></div>
+    <div class="pop-sec" style="background:#E1F5FE"><h4>3️⃣ "U" Hareketi</h4><p style="font-size:.72rem;color:#555;line-height:1.6">Sağ alt karından başlayıp yukarı, karşıya (göbek üzerinden) ve sol alt karına inerek ters "U" şekli çizin — bu tüm kalın bağırsak yolunu takip eder ve gazın ilerlemesine yardımcı olur.</p></div>
+    <div class="pop-sec" style="background:#E8F5E9"><h4>🚲 Bisiklet Hareketi</h4><p style="font-size:.72rem;color:#555;line-height:1.6">Bebek sırtüstü yatarken bacaklarını nazikçe tutup sırayla karnına doğru çekip açarak bisiklet çevirme hareketi yaptırın — bu da gazın çıkışını kolaylaştırır.</p></div>
+    <div class="pop-sec" style="background:#F3E5F5"><h4>📋 Adım Adım Uygulama</h4><p style="font-size:.72rem;color:#555;line-height:1.6">Ellerinizi ısıtın, hafif bebek yağı/losyon sürün, beslenmeden hemen sonra değil aralarda uygulayın. Nazik ve sabit basınç kullanın; bebek rahatsız görünüyorsa (ağlıyor, geriliyor) hemen durdurun.</p></div>
+    <div class="pop-tip"><div class="pop-tip-t">💡 İpucu</div><p>Masaj sırasında sakin bir ses tonuyla konuşmak ya da ninni söylemek hem sizi hem ${S.babyName}'i rahatlatır ve bağlanmayı güçlendirir.</p></div>
+    <button class="pop-btn" onclick="this.closest('.pop-ov').remove()">🤲 Anladım!</button>
+  </div></div>`;
+  document.body.insertAdjacentHTML('beforeend',h);
+}
+
+// ══════════════════════════════════════════════════════
+// PACIFIER PROS/CONS GUIDE
+// ══════════════════════════════════════════════════════
+function showPacifierProConGuide(){
+  S.pacifierProConRead=true;checkAchievements();saveGame();
+  const h=`<div class="pop-ov" onclick="if(event.target===this)this.remove()"><div class="pop-box">
+    <div class="pop-rainbow" style="background:linear-gradient(90deg,#E1F5FE,#B3E5FC,#F8BBD0)"></div>
+    <span class="pop-ico">🍼</span>
+    <div class="pop-title">Emzik: Artı ve Eksileri</div>
+    <div class="pop-sub">Ne zaman verilir, ne zaman bırakılır?</div>
+    <div class="pop-sec" style="background:#E8F5E9"><h4>✅ Artıları</h4><p style="font-size:.72rem;color:#555;line-height:1.6">Uyku sırasında emzik kullanımı SIDS (ani bebek ölümü sendromu) riskini azalttığı gösterilmiştir. Ayrıca bebeğin doğal emme ihtiyacını karşılayarak kendini sakinleştirmesine yardımcı olur.</p></div>
+    <div class="pop-sec" style="background:#FFEBEE"><h4>⚠️ Eksileri</h4><p style="font-size:.72rem;color:#555;line-height:1.6">Emzirme oturmadan (ilk 3-4 hafta içinde) verilirse meme karışıklığına yol açabilir. Uzun süreli/sık kullanımda orta kulak iltihabı riskinde hafif artış ve ileride diş/damak gelişiminde etki görülebilir.</p></div>
+    <div class="pop-sec" style="background:#E3F2FD"><h4>📅 Ne Zaman Verilir?</h4><p style="font-size:.72rem;color:#555;line-height:1.6">Emzirme iyi oturduktan sonra (genelde 3-4 hafta), özellikle uyku zamanlarında verilmesi önerilir. Formülle beslenen bebeklerde bu bekleme gerekmeyebilir.</p></div>
+    <div class="pop-sec" style="background:#FFF3E0"><h4>🛑 Ne Zaman Bırakılır?</h4><p style="font-size:.72rem;color:#555;line-height:1.6">Amerikan Pediatri Akademisi (AAP) 6 aydan sonra kademeli azaltmayı, çoğu uzman 2-4 yaş arasında tamamen bırakılmasını önerir — diş ve konuşma gelişimini olumsuz etkilememesi için.</p></div>
+    <div class="pop-sec" style="background:#F3E5F5"><h4>🤱 Meme Karışıklığı</h4><p style="font-size:.72rem;color:#555;line-height:1.6">Emzik ve biberonun erken/sık verilmesi bebeğin meme alma tekniğini değiştirebilir. Emzirme yeni başlıyorsa önce doğal emme rutinini oturtmak önceliklidir.</p></div>
+    <div class="pop-tip"><div class="pop-tip-t">💡 İpucu</div><p>Emziği asla boyuna ip/zincirle asmayın (boğulma riski) — sadece bebek klipsi onaylı, kısa aparatlar güvenlidir.</p></div>
+    <button class="pop-btn" onclick="this.closest('.pop-ov').remove()">🍼 Anladım!</button>
+  </div></div>`;
+  document.body.insertAdjacentHTML('beforeend',h);
+}
+
+// ══════════════════════════════════════════════════════
+// BOTTLE REFUSAL GUIDE
+// ══════════════════════════════════════════════════════
+function showBottleRefusalGuide(){
+  S.bottleRefusalRead=true;checkAchievements();saveGame();
+  const h=`<div class="pop-ov" onclick="if(event.target===this)this.remove()"><div class="pop-box">
+    <div class="pop-rainbow" style="background:linear-gradient(90deg,#FFF9C4,#FFECB3,#E1F5FE)"></div>
+    <span class="pop-ico">🚫</span>
+    <div class="pop-title">Biberon Reddi</div>
+    <div class="pop-sub">${S.babyName} biberonu kabul etmiyor mu? Sabırla çözülür</div>
+    <div class="pop-sec" style="background:#FFF9C4"><h4>🔄 Anne Sütünden Biberona Geçiş</h4><p style="font-size:.72rem;color:#555;line-height:1.6">Biberonu anne dışında biri (baba, büyükanne, bakıcı) verirse geçiş genelde daha kolay olur — bebek annenin kokusunu/göğsünü yakında hissedince beklentisi karışabilir. Farklı biberon ucu şekilleri/materyalleri deneyin.</p></div>
+    <div class="pop-sec" style="background:#E1F5FE"><h4>🎯 Pratik Taktikler</h4><p style="font-size:.72rem;color:#555;line-height:1.6">Bebek çok aç değilken, sakin bir ruh halindeyken deneyin — aşırı açlıkta yeni bir şey denemek zorlaştırır. Farklı pozisyonlarda (dik, yan, başka biri kucağında) deneyin, biberonu vücut ısısına yakın ılık tutun.</p></div>
+    <div class="pop-sec" style="background:#E8F5E9"><h4>🥄 Kaşık / Bardak Alternatifi</h4><p style="font-size:.72rem;color:#555;line-height:1.6">Biberon tamamen reddediliyorsa açık bardaktan küçük yudumlar veya kaşıkla azar azar süt verilebilir. 6 aydan büyük bebeklerde eğitim bardağı (sippy cup) da bir köprü olabilir.</p></div>
+    <div class="pop-sec" style="background:#FCE4EC"><h4>⏳ Sabır ve Tutarlılık</h4><p style="font-size:.72rem;color:#555;line-height:1.6">Bazı bebeklerin biberonu kabul etmesi günler/haftalar sürebilir. Her denemeyi kısa tutun, zorlamayın — zorlama bebeği biberondan daha da uzaklaştırabilir.</p></div>
+    <div class="pop-sec" style="background:#FFEBEE"><h4>🩺 Ne Zaman Doktora?</h4><p style="font-size:.72rem;color:#555;line-height:1.6">Uzun süreli reddiyle birlikte kilo kaybı, az ıslak bez veya susama belirtileri (kuru dudak, çökük gözler) varsa pediatristinize danışın.</p></div>
+    <div class="pop-tip"><div class="pop-tip-t">💡 İpucu</div><p>İşe dönüş öncesi biberonu önceden (2-4 hafta) tanıtmaya başlamak geçiş sürecini çok daha az stresli yapar.</p></div>
+    <button class="pop-btn" onclick="this.closest('.pop-ov').remove()">🚫 Anladım!</button>
+  </div></div>`;
+  document.body.insertAdjacentHTML('beforeend',h);
+}
+
+// ══════════════════════════════════════════════════════
+// TEETH BRUSHING GUIDE (YAŞA GÖRE)
+// ══════════════════════════════════════════════════════
+function showTeethBrushingGuide(){
+  S.teethBrushRead=true;checkAchievements();saveGame();
+  const h=`<div class="pop-ov" onclick="if(event.target===this)this.remove()"><div class="pop-box">
+    <div class="pop-rainbow" style="background:linear-gradient(90deg,#E1F5FE,#B3E5FC,#E8F5E9)"></div>
+    <span class="pop-ico">🪥</span>
+    <div class="pop-title">Yaşa Göre Diş Fırçalama</div>
+    <div class="pop-sub">İlk dişten önce, sonra ve direnç yönetimi</div>
+    <div class="pop-sec" style="background:#E1F5FE"><h4>🍼 İlk Diş Öncesi (0-6 ay)</h4><p style="font-size:.72rem;color:#555;line-height:1.6">Diş çıkmadan önce bile nemli, temiz bir gazlı bez veya parmak fırçasıyla diş etlerini günde 1-2 kez silin. Bu, bebeği ağız temizliği rutinine alıştırır ve bakteri birikimini azaltır.</p></div>
+    <div class="pop-sec" style="background:#E8F5E9"><h4>🦷 İlk Diş Çıkınca</h4><p style="font-size:.72rem;color:#555;line-height:1.6">WHO/AAP önerisi: pirinç tanesi kadar (yaklaşık 0.1g) florürlü diş macunu, yumuşak kıllı bebek diş fırçası ile günde 2 kez fırçalayın. Florür diş çürüğünü önlemede güvenli ve etkilidir.</p></div>
+    <div class="pop-sec" style="background:#FFF9C4"><h4>🌟 3 Yaşına Kadar</h4><p style="font-size:.72rem;color:#555;line-height:1.6">3 yaşından itibaren bezelye tanesi kadar diş macunu kullanılabilir. Bu yaşa kadar fırçalama tamamen ebeveyn kontrolünde olmalı, çocuk yutmaması için macun miktarı az tutulmalı.</p></div>
+    <div class="pop-sec" style="background:#FCE4EC"><h4>😤 Direnç Yönetimi</h4><p style="font-size:.72rem;color:#555;line-height:1.6">Şarkı söyleyerek, ayna karşısında birlikte fırçalayarak, sırayla "önce sen önce ben" oyunuyla direnci azaltabilirsiniz. Her gün aynı saatte tutarlı bir rutin oluşturmak direnci zamanla azaltır.</p></div>
+    <div class="pop-sec" style="background:#F3E5F5"><h4>🩺 İlk Diş Hekimi Ziyareti</h4><p style="font-size:.72rem;color:#555;line-height:1.6">AAP, ilk diş çıktığında veya en geç 1 yaşında ilk diş hekimi kontrolünü önerir — erken tanı ileride büyük sorunları önler.</p></div>
+    <div class="pop-tip"><div class="pop-tip-t">💡 İpucu</div><p>Fırçalamayı ${S.babyName} ile göz teması kurarak, oyun havasında yapmak hem işbirliğini artırır hem de günlük rutini keyifli hale getirir.</p></div>
+    <button class="pop-btn" onclick="this.closest('.pop-ov').remove()">🪥 Anladım!</button>
+  </div></div>`;
+  document.body.insertAdjacentHTML('beforeend',h);
+}
+
+// ══════════════════════════════════════════════════════
+// BABY-LED FREE PLAY GUIDE
+// ══════════════════════════════════════════════════════
+function showBabyledPlayGuide(){
+  S.babyledPlayRead=true;checkAchievements();saveGame();
+  const h=`<div class="pop-ov" onclick="if(event.target===this)this.remove()"><div class="pop-box">
+    <div class="pop-rainbow" style="background:linear-gradient(90deg,#E8F5E9,#C8E6C9,#FFF9C4)"></div>
+    <span class="pop-ico">🧸</span>
+    <div class="pop-title">Bebek Liderliğinde Serbest Oyun</div>
+    <div class="pop-sub">Müdahale etmeden gözlemlemenin gücü</div>
+    <div class="pop-sec" style="background:#E8F5E9"><h4>👀 Müdahalesiz Gözlem</h4><p style="font-size:.72rem;color:#555;line-height:1.6">Bebeğin kendi başına bir nesneyi keşfetmesine, denemesine ve hatta hayal kırıklığı yaşayıp yeniden denemesine izin verin. Sürekli yönlendirmek/yardım etmek yerine önce izleyin — bebek çoğu zaman kendi çözümünü bulur.</p></div>
+    <div class="pop-sec" style="background:#FFF9C4"><h4>😐 Sıkılmanın Faydası</h4><p style="font-size:.72rem;color:#555;line-height:1.6">Her an eğlendirmek zorunlu değildir. Kısa süreli "sıkılma" anları bebeğin kendi iç dünyasında yaratıcılık geliştirmesine ve öz-yönetim becerisi kazanmasına alan açar.</p></div>
+    <div class="pop-sec" style="background:#E1F5FE"><h4>📦 Oyuncaksız Oyun</h4><p style="font-size:.72rem;color:#555;line-height:1.6">Tahta kaşık, plastik kase, kumaş parçası, karton kutu gibi basit ev eşyaları genelde pahalı oyuncaklardan daha uzun süre ilgi çeker ve hayal gücünü tetikler. "Açık uçlu" nesneler farklı şekillerde kullanılabildiği için gelişimi destekler.</p></div>
+    <div class="pop-sec" style="background:#FCE4EC"><h4>🛡️ Güvenli Alan Hazırlama</h4><p style="font-size:.72rem;color:#555;line-height:1.6">Serbest oyun için güvenli, gözlemlenebilir bir köşe hazırlayın — küçük parçalar, keskin kenarlar ve düşme riskleri olmadığından emin olun. Böylece siz de rahatça uzaktan izleyebilirsiniz.</p></div>
+    <div class="pop-sec" style="background:#F3E5F5"><h4>🌱 Gelişimsel Faydalar</h4><p style="font-size:.72rem;color:#555;line-height:1.6">Serbest oyun problem çözme, dikkat süresi, motor beceri ve duygusal öz-düzenlemeyi destekler. Yapılandırılmış aktivitelerle serbest oyunu dengelemek en sağlıklı yaklaşımdır.</p></div>
+    <div class="pop-tip"><div class="pop-tip-t">💡 İpucu</div><p>Günde 15-20 dakikalık "sadece izle, müdahale etme" seansları bile ${S.babyName}'in bağımsız keşif özgüvenini büyük ölçüde destekler.</p></div>
+    <button class="pop-btn" onclick="this.closest('.pop-ov').remove()">🧸 Anladım!</button>
+  </div></div>`;
+  document.body.insertAdjacentHTML('beforeend',h);
+}
+
+// ══════════════════════════════════════════════════════
+// ROUTINE CHANGES MANAGEMENT GUIDE
+// ══════════════════════════════════════════════════════
+function showRoutineChangesGuide(){
+  S.routineChangeRead=true;checkAchievements();saveGame();
+  const h=`<div class="pop-ov" onclick="if(event.target===this)this.remove()"><div class="pop-box">
+    <div class="pop-rainbow" style="background:linear-gradient(90deg,#E1F5FE,#B39DDB,#FFE0B2)"></div>
+    <span class="pop-ico">🔄</span>
+    <div class="pop-title">Rutin Bozulmaları Yönetimi</div>
+    <div class="pop-sub">Taşınma, seyahat, kardeş ve kreş geçişleri</div>
+    <div class="pop-sec" style="background:#E1F5FE"><h4>📦 Taşınma</h4><p style="font-size:.72rem;color:#555;line-height:1.6">Yeni evi/odayı önceden fotoğraf veya kısa ziyaretle tanıtın. Bebeğin tanıdık eşyalarını (battaniye, oyuncak) yanınızda taşıyın, taşınma sonrası uyku/beslenme rutinini mümkün olduğunca aynı tutmaya çalışın.</p></div>
+    <div class="pop-sec" style="background:#FFF3E0"><h4>✈️ Seyahat</h4><p style="font-size:.72rem;color:#555;line-height:1.6">Uyku ve beslenme saatlerini olabildiğince yakın tutmaya çalışın ama esnek olun. Tanıdık "çapa noktaları" (aynı ninni, aynı battaniye, aynı yatış ritüeli) değişimin ortasında güven verir.</p></div>
+    <div class="pop-sec" style="background:#F3E5F5"><h4>👶 Kardeş Doğumu</h4><p style="font-size:.72rem;color:#555;line-height:1.6">Büyük kardeşe bebeğin gelişini kademeli anlatın, bebek geldiğinde büyük kardeşe özel bir "büyük kardeş hediyesi" hazırlayabilirsiniz. Her gün büyük kardeşle bire bir kısa bir zaman ayırmak kıskançlığı azaltır.</p></div>
+    <div class="pop-sec" style="background:#E8F5E9"><h4>🏫 Kreş Başlangıcı</h4><p style="font-size:.72rem;color:#555;line-height:1.6">Kademeli alışma (birkaç gün kısa süreli ziyaretler, sonra yarım gün, sonra tam gün) geçişi kolaylaştırır. Tutarlı bir "vedalaşma ritüeli" (kısa sarılma + sabit cümle) bebeğe güven verir — vedalaşırken sessizce kaçmayın.</p></div>
+    <div class="pop-sec" style="background:#FCE4EC"><h4>🌙 Genel İlke: Regresyon Normaldir</h4><p style="font-size:.72rem;color:#555;line-height:1.6">Herhangi bir büyük değişim döneminde uyku/yeme düzeninde geçici gerileme (regresyon) beklenen bir tepkidir. Tutarlılık ve sabırla birkaç hafta içinde eski düzene dönülür.</p></div>
+    <div class="pop-tip"><div class="pop-tip-t">💡 İpucu</div><p>Değişim dönemlerinde aynı anda birden fazla büyük değişikliği (ör. kreş + emzik bırakma) yapmamaya çalışın — bir seferde bir geçiş bebeği daha az yorar.</p></div>
+    <button class="pop-btn" onclick="this.closest('.pop-ov').remove()">🔄 Anladım!</button>
+  </div></div>`;
+  document.body.insertAdjacentHTML('beforeend',h);
+}
+
+// ══════════════════════════════════════════════════════
+// EMERGENCY ROOM DECISION GUIDE
+// ══════════════════════════════════════════════════════
+function showEmergencyRoomGuide(){
+  S.erGuideRead=true;checkAchievements();saveGame();
+  const h=`<div class="pop-ov" onclick="if(event.target===this)this.remove()"><div class="pop-box">
+    <div class="pop-rainbow" style="background:linear-gradient(90deg,#FFEBEE,#EF9A9A,#FFCDD2)"></div>
+    <span class="pop-ico">🚑</span>
+    <div class="pop-title">Acile Gitmeli mi? Rehberi</div>
+    <div class="pop-sub">Yaşa göre kırmızı çizgiler ve acil çantası</div>
+    <div class="pop-sec" style="background:#FFEBEE"><h4>👶 0-3 Ay: En Düşük Eşik</h4><p style="font-size:.72rem;color:#555;line-height:1.6">Bu yaşta 38°C ve üzeri ateş HER ZAMAN acil değerlendirme gerektirir — bekletmeyin. Dakikada 60'ın üzerinde solunum, emmeyi tamamen reddetme veya aşırı uykululuk da acil işaretlerdir.</p></div>
+    <div class="pop-sec" style="background:#FFF3E0"><h4>🍼 3-12 Ay</h4><p style="font-size:.72rem;color:#555;line-height:1.6">39°C üzeri ateş + huzursuzluk, dehidrasyon belirtileri (az ıslak bez, çökük gözler, kuru ağız), nöbet (havale) veya 24 saatten uzun süren kusma acil değerlendirme gerektirir.</p></div>
+    <div class="pop-sec" style="background:#FCE4EC"><h4>🫁 Her Yaşta: Solunum Sıkıntısı</h4><p style="font-size:.72rem;color:#555;line-height:1.6">Göğüs kafesinin içe çekilmesi, burun kanatlarının açılıp kapanması, dudak/tırnaklarda morarma (siyanoz) her yaşta acil bir durumdur — beklemeden acile gidin.</p></div>
+    <div class="pop-sec" style="background:#E3F2FD"><h4>🧠 Bilinç Değişiklikleri</h4><p style="font-size:.72rem;color:#555;line-height:1.6">Bebek uyandırılamıyor, tepkisiz veya aşırı gevşek/uyuşuk görünüyorsa bu acil bir nörolojik değerlendirme gerektirir.</p></div>
+    <div class="pop-sec" style="background:#E8F5E9"><h4>🎒 Acil Çantası</h4><p style="font-size:.72rem;color:#555;line-height:1.6">Aşı kartı, kullanılan ilaç listesi, kimlik/sigorta bilgileri, yedek bez ve mama/biberon, telefon şarj cihazı acil durum çantasında hazır bulunmalı.</p></div>
+    <div class="pop-tip"><div class="pop-tip-t">🆘 112 Ne Zaman Aranmalı?</div><p>Nefes almıyor veya morarma var, bilinç kaybı, kontrol edilemeyen kanama, boğulma veya ciddi alerjik reaksiyon (yüzde şişme, nefes darlığı) varsa hemen 112'yi arayın — bu durumlarda vakit kaybetmeyin.</p></div>
+    <button class="pop-btn" onclick="this.closest('.pop-ov').remove()">🚑 Anladım!</button>
+  </div></div>`;
+  document.body.insertAdjacentHTML('beforeend',h);
+}
+
+// ══════════════════════════════════════════════════════
+// PINCER GRASP / FINE MOTOR MILESTONES GUIDE
+// ══════════════════════════════════════════════════════
+function showPincerGraspGuide(){
+  S.pincerGraspRead=true;checkAchievements();saveGame();
+  const h=`<div class="pop-ov" onclick="if(event.target===this)this.remove()"><div class="pop-box">
+    <div class="pop-rainbow" style="background:linear-gradient(90deg,#E1F5FE,#B3E5FC,#E8F5E9)"></div>
+    <span class="pop-ico">🤏</span>
+    <div class="pop-title">İnce Motor Kilometre Taşları</div>
+    <div class="pop-sub">${S.babyName}'in eldeki becerileri aya göre nasıl gelişiyor</div>
+    <div class="pop-sec" style="background:#E1F5FE"><h4>🖐️ 6 Ay: Avuç Kavrama</h4><p style="font-size:.72rem;color:#555;line-height:1.6">Bebek nesneleri tüm avuçla, parmakları birlikte kullanarak kavrar (palmar grasp). Bu, ince motor gelişiminin ilk büyük adımıdır.</p></div>
+    <div class="pop-sec" style="background:#E8F5E9"><h4>🤏 9-12 Ay: Kıskaç Kavrama (Pincer Grasp)</h4><p style="font-size:.72rem;color:#555;line-height:1.6">Baş parmak ve işaret parmağını kullanarak küçük nesneleri (bezelye tanesi büyüklüğünde parmak yiyecekler gibi) tutabilir. Bu beceri ince motor koordinasyonda önemli bir dönüm noktasıdır.</p></div>
+    <div class="pop-sec" style="background:#FFF9C4"><h4>🥄 12-24 Ay: Kaşık Kullanımı</h4><p style="font-size:.72rem;color:#555;line-height:1.6">12-18 ayda kaşığı kendi başına kullanmayı dener (çoğu içerik dökülür), 18-24 ayda daha kontrollü ve az dökerek yemeye başlar. Kule yapma (2-4 küp üst üste) de bu dönemde görülür.</p></div>
+    <div class="pop-sec" style="background:#F3E5F5"><h4>✏️ Çizim Gelişimi</h4><p style="font-size:.72rem;color:#555;line-height:1.6">12-18 ayda kalemle tesadüfi çiziktirme başlar, 2 yaşta dikey/yatay çizgi çizebilir, 3 yaşta daireye benzer şekiller çizmeye başlar.</p></div>
+    <div class="pop-sec" style="background:#FCE4EC"><h4>🩺 Ne Zaman Doktora?</h4><p style="font-size:.72rem;color:#555;line-height:1.6">12 ayda kıskaç kavrama hiç gelişmemişse, bir elin çok erken (12 aydan önce) belirgin şekilde baskın hale gelmesi (diğer elin hiç kullanılmaması) pediatristle paylaşılmalıdır.</p></div>
+    <div class="pop-tip"><div class="pop-tip-t">💡 İpucu</div><p>Küçük parmak yiyecekleri (haşlanmış sebze parçaları, meyve dilimleri) sunmak kıskaç kavramayı doğal ve eğlenceli şekilde geliştirir — boğulma riskine karşı her zaman gözetim altında olun.</p></div>
+    <button class="pop-btn" onclick="this.closest('.pop-ov').remove()">🤏 Anladım!</button>
+  </div></div>`;
+  document.body.insertAdjacentHTML('beforeend',h);
+}
+
+// ══════════════════════════════════════════════════════
+// SECOND BABY PREPARATION GUIDE
+// ══════════════════════════════════════════════════════
+function showSecondBabyGuide(){
+  S.secondBabyRead=true;checkAchievements();saveGame();
+  const h=`<div class="pop-ov" onclick="if(event.target===this)this.remove()"><div class="pop-box">
+    <div class="pop-rainbow" style="background:linear-gradient(90deg,#F8BBD0,#F48FB1,#B3E5FC)"></div>
+    <span class="pop-ico">👨‍👩‍👧‍👦</span>
+    <div class="pop-title">İkinci Bebeğe Hazırlık</div>
+    <div class="pop-sub">${S.momName} ve ${S.dadName} için aile büyürken denge kurma rehberi</div>
+    <div class="pop-sec" style="background:#F8BBD0"><h4>📊 Aradaki Yaş Farkı Dinamikleri</h4><p style="font-size:.72rem;color:#555;line-height:1.6">2 yaştan küçük farkta fiziksel bakım yükü fazladır ama kıskançlık genelde daha az bilinçlidir. 2-4 yaş farkında kıskançlık daha belirgin olabilir ama büyük kardeş yardımcı da olabilir. 4+ yaş farkında bağımsızlık kolaylık sağlar ama ilgi alanları daha farklı olabilir. Her aralığın kendine göre avantajı vardır.</p></div>
+    <div class="pop-sec" style="background:#E1F5FE"><h4>📋 Lojistik Planlama</h4><p style="font-size:.72rem;color:#555;line-height:1.6">Gebelik sırasında büyük kardeşin rutinini olabildiğince koruyun. Doğum sonrası ilk haftalar için yemek, ev işi ve bakım desteği (aile, arkadaş, profesyonel yardım) önceden planlayın — bu dönemde yardım istemek güçsüzlük değil bilgeliktir.</p></div>
+    <div class="pop-sec" style="background:#E8F5E9"><h4>👧 Büyük Kardeş Hazırlığı</h4><p style="font-size:.72rem;color:#555;line-height:1.6">Bebek geldiğinde büyük kardeşe özel küçük bir "kardeş hediyesi" hazırlayın. Kardeş temalı resimli kitaplar ve rol yapma oyunlarıyla değişimi önceden anlatın. Büyük kardeşi bebeğe bez getirme gibi küçük görevlerle dahil edin ama asla zorlamayın.</p></div>
+    <div class="pop-sec" style="background:#FFF3E0"><h4>💞 Bağlanma ve Bire Bir Zaman</h4><p style="font-size:.72rem;color:#555;line-height:1.6">Her iki çocuğa da düzenli, kesintisiz bire bir zaman ayırmaya çalışın — büyük kardeş için 10-15 dakikalık özel oyun zamanı bile fark yaratır. Kıskançlık ve gerileme (regresyon) davranışları bu dönemde normaldir, sabırla karşılayın.</p></div>
+    <div class="pop-sec" style="background:#F3E5F5"><h4>🧘 Anne-Baba Kendine Şefkat</h4><p style="font-size:.72rem;color:#555;line-height:1.6">İş bölümünü netleştirin, birbirinizden yardım istemekten çekinmeyin. İlk birkaç ay kaotik hissetmesi tamamen normaldir — kendinize karşı nazik olun, mükemmeliyetçilikten uzak durun.</p></div>
+    <div class="pop-tip"><div class="pop-tip-t">💡 İpucu</div><p>Doğumdan sonra ilk buluşmada bebeği büyük kardeşin kucağına değil, ellerinizde tutarak tanıştırın ve büyük kardeşe "sen de bana yardım edebilirsin" diyerek özel hissettirin.</p></div>
+    <button class="pop-btn" onclick="this.closest('.pop-ov').remove()">👨‍👩‍👧‍👦 Anladım!</button>
   </div></div>`;
   document.body.insertAdjacentHTML('beforeend',h);
 }
