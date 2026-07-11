@@ -4801,7 +4801,7 @@ function saveBirthStory(){
   playSound('milestone');
   addLog('📖 Doğum hikayesi kaydedildi! Unutulmaz bir an 💖','ms');
   showToast('💖 Doğum hikayeniz kaydedildi! +80 GP');
-  document.querySelector('.pop-ov').remove();
+  {const _ovs=document.querySelectorAll('.pop-ov');if(_ovs.length)_ovs[_ovs.length-1].remove();}
 }
 
 // ══════════════════════════════════════════════════════
@@ -5005,7 +5005,7 @@ function saveFirstWord(){
   playSound('milestone');
   addLog(`🗣️ İlk kelime kaydedildi: "${word}" — ${S.ageMonths}. ayda!`,'ms');
   showToast(`🗣️ "${word}" kaydedildi! +60 GP`);
-  document.querySelector('.pop-ov').remove();
+  {const _ovs=document.querySelectorAll('.pop-ov');if(_ovs.length)_ovs[_ovs.length-1].remove();}
   checkAchievements();
   showFirstWords();
 }
@@ -5213,7 +5213,7 @@ function saveSleepEntry(){
   spawnParticles(['😴','⭐','🌙'],3);
   showToast(`😴 ${hrs}s uyku kaydedildi! +${bonus} GP`);
   addLog(`😴 Uyku kaydı: ${hrs}s · Kalite ${quality}/5`,'care');
-  document.querySelector('.pop-ov').remove();
+  {const _ovs=document.querySelectorAll('.pop-ov');if(_ovs.length)_ovs[_ovs.length-1].remove();}
   checkAchievements();
   showSleepLog();
 }
@@ -5277,7 +5277,7 @@ function saveFeedEntry(){
   else if(type==='formula'||type==='solid') S.totalFeeds=(S.totalFeeds||0)+1;
   S.dp+=10; S.hunger=Math.min(100,S.hunger+18);
   showToast('🍽️ Öğün kaydedildi! +10 GP');
-  document.querySelector('.pop-ov').remove();
+  {const _ovs=document.querySelectorAll('.pop-ov');if(_ovs.length)_ovs[_ovs.length-1].remove();}
   checkAchievements();
   showFeedLog();
 }
@@ -5544,7 +5544,7 @@ function addGrowthEntry(){
   spawnParticles(['📏','⭐'],3);
   showToast(wasDue?`📏 Aylık ölçüm tamamlandı! +${bonus} GP 🎉`:`📏 Büyüme ölçümü kaydedildi! +${bonus} GP`);
   if(typeof renderGrowthBadge==='function') renderGrowthBadge();
-  document.querySelector('.pop-ov').remove();
+  {const _ovs=document.querySelectorAll('.pop-ov');if(_ovs.length)_ovs[_ovs.length-1].remove();}
   showGrowthJournal();
 }
 
