@@ -377,6 +377,24 @@ body.has3d .baby-char,body.has3d .scene-deco{display:none}
 .gchart-dot{position:absolute;top:50%;transform:translateY(-50%);width:14px;height:14px;border-radius:50%;border:2px solid #fff;box-shadow:0 2px 6px rgba(0,0,0,.2);z-index:2}
 .gchart-val{font-size:.65rem;font-weight:700;color:var(--purple);min-width:48px}
 
+/* growth tracker (flagship) */
+.gt-stdrow{display:flex;gap:8px;margin-bottom:10px}
+.gt-stdbtn{flex:1;padding:9px 6px;border-radius:12px;border:2px solid #E0D7FF;background:#fff;font-family:'Nunito',sans-serif;font-weight:800;font-size:.74rem;color:#888;cursor:pointer;transition:all .2s}
+.gt-stdbtn.active{background:linear-gradient(135deg,var(--purple),#9D6BFF);border-color:transparent;color:#fff;box-shadow:0 4px 12px rgba(157,107,255,.35)}
+.gt-tabrow{display:flex;gap:6px;margin-bottom:10px}
+.gt-tab{flex:1;padding:8px 4px;border-radius:12px;border:2px solid #E8F5E9;background:#F8FFF9;font-family:'Nunito',sans-serif;font-weight:700;font-size:.72rem;color:#555;cursor:pointer;transition:all .2s;text-align:center}
+.gt-tab.active{background:linear-gradient(135deg,var(--green),#66BB6A);border-color:transparent;color:#fff}
+.gt-tab:disabled{opacity:.4;cursor:not-allowed}
+.gt-chartwrap{background:#F8F9FF;border-radius:16px;padding:8px;margin-bottom:10px;overflow-x:auto}
+.gt-chartwrap svg{width:100%;height:auto;display:block;font-family:'Nunito',sans-serif}
+.gt-summary{border-radius:16px;padding:14px;margin-bottom:10px;background:linear-gradient(135deg,#F0FFF4,#E8F5E9)}
+.gt-summary.warn{background:linear-gradient(135deg,#FFF3E0,#FFE0B2)}
+.gt-pctbadge{display:inline-block;padding:3px 11px;border-radius:12px;font-weight:800;font-size:.78rem;color:#fff;background:var(--green);margin-left:6px}
+.gt-histrow{display:flex;justify-content:space-between;align-items:center;background:#F8F9FA;border-radius:10px;padding:7px 10px;margin-bottom:5px;font-size:.72rem}
+.gt-chip{display:inline-block;padding:2px 8px;border-radius:10px;font-size:.65rem;font-weight:800;color:#fff}
+.growth-pulse-dot{display:none;position:absolute;top:-3px;right:-3px;width:12px;height:12px;border-radius:50%;background:#FF6B6B;box-shadow:0 0 0 rgba(255,107,107,.6);animation:growthPulse 1.5s infinite}
+@keyframes growthPulse{0%{box-shadow:0 0 0 0 rgba(255,107,107,.6)}70%{box-shadow:0 0 0 8px rgba(255,107,107,0)}100%{box-shadow:0 0 0 0 rgba(255,107,107,0)}}
+
 /* info-btn inline style */
 .info-btn{background:none;border:none;cursor:pointer;font-size:.75rem;padding:2px 6px;border-radius:8px;background:var(--soft);color:var(--purple);font-weight:700;transition:all .2s}
 .info-btn:hover{background:var(--purple);color:#fff}
@@ -735,11 +753,11 @@ body.has3d .baby-char,body.has3d .scene-deco{display:none}
           </div>
           <div class="baby-mood" id="babyMoodTxt">😊 Mutlu ve Sağlıklı</div>
         </div>
-        <div class="baby-vitals" style="cursor:pointer" onclick="showGrowthChart()" title="Büyüme grafiğini gör">
+        <div class="baby-vitals" style="cursor:pointer;position:relative" onclick="showGrowthChart()" title="Büyüme grafiğini gör">
           <div class="vital"><div class="vital-val" id="vitalWeight">3.2 kg</div><div class="vital-lbl">⚖️ Kilo</div></div>
           <div class="vital"><div class="vital-val" id="vitalHeight">50 cm</div><div class="vital-lbl">📏 Boy</div></div>
           <div class="vital"><div class="vital-val" id="vitalAge">0. Ay</div><div class="vital-lbl">🎂 Yaş</div></div>
-          <div class="vital"><div class="vital-val" style="font-size:.75rem">📈</div><div class="vital-lbl">Grafik</div></div>
+          <div class="vital" style="position:relative"><div class="vital-val" style="font-size:.75rem">📈</div><div class="vital-lbl">Grafik</div><span class="growth-pulse-dot" id="growthReminderDot" title="Aylık ölçüm zamanı!"></span></div>
         </div>
       </div>
 
@@ -1510,6 +1528,7 @@ function saveGame(){
     quizDone:S.quizDone||false, quizDay:S.quizDay||0, quizTotal:S.quizTotal||0,
     quizPerfect:S.quizPerfect||false, poemsRead:S.poemsRead||0,
     growthLog:S.growthLog||[],
+    growthStd:S.growthStd||'who', lastMeasureDay:S.lastMeasureDay||0,
     comboCount:S.comboCount||0, lastActTime:S.lastActTime||0, maxCombo:S.maxCombo||0,
     dailyStreak:S.dailyStreak||0, lastStreakDay:S.lastStreakDay||0, maxStreak:S.maxStreak||0,
     birthStory:S.birthStory||null,
@@ -1625,6 +1644,8 @@ function applySaveData(d){
   S.quizTotal = d.quizTotal||0;
   S.quizPerfect = d.quizPerfect||false;
   S.growthLog = d.growthLog||[];
+  S.growthStd = d.growthStd||'who';
+  S.lastMeasureDay = d.lastMeasureDay||0;
   S.poemsRead = d.poemsRead||0;
   S.comboCount = d.comboCount||0;
   S.lastActTime = d.lastActTime||0;
@@ -2185,6 +2206,8 @@ const S = {
   quizTotal:0,
   quizPerfect:false,
   growthLog:[],
+  growthStd:'who',
+  lastMeasureDay:0,
   poemsRead:0,
   comboCount:0,
   lastActTime:0,
@@ -2506,6 +2529,17 @@ function tick(){
     S.season=newSeason;
     const sn=document.getElementById('seasonBadge');
     if(sn){sn.textContent=SEASONS[newSeason].emoji;sn.title=SEASONS[newSeason].name;}
+  }
+  // measurement reminder ("ölçüm görevi") — every 30 game days, once per cycle
+  const measureCycle=Math.floor(S.dayTime/30);
+  if(measureCycle!==S.measureReminderCycle){
+    S.measureReminderCycle=measureCycle;
+    const daysSinceLast=S.dayTime-(S.lastMeasureDay||0);
+    S._measureDue = daysSinceLast>=30;
+    if(S._measureDue && measureCycle>0){
+      showToast('📏 Aylık ölçüm zamanı! Kilo, boy ve baş çevresini kaydet','');
+    }
+    renderGrowthBadge();
   }
   // achievements
   checkAchievements();
@@ -3557,72 +3591,268 @@ const WHO_H=[
   [89.0,94.0,99.1]
 ];
 
-function showGrowthChart(){
-  const mo=Math.min(24,S.ageMonths);
-  const gd=BABY_GROWTH[mo];
-  const wWHO=WHO_W[mo]||WHO_W[24];
-  const hWHO=WHO_H[mo]||WHO_H[24];
-  const wPct=v=>`${Math.min(100,Math.max(0,((v-wWHO[0])/(wWHO[2]-wWHO[0]))*100)).toFixed(0)}%`;
-  const hPct=v=>`${Math.min(100,Math.max(0,((v-hWHO[0])/(hWHO[2]-hWHO[0]))*100)).toFixed(0)}%`;
-  const avgWPct=`${((wWHO[1]-wWHO[0])/(wWHO[2]-wWHO[0])*100).toFixed(0)}%`;
-  const avgHPct=`${((hWHO[1]-hWHO[0])/(hWHO[2]-hWHO[0])*100).toFixed(0)}%`;
-  const babyWPct=wPct(gd.w);const babyHPct=hPct(gd.h);
-  const wColor=gd.w<wWHO[0]?'#FF4757':gd.w>wWHO[2]?'#FF9A3C':'#52B788';
-  const hColor=gd.h<hWHO[0]?'#FF4757':gd.h>hWHO[2]?'#FF9A3C':'#52B788';
-  const wStatus=gd.w<wWHO[0]?'Düşük (doktora danışın)':gd.w>wWHO[2]?'Yüksek (doktora danışın)':'Normal aralıkta ✅';
-  const hStatus=gd.h<hWHO[0]?'Düşük (doktora danışın)':gd.h>hWHO[2]?'Yüksek (doktora danışın)':'Normal aralıkta ✅';
+// ══════════════════════════════════════════════════════
+// GROWTH TRACKER — WHO (DSÖ) LMS + Neyzi 2008 (Türkiye) percentile data
+// Sources: CDC-hosted official WHO Child Growth Standards LMS tables
+// (ftp.cdc.gov/pub/Health_Statistics/NCHS/growthcharts/WHO-*-Percentiles.csv,
+// 0-24 months, exact integer months) and Neyzi O, Günöz H, Furman A, Bundak R,
+// Gökçay G, Darendeliler F, Baş F. "Türk çocuklarında vücut ağırlığı, boy
+// uzunluğu, baş çevresi ve vücut kitle indeksi referans değerleri."
+// Çocuk Sağlığı ve Hastalıkları Dergisi 2008;51:1-14 (Tablo I, II, IV).
+// Spot-checked: boy 0ay kilo M=3.3464kg, kız 12ay boy M=74.015cm — match
+// published WHO/CDC values exactly.
+// LMS format per month index 0-24: [L, M, S]
+const WHO_LMS={
+  weight:{erkek:[[0.3487,3.3464,0.14602],[0.2297,4.4709,0.13395],[0.197,5.5675,0.12385],[0.1738,6.3762,0.11727],[0.1553,7.0023,0.11316],[0.1395,7.5105,0.1108],[0.1257,7.934,0.10958],[0.1134,8.297,0.10902],[0.1021,8.6151,0.10882],[0.0917,8.9014,0.10881],[0.082,9.1649,0.10891],[0.073,9.4122,0.10906],[0.0644,9.6479,0.10925],[0.0563,9.8749,0.10949],[0.0487,10.0953,0.10976],[0.0413,10.3108,0.11007],[0.0343,10.5228,0.11041],[0.0275,10.7319,0.11079],[0.0211,10.9385,0.11119],[0.0148,11.143,0.11164],[0.0087,11.3462,0.11211],[0.0029,11.5486,0.11261],[-0.0028,11.7504,0.11314],[-0.0083,11.9514,0.11369],[-0.0137,12.1515,0.11426]], kiz:[[0.3809,3.2322,0.14171],[0.1714,4.1873,0.13724],[0.0962,5.1282,0.13],[0.0402,5.8458,0.12619],[-0.005,6.4237,0.12402],[-0.043,6.8985,0.12274],[-0.0756,7.297,0.12204],[-0.1039,7.6422,0.12178],[-0.1288,7.9487,0.12181],[-0.1507,8.2254,0.12199],[-0.17,8.48,0.12223],[-0.1872,8.7192,0.12247],[-0.2024,8.9481,0.12268],[-0.2158,9.1699,0.12283],[-0.2278,9.387,0.12294],[-0.2384,9.6008,0.12299],[-0.2478,9.8124,0.12303],[-0.2562,10.0226,0.12306],[-0.2637,10.2315,0.12309],[-0.2703,10.4393,0.12315],[-0.2762,10.6464,0.12323],[-0.2815,10.8534,0.12335],[-0.2862,11.0608,0.1235],[-0.2903,11.2688,0.12369],[-0.2941,11.4775,0.1239]]},
+  height:{erkek:[[1.0,49.8842,0.03795],[1.0,54.7244,0.03557],[1.0,58.4249,0.03424],[1.0,61.4292,0.03328],[1.0,63.886,0.03257],[1.0,65.9026,0.03204],[1.0,67.6236,0.03165],[1.0,69.1645,0.03139],[1.0,70.5994,0.03124],[1.0,71.9687,0.03117],[1.0,73.2812,0.03118],[1.0,74.5388,0.03125],[1.0,75.7488,0.03137],[1.0,76.9186,0.03154],[1.0,78.0497,0.03174],[1.0,79.1458,0.03197],[1.0,80.2113,0.03222],[1.0,81.2487,0.0325],[1.0,82.2587,0.03279],[1.0,83.2418,0.0331],[1.0,84.1996,0.03342],[1.0,85.1348,0.03376],[1.0,86.0477,0.0341],[1.0,86.941,0.03445],[1.0,87.8161,0.03479]], kiz:[[1.0,49.1477,0.0379],[1.0,53.6872,0.0364],[1.0,57.0673,0.03568],[1.0,59.8029,0.0352],[1.0,62.0899,0.03486],[1.0,64.0301,0.03463],[1.0,65.7311,0.03448],[1.0,67.2873,0.03441],[1.0,68.7498,0.0344],[1.0,70.1435,0.03444],[1.0,71.4818,0.03452],[1.0,72.771,0.03464],[1.0,74.015,0.03479],[1.0,75.2176,0.03496],[1.0,76.3817,0.03514],[1.0,77.5099,0.03534],[1.0,78.6055,0.03555],[1.0,79.671,0.03576],[1.0,80.7079,0.03598],[1.0,81.7182,0.0362],[1.0,82.7036,0.03643],[1.0,83.6654,0.03666],[1.0,84.604,0.03688],[1.0,85.5202,0.03711],[1.0,86.4153,0.03734]]},
+  headc:{erkek:[[1.0,34.4618,0.03686],[1.0,37.2759,0.03133],[1.0,39.1285,0.02997],[1.0,40.5135,0.02918],[1.0,41.6317,0.02868],[1.0,42.5576,0.02837],[1.0,43.3306,0.02817],[1.0,43.9803,0.02804],[1.0,44.53,0.02796],[1.0,44.9998,0.02792],[1.0,45.4051,0.0279],[1.0,45.7573,0.02789],[1.0,46.0661,0.02789],[1.0,46.3395,0.02789],[1.0,46.5844,0.02791],[1.0,46.806,0.02792],[1.0,47.0088,0.02795],[1.0,47.1962,0.02797],[1.0,47.3711,0.028],[1.0,47.5357,0.02803],[1.0,47.6919,0.02806],[1.0,47.8408,0.0281],[1.0,47.9833,0.02813],[1.0,48.1201,0.02817],[1.0,48.2515,0.02821]], kiz:[[1.0,33.8787,0.03496],[1.0,36.5463,0.0321],[1.0,38.2521,0.03168],[1.0,39.5328,0.0314],[1.0,40.5817,0.03119],[1.0,41.459,0.03102],[1.0,42.1995,0.03087],[1.0,42.829,0.03075],[1.0,43.3671,0.03063],[1.0,43.83,0.03053],[1.0,44.2319,0.03044],[1.0,44.5844,0.03035],[1.0,44.8965,0.03027],[1.0,45.1752,0.03019],[1.0,45.4265,0.03012],[1.0,45.6551,0.03006],[1.0,45.865,0.02999],[1.0,46.0598,0.02993],[1.0,46.2424,0.02987],[1.0,46.4152,0.02982],[1.0,46.5801,0.02977],[1.0,46.7384,0.02972],[1.0,46.8913,0.02967],[1.0,47.0391,0.02962],[1.0,47.1822,0.02957]]}
+};
+// Neyzi 2008 (Türk çocukları) percentile tables — sparse months, columns [P3,P10,P25,P50,P75,P90,P97]
+const NEYZI_PCT={
+  months:[0,3,6,9,12,15,18,24],
+  weight:{
+    erkek:[[2.58,2.85,3.13,3.43,3.73,4.00,4.27],[4.75,5.26,5.79,6.38,6.99,7.54,8.10],[6.21,6.79,7.41,8.12,8.85,9.54,10.25],[7.27,7.87,8.51,9.26,10.06,10.81,11.58],[7.96,8.61,9.32,10.16,11.05,11.92,12.82],[8.61,9.28,10.01,10.89,11.83,12.75,13.72],[9.13,9.82,10.58,11.49,12.48,13.46,14.49],[10.12,10.85,11.66,12.66,13.76,14.86,16.05]],
+    kiz:[[2.52,2.76,3.01,3.29,3.58,3.84,4.10],[4.48,4.90,5.33,5.82,6.32,6.78,7.24],[5.94,6.38,6.85,7.43,8.06,8.68,9.34],[6.85,7.34,7.89,8.55,9.29,10.02,10.82],[7.52,8.06,8.66,9.39,10.20,11.00,11.87],[8.09,8.67,9.31,10.10,10.96,11.81,12.73],[8.57,9.19,9.87,10.71,11.63,12.55,13.54],[9.49,10.20,10.99,11.94,12.99,14.03,15.15]]
+  },
+  height:{
+    erkek:[[45.9,47.2,48.5,50.0,51.5,52.9,54.2],[56.2,57.8,59.5,61.3,63.2,64.8,66.4],[62.8,64.5,66.2,68.0,69.9,71.6,73.2],[67.4,69.1,70.9,72.8,74.7,76.4,78.1],[70.8,72.7,74.7,76.9,79.1,81.1,83.0],[73.8,75.8,77.9,80.2,82.5,84.5,86.6],[76.4,78.5,80.7,83.1,85.5,87.7,89.8],[81.0,83.3,85.6,88.2,90.8,93.2,95.5]],
+    kiz:[[45.3,46.6,47.9,49.4,50.8,52.1,53.4],[55.3,56.8,58.2,59.9,61.5,63.0,64.5],[61.6,63.1,64.7,66.4,68.2,69.7,71.3],[66.0,67.7,69.3,71.2,73.0,74.6,76.3],[69.7,71.4,73.2,75.1,77.1,78.8,80.5],[72.8,74.6,76.5,78.5,80.6,82.4,84.2],[75.5,77.4,79.3,81.5,83.7,85.6,87.6],[80.1,82.3,84.4,86.8,89.2,91.4,93.5]]
+  },
+  headcMonths:[0,1,2,3,6,9,12,15,18,21,24],
+  headc:{
+    erkek:[[32.3,33.2,34.0,34.9,35.9,36.7,37.5],[35.3,36.1,37.0,37.9,38.9,39.7,40.5],[37.1,37.9,38.8,39.7,40.6,41.5,42.3],[38.5,39.3,40.2,41.1,42.0,42.8,43.7],[41.3,42.2,43.1,44.0,45.0,45.9,46.7],[43.1,44.0,44.9,45.8,46.8,47.7,48.6],[44.3,45.2,46.1,47.1,48.0,48.9,49.8],[45.0,45.9,46.8,47.8,48.8,49.7,50.6],[45.6,46.5,47.4,48.4,49.4,50.3,51.2],[46.1,47.0,47.9,48.9,49.9,50.8,51.7],[46.4,47.3,48.3,49.3,50.3,51.2,52.1]],
+    kiz:[[31.9,32.7,33.6,34.5,35.5,36.3,37.1],[34.8,35.5,36.3,37.1,38.0,38.7,39.5],[36.5,37.2,38.0,38.8,39.6,40.3,41.0],[37.7,38.4,39.1,40.0,40.8,41.6,42.3],[40.4,41.2,42.0,42.9,43.8,44.6,45.3],[42.1,42.9,43.7,44.6,45.5,46.3,47.1],[43.4,44.1,44.9,45.8,46.7,47.5,48.3],[44.2,45.0,45.8,46.6,47.5,48.3,49.0],[44.8,45.5,46.3,47.2,48.1,48.9,49.7],[45.1,45.9,46.7,47.6,48.6,49.4,50.2],[45.4,46.2,47.1,48.0,49.0,49.8,50.7]]
+  }
+};
+const NEYZI_P=[3,10,25,50,75,90,97];
 
-  // Mini chart for last 6 months
-  const hist=[];
-  for(let i=Math.max(0,mo-5);i<=mo;i++){
-    const g=BABY_GROWTH[i]; hist.push(`<div style="flex:1;text-align:center"><div style="height:${30+g.w*3}px;background:linear-gradient(0deg,#52B788,#B2DFDB);border-radius:4px 4px 0 0;margin-bottom:2px"></div><div style="font-size:.55rem;color:#888">${i}ay<br>${g.w}kg</div></div>`);
+// ── Percentile math (LMS method + normal CDF/quantile approximations) ──
+function erf(x){
+  const s=x<0?-1:1; x=Math.abs(x);
+  const a1=0.254829592,a2=-0.284496736,a3=1.421413741,a4=-1.453152027,a5=1.061405429,p=0.3275911;
+  const t=1/(1+p*x);
+  const y=1-(((((a5*t+a4)*t)+a3)*t+a2)*t+a1)*t*Math.exp(-x*x);
+  return s*y;
+}
+function normalCDF(z){ return 0.5*(1+erf(z/Math.SQRT2)); }
+// Acklam's algorithm approximation for the inverse normal CDF (quantile function)
+function invNormalCDF(p){
+  if(p<=0) return -8; if(p>=1) return 8;
+  const a=[-3.969683028665376e+01,2.209460984245205e+02,-2.759285104469687e+02,1.383577518672690e+02,-3.066479806614716e+01,2.506628277459239e+00];
+  const b=[-5.447609879822406e+01,1.615858368580409e+02,-1.556989798598866e+02,6.680131188771972e+01,-1.328068155288572e+01];
+  const c=[-7.784894002430293e-03,-3.223964580411365e-01,-2.400758277161838e+00,-2.549732539343734e+00,4.374664141464968e+00,2.938163982698783e+00];
+  const d=[7.784695709041462e-03,3.224671290700398e-01,2.445134137142996e+00,3.754408661907416e+00];
+  const plow=0.02425, phigh=1-plow;
+  let q,r;
+  if(p<plow){ q=Math.sqrt(-2*Math.log(p)); return (((((c[0]*q+c[1])*q+c[2])*q+c[3])*q+c[4])*q+c[5])/((((d[0]*q+d[1])*q+d[2])*q+d[3])*q+1); }
+  if(p>phigh){ q=Math.sqrt(-2*Math.log(1-p)); return -(((((c[0]*q+c[1])*q+c[2])*q+c[3])*q+c[4])*q+c[5])/((((d[0]*q+d[1])*q+d[2])*q+d[3])*q+1); }
+  q=p-0.5; r=q*q;
+  return (((((a[0]*r+a[1])*r+a[2])*r+a[3])*r+a[4])*r+a[5])*q/(((((b[0]*r+b[1])*r+b[2])*r+b[3])*r+b[4])*r+1);
+}
+function zFromLMS(L,M,S,val){ if(Math.abs(L)<1e-6) return Math.log(val/M)/S; return (Math.pow(val/M,L)-1)/(L*S); }
+function valueFromZ(L,M,S,z){ if(Math.abs(L)<1e-6) return M*Math.exp(S*z); return M*Math.pow(1+L*S*z,1/L); }
+function lmsAt(measure,gender,ageMonths){
+  const arr=(WHO_LMS[measure]||WHO_LMS.weight)[gender==='erkek'?'erkek':'kiz'];
+  const m=Math.max(0,Math.min(24,ageMonths));
+  const i0=Math.floor(m), i1=Math.min(24,i0+1), frac=m-i0;
+  const a=arr[i0], b=arr[i1];
+  return [a[0]+(b[0]-a[0])*frac, a[1]+(b[1]-a[1])*frac, a[2]+(b[2]-a[2])*frac];
+}
+function whoPercentile(measure,gender,ageMonths,val){
+  const [L,M,S]=lmsAt(measure,gender,ageMonths);
+  const z=zFromLMS(L,M,S,val);
+  return {z, pct:normalCDF(z)*100};
+}
+function whoValueAtPercentile(measure,gender,ageMonths,pct){
+  const [L,M,S]=lmsAt(measure,gender,ageMonths);
+  return valueFromZ(L,M,S,invNormalCDF(pct/100));
+}
+function neyziRowAt(measure,gender,ageMonths){
+  const months=measure==='headc'?NEYZI_PCT.headcMonths:NEYZI_PCT.months;
+  const table=NEYZI_PCT[measure][gender==='erkek'?'erkek':'kiz'];
+  const mo=Math.max(months[0],Math.min(months[months.length-1],ageMonths));
+  let i=0; while(i<months.length-2 && months[i+1]<mo) i++;
+  const i0=i, i1=Math.min(months.length-1,i+1);
+  if(i0===i1||months[i1]===months[i0]) return table[i0].slice();
+  const t=(mo-months[i0])/(months[i1]-months[i0]);
+  return table[i0].map((v,k)=>v+(table[i1][k]-v)*t);
+}
+function neyziPercentileForValue(measure,gender,ageMonths,val){
+  const row=neyziRowAt(measure,gender,ageMonths);
+  if(val<=row[0]){ const slope=(row[1]-row[0])/(NEYZI_P[1]-NEYZI_P[0])||1; return Math.max(0.5,NEYZI_P[0]-(row[0]-val)/slope); }
+  const n=row.length;
+  if(val>=row[n-1]){ const slope=(row[n-1]-row[n-2])/(NEYZI_P[n-1]-NEYZI_P[n-2])||1; return Math.min(99.5,NEYZI_P[n-1]+(val-row[n-1])/slope); }
+  for(let k=0;k<row.length-1;k++){
+    if(val>=row[k]&&val<=row[k+1]){ const t=(val-row[k])/((row[k+1]-row[k])||1); return NEYZI_P[k]+(NEYZI_P[k+1]-NEYZI_P[k])*t; }
+  }
+  return 50;
+}
+function neyziValueAtPercentile(measure,gender,ageMonths,pct){
+  const row=neyziRowAt(measure,gender,ageMonths);
+  if(pct<=NEYZI_P[0]) return row[0];
+  if(pct>=NEYZI_P[NEYZI_P.length-1]) return row[row.length-1];
+  for(let k=0;k<NEYZI_P.length-1;k++){
+    if(pct>=NEYZI_P[k]&&pct<=NEYZI_P[k+1]){ const t=(pct-NEYZI_P[k])/(NEYZI_P[k+1]-NEYZI_P[k]); return row[k]+(row[k+1]-row[k])*t; }
+  }
+  return row[Math.floor(row.length/2)];
+}
+// Unified API used by the tracker UI
+function growthPercentile(measure,gender,ageMonths,val,std){
+  if(std==='neyzi'){ const pct=neyziPercentileForValue(measure,gender,ageMonths,val); return {pct, z:invNormalCDF(Math.min(99.4,Math.max(0.6,pct))/100)}; }
+  return whoPercentile(measure,gender,ageMonths,val);
+}
+function growthCurveValue(measure,gender,ageMonths,pct,std){
+  if(std==='neyzi') return neyziValueAtPercentile(measure,gender,ageMonths,pct);
+  return whoValueAtPercentile(measure,gender,ageMonths,pct);
+}
+function growthBandIndex(pct){ return pct<3?0:pct<15?1:pct<=85?2:pct<=97?3:4; }
+function growthInterpretation(pct){
+  if(pct<3) return 'ortalamanın belirgin altında — pediatristinizle paylaşın';
+  if(pct<15) return 'ortalamanın hafif altında, normal aralıkta';
+  if(pct<=85) return 'ortalama aralıkta, sağlıklı büyüme';
+  if(pct<=97) return 'ortalamanın hafif üstünde, normal aralıkta';
+  return 'ortalamanın belirgin üstünde — pediatristinizle paylaşın';
+}
+
+const GT_MEASURES={
+  weight:{label:'Kilo',unit:'kg',icon:'⚖️',min:1,max:20,step:0.1},
+  height:{label:'Boy',unit:'cm',icon:'📏',min:40,max:100,step:0.5},
+  headc:{label:'Baş Çevresi',unit:'cm',icon:'⭕',min:25,max:60,step:0.1}
+};
+const GT_BANDCOLORS=['#FF6B6B','#FFB74D','#52B788','#FFB74D','#FF6B6B'];
+let _gtTab='weight';
+
+function setGrowthStd(std){ S.growthStd=std; showGrowthTracker(_gtTab); }
+function setGrowthTab(measure){ showGrowthTracker(measure); }
+
+function buildGrowthSVG(measure,gender,std,entries){
+  const W=640,H=360,padL=44,padR=12,padT=16,padB=30;
+  const plotW=W-padL-padR, plotH=H-padT-padB;
+  const months=[]; for(let m=0;m<=24;m++) months.push(m);
+  const bands=[3,15,50,85,97];
+  const curves=bands.map(b=>months.map(m=>growthCurveValue(measure,gender,m,b,std)));
+  let yMin=Math.min(...curves[0]), yMax=Math.max(...curves[4]);
+  entries.forEach(e=>{ const v=e[measure]; if(v!=null){ yMin=Math.min(yMin,v); yMax=Math.max(yMax,v); } });
+  const pad=(yMax-yMin)*0.08||1; yMin-=pad; yMax+=pad;
+  const sx=m=>padL+(m/24)*plotW;
+  const sy=v=>padT+(1-(v-yMin)/((yMax-yMin)||1))*plotH;
+  const pathOf=arr=>arr.map((v,i)=>`${i===0?'M':'L'}${sx(months[i]).toFixed(1)},${sy(v).toFixed(1)}`).join(' ');
+  const bandFill=`${pathOf(curves[1])} L${curves[3].map((v,i)=>`${sx(months[i]).toFixed(1)},${sy(v).toFixed(1)}`).reverse().join(' L')} Z`;
+  const curveColors=['#FF9A3C','#9D6BFF','#52B788','#9D6BFF','#FF9A3C'];
+  const curveDash=['4,3','','','','4,3'];
+  let svg=`<svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Büyüme persentil grafiği">`;
+  // grid lines (every 3 months)
+  for(let m=0;m<=24;m+=3){
+    svg+=`<line x1="${sx(m).toFixed(1)}" y1="${padT}" x2="${sx(m).toFixed(1)}" y2="${padT+plotH}" stroke="#E8E4FF" stroke-width="1"/>`;
+    svg+=`<text x="${sx(m).toFixed(1)}" y="${H-8}" font-size="9" fill="#9992b8" text-anchor="middle">${m}ay</text>`;
+  }
+  svg+=`<path d="${bandFill}" fill="#52B788" opacity="0.13"/>`;
+  bands.forEach((b,bi)=>{
+    svg+=`<path d="${pathOf(curves[bi])}" fill="none" stroke="${curveColors[bi]}" stroke-width="${b===50?2.4:1.4}" stroke-dasharray="${curveDash[bi]}" opacity="0.85"/>`;
+    svg+=`<text x="${(padL+plotW+2).toFixed(1)}" y="${sy(curves[bi][24]).toFixed(1)}" font-size="8.5" fill="${curveColors[bi]}" font-weight="700">P${b}</text>`;
+  });
+  // child entries
+  const pts=entries.filter(e=>e[measure]!=null).sort((a,b)=>a.month-b.month);
+  if(pts.length){
+    const linePts=pts.map(e=>`${sx(e.month).toFixed(1)},${sy(e[measure]).toFixed(1)}`).join(' ');
+    svg+=`<polyline points="${linePts}" fill="none" stroke="#FF6B9D" stroke-width="2"/>`;
+    pts.forEach(e=>{
+      const {pct}=growthPercentile(measure,gender,e.month,e[measure],std);
+      const col=GT_BANDCOLORS[growthBandIndex(pct)];
+      svg+=`<circle cx="${sx(e.month).toFixed(1)}" cy="${sy(e[measure]).toFixed(1)}" r="5.5" fill="${col}" stroke="#fff" stroke-width="1.6"/>`;
+    });
+  }
+  svg+=`</svg>`;
+  return svg;
+}
+
+function showGrowthTracker(measure){
+  if(!measure) measure=_gtTab||'weight';
+  const std=S.growthStd||'who';
+  const gender=S.gender==='erkek'?'erkek':'kiz';
+  const hasNeyziHeadc = true; // Neyzi 2008 Tablo IV includes head circumference 0-24 ay
+  if(measure==='headc' && std==='neyzi' && !hasNeyziHeadc) measure='weight';
+  _gtTab=measure;
+  const log=(S.growthLog||[]).slice().sort((a,b)=>a.month-b.month);
+  const meta=GT_MEASURES[measure];
+  const withVal=log.filter(e=>e[measure]!=null);
+  const latest=withVal[withVal.length-1]||null;
+
+  let summaryHtml, trendHtml='';
+  if(latest){
+    const {pct,z}=growthPercentile(measure,gender,latest.month,latest[measure],std);
+    const pctR=Math.round(pct);
+    const warn = pct<3||pct>97;
+    const stdName = std==='neyzi'?'Neyzi (TR)':'WHO (DSÖ)';
+    summaryHtml=`<div class="gt-summary${warn?' warn':''}">
+      <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:6px">
+        <div style="font-weight:800;color:var(--text);font-size:.95rem">${meta.icon} ${latest[measure]} ${meta.unit} <span class="gt-pctbadge" style="background:${GT_BANDCOLORS[growthBandIndex(pct)]}">P${pctR}</span></div>
+        <div style="font-size:.68rem;color:#888">${latest.month}. Ay · ${stdName} · z=${z.toFixed(2)}</div>
+      </div>
+      <div style="font-size:.78rem;color:#555;margin-top:6px">${S.babyName}, ${meta.label.toLowerCase()} ölçümünde ${stdName} referansına göre P${pctR} — ${growthInterpretation(pct)}.</div>
+      ${warn?`<div style="font-size:.74rem;color:#B45300;margin-top:6px;font-weight:700">💡 Bu tek bir ölçüm — endişelenmeyin, ama bir sonraki doktor kontrolünde bu grafiği pediatristinizle paylaşın.</div>`:''}
+    </div>`;
+    // trend: compare last two measurements for band-crossing
+    if(withVal.length>=2){
+      const prev=withVal[withVal.length-2];
+      const p1=growthPercentile(measure,gender,prev.month,prev[measure],std).pct;
+      const p2=pct;
+      const b1=growthBandIndex(p1), b2=growthBandIndex(p2);
+      if(Math.abs(b1-b2)>=2){
+        trendHtml=`<div class="pop-sec" style="background:#FFF3E0"><h4>📉 Büyüme Eğrisi Değişimi</h4><p>${prev.month}. ay (P${Math.round(p1)}) ile ${latest.month}. ay (P${Math.round(p2)}) arasında persentil eğrisinde belirgin bir kayma var. Bu tek başına ciddi bir sorun anlamına gelmez, ama büyüme trendindeki değişiklikler doktor kontrolünde değerlendirilmelidir — bir sonraki ziyarette danışmanıza sorun.</p></div>`;
+      }
+    }
+  } else {
+    summaryHtml=`<div class="gt-summary"><div style="text-align:center;color:#aaa;font-size:.8rem;padding:6px">Henüz ${meta.label.toLowerCase()} ölçümü eklenmedi.</div></div>`;
   }
 
+  const svg=buildGrowthSVG(measure,gender,std,log);
+  const histRows=withVal.slice().reverse().map(e=>{
+    const {pct}=growthPercentile(measure,gender,e.month,e[measure],std);
+    return `<div class="gt-histrow"><span>${e.month}. Ay <span style="color:#aaa">${e.date||''}</span></span><span>${e[measure]} ${meta.unit} <span class="gt-chip" style="background:${GT_BANDCOLORS[growthBandIndex(pct)]}">P${Math.round(pct)}</span></span></div>`;
+  }).join('') || '<div style="color:#aaa;text-align:center;padding:10px;font-size:.75rem">Henüz kayıt yok.</div>';
+
+  const headcNote = std==='neyzi' ? '' : '';
   const h=`<div class="pop-ov" onclick="if(event.target===this)this.remove()">
   <div class="pop-box">
     <div class="pop-rainbow"></div>
     <span class="pop-ico">📈</span>
-    <div class="pop-title">${S.babyName} Büyüme Grafiği</div>
-    <div class="pop-sub">${mo}. Ay · WHO Referans Değerleri ile Karşılaştırma</div>
+    <div class="pop-title">${S.babyName} Büyüme Takibi</div>
+    <div class="pop-sub">${S.ageMonths}. Ay · Tam Persentil Analizi</div>
 
-    <div style="display:flex;align-items:flex-end;gap:4px;background:#F8F8FF;border-radius:12px;padding:12px;margin-bottom:12px;height:80px">
-      ${hist.join('')}
+    <div class="gt-stdrow">
+      <button class="gt-stdbtn${std==='who'?' active':''}" onclick="setGrowthStd('who')">🌍 WHO (DSÖ)</button>
+      <button class="gt-stdbtn${std==='neyzi'?' active':''}" onclick="setGrowthStd('neyzi')">🇹🇷 Neyzi (TR)</button>
     </div>
+    <div class="gt-tabrow">
+      <button class="gt-tab${measure==='weight'?' active':''}" onclick="setGrowthTab('weight')">⚖️ Kilo</button>
+      <button class="gt-tab${measure==='height'?' active':''}" onclick="setGrowthTab('height')">📏 Boy</button>
+      <button class="gt-tab${measure==='headc'?' active':''}" onclick="setGrowthTab('headc')">⭕ Baş Çevresi</button>
+    </div>
+
+    <div class="gt-chartwrap">${svg}</div>
+    ${summaryHtml}
+    ${trendHtml}
 
     <div class="pop-sec">
-      <h4>⚖️ Kilo — ${gd.w} kg</h4>
-      <div class="gchart-bar-wrap" style="margin-top:8px">
-        <span class="gchart-lbl">P3<br>${wWHO[0]}kg</span>
-        <div class="gchart-track">
-          <div class="gchart-range" style="left:0;width:100%"></div>
-          <div class="gchart-avg" style="left:${avgWPct}"></div>
-          <div class="gchart-dot" style="left:calc(${babyWPct} - 7px);background:${wColor}"></div>
-        </div>
-        <span class="gchart-lbl">P97<br>${wWHO[2]}kg</span>
-      </div>
-      <div style="font-size:.72rem;font-weight:700;color:${wColor};margin-top:4px">${wStatus} · WHO 50. persentil: ${wWHO[1]} kg</div>
+      <h4>📋 Ölçüm Geçmişi</h4>
+      <div style="max-height:160px;overflow-y:auto">${histRows}</div>
     </div>
 
-    <div class="pop-sec">
-      <h4>📏 Boy — ${gd.h} cm</h4>
-      <div class="gchart-bar-wrap" style="margin-top:8px">
-        <span class="gchart-lbl">P3<br>${hWHO[0]}cm</span>
-        <div class="gchart-track">
-          <div class="gchart-range" style="left:0;width:100%"></div>
-          <div class="gchart-avg" style="left:${avgHPct}"></div>
-          <div class="gchart-dot" style="left:calc(${babyHPct} - 7px);background:${hColor}"></div>
-        </div>
-        <span class="gchart-lbl">P97<br>${hWHO[2]}cm</span>
-      </div>
-      <div style="font-size:.72rem;font-weight:700;color:${hColor};margin-top:4px">${hStatus} · WHO 50. persentil: ${hWHO[1]} cm</div>
-    </div>
-
-    <div class="pop-tip"><div class="pop-tip-t">💡 Grafik Hakkında</div><p>Yeşil alan normal büyüme aralığını (P3–P97) gösterir. Çizgi WHO ortalamasıdır (P50). Önemli olan tek bir ölçüm değil, büyüme TRENDIDIR. Her kontrol doktora grafiği gösterin.</p></div>
-    <button class="pop-btn" onclick="this.closest('.pop-ov').remove()">✅ Anladım</button>
+    <div class="pop-tip"><div class="pop-tip-t">💡 Grafik Hakkında</div><p>P3-P97 arası normal büyüme aralığıdır; P15-P85 (yeşil bant) çoğu çocuğun bulunduğu aralıktır. Önemli olan tek bir ölçüm değil, çizginin eğimidir — kendi eğrisini takip eden bebek genelde sağlıklıdır. Standart olarak WHO (DSÖ) 0-24 ay için tüm dünyada, Neyzi 2008 ise Türk çocukları için referans olarak kullanılır.</p></div>
+    <button class="pop-btn green" onclick="this.closest('.pop-ov').remove();showGrowthJournal()">📏 Yeni Ölçüm Ekle</button>
+    <button class="pop-btn" style="margin-top:8px" onclick="this.closest('.pop-ov').remove()">✅ Kapat</button>
   </div></div>`;
+  const old=document.querySelector('.pop-ov'); if(old) old.remove();
   document.body.insertAdjacentHTML('beforeend',h);
 }
 
+function showGrowthChart(){ showGrowthTracker(_gtTab); }
+
+function renderGrowthBadge(){
+  const dot=document.getElementById('growthReminderDot');
+  if(dot) dot.style.display=S._measureDue?'block':'none';
+}
 // ══════════════════════════════════════════════════════
 // BREASTFEEDING GUIDE
 // ══════════════════════════════════════════════════════
@@ -5267,6 +5497,7 @@ function showGrowthJournal(){
       <div style="display:flex;justify-content:space-between;font-weight:800;color:var(--text)">${e.month}. Ay <span style="color:#aaa;font-weight:400">${e.date}</span></div>
       ${e.weight?`<div style="color:${wColor}">⚖️ ${e.weight} kg <span style="font-size:.65rem">(WHO ortalama: ${who.w} kg)</span></div>`:''}
       ${e.height?`<div style="color:#1565C0">📏 ${e.height} cm <span style="font-size:.65rem">(WHO ortalama: ${who.h} cm)</span></div>`:''}
+      ${e.headc?`<div style="color:#7B1FA2">⭕ ${e.headc} cm baş çevresi</div>`:''}
       ${e.note?`<div style="color:#888;margin-top:3px">📝 ${e.note}</div>`:''}
     </div>`;
   }).join('') || '<div style="color:#aaa;text-align:center;padding:20px">Henüz ölçüm eklenmedi.</div>';
@@ -5282,10 +5513,12 @@ function showGrowthJournal(){
         <input id="gjWeight" type="number" step="0.1" min="1" max="20" placeholder="Kilo (kg)" style="padding:8px;border:2px solid #E0D7FF;border-radius:10px;font-family:'Nunito',sans-serif;font-size:.8rem;outline:none">
         <input id="gjHeight" type="number" step="0.5" min="40" max="100" placeholder="Boy (cm)" style="padding:8px;border:2px solid #E0D7FF;border-radius:10px;font-family:'Nunito',sans-serif;font-size:.8rem;outline:none">
       </div>
-      <input id="gjNote" type="text" placeholder="Not (isteğe bağlı)" style="width:100%;padding:8px;border:2px solid #E0D7FF;border-radius:10px;font-family:'Nunito',sans-serif;font-size:.8rem;outline:none;margin-bottom:6px">
+      <input id="gjHeadc" type="number" step="0.1" min="25" max="60" placeholder="Baş Çevresi (cm)" style="width:100%;padding:8px;border:2px solid #E0D7FF;border-radius:10px;font-family:'Nunito',sans-serif;font-size:.8rem;outline:none;margin-bottom:6px;box-sizing:border-box">
+      <input id="gjNote" type="text" placeholder="Not (isteğe bağlı)" style="width:100%;padding:8px;border:2px solid #E0D7FF;border-radius:10px;font-family:'Nunito',sans-serif;font-size:.8rem;outline:none;margin-bottom:6px;box-sizing:border-box">
       <button onclick="addGrowthEntry()" style="width:100%;padding:9px;background:linear-gradient(135deg,var(--green),#81C784);color:#fff;border:none;border-radius:10px;font-family:'Nunito',sans-serif;font-weight:800;font-size:.8rem;cursor:pointer">Kaydet 📏</button>
     </div>
     <div style="max-height:240px;overflow-y:auto">${logRows}</div>
+    <button class="pop-btn" style="background:linear-gradient(135deg,#9D6BFF,#C77DFF);margin-top:8px" onclick="this.closest('.pop-ov').remove();showGrowthTracker()">📈 Büyüme Takibini Gör</button>
     <button class="pop-btn" style="background:linear-gradient(135deg,#43A047,#66BB6A);margin-top:8px" onclick="this.closest('.pop-ov').remove()">Kapat</button>
   </div></div>`;
   document.body.insertAdjacentHTML('beforeend',h);
@@ -5294,14 +5527,21 @@ function showGrowthJournal(){
 function addGrowthEntry(){
   const w=parseFloat(document.getElementById('gjWeight').value)||null;
   const h2=parseFloat(document.getElementById('gjHeight').value)||null;
+  const hc=parseFloat(document.getElementById('gjHeadc')?.value)||null;
   const note=document.getElementById('gjNote').value.trim()||null;
-  if(!w&&!h2){showToast('Kilo veya boy giriniz!'); return;}
+  if(!w&&!h2&&!hc){showToast('Kilo, boy veya baş çevresi giriniz!'); return;}
   if(!S.growthLog) S.growthLog=[];
   const today=new Date().toLocaleDateString('tr-TR');
-  S.growthLog.push({month:S.ageMonths,weight:w,height:h2,note,date:today});
-  S.dp+=15;
+  S.growthLog.push({month:S.ageMonths,weight:w,height:h2,headc:hc,note,date:today,dayTime:Math.floor(S.dayTime||0)});
+  const wasDue = !!S._measureDue || (S.dayTime-(S.lastMeasureDay||0))>=30;
+  S.lastMeasureDay = Math.floor(S.dayTime||0);
+  S._measureDue = false;
+  let bonus=15;
+  if(wasDue){ bonus+=40; }
+  S.dp+=bonus;
   spawnParticles(['📏','⭐'],3);
-  showToast('📏 Büyüme ölçümü kaydedildi! +15 GP');
+  showToast(wasDue?`📏 Aylık ölçüm tamamlandı! +${bonus} GP 🎉`:`📏 Büyüme ölçümü kaydedildi! +${bonus} GP`);
+  if(typeof renderGrowthBadge==='function') renderGrowthBadge();
   document.querySelector('.pop-ov').remove();
   showGrowthJournal();
 }
