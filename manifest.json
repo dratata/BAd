@@ -1,0 +1,20 @@
+{
+  "name": "Bebek Büyütme Macerası",
+  "short_name": "Bebek Macerası",
+  "lang": "tr",
+  "display": "standalone",
+  "orientation": "portrait",
+  "start_url": "./",
+  "scope": "./",
+  "background_color": "#FFF5F8",
+  "theme_color": "#3D2C8D",
+  "description": "Sanal bebeğini büyüt, bakımını yap, günlük tut ve gelişimini takip et.",
+  "icons": [
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

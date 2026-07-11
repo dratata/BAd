@@ -4,6 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="theme-color" content="#3D2C8D">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon.svg">
 <title>🍼 Bebek Büyütme Macerası</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Nunito:ital,wght@0,400;0,600;0,700;0,800;1,400&subset=latin,latin-ext&display=swap');
@@ -714,6 +716,7 @@ body.has3d .baby-char,body.has3d .scene-deco{display:none}
       <span id="seasonBadge" title="Mevsim" style="font-size:1.1rem;cursor:default">🌸</span>
     </div>
     <div class="mob-sheet" id="mobSheet">
+      <button onclick="installPwa()" id="installPwaBtn" style="display:none;background:linear-gradient(135deg,#FF6B9D,#C77DFF);color:#fff">📲 Uygulamayı Yükle</button>
       <button onclick="manualSave()">💾 Kaydet</button>
       <button onclick="showReportCard()">📊 Karne</button>
       <button onclick="toggleSound()">🔊 Ses</button>
@@ -2422,6 +2425,41 @@ document.addEventListener('click',function(e){
   if(sheet && sheet.classList.contains('open') && e.target===sheet){
     sheet.classList.remove('open');
   }
+});
+
+// ══════════════════════════════════════════════════════
+// PWA: SERVICE WORKER + INSTALL PROMPT
+// ══════════════════════════════════════════════════════
+let deferredInstallPrompt=null;
+if('serviceWorker' in navigator && (location.protocol==='https:'||location.hostname==='127.0.0.1'||location.hostname==='localhost')){
+  window.addEventListener('load',function(){
+    navigator.serviceWorker.register('./sw.js').catch(function(err){
+      console.warn('SW registration failed',err);
+    });
+  });
+}
+window.addEventListener('beforeinstallprompt',function(e){
+  e.preventDefault();
+  deferredInstallPrompt=e;
+  const btn=document.getElementById('installPwaBtn');
+  if(btn) btn.style.display='block';
+});
+function installPwa(){
+  const btn=document.getElementById('installPwaBtn');
+  if(!deferredInstallPrompt){
+    if(btn) btn.style.display='none';
+    return;
+  }
+  deferredInstallPrompt.prompt();
+  deferredInstallPrompt.userChoice.finally(function(){
+    deferredInstallPrompt=null;
+    if(btn) btn.style.display='none';
+  });
+}
+window.addEventListener('appinstalled',function(){
+  deferredInstallPrompt=null;
+  const btn=document.getElementById('installPwaBtn');
+  if(btn) btn.style.display='none';
 });
 
 // ══════════════════════════════════════════════════════
